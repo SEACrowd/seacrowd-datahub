@@ -20,7 +20,7 @@ You will also need at least Python 3.6+. If you are installing Python, we recomm
     <img src="./docs/_static/img/self-assign.png" style="width: 80%;"/>
 </p>
 
-- Search to see if the dataset exists in the 🤗 [Hub](https://huggingface.co/datasets). If it exists, please use the current implementation as the `source` and focus on implementing the [task-specific `seacrowd` schema](https://github.com/SEACrowd/seacrowd-datahub/blob/master/task_schemas.md).
+- Search to see if the dataset exists in the 🤗 [Hub](https://huggingface.co/datasets). If it exists, please use the current implementation as the `source` and focus on implementing the [task-specific seacrowd schema](https://github.com/SEACrowd/seacrowd-datahub/blob/master/task_schemas.md).
 
 - If not, find the dataset online, usually uploaded in Github or Google Drive.
 
@@ -78,7 +78,7 @@ You can make an environment in any way you choose. We highlight two possible opt
 The following instructions will create an Anaconda `env-seacrowd-datahub` environment.
 
 - Install [anaconda](https://docs.anaconda.com/anaconda/install/) for your appropriate operating system.
-- Run the following command while in the `nusantara_datasets` folder (you can pick your python version):
+- Run the following command while in the `sea_datasets` folder (you can pick your python version):
 
 ```
 conda env create -f conda.yml  # Creates a conda env
