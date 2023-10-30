@@ -1,4 +1,4 @@
-# Nusantara Schema Documentation
+# SEACrowd Schema Documentation
 We have defined a set of lightweight, task-specific schema to help simplify programmatic access to common `nusantara-nlp` datasets. This schema should be implemented for each dataset in addition to a schema that preserves the original dataset format.
 
 ### Example Schema and Associated Tasks
