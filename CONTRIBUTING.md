@@ -116,7 +116,7 @@ To start, copy [templates/template.py](templates/template.py) to your `seacrowd/
     cp templates/template.py seacrowd/sea_datasets/<dataset_name>/<dataset_name>.py
 
 For the `_info_` function, you will need to define `features` for your
-`DatasetInfo` object. For the `bigbio` config, choose the right schema from our list of examples. You can find a description of these in the [Task Schemas Document](task_schemas.md). You can find the actual schemas in the [schemas directory](utils/schemas/).
+`DatasetInfo` object. For the `bigbio` config, choose the right schema from our list of examples. You can find a description of these in the [Task Schemas Document](task_schemas.md). You can find the actual schemas in the [schemas directory](seacrowd/utils/schemas).
 
 You will use this schema in the `_generate_examples` return value.
 
@@ -124,7 +124,7 @@ Populate the information in the dataset according to this schema; some fields ma
 
 To enable quality control, please add the following line in your file before the class definition:
 ```python
-from utils.constants import Tasks
+from seacrowd.utils.constants import Tasks
 _SUPPORTED_TASKS = [Tasks.NAMED_ENTITY_RECOGNITION, Tasks.DEPENDENCY_PARSING]
 ```
 
