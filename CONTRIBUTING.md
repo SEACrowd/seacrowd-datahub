@@ -1,20 +1,20 @@
-# Guide for contributing a dataloader implementation
+# Guideline for contributing a dataloader implementation
 
 ## Pre-Requisites
 
-Please make a github account prior to implementing a dataset; you can follow instructions to install git [here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
+Please make a GitHub account prior to implementing a dataset; you can follow the instructions to install git [here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
 
-You will also need at least Python 3.6+. If you are installing python, we recommend downloading [anaconda](https://docs.anaconda.com/anaconda/install/index.html) to curate a python environment with necessary packages. **We strongly recommend Python 3.8+ for stability**.
+You will also need at least Python 3.6+. If you are installing Python, we recommend downloading [anaconda](https://docs.anaconda.com/anaconda/install/index.html) to curate a python environment with the necessary packages. **We strongly recommend Python 3.8+ for stability**.
 
 **Optional** Setup your GitHub account with SSH ([instructions here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh).)
 
 ### 1. **Assigning a dataloader**
-- Choose a dataset from the [list of Nusantara datasets](https://github.com/orgs/IndoNLP/projects/2).
+- Choose a dataset from the [list of SEACrowd datasets](https://github.com/orgs/SEACrowd/projects/1/views/1).
 <p align="center">
     <img src="./docs/_static/img/select-task.jpeg" style="width: 80%;"/>
 </p>
 
-- Assign yourself an issue by commenting `#self-assign` under the issue. **Please assign yourself to issues with no other collaborators assigned**. You should see your GitHub username associated to the issue within 1-2 minutes of making a comment.
+- Assign yourself an issue by commenting `#self-assign` under the issue. **Please assign yourself to issues with no other collaborators assigned**. You should see your GitHub username associated with the issue within 1-2 minutes of making a comment.
 
 <p align="center">
     <img src="./docs/_static/img/self-assign.jpg" style="width: 80%;"/>
@@ -24,17 +24,17 @@ You will also need at least Python 3.6+. If you are installing python, we recomm
 
 - If not, find the dataset online, usually uploaded in Github or Google drive.
 
-### 2. **Setup a local version of the nusa-crowd repo**
-Fork the nusa-crowd [repository](https://github.com/IndoNLP/nusa-crowd) to your local github account. To do this, click the link to the repository and click "fork" in the upper-right corner. You should get an option to fork to your account, provided you are signed into Github.
+### 2. **Setup a local version of the SEACrowd repo**
+Fork the seacrowd-datahub [repository](https://github.com/SEACrowd/seacrowd-datahub) to your local Github account. To do this, click the link to the repository and click "fork" in the upper-right corner.
 
 After you fork, clone the repository locally. You can do so as follows:
 
-    git clone git@github.com:<your_github_username>/nusa-crowd.git
-    cd nusa-crowd  # enter the directory
+    git clone git@github.com:<your_github_username>/seacrowd-datahub.git
+    cd seacrowd-datahub  # enter the directory
 
 Next, you want to set your `upstream` location to enable you to push/pull (add or receive updates). You can do so as follows:
 
-    git remote add upstream git@github.com:IndoNLP/nusa-crowd.git
+    git remote add upstream git@github.com:SEACrowd/seacrowd-datahub.git
 
 You can optionally check that this was set properly by running the following command:
 
@@ -42,16 +42,16 @@ You can optionally check that this was set properly by running the following com
 
 The output of this command should look as follows:
 
-    origin  git@github.com:<your_github_username>/nusa-crowd.git (fetch)
-    origin  git@github.com:<your_github_username>/nusa-crowd.git (push)
-    upstream    git@github.com:IndoNLP/nusa-crowd.git (fetch)
-    upstream    git@github.com:IndoNLP/nusa-crowd.git (push)
+    origin  git@github.com:<your_github_username>/seacrowd-datahub.git (fetch)
+    origin  git@github.com:<your_github_username>/seacrowd-datahub.git (push)
+    upstream    git@github.com:SEACrowd/seacrowd-datahub.git (fetch)
+    upstream    git@github.com:SEACrowd/seacrowd-datahub.git (push)
 
 If you do NOT have an `origin` for whatever reason, then run:
 
-    git remote add origin git@github.com:<your_github_username>/nusa-crowd.git
+    git remote add origin git@github.com:<your_github_username>/seacrowd-datahub.git
 
-The goal of `upstream` is to keep your repository up-to-date to any changes that are made officially to the datasets library. You can do this as follows by running the following commands:
+The goal of `upstream` is to keep your repository up-to-date with any changes made officially to the datasets library. You can do this as follows by running the following commands:
 
     git fetch upstream
     git pull
@@ -68,21 +68,21 @@ Always make sure you're on the right branch with the following command:
 
     git branch
 
-The correct branch will have a asterisk \* in front of it.
+The correct branch will have an asterisk \* in front of it.
 
 ### 2. **Create a development environment**
-You can make an environment in any way you choose to. We highlight two possible options:
+You can make an environment in any way you choose. We highlight two possible options:
 
 #### 2a) Create a conda environment
 
-The following instructions will create an Anaconda `env-nusantara-datasets` environment.
+The following instructions will create an Anaconda `env-seacrowd-datahub` environment.
 
 - Install [anaconda](https://docs.anaconda.com/anaconda/install/) for your appropriate operating system.
 - Run the following command while in the `nusantara_datasets` folder (you can pick your python version):
 
 ```
 conda env create -f conda.yml  # Creates a conda env
-conda activate env-nusantara-datasets # Activate your conda environment
+conda activate env-seacrowd-datahub # Activate your conda environment
 ```
 
 You can deactivate your environment at any time by either exiting your terminal or using `conda deactivate`.
