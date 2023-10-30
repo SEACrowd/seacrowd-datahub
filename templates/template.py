@@ -69,9 +69,9 @@ _HOMEPAGE = ""
 
 # TODO: Add the licence for the dataset here 
 # Note that this doesn't have to be a common open source license.
-# Some datasets have custom licenses. In this case, simply put the full license terms into `_LICENSE`
 # In the case of the dataset intentionally is built without license, please use `Licenses.UNLICENSE.value`
 # In the case that it's not clear whether the dataset has a license or not, please use `Licenses.UNKNOWN.value`
+# Some datasets may also have custom licenses. In this case, simply put f'{Licenses.OTHERS.value} | {FULL_LICENSE_TERM}' into `_LICENSE`
 _LICENSE = "" # example: Licenses.MIT.value, Licenses.CC_BY_NC_SA_4_0.value, Licenses.UNLICENSE.value, Licenses.UNKNOWN.value
 
 # TODO: Add links to the urls needed to download your dataset files.
