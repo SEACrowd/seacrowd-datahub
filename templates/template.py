@@ -37,6 +37,7 @@ from typing import Dict, List, Tuple
 import datasets
 
 from seacrowd.utils.configs import SEACrowdConfig
+from seacrowd.utils.constants Tasks, Licenses
 
 # TODO: Add BibTeX citation
 _CITATION = """\
@@ -66,11 +67,11 @@ This dataset is designed for XXX NLP task.
 # TODO: Add a link to an official homepage for the dataset here (if possible)
 _HOMEPAGE = ""
 
-# TODO: Add the licence for the dataset here (if possible)
+# TODO: Add the licence for the dataset here 
 # Note that this doesn't have to be a common open source license.
-# Some datasets have custom licenses. In this case, simply put the full license terms
-# into `_LICENSE`
-_LICENSE = ""
+# Some datasets have custom licenses. In this case, simply put the full license terms into `_LICENSE`
+# In the case of here is no license, please use `Licenses.UNLICENSE`
+_LICENSE = "" # example: Licenses.MIT.value, Licenses.CC_BY_NC_SA_4_0.value, Licenses.UNLICENSE.value
 
 # TODO: Add links to the urls needed to download your dataset files.
 #  For local datasets, this variable can be an empty dictionary.

@@ -90,6 +90,86 @@ class Tasks(Enum):
 
     # No seacrowd schema
     FACT_CHECKING = "FCT"
+    
+class Licenses(Enum):
+    # BSD
+    BSD = "BSD license family (bsd)"
+    BSD_2_CLAUSE = "BSD 2-clause “Simplified” license (bsd-2-clause)"
+    BSD_3_CLAUSE = "BSD 3-clause “New” or “Revised” license (bsd-3-clause)"
+    BSD_3_CLAUSE_CLEAR = "BSD 3-clause Clear license (bsd-3-clause-clear)"
+    
+    # Creative Common
+    CC = "Creative Commons license family (cc)"
+    CC0_1_0 = "Creative Commons Zero v1.0 Universal (cc0-1.0)"
+    CC_BY_2_0 = "Creative Commons Attribution 2.0 (cc-by-2.0)"
+    CC_BY_2_5 = "Creative Commons Attribution 2.5 (cc-by-2.5)"
+    CC_BY_3_0 = "Creative Commons Attribution 3.0 (cc-by-3.0)"
+    CC_BY_4_0 = "Creative Commons Attribution 4.0 (cc-by-4.0)"
+    CC_BY_SA_3_0 = "Creative Commons Attribution Share Alike 3.0 (cc-by-sa-3.0)"
+    CC_BY_SA_4_0 = "Creative Commons Attribution Share Alike 4.0 (cc-by-sa-4.0)"
+    CC_BY_NC_2_0 = "Creative Commons Attribution Non Commercial 2.0 (cc-by-nc-2.0)"
+    CC_BY_NC_3_0 = "Creative Commons Attribution Non Commercial 3.0 (cc-by-nc-3.0)"
+    CC_BY_NC_4_0 = "Creative Commons Attribution Non Commercial 4.0 (cc-by-nc-4.0)"
+    CC_BY_ND_4_0 = "Creative Commons Attribution No Derivatives 4.0 (cc-by-nd-4.0)"
+    CC_BY_NC_ND_3_0 = "Creative Commons Attribution Non Commercial No Derivatives 3.0 (cc-by-nc-nd-3.0)"
+    CC_BY_NC_ND_4_0 = "Creative Commons Attribution Non Commercial No Derivatives 4.0 (cc-by-nc-nd-4.0)"
+    CC_BY_NC_SA_2_0 = "Creative Commons Attribution Non Commercial Share Alike 2.0 (cc-by-nc-sa-2.0)"
+    CC_BY_NC_SA_3_0 = "Creative Commons Attribution Non Commercial Share Alike 3.0 (cc-by-nc-sa-3.0)"
+    CC_BY_NC_SA_4_0 = "Creative Commons Attribution Non Commercial Share Alike 4.0 (cc-by-nc-sa-4.0)"
+    CDLA_SHARING_1_0 = "Community Data License Agreement – Sharing, Version 1.0 (cdla-sharing-1.0)"
+    CDLA_PERMISSIVE_1_0 = "Community Data License Agreement – Permissive, Version 1.0 (cdla-permissive-1.0)"
+    CDLA_PERMISSIVE_2_0 = "Community Data License Agreement – Permissive, Version 2.0 (cdla-permissive-2.0)"
+    WTFPL = "Do What The F*ck You Want To Public License (wtfpl)"
+    ECL_2_0 = "Educational Community License v2.0 (ecl-2.0)"
+    
+    # EPL
+    EPL_1_0 = "Eclipse Public License 1.0 (epl-1.0)"
+    EPL_2_0 = "Eclipse Public License 2.0 (epl-2.0)"
+    EUPL_1_1 = "European Union Public License 1.1 (eupl-1.1)"
+    
+    # GPL
+    AGPL_3_0 = "GNU Affero General Public License v3.0 (agpl-3.0)"
+    GFDL = "GNU Free Documentation License family (gfdl)"
+    GPL = "GNU General Public License family (gpl)"
+    GPL_2_0 = "GNU General Public License v2.0 (gpl-2.0)"
+    GPL_3_0 = "GNU General Public License v3.0 (gpl-3.0)"
+    LGPL = "GNU Lesser General Public License family (lgpl)"
+    LGPL_2_1 = "GNU Lesser General Public License v2.1 (lgpl-2.1)"
+    LGPL_3_0 = "GNU Lesser General Public License v3.0 (lgpl-3.0)"
+    LGPL_LR = "Lesser General Public License For Linguistic Resources (lgpl-lr)"
+
+    # OTHER SPECIFIC LICENSES
+    APACHE_2_0 = "Apache license 2.0 (apache-2.0)"
+    MIT = "MIT (mit)"
+    C_UDA = "Computational Use of Data Agreement (c-uda)"
+    OPENRAIL = "OpenRAIL license family (openrail)"
+    BIGSCIENCE_OPENRAIL_M = "BigScience OpenRAIL-M (bigscience-openrail-m)"
+    CREATIVEML_OPENRAIL_M = "CreativeML OpenRAIL-M (creativeml-openrail-m)"
+    BIGSCIENCE_BLOOM_RAIL_1_0 = "BigScience BLOOM RAIL 1.0 (bigscience-bloom-rail-1.0)"
+    BIGCODE_OPENRAIL_M = "BigCode Open RAIL-M v1 (bigcode-openrail-m)"
+    AFL_3_0 = "Academic Free License v3.0 (afl-3.0)"
+    ARTISTIC_2_0 = "Artistic license 2.0 (artistic-2.0)"
+    BSL_1_0 = "Boost Software License 1.0 (bsl-1.0)"
+    ISC = "ISC (isc)"
+    LPPL_1_3C = "LaTeX Project Public License v1.3c (lppl-1.3c)"
+    MS_PL = "Microsoft Public License (ms-pl)"
+    MPL_2_0 = "Mozilla Public License 2.0 (mpl-2.0)"
+    ODC_BY = "Open Data Commons License Attribution family (odc-by)"
+    ODBL = "Open Database License family (odbl)"
+    OPENRAIL_PP = "Open Rail++-M License (openrail++)"
+    OSL_3_0 = "Open Software License 3.0 (osl-3.0)"
+    POSTGRESQL = "PostgreSQL License (postgresql)"
+    OFL_1_1 = "SIL Open Font License 1.1 (ofl-1.1)"
+    NCSA = "University of Illinois/NCSA Open Source License (ncsa)"
+    ZLIB = "zLib License (zlib)"
+    PDDL = "Open Data Commons Public Domain Dedication and License (pddl)"
+    DEEPFLOYD_IF_LICENSE = "DeepFloyd IF Research License Agreement (deepfloyd-if-license)"
+    LLAMA2 = "Llama 2 Community License Agreement (llama2)"
+    
+    # OTHER UNLISTED / UNLICENSED
+    UNLICENSE = "The Unlicense (unlicense)"
+    UNKNOWN = "Unknown (unknown)"
+    OTHER = "Other (other)"
 
 
 TASK_TO_SCHEMA = {
