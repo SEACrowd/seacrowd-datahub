@@ -1,10 +1,9 @@
 # Welcome to SEACrowd!
 
 <!--
-<h3>143 datasets registered</h3>
+<h3>158 datasets registered</h3>
 
 ![Dataset claimed](https://progress-bar.dev/83/?title=Datasets%20Claimed%20(119%20Datasets%20Claimed))
--->
 
 <!-- milestone starts
 ![Milestone 1](https://progress-bar.dev/100/?title=Milestone%201%20(30%20Datasets%20Completed))
@@ -20,7 +19,7 @@ South East Asia is home to more than 1,000 native languages. Nevertheless, South
 
 ## How to contribute?
 
-You can contribute by proposing **unregistered NLP dataset** on [our record](https://seacrowd.github.io/seacrowd-catalogue/). [Just fill out this form](https://forms.gle/31dMGZik25DPFYFd6), and we will check and approve your entry.
+You can contribute by proposing **unregistered NLP dataset** on [our record](https://seacrowd.github.io/seacrowd-catalogue/). [Just fill out this form](https://jotform.com/team/232952680898069/seacrowd-sea-datasets), and we will check and approve your entry.
 
 We will give **contribution points** based on several factors, including: **supported modality**, **language scarcity**, or **task scarcity**.
 
@@ -72,7 +71,7 @@ Yes, you can ask for helps in SEACrowd's community channel! Please join our [Dis
 
 We greatly appreciate your help!
 
-The artifacts of this hackathon will be described in a forthcoming academic paper targeting a machine learning or NLP audience. Please refer to [this section](#contribution-guidelines) for your contribution rewards for helping South-East Asian NLP. We recognize that some datasets require more effort than others, so please reach out if you have questions. Our goal is to be inclusive with credit!
+The artifacts of this initiative will be described in a forthcoming academic paper targeting a machine learning or NLP audience. Please refer to [this section](#contribution-guidelines) for your contribution rewards for helping South-East Asian NLP. We recognize that some datasets require more effort than others, so please reach out if you have questions. Our goal is to be inclusive with credit!
 
 ## Acknowledgements
 
