@@ -25,7 +25,7 @@ We have defined a set of lightweight, task-specific schema to help simplify prog
 
 ## Knowledge Base
 
-[Schema Template](nusacrowd/utils/schemas/kb.py)
+[Schema Template](seacrowd/utils/schemas/kb.py)
 
 This is a simple container format with minimal nesting that supports a range of common knowledge base construction / information extraction tasks.
 
@@ -59,124 +59,23 @@ This is a simple container format with minimal nesting that supports a range of 
 - `passages` captures document structure such as named sections.
 - `entities`,`events`,`coreferences`,`relations` may be empty fields depending on the dataset and specific task.
 
-
-
-### Passages
-
-Passages capture document structure, such as the title and abstact sections of a PubMed abstract.
+## Text
+- [Schema Template](seacrowd/utils/schemas/text.py)
+- Examples: [SmSA](seacrowd/sea_datasets/smsa/smsa.py)
 
 ```
 {
     "id": "0",
-    "document_id": "227508",
-    "passages": [
-        {
-            "id": "1",
-            "type": "title",
-            "text": ["Naloxone reverses the antihypertensive effect of clonidine."],
-            "offsets": [[0, 59]],
-        },
-        {
-            "id": "2",
-            "type": "abstract",
-            "text": ["In unanesthetized, spontaneously hypertensive rats the decrease in blood pressure and heart rate produced by intravenous clonidine, 5 to 20 micrograms/kg, was inhibited or reversed by nalozone, 0.2 to 2 mg/kg. The hypotensive effect of 100 mg/kg alpha-methyldopa was also partially reversed by naloxone. Naloxone alone did not affect either blood pressure or heart rate. In brain membranes from spontaneously hypertensive rats clonidine, 10(-8) to 10(-5) M, did not influence stereoselective binding of [3H]-naloxone (8 nM), and naloxone, 10(-8) to 10(-4) M, did not influence clonidine-suppressible binding of [3H]-dihydroergocryptine (1 nM). These findings indicate that in spontaneously hypertensive rats the effects of central alpha-adrenoceptor stimulation involve activation of opiate receptors. As naloxone and clonidine do not appear to interact with the same receptor site, the observed functional antagonism suggests the release of an endogenous opiate by clonidine or alpha-methyldopa and the possible role of the opiate in the central control of sympathetic tone."],
-            "offsets": [[60, 1075]],
-        },
-    ],
-}
-```
-
-### Entities
-
-- Examples: [BC5CDR](https://github.com/bigscience-workshop/biomedical/blob/main/examples/bc5cdr.py)
-
-```
-"entities": [
-    {
-        "id": "3",
-        "offsets": [[0, 8]],
-        "text": ["Naloxone"],
-        "type": "Chemical",
-        "normalized": [{"db_name": "MESH", "db_id": "D009270"}]
-    },
-    ...
- ],
-```
-
-### Events
-- Examples: [MLEE](https://github.com/bigscience-workshop/biomedical/blob/main/examples/mlee.py)
-
-```
-"events": [
-    {
-        "id": "3",
-        "type": "Reaction",
-        "trigger": {
-            "offsets": [[0,6]],
-            "text": ["reacts"]
-        },
-        "arguments": [
-            {
-                "role": "theme",
-                "ref_id": "5",
-            }
-            ...
-        ],
-    }
-    ...
-],
-
-```
-
-### Coreferences
-
-- Examples: [n2c2 2011: Coreference Challenge](https://github.com/bigscience-workshop/biomedical/blob/main/examples/n2c2_2011.py)
-
-```
-"coreferences": [
-	{
-	   "id": "32",
-	   "entity_ids": ["1", "10", "23"],
-	},
-	...
-]
-```
-
-### Relations
-- Examples: [BC5CDR](https://github.com/bigscience-workshop/biomedical/blob/main/examples/bc5cdr.py)
-
-```
-"relations": [
-    {
-        "id": "100",
-        "type": "chemical-induced disease",
-        "arg1_id": "10",
-        "arg2_id": "32",
-        "normalized": []
-    }
-]
-```
-
-## Question Answering
-- [Schema Template](nusacrowd/utils/schemas/qa.py)
-- Examples: [BioASQ Task B](https://github.com/bigscience-workshop/biomedical/blob/main/examples/bioasq_task_b.py)
-
-```
-{
-	"id": "0",
-	"document_id": "24267510",
-	"question_id": "55031181e9bde69634000014",
-	"question": "Is RANKL secreted from the cells?",
-	"type": "yesno",
-	"choices": [],
-	"context": "Osteoprotegerin (OPG) is a soluble secreted factor that acts as a decoy receptor for receptor activator of NF-\u03baB ligand (RANKL)",
-	"answer": ["yes"],
+    "text": "meski masa kampanye sudah selesai , bukan berati habis pula upaya mengerek tingkat kedipilihan elektabilitas .",
+    "labels": [
+        "neutral"
+    ]
 }
 ```
 
 ## Sequence Labeling
-- [Schema Template](nusacrowd/utils/schemas/seq_label.py)
-- Examples: [BaPOS](nusacrowd/nusa_datasets/bapos/bapos.py)
+- [Schema Template](seacrowd/utils/schemas/seq_label.py)
+- Examples: [BaPOS](seacrowd/sea_datasets/bapos/bapos.py)
 
 ```
 {
@@ -239,23 +138,8 @@ Passages capture document structure, such as the title and abstact sections of a
 }
 ```
 
-## Textual Entailment
-
-- Examples: [SciTail](https://github.com/bigscience-workshop/biomedical/blob/main/examples/scitail.py)
-
-```
-{
-	"id": "0",
-	"document_id": "NULL",
-	"premise": "Pluto rotates once on its axis every 6.39 Earth days;",
-	"hypothesis": "Earth rotates on its axis once times in one day.",
-	"label": "neutral",
-}
-```
-
 ## Text Pairs
-
-- [Schema Template](nusacrowd/utils/schemas/pairs.py)
+- [Schema Template](seacrowd/utils/schemas/pairs.py)
 - Examples: [MQP](https://github.com/bigscience-workshop/biomedical/blob/main/examples/mqp.py)
 
 ```
@@ -268,10 +152,26 @@ Passages capture document structure, such as the title and abstact sections of a
 }
 ```
 
+## Question Answering
+- [Schema Template](seacrowd/utils/schemas/qa.py)
+- Examples: [TyDiQA-ID](seacrowd/sea_datasets/tydiqa_id/tydiqa_id.py)
+
+```
+{
+	"id": "0",
+	"document_id": "24267510",
+	"question_id": "55031181e9bde69634000014",
+	"question": "Is RANKL secreted from the cells?",
+	"type": "yesno",
+	"choices": [],
+	"context": "Osteoprotegerin (OPG) is a soluble secreted factor that acts as a decoy receptor for receptor activator of NF-\u03baB ligand (RANKL)",
+	"answer": ["yes"],
+}
+```
 
 ## Text to Text
 
-- [Schema Template](nusacrowd/utils/schemas/text_to_text.py)
+- [Schema Template](seacrowd/utils/schemas/text_to_text.py)
 - Examples: [ParaMed](https://github.com/bigscience-workshop/biomedical/blob/main/examples/paramed.py)
 
 ```
@@ -284,24 +184,9 @@ Passages capture document structure, such as the title and abstact sections of a
 }
 ```
 
-
-## Text
-- [Schema Template](nusacrowd/utils/schemas/text.py)
-- Examples: [SmSA](nusacrowd/nusa_datasets/smsa/smsa.py)
-
-```
-{
-    "id": "0",
-    "text": "meski masa kampanye sudah selesai , bukan berati habis pula upaya mengerek tingkat kedipilihan elektabilitas .",
-    "labels": [
-        "neutral"
-    ]
-}
-```
-
 ## Self-supervised pretraining
-- [Schema Template](nusacrowd/utils/schemas/self_supervised_pretraining.py)
-- Examples: [CC100](nusacrowd/nusa_datasets/cc100/cc100.py)
+- [Schema Template](seacrowd/utils/schemas/self_supervised_pretraining.py)
+- Examples: [CC100](seacrowd/sea_datasets/cc100/cc100.py)
 
 ```
 {
@@ -311,7 +196,8 @@ Passages capture document structure, such as the title and abstact sections of a
 ```
 
 ## Speech recognition
-- Examples: [Coming soon](nusantara/nusa_datasets/coming_soon/coming_soon.py)
+- [Schema Template](seacrowd/utils/schemas/speech_text.py)
+- Examples: [TITML-IDN](seacrowd/sea_datasets/titml_idn/titml_idn.py)
 
 ```
 {

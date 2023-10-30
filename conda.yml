@@ -1,6 +1,6 @@
-name: env-nusantara-datasets
+name: env-seacrowd
 dependencies:
-  - python>=3.6
+  - python>=3.9
   - pip
   - pip:
     - -r requirements.txt
