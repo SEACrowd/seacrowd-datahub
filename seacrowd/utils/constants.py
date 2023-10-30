@@ -169,7 +169,6 @@ class Licenses(Enum):
     # OTHER UNLISTED / UNLICENSED
     UNLICENSE = "The Unlicense (unlicense)"
     UNKNOWN = "Unknown (unknown)"
-    OTHER = "Other (other)"
 
 
 TASK_TO_SCHEMA = {
