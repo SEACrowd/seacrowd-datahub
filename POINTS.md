@@ -1,36 +1,40 @@
 # Contribution point guideline
 
-To be considered as co-author, 10 contribution points is required.
+To be considered as a co-author, 20 contribution points are required.
 
 > **Note**: The purpose of the point system is not to barrier collaboration, but to reward rare and high-quality dataset entries.
-We might adjust the point requirement lower to accommodate more co-authorship, if needed.
+We might adjust the point requirement lower to accommodate more co-authorship if needed.
+
+| Contribution type              | Demand              | Points | Max points              | Job description                                                                                                          |
+| ------------------------------ | ------------------- | ------ | ----------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Public Datasheet Submission    | As many as possible | 2+bonus      | 6                       | Submit public datasheet via [jotform](https://www.jotform.com/team/232952680898069/seacrowd-sea-datasets)                                                                                   |
+| Private Datasheet Submission   | As many as possible | 1      |                         | Submit private datasheet via [jotform](https://www.jotform.com/team/232952680898069/seacrowd-sea-datasets)                                                                                  |
+| Open Access to Private Dataset | As many as possible | 4+bonus     | 10 for the high-quality | Only private dataset owners can do this. Upload the data in a public repository and submit the datasheet in [jotform](https://www.jotform.com/team/232952680898069/seacrowd-sea-datasets). |
+| Dataloader Implementation      | As many as possible | 3      | 6 for the hard one      | Implement dataloader based on the respective dataset's schema and task.                                                  |
+
+
+
+## Public Datasheet Submission
+
+Submitting a public dataset via [jotform](https://www.jotform.com/team/232952680898069/seacrowd-sea-datasets) is worth a default score of 2. Bonus is applied based on the following conditions:
+* modality: +1 pts for speech/vision, +2 pts for others
+* language rarity based on https://microsoft.github.io/linguisticdiversity:
+   * +0 pts for languages in level 3 or above
+   * +1 pts for languages in level 1 and 2
+   * +2 pts for languages in level 0 or languages are not mentioned in the list.  
+
+## Private Datasheet Submission
+
+Submitting a private dataset via [jotform](https://www.jotform.com/team/232952680898069/seacrowd-sea-datasets) is worth a default score of 1. 
+
+Providing open access to the private datasets will be granted +4 points, with a bonus applied based on the following conditions:
+* modality: +1 pts for speech/vision, +2 pts for others
+* language rarity based on https://microsoft.github.io/linguisticdiversity:
+   * +0 pts for languages in level 3 or above
+   * +1 pts for languages in level 1 and 2
+   * +2 pts for languages in level 0 or languages are not mentioned in the list. 
 
 ## Implementing Data Loader
 
-Implementing any data loader is granted +3 pts, unless otherwise specified on the Github issue.
+Implementing any data loader is granted +3 pts unless otherwise specified on the Github issue.
 More details [here](DATALOADER.md).
-
-## NusaCatalogue's Datasheet Proposal
-
-### Datasheet Proposal as the Dataset's Author(s)
-Proposing a datasheet of a dataset is granted +2 pts.
-
-As a support for data openness, for any data that is previously private, if Author(s) agree to make the dataset publicly available then additional +3 pts will be granted.
-
-As a support for the development of local languages datasets:
-- For dataset in Sundanese, Javanese, or Minangkabau, +2 pts will be granted
-- For dataset in other local language, +3 pts will be granted
-
-Based on our observation, we find that the common NLP tasks in Indonesian languages include: machine translation (MT), language modeling (LM), sentiment analysis (SA), and named entity recognition (NER). To encoureage more diverse NLP corpora, all other NLP tasks are considered rare and corresponding submission are eligible for the +2 contribution points. 
-
-In addition, there are limited publicly available Indonesian NLP corpora involving other modality / multimodality, to encourage more coverage over these modalities, all submissions with these modalities will be eligible for a +2 contribution points
-
-We understand that the quality of a dataset varies a lot. To support fairness in scoring datasets with different quality, for any dataset that does not achieve a certain minimum standard, 50% contribution score of the dataset will be penalized. This policy affects dataset that is collected with:
-- Crawling without any manual validation process
-- Machine / heuristic-rule labelled dataset, without any manual validation
-- Machine translated dataset without any manual validation.
-
-> **Note**: if there is more than 1 Author for a dataset, main Author will be eligible for nominating 1 more Author to be granted the same contribution score.
-
-## Listing Private Dataset
-Each private dataset listed is granted +1 pt.
