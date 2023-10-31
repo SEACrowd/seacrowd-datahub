@@ -8,19 +8,19 @@ Please do the following before getting started:
 
 - [Make](https://huggingface.co/join) an account on 🤗's Hub and [login](https://huggingface.co/login). **Choose a good password, as you'll need to authenticate your credentials**.
 
-- Join the Indobenchmark initiative [here](https://huggingface.co/indobenchmark).
+- Join the SEACrowd initiative [here](https://huggingface.co/SEACrowd).
     - click the "Request to join this org" button in the upper right corner.
 
 - Make a github account; you can follow instructions to install git [here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
 
 
-**Note - your permissions will be set to READ. Please contact an admin in your dataset's github issue to be granted WRITE access; this should be given after your PR is accepted**.
+**Note - your permissions will be set to READ. Please contact an admin in your dataset's GitHub issue to be granted WRITE access; this should be given after your PR is accepted**.
 
 ### 2) Activate the Huggingface hub
 
-You can find the official instructions [here](https://huggingface.co/welcome). We will provide what you need for the nusantara-datasets hackathon environment.
+You can find the official instructions [here](https://huggingface.co/welcome). We will provide what you need for the seacrowd-datasets hackathon environment.
 
-With your active `nusantara` environment, use the following command:
+With your active `seacrowd` environment, use the following command:
 
 ```
 huggingface-cli login
@@ -32,7 +32,7 @@ Login with your 🤗 Hub account username and password.
 
 Make a repository via the 🤗 Hub [here](https://huggingface.co/new-dataset) with the following details.
 
-+ Set Owner: nusantara-datasets
++ Set Owner: seacrowd-datasets
 + Set Dataset name: the name of the dataset
 + Set License: the license that applies to this dataset
 + Select Private
@@ -44,10 +44,10 @@ If there is no appropriate license available in the provided options (for exampl
 
 ### 4. Clone the dataset repository
 
-Using terminal access, find a location to place your github repository. In this location, use the following command:
+Using terminal access, find a location to place your GitHub repository. In this location, use the following command:
 
 ```
-git clone https://huggingface.co/datasets/indobenchmark/<your_dataset_name>
+git clone https://huggingface.co/datasets/SEACrowd/<your_dataset_name>
 ```
 
 ### 5. Commit your changes
@@ -64,14 +64,14 @@ git push origin
 
 Run the following command **in a folder that does not include your data-loading script**:
 
-Test both the original dataset schema/config and the nusantara schema/config.
+Test both the original dataset schema/config and the seacrowd schema/config.
 
 **Public Dataset**
 ```python
 from datasets import load_dataset
 
-dataset_orig = load_dataset("indobenchmark/<your_dataset_name>", name="source", use_auth_token=True)
-dataset_indobenchmark= load_dataset("indobenchmark/<your_dataset_name>", name="indobenchmark", use_auth_token=True)
+dataset_orig = load_dataset("SEACrowd/<your_dataset_name>", name="source", use_auth_token=True)
+dataset_SEACrowd = load_dataset("SEACrowd/<your_dataset_name>", name="SEACrowd", use_auth_token=True)
 ```
 
 **Private Dataset**
@@ -80,13 +80,13 @@ dataset_indobenchmark= load_dataset("indobenchmark/<your_dataset_name>", name="i
 from datasets import load_dataset
 
 dataset_orig = load_dataset(
-    "indobenchmark/<your_dataset_name>",
+    "SEACrowd/<your_dataset_name>",
     name="source",
     data_dir="/local/path/to/data/files",
     use_auth_token=True)
 
-dataset_indobenchmark = load_dataset(
-    "indobenchmark/<your_dataset_name>",
+dataset_SEACrowd = load_dataset(
+    "SEACrowd/<your_dataset_name>",
     name="indobenchmark",
     data_dir="/local/path/to/data/files",
     use_auth_token=True)
