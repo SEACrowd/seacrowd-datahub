@@ -16,7 +16,7 @@ We might adjust the point requirement lower to accommodate more co-authorship if
 
 ## Public Datasheet Submission
 
-Submitting a public dataset via [jotform](https://www.jotform.com/team/232952680898069/seacrowd-sea-datasets) is worth a default score of 2. Bonus is applied based on the following conditions:
+Submitting a public dataset via [jotform](https://www.jotform.com/team/232952680898069/seacrowd-sea-datasets) is worth a default score of +2. Bonus is applied based on the following conditions:
 * modality: +1 pts for speech/vision, +2 pts for others
 * language rarity based on https://microsoft.github.io/linguisticdiversity:
    * +0 pts for languages in level 3 or above
@@ -25,7 +25,7 @@ Submitting a public dataset via [jotform](https://www.jotform.com/team/232952680
 
 ## Private Datasheet Submission
 
-Submitting a private dataset via [jotform](https://www.jotform.com/team/232952680898069/seacrowd-sea-datasets) is worth a default score of 1. 
+Submitting a private dataset via [jotform](https://www.jotform.com/team/232952680898069/seacrowd-sea-datasets) is worth a default score of +1. 
 
 Providing open access to the private datasets will be granted +4 points, with a bonus applied based on the following conditions:
 * modality: +1 pts for speech/vision, +2 pts for others
@@ -36,5 +36,5 @@ Providing open access to the private datasets will be granted +4 points, with a 
 
 ## Implementing Data Loader
 
-Implementing any data loader is granted +3 pts unless otherwise specified on the Github issue.
+Implementing any data loader is granted +3 pts unless otherwise specified on the GitHub issue.
 More details [here](DATALOADER.md).
