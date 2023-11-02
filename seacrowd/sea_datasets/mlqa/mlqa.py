@@ -239,7 +239,7 @@ class MLQADataset(datasets.GeneratorBasedBuilder):
                                 "question_id": id_,
                                 "context": context,
                                 "question": question,
-                                "answer": {"answer_start": answers_start[0], "text": answers_text[0]},
+                                "answer": answers_text,
                                 "id": id_,
                                 "choices": [],
                                 "type": "extractive",
