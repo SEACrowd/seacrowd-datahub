@@ -178,33 +178,6 @@ class MLQADataset(datasets.GeneratorBasedBuilder):
                     },
                 ),
             ]
-        elif (name_split[0] == "mlqa"):
-            url = _URL+_DEV_TEST_URL
-            data_path = dl_manager.download_and_extract(url)
-            ctx_lang = qst_lang = "vi"
-            return [
-                datasets.SplitGenerator(
-                    name=datasets.Split.VALIDATION,
-                    gen_kwargs={
-                        "filepath": os.path.join(
-                                os.path.join(data_path, "MLQA_V1/dev"),
-                                f"dev-context-{ctx_lang}-question-{qst_lang}.json",
-                            ),
-                        "split": "dev",
-                    },
-                ),
-                datasets.SplitGenerator(
-                    name=datasets.Split.TEST,
-                    gen_kwargs={
-                        "filepath": os.path.join(
-                                os.path.join(data_path, "MLQA_V1/test"),
-                                f"test-context-{ctx_lang}-question-{qst_lang}.json",
-                            ),
-                        "split": "test",
-                    },
-                ),
-            ]
-
     def _generate_examples(self, filepath: Path, split: str, files=None) -> Tuple[int, Dict]:
         if self.config.name.startswith("mlqa-translate"):
             for path, f in files:
