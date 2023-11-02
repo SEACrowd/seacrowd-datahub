@@ -95,9 +95,9 @@ class TLUnifiedNERDataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
         data_files = {
-            "train": dl_manager.download_and_extract(_URLS["train"]),
-            "dev": dl_manager.download_and_extract(_URLS["dev"]),
-            "test": dl_manager.download_and_extract(_URLS["test"]),
+            "train": Path(dl_manager.download_and_extract(_URLS["train"])),
+            "dev": Path(dl_manager.download_and_extract(_URLS["dev"])),
+            "test": Path(dl_manager.download_and_extract(_URLS["test"])),
         }
 
         return [
