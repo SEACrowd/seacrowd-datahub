@@ -35,8 +35,8 @@ volunteers.
 _HOMEPAGE = "https://github.com/ljyflores/efficient-spelling-normalization-filipino"
 _LICENSE = Licenses.UNKNOWN.value
 _URLS = {
-    "train": "https://raw.githubusercontent.com/ljyflores/efficient-spelling-normalization-filipino/main/data/train_words.csv",
-    "test": "https://raw.githubusercontent.com/ljyflores/efficient-spelling-normalization-filipino/main/data/test_words.csv",
+    "train": "https://github.com/ljyflores/efficient-spelling-normalization-filipino/raw/main/data/train_words.csv",
+    "test": "https://github.com/ljyflores/efficient-spelling-normalization-filipino/raw/main/data/test_words.csv",
 }
 
 _SUPPORTED_TASKS = [Tasks.MULTILEXNORM]
