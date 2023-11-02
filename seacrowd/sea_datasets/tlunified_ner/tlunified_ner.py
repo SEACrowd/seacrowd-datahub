@@ -101,12 +101,21 @@ class TLUnifiedNERDataset(datasets.GeneratorBasedBuilder):
         }
 
         return [
-            datasets.SplitGenerator(name=datasets.Split.TRAIN, gen_kwargs={"filepath": data_files["train"]}),
-            datasets.SplitGenerator(name=datasets.Split.VALIDATION, gen_kwargs={"filepath": data_files["dev"]}),
-            datasets.SplitGenerator(name=datasets.Split.TEST, gen_kwargs={"filepath": data_files["test"]}),
+            datasets.SplitGenerator(
+                name=datasets.Split.TRAIN,
+                gen_kwargs={"filepath": data_files["train"], "split": "train"},
+            ),
+            datasets.SplitGenerator(
+                name=datasets.Split.VALIDATION,
+                gen_kwargs={"filepath": data_files["dev"], "split": "dev"},
+            ),
+            datasets.SplitGenerator(
+                name=datasets.Split.TEST,
+                gen_kwargs={"filepath": data_files["test"], "split": "test"},
+            ),
         ]
 
-    def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yield examples as (key, example) tuples"""
         # The only difference between the source schema and the seacrowd seq_label schema is the dictionary keys.
         # The implementation is the same.
