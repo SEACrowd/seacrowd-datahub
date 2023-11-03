@@ -64,12 +64,12 @@ Belebele is a multiple-choice machine reading comprehension (MRC) dataset spanni
  the multilingual abilities of language models and NLP systems.
 """
 
-_HOMEPAGE = "https://huggingface.co/datasets/facebook/belebele"
+_HOMEPAGE = "https://github.com/facebookresearch/belebele"
 
 _LICENSE = Licenses.CC_BY_NC_SA_4_0.value
 
 _URLS = {
-    _DATASETNAME: "https://huggingface.co/datasets/facebook/belebele/blob/main/data",
+    _DATASETNAME: "https://dl.fbaipublicfiles.com/belebele/Belebele.zip",
 }
 
 _SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
@@ -97,7 +97,6 @@ class BelebeleDataset(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [config_constructor(lang, "source", _SOURCE_VERSION) for lang in _NAMES]
     BUILDER_CONFIGS.extend((config_constructor(lang, "seacrowd_qa", _SEACROWD_VERSION) for lang in _NAMES))
-
 
 
     DEFAULT_CONFIG_NAME = "belebele_acm_Arab_source"
@@ -133,11 +132,9 @@ class BelebeleDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        # lang = self.config.name[self.config.name.index('_')+1:self.config.name.rindex('_')]
         comps = self.config.name.split("_")
         lang = comps[1]+"_"+comps[2]
-        # urls = "{base}/{lang}.jsonl".format(base=_URLS[_DATASETNAME], lang=lang)
-        path = dl_manager.download_and_extract('https://dl.fbaipublicfiles.com/belebele/Belebele.zip')
+        path = dl_manager.download_and_extract(_URLS[_DATASETNAME])
         file = "{path}/Belebele/{lang}.jsonl".format(path=path, lang=lang)
 
         print(path)
@@ -174,9 +171,3 @@ class BelebeleDataset(datasets.GeneratorBasedBuilder):
                     }
         else:
             raise ValueError(f"Invalid config {self.config.name}")
-
-
-# This allows you to run your dataloader with `python [dataset_name].py` during development
-# TODO: Remove this before making your PR
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)
