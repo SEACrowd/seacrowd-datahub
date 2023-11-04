@@ -117,8 +117,7 @@ class FilipinoSlangNormDataset(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yield examples as (key, example) tuples"""
         with open(filepath, encoding="utf-8") as f:
-            guid = 0
-            for line in f:
+            for guid, line in enumerate(f):
                 src_sent, norm_sent = line.strip("\n").split(",")
                 if self.config.schema == "source":
                     example = {
@@ -135,4 +134,3 @@ class FilipinoSlangNormDataset(datasets.GeneratorBasedBuilder):
                         "text_2_name": "norm_sent",
                     }
                 yield guid, example
-                guid += 1
