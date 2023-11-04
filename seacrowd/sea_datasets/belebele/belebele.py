@@ -136,7 +136,6 @@ class BelebeleDataset(datasets.GeneratorBasedBuilder):
         path = dl_manager.download_and_extract(_URLS[_DATASETNAME])
         file = "{path}/Belebele/{lang}.jsonl".format(path=path, lang=lang)
 
-        print(path)
         return datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
