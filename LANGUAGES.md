@@ -17,7 +17,6 @@
 We seek datasets of languages spoken in the South East Asia. The total number of unique languages spoken in this region is 1304 languages. Please refer to [this spreadsheet](https://docs.google.com/spreadsheets/d/1FX5oNdP2RcPseatKtXIKHfoppi_c986ZrV_gEX-ccgA/edit?usp=sharing) to check the full list.
 
 
-
 # FAQ
 
 ### Are non-indigenous but major languages in SEA also accepted?
@@ -29,3 +28,7 @@ Since this initiative is mainly to represent SEA, please make sure that those da
 
 A creole is a language that comes from a simplified version of another language, or the mix of two or more languages. In Singapore, people speak a creole that's mostly based on English.
 Any creoles that are based on SEA official and/or indigenous languages (e.g., Singlish is based on English) are welcome!
+
+## I want to submit a SEA language/dialect/creole that doesn't exist in the existing options.
+
+Please contact the `moderators` on Discord so we can help to add it.
