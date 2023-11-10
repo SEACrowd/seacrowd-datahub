@@ -1,21 +1,24 @@
-name: github-project-issue-to-sheets
-
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
-on:
-  workflow_dispatch:
-  issues:
-    types: [opened, deleted, transferred, closed, reopened, assigned, unassigned, labeled, unlabeled]
+name: gsheet.action test
+on: push
 
 jobs:
-    github-project-issue-to-sheets:
-        runs-on: ubuntu-latest
-        name: github-project-issue-to-sheets
-        steps:
-        - name: github-project-issue-to-sheets
-          id: github-project-issue-to-sheets
-          uses: holylovenia/github-project-issue-to-sheets@dev
-          with:
-            google-api-service-account-credentials: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_DATA }}
-            document-id: '1aIAwzMgDdXQUr2A_A_sC3ShEjQky-gYEzqB1TbPzdjA'
-            sheet-name: 'GitHub Issues Tracker'
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - id: 'update_worksheet'
+        uses: jroehl/gsheet.action@v2.0.0 # you can specify '@release' to always have the latest changes
+        with:
+          spreadsheetId: 1aIAwzMgDdXQUr2A_A_sC3ShEjQky-gYEzqB1TbPzdjA
+          commands: | # list of commands, specified as a valid JSON string
+            [
+              { "command": "addWorksheet", "args": { "worksheetTitle": "GitHub Issues Tracker" }},
+              { "command": "updateData", "args": { "data": [["A1", "A2", "A3"]] }},
+            ]
+        env:
+          GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
+          GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
+      - name: dump results
+        env:
+          #  the output of the action can be found in ${{ steps.update_worksheet.outputs.results }}
+          RESULTS: ${{ steps.update_worksheet.outputs.results }}
+        run: echo "$RESULTS" | jq
