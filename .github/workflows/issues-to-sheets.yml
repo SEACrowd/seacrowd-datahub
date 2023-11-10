@@ -1,5 +1,7 @@
-name: gsheet.action test
-on: push
+xname: gsheet.action test
+on:
+  pull_request:
+    types: [opened, deleted, closed, reopened]
 
 jobs:
   fetch:
@@ -11,8 +13,7 @@ jobs:
           spreadsheetId: 1aIAwzMgDdXQUr2A_A_sC3ShEjQky-gYEzqB1TbPzdjA
           commands: | # list of commands, specified as a valid JSON string
             [
-              { "command": "addWorksheet", "args": { "worksheetTitle": "GitHub Issues Tracker" }},
-              { "command": "updateData", "args": { "data": [["A1", "A2", "A3"]] }}
+              { "command": "updateData", "args": { "worksheetTitle": "GitHub Issues Tracker", "data": [[github.event.pull_request]] }}
             ]
         env:
           GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
