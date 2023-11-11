@@ -98,7 +98,15 @@ class TatoebaDatset(datasets.GeneratorBasedBuilder):
         lang = lang_source.split("_")[0]
         tatoeba_source_data = dl_manager.download_and_extract(_URL + f"tatoeba.{lang}-eng.{lang}")
         tatoeba_eng_data = dl_manager.download_and_extract(_URL + f"tatoeba.{lang}-eng.eng")
-        return [datasets.SplitGenerator(name=datasets.Split.VALIDATION, gen_kwargs={"filepath": (tatoeba_source_data, tatoeba_eng_data), "split": "dev"})]
+        return [
+            datasets.SplitGenerator(
+                name=datasets.Split.VALIDATION,
+                gen_kwargs={
+                    "filepath": (tatoeba_source_data, tatoeba_eng_data),
+                    "split": "dev",
+                },
+            )
+        ]
 
     def _generate_examples(self, filepath: Tuple[Path, Path], split: str) -> Tuple[int, Dict]:
         """Yield examples as (key, example) tuples"""
