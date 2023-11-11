@@ -108,10 +108,10 @@ class TatoebaDatset(datasets.GeneratorBasedBuilder):
         target_sentences = []
         with open(source_file, encoding="utf-8") as f1:
             for row in f1:
-                source_sentences.append(row)
+                source_sentences.append(row.strip())
         with open(target_file, encoding="utf-8") as f2:
             for row in f2:
-                target_sentences.append(row)
+                target_sentences.append(row.strip())
         for idx in range(len(source_sentences)):
             if self.config.schema == "source":
                 example = {
