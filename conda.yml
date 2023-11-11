@@ -1,6 +1,6 @@
 name: env-seacrowd
 dependencies:
-  - python>=3.9
+  - python~=3.10.0
   - pip
   - pip:
     - -r requirements.txt
