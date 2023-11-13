@@ -27,8 +27,6 @@ To create a dataset loading script you will create a class and implement 3 metho
   * `_generate_examples`: Creates examples from data on disk that conform to each schema defined in `_info`.
 
 TODO: Before submitting your script, delete this doc string and replace it with a description of your dataset.
-
-[sea_schema_name] = (kb, pairs, qa, text, t2t, entailment)
 """
 import os
 from pathlib import Path
@@ -120,7 +118,9 @@ class NewDataset(datasets.GeneratorBasedBuilder):
     #   - description: one line description for the dataset
     #   - schema: options = (source|seacrowd_[seacrowd_schema_name])
     #   - subset_id: subset id is the canonical name for the dataset (eg. smsa)
-    #  where [seacrowd_schema_name] = (kb, pairs, qa, text, t2t)
+    #  where [seacrowd_schema_name] can be checked in seacrowd/utils/constants.py
+    #    under variable `TASK_TO_SCHEMA`, in accordance to values from `_SUPPORTED_TASKS`
+    #    for all config(s) defined
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
