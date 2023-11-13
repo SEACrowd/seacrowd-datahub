@@ -117,10 +117,6 @@ class copal(datasets.GeneratorBasedBuilder):
                 name=datasets.Split.TEST,
                 gen_kwargs={"filepath": data_url},
             ),
-            datasets.SplitGenerator(
-                name=datasets.Split.VALIDATION,
-                gen_kwargs={"filepath": data_url},
-            ),
         ]
 
     def _generate_examples(self, filepath):
