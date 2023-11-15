@@ -14,6 +14,7 @@ from seacrowd.utils.schemas import (
     ssp_features,
     speech_text_features,
     speech2speech_features,
+    speech_features,
     speech_multi_features,
     image_text_features,
 )
@@ -79,7 +80,11 @@ class Tasks(Enum):
     # SpeechText
     SPEECH_RECOGNITION = "ASR"
     SPEECH_TO_TEXT_TRANSLATION = "STTT"
-    SPEECH_TO_TEXT_CLASSIFICATION = "STTC"
+
+    SPEECH_LANGUAGE_IDENTIFICATION = "SPEECH_LID"
+    SPEECH_EMOTION_RECOGNITION = "SER"
+    SPEECH_EMOTION_RECOGNITION_MULTILABEL = "SER_MULTI"
+
     TEXT_TO_SPEECH = "TTS"
 
     # SpeechSpeech
@@ -207,7 +212,9 @@ TASK_TO_SCHEMA = {
     Tasks.SPEECH_TO_TEXT_TRANSLATION: "SPTEXT",
     Tasks.TEXT_TO_SPEECH: "SPTEXT",
     Tasks.SPEECH_TO_SPEECH_TRANSLATION: "S2S",
-    Tasks.SPEECH_TO_TEXT_CLASSIFICATION: "SC",
+    Tasks.SPEECH_LANGUAGE_IDENTIFICATION: "SP_CLS",
+    Tasks.SPEECH_EMOTION_RECOGNITION: "SP_CLS",
+    Tasks.SPEECH_EMOTION_RECOGNITION_MULTILABEL: "SP_CLS_MULTI",
     Tasks.IMAGE_CAPTIONING: "IMTEXT",
     Tasks.STYLIZED_IMAGE_CAPTIONING: "IMTEXT",
     Tasks.VISUALLY_GROUNDED_REASONING: "IMTEXT",
@@ -237,7 +244,8 @@ SCHEMA_TO_FEATURES = {
     "SSP": ssp_features,
     "SPTEXT": speech_text_features,
     "S2S": speech2speech_features,
-    "SC": speech_multi_features(),
+    "SP_CLS": speech_features(),
+    "SP_CLS_MULTI": speech_multi_features(),
     "IMTEXT": image_text_features(),
 }
 
