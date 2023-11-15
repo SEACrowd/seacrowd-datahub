@@ -170,6 +170,9 @@ class SEAWikiDataset(datasets.GeneratorBasedBuilder):
             else:
                 raise ValueError(f"Unexpected schema received! {_config_schema_name}")
 
+        else:
+            raise ValueError(f"Received unexpected config schema of {_config_schema_name}!")
+
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
             features=features,
