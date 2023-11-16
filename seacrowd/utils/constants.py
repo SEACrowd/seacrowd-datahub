@@ -212,9 +212,9 @@ TASK_TO_SCHEMA = {
     Tasks.SPEECH_TO_TEXT_TRANSLATION: "SPTEXT",
     Tasks.TEXT_TO_SPEECH: "SPTEXT",
     Tasks.SPEECH_TO_SPEECH_TRANSLATION: "S2S",
-    Tasks.SPEECH_LANGUAGE_IDENTIFICATION: "SP_CLS",
-    Tasks.SPEECH_EMOTION_RECOGNITION: "SP_CLS",
-    Tasks.SPEECH_EMOTION_RECOGNITION_MULTILABEL: "SP_CLS_MULTI",
+    Tasks.SPEECH_LANGUAGE_IDENTIFICATION: "SPEECH",
+    Tasks.SPEECH_EMOTION_RECOGNITION: "SPEECH",
+    Tasks.SPEECH_EMOTION_RECOGNITION_MULTILABEL: "SPEECH_MULTI",
     Tasks.IMAGE_CAPTIONING: "IMTEXT",
     Tasks.STYLIZED_IMAGE_CAPTIONING: "IMTEXT",
     Tasks.VISUALLY_GROUNDED_REASONING: "IMTEXT",
@@ -244,8 +244,8 @@ SCHEMA_TO_FEATURES = {
     "SSP": ssp_features,
     "SPTEXT": speech_text_features,
     "S2S": speech2speech_features,
-    "SP_CLS": speech_features(),
-    "SP_CLS_MULTI": speech_multi_features(),
+    "SPEECH": speech_features(),
+    "SPEECH_MULTI": speech_multi_features(),
     "IMTEXT": image_text_features(),
 }
 

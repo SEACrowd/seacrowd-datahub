@@ -10,7 +10,7 @@ from .seq_label import features as seq_label_features
 from .self_supervised_pretraining import features as ssp_features
 from .speech_text import features as speech_text_features
 from .speech_to_speech import features as speech2speech_features
-from .speech_classification import features as speech_features
+from .speech import features as speech_features
 from .speech_multilabel import features as speech_multi_features
 from .image_text import features as image_text_features
 
