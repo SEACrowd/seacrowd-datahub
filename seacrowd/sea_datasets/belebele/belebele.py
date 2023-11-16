@@ -130,12 +130,14 @@ class BelebeleDataset(datasets.GeneratorBasedBuilder):
         path = dl_manager.download_and_extract(_URLS[_DATASETNAME])
         file = "{path}/Belebele/{lang}.jsonl".format(path=path, lang=lang)
 
-        return datasets.SplitGenerator(
-            name=datasets.Split.TRAIN,
-            gen_kwargs={
-                "file": file,
-            },
-        )
+        return [
+            datasets.SplitGenerator(
+                name=datasets.Split.TRAIN,
+                gen_kwargs={
+                    "file": file,
+                },
+            ),
+        ]
 
     def _generate_examples(self, file: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
@@ -152,8 +154,8 @@ class BelebeleDataset(datasets.GeneratorBasedBuilder):
                     answer = choices[int(line['correct_answer_num'])-1]
                     yield key, {
                         "id": key,
-                        "question_id": line['question_number'],
-                        "document_id": hashlib.md5(line['question_number'].encode('utf-8')).hexdigest(),
+                        "question_id": str(line['question_number']),
+                        "document_id": hashlib.md5(line['flores_passage'].encode('utf-8')).hexdigest(),
                         "question": line['question'],
                         "type": 'multiple_choice',
                         "choices": choices,
