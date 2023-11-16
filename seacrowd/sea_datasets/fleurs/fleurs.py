@@ -1,5 +1,5 @@
 """
-SEA Crowd Data Loader for SEA Wiki.
+SEA Crowd Data Loader for Fleurs.
 """
 
 import json
@@ -145,7 +145,7 @@ def construct_configs(languages: list = None) -> List[SEACrowdConfig]:
 
 
 class SEAWikiDataset(datasets.GeneratorBasedBuilder):
-    """SEA Wiki dataset from https://huggingface.co/datasets/sabilmakbar/sea_wiki"""
+    """Fleurs dataset from https://huggingface.co/datasets/google/xtreme_s"""
 
     # get all schema w/o lang arg + get all schema w/ lang arg
     BUILDER_CONFIGS = construct_configs() + construct_configs(_LANGUAGES)
