@@ -104,11 +104,12 @@ class TatoebaDatset(datasets.GeneratorBasedBuilder):
                 gen_kwargs={
                     "filepath": (tatoeba_source_data, tatoeba_eng_data),
                     "split": "dev",
+                    "lang": lang,
                 },
             )
         ]
 
-    def _generate_examples(self, filepath: Tuple[Path, Path], split: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepath: Tuple[Path, Path], split: str, lang: str) -> Tuple[int, Dict]:
         """Yield examples as (key, example) tuples"""
         source_file = filepath[0]
         target_file = filepath[1]
@@ -125,7 +126,9 @@ class TatoebaDatset(datasets.GeneratorBasedBuilder):
                 example = {
                     "source_sentence": source_sentences[idx],
                     "target_sentence": target_sentences[idx],
-                    "source_lang": source_file.split(".")[-1],
+                    # The source_lang in the HuggingFace source seems incorrect
+                    # I am overriding it with the actual language code.
+                    "source_lang": lang,
                     "target_lang": "eng",
                 }
             elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
@@ -133,7 +136,9 @@ class TatoebaDatset(datasets.GeneratorBasedBuilder):
                     "id": str(idx),
                     "text_1": source_sentences[idx],
                     "text_2": target_sentences[idx],
-                    "text_1_name": source_file.split(".")[-1],
+                    # The source_lang in the HuggingFace source seems incorrect
+                    # I am overriding it with the actual language code.
+                    "text_1_name": lang,
                     "text_2_name": "eng",
                 }
             yield idx, example
