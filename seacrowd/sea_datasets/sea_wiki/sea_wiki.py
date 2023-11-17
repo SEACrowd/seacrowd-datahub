@@ -182,7 +182,8 @@ class SEAWikiDataset(datasets.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl_manager: DownloadManager) -> List[datasets.SplitGenerator]:
-        # args of dl_manager is useless since this data loader will wrap the hf `load_dataset` from given _URL
+        # args of dl_manager is a placeholder since this data loader will wrap the hf `load_dataset` from given _URL
+        # directly using `_load_hf_data_from_remote`
         return [datasets.SplitGenerator(name=datasets.Split.TRAIN)]
 
     def _load_hf_data_from_remote(self):
@@ -212,7 +213,7 @@ class SEAWikiDataset(datasets.GeneratorBasedBuilder):
 
             # for summary schema
             elif "seacrowd" in _config_schema_name and CONFIG_SUFFIXES_FOR_TASK[1] in _config_schema_name:
-                yield id_, {"id": id_, "text_1": _data["text"], "text_2": _data["title"], "text_1_name": "text_to_be_summarized", "text_2_name": "title_of_text"}
+                yield id_, {"id": id_, "text_1": _data["text"], "text_2": _data["title"], "text_1_name": "document", "text_2_name": "title"}
 
             else:
                 raise ValueError(f"Received unexpected config schema of {_config_schema_name}!")
