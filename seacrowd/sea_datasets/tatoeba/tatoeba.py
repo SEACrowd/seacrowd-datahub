@@ -49,6 +49,7 @@ class TatoebaDataset(datasets.GeneratorBasedBuilder):
 
     SEACROWD_SCHEMA_NAME = "t2t"
 
+    # Add configurations for loading a dataset per language.
     dataset_names = sorted([f"tatoeba_{lang}" for lang in _LANGUAGES])
     BUILDER_CONFIGS = []
     for name in dataset_names:
@@ -69,8 +70,30 @@ class TatoebaDataset(datasets.GeneratorBasedBuilder):
         )
         BUILDER_CONFIGS.append(seacrowd_config)
 
+    # Add configuration that allows loading all datasets at once.
+    BUILDER_CONFIGS.extend(
+        [
+            # tatoeba_source
+            SEACrowdConfig(
+                name=f"{_DATASETNAME}_source",
+                version=SOURCE_VERSION,
+                description=f"{_DATASETNAME} source schema (all)",
+                schema="source",
+                subset_id=_DATASETNAME,
+            ),
+            # tatoeba_seacrowd_t2t
+            SEACrowdConfig(
+                name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",
+                version=SEACROWD_VERSION,
+                description=f"{_DATASETNAME} SEACrowd schema (all)",
+                schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
+                subset_id=_DATASETNAME,
+            ),
+        ]
+    )
+
     # Choose first language as default
-    DEFAULT_CONFIG_NAME = f"{dataset_names[0]}_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -94,37 +117,55 @@ class TatoebaDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: DownloadManager) -> List[datasets.SplitGenerator]:
         """Return SplitGenerators."""
-        lang = self.config.name.split("_")[1]
-        tatoeba_source_data = dl_manager.download_and_extract(_URL + f"tatoeba.{lang}-eng.{lang}")
-        tatoeba_eng_data = dl_manager.download_and_extract(_URL + f"tatoeba.{lang}-eng.eng")
+        languages = []
+        tatoeba_source_data = []
+        tatoeba_eng_data = []
+
+        lang = self.config.name.split("_")[1] 
+        if lang in _LANGUAGES:
+            # Load data per language
+            tatoeba_source_data.append(dl_manager.download_and_extract(_URL + f"tatoeba.{lang}-eng.{lang}"))
+            tatoeba_eng_data.append(dl_manager.download_and_extract(_URL + f"tatoeba.{lang}-eng.eng"))
+            languages.append(lang)
+        else:
+            # Load examples from all languages at once
+            # We just want to run this part when tatoeba_source / tatoeba_seacrowd_t2t was chosen.
+            for lang in _LANGUAGES:
+                tatoeba_source_data.append(dl_manager.download_and_extract(_URL + f"tatoeba.{lang}-eng.{lang}"))
+                tatoeba_eng_data.append(dl_manager.download_and_extract(_URL + f"tatoeba.{lang}-eng.eng"))
+                languages.append(lang)
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
-                    "filepath": (tatoeba_source_data, tatoeba_eng_data),
+                    "filepaths": (tatoeba_source_data, tatoeba_eng_data),
                     "split": "dev",
-                    "lang": lang,
+                    "languages": languages,
                 },
             )
         ]
 
-    def _generate_examples(self, filepath: Tuple[Path, Path], split: str, lang: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepaths: Tuple[List[Path], List[Path]], split: str, languages: List[str]) -> Tuple[int, Dict]:
         """Yield examples as (key, example) tuples"""
-        source_file = filepath[0]
-        target_file = filepath[1]
-        source_sentences = []
-        target_sentences = []
-        with open(source_file, encoding="utf-8") as f1:
-            for row in f1:
-                source_sentences.append(row.strip())
-        with open(target_file, encoding="utf-8") as f2:
-            for row in f2:
-                target_sentences.append(row.strip())
-        for idx in range(len(source_sentences)):
+        source_files, target_files = filepaths
+        source_sents = []
+        target_sents = []
+        source_langs = []
+
+        for source_file, target_file, lang in zip(source_files, target_files, languages):
+            with open(source_file, encoding="utf-8") as f1:
+                for row in f1:
+                    source_sents.append(row.strip())
+                    source_langs.append(lang)
+            with open(target_file, encoding="utf-8") as f2:
+                for row in f2:
+                    target_sents.append(row.strip())
+
+        for idx, (source, target, lang) in enumerate(zip(source_sents, target_sents, source_langs)):
             if self.config.schema == "source":
                 example = {
-                    "source_sentence": source_sentences[idx],
-                    "target_sentence": target_sentences[idx],
+                    "source_sentence": source,
+                    "target_sentence": target,
                     # The source_lang in the HuggingFace source seems incorrect
                     # I am overriding it with the actual language code.
                     "source_lang": lang,
@@ -133,8 +174,8 @@ class TatoebaDataset(datasets.GeneratorBasedBuilder):
             elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
                 example = {
                     "id": str(idx),
-                    "text_1": source_sentences[idx],
-                    "text_2": target_sentences[idx],
+                    "text_1": source,
+                    "text_2": target,
                     # The source_lang in the HuggingFace source seems incorrect
                     # I am overriding it with the actual language code.
                     "text_1_name": lang,
