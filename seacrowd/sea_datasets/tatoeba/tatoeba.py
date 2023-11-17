@@ -121,7 +121,7 @@ class TatoebaDataset(datasets.GeneratorBasedBuilder):
         tatoeba_source_data = []
         tatoeba_eng_data = []
 
-        lang = self.config.name.split("_")[1] 
+        lang = self.config.name.split("_")[1]
         if lang in _LANGUAGES:
             # Load data per language
             tatoeba_source_data.append(dl_manager.download_and_extract(_URL + f"tatoeba.{lang}-eng.{lang}"))
