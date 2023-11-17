@@ -49,7 +49,7 @@ class TatoebaDataset(datasets.GeneratorBasedBuilder):
 
     SEACROWD_SCHEMA_NAME = "t2t"
 
-    dataset_names = sorted([f"tatoeba.{lang}" for lang in _LANGUAGES])
+    dataset_names = sorted([f"tatoeba_{lang}" for lang in _LANGUAGES])
     BUILDER_CONFIGS = []
     for name in dataset_names:
         source_config = SEACrowdConfig(
@@ -94,8 +94,7 @@ class TatoebaDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: DownloadManager) -> List[datasets.SplitGenerator]:
         """Return SplitGenerators."""
-        lang_source = self.config.name.split(".")[1]
-        lang = lang_source.split("_")[0]
+        lang = self.config.name.split("_")[1]
         tatoeba_source_data = dl_manager.download_and_extract(_URL + f"tatoeba.{lang}-eng.{lang}")
         tatoeba_eng_data = dl_manager.download_and_extract(_URL + f"tatoeba.{lang}-eng.eng")
         return [
