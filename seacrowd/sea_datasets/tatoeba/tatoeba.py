@@ -41,7 +41,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class TatoebaDatset(datasets.GeneratorBasedBuilder):
+class TatoebaDataset(datasets.GeneratorBasedBuilder):
     """Tatoeba subset for Indonesian, Vietnamese, Tagalog, Javanese, and Thai."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
