@@ -30,7 +30,10 @@ recognition (NER) task.
 
 _HOMEPAGE = "https://github.com/mebzmoren/CebuaNER"
 _LICENSE = Licenses.CC_BY_NC_SA_4_0.value
-_URL = "https://github.com/mebzmoren/CebuaNER/raw/main/data/annotated_data/final-1.txt"
+_URLS = {
+    "annotator_0": "https://github.com/mebzmoren/CebuaNER/raw/main/data/annotated_data/final-1.txt",
+    "annotator_1": "https://github.com/mebzmoren/CebuaNER/raw/main/data/annotated_data/final-2.txt",
+}
 
 _SUPPORTED_TASKS = [Tasks.NAMED_ENTITY_RECOGNITION]
 _SOURCE_VERSION = "1.0.0"
@@ -56,24 +59,31 @@ class CebuaNERDataset(datasets.GeneratorBasedBuilder):
         "I-OTHER",
     ]
 
-    BUILDER_CONFIGS = [
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_source",
+    # There are two annotators in the CebuaNER dataset but there's no canonical
+    # label. Here, we decided to create loaders for both annotators. The
+    # inter-annotator reliability is high so it's possible to treat either as
+    # gold-standard data.
+    dataset_names = sorted([f"{_DATASETNAME}_{annot}" for annot in _URLS.keys()])
+    BUILDER_CONFIGS = []
+    for name in dataset_names:
+        source_config = SEACrowdConfig(
+            name=f"{name}_source",
             version=SOURCE_VERSION,
             description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id=_DATASETNAME,
-        ),
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",
+            subset_id=name,
+        )
+        BUILDER_CONFIGS.append(source_config)
+        seacrowd_config = SEACrowdConfig(
+            name=f"{name}_seacrowd_{SEACROWD_SCHEMA_NAME}",
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd schema",
             schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
-            subset_id=_DATASETNAME,
-        ),
-    ]
+            subset_id=name,
+        )
+        BUILDER_CONFIGS.append(seacrowd_config)
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_1_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -96,7 +106,9 @@ class CebuaNERDataset(datasets.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl_manager: DownloadManager) -> List[datasets.SplitGenerator]:
-        data_file = Path(dl_manager.download_and_extract(_URL))
+        _, annotator = self.config.subset_id.split("_", 1)
+        url = _URLS[annotator]
+        data_file = Path(dl_manager.download_and_extract(url))
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
