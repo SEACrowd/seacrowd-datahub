@@ -128,7 +128,7 @@ class MLQADataset(datasets.GeneratorBasedBuilder):
                 datasets.SplitGenerator(
                     name=datasets.Split.TEST,
                     gen_kwargs={
-                        "filepath": f"{config_name}.{lang}/{lang}_squad-translate-train-dev-v1.1.json",
+                        "filepath": f"{config_name}/{lang}_squad-translate-train-dev-v1.1.json",
                         "files": dl_manager.iter_archive(data_path),
                         "split": "test",
                     },
