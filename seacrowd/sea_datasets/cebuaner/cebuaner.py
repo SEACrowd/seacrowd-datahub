@@ -119,6 +119,8 @@ class CebuaNERDataset(datasets.GeneratorBasedBuilder):
             tokens = []
             ner_tags = []
             for line in f:
+                # There's no clear delimiter in the IOB file so I'm separating each example based on the newline.
+                # The -DOCSTART- delimiter only shows up in the very first example.
                 if line.startswith("-DOCSTART-") or line == "" or line == "\n":
                     if tokens:
                         examples.append({"tokens": tokens, label_key: ner_tags})
