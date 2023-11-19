@@ -37,7 +37,7 @@ _LICENSE = Licenses.CC_BY_4_0.value
 _ROOT_URL = "https://raw.githubusercontent.com/imperialite/Philippine-Languages-Online-Corpora/master/Tweets/Annotated%20Yolanda/"
 _URLS = {"train": {-1: _ROOT_URL + "train/-1.txt", 0: _ROOT_URL + "train/0.txt", 1: _ROOT_URL + "train/1.txt"}, "test": {-1: _ROOT_URL + "test/-1.txt", 0: _ROOT_URL + "test/0.txt", 1: _ROOT_URL + "test/1.txt"}}
 
-_SUPPORTED_TASKS = [Tasks.SENTIMENT_ANALYSIS]  # example: [Tasks.TRANSLATION, Tasks.NAMED_ENTITY_RECOGNITION, Tasks.RELATION_EXTRACTION]
+_SUPPORTED_TASKS = [Tasks.SENTIMENT_ANALYSIS]
 
 _SOURCE_VERSION = "1.0.0"
 
