@@ -81,9 +81,13 @@ class Phost(datasets.GeneratorBasedBuilder):
                 {
                     "file": datasets.Value("string"),
                     "audio": datasets.Audio(sampling_rate=16_000),
-                    "en_sentence": datasets.Sequence(datasets.Value("string")),
-                    "vi_translation": datasets.Sequence(datasets.Value("string")),
-                    "timing": datasets.Sequence(datasets.Value("string")),
+                    "text": [datasets.Value("string")], #datasets.Sequence(datasets.Value("string")),
+                    "timing": datasets.Sequence({
+                            "duration": datasets.Value("float64"), 
+                            "offset": datasets.Value("float64"), 
+                            "rW": datasets.Value("int64"), 
+                            "uW": datasets.Value("int64"), 
+                            "wav": datasets.Value("string")}),
                 }
             )
         elif self.config.schema == "seacrowd_sptext":
@@ -166,29 +170,40 @@ class Phost(datasets.GeneratorBasedBuilder):
         timing = []
         en_sub = []
         vi_sub = []
+        counter = 0
+        
+        if tgt_lang not in ["en", "vi"]:
+            raise NotImplementedError(f"Target language '{tgt_lang}' is not defined.")
+        if src_lang not in ["en", "vi"]:
+            raise NotImplementedError(f"Source language '{src_lang}' is not defined.")
+
         for key, track_id in enumerate(track_ids):
-            with open(os.path.join(filepath["text"], track_id, track_id + ".yaml")) as timing_file:
-                timing = yaml.safe_load(timing_file)
             with open(os.path.join(filepath["text"], track_id, track_id + ".en")) as en_text:
-                en_sub = [line.strip() for line in en_text]
-            with open(
-                os.path.join(filepath["text"], track_id, track_id + ".vi"),
-            ) as vi_text:
-                vi_sub = [line.strip() for line in vi_text]
+                    en_sub = [line.rstrip() for line in en_text]
+
+            with open(os.path.join(filepath["text"], track_id, track_id + ".vi")) as vi_text:
+                vi_sub = [line.rstrip() for line in vi_text]
 
             if self.config.schema == "source":
-                # TODO: yield (key, example) tuples in the original dataset schema
-                yield key, {"file": os.path.join(filepath["audio"], track_id + ".wav"), "audio": os.path.join(filepath["audio"], track_id + ".wav"), "en_text": en_sub, "vi_text": vi_sub, "timing": timing}
+                with open(os.path.join(filepath["text"], track_id, track_id + ".yaml")) as timing_file:
+                    timing = yaml.safe_load(timing_file)
+
+                yield key, {
+                    "file": os.path.join(filepath["audio"], track_id + ".wav"), 
+                    "audio": os.path.join(filepath["audio"], track_id + ".wav"), 
+                    "text": en_sub if tgt_lang == "en" else vi_sub, 
+                    "timing": timing
+                }
 
             elif self.config.schema == "seacrowd_sptext":
-                if tgt_lang not in ["en", "vi"]:
-                    raise NotImplementedError(f"Target language '{tgt_lang}' is not defined.")
+                with open(os.path.join(filepath["text"], track_id, track_id + ".yaml")) as timing_file:
+                    timing = yaml.safe_load(timing_file)
 
                 yield key, {
                     "id": track_id,
                     "path": os.path.join(filepath["audio"], track_id + ".wav"),
                     "audio": os.path.join(filepath["audio"], track_id + ".wav"),
-                    "text": en_sub if tgt_lang == "en" else vi_sub,
+                    "text": " ".join(en_sub) if tgt_lang == "en" else " ".join(vi_sub),
                     "speaker_id": None,
                     "metadata": {
                         "speaker_age": None,
@@ -197,17 +212,17 @@ class Phost(datasets.GeneratorBasedBuilder):
                 }
 
             elif self.config.schema == "seacrowd_t2t":
-                if src_lang not in ["en", "vi"]:
-                    raise NotImplementedError(f"Source language '{src_lang}' is not defined.")
-                if tgt_lang not in ["en", "vi"]:
-                    raise NotImplementedError(f"Target language '{tgt_lang}' is not defined.")
-
-                yield key, {
-                    "id": track_id,
-                    "text_1": en_sub if src_lang == "en" else vi_sub,
-                    "text_2": en_sub if tgt_lang == "en" else vi_sub,
-                    "text_1_name": src_lang,
-                    "text_2_name": tgt_lang,
-                }
+                src_sub = en_sub if src_lang == "en" else vi_sub
+                tgt_sub = en_sub if tgt_lang == "en" else vi_sub
+                
+                for src_line, tgt_line in zip(src_sub, tgt_sub):
+                    yield counter, {
+                        "id": str(counter),
+                        "text_1": src_line,
+                        "text_2": tgt_line,
+                        "text_1_name": src_lang,
+                        "text_2_name": tgt_lang,
+                    }
+                    counter+=1
             else:
                 raise NotImplementedError(f"Schema '{self.config.schema}' is not defined.")
