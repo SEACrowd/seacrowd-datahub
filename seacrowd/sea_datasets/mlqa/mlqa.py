@@ -120,7 +120,7 @@ class MLQADataset(datasets.GeneratorBasedBuilder):
                     name=datasets.Split.TRAIN,
                     # Whatever you put in gen_kwargs will be passed to _generate_examples
                     gen_kwargs={
-                        "filepath": f"{config_name}.{lang}/{lang}_squad-translate-train-train-v1.1.json",
+                        "filepath": f"{config_name}/{lang}_squad-translate-train-train-v1.1.json",
                         "files": dl_manager.iter_archive(data_path),
                         "split": "train",
                     },
