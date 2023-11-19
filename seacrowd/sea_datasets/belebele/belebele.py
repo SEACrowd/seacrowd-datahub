@@ -103,14 +103,14 @@ class BelebeleDataset(datasets.GeneratorBasedBuilder):
         SEACrowdConfig(
             name="belebele_source",
             version=_SOURCE_VERSION,
-            description=f"belebele default source schema (using language of) {_DEFAULT_LANG}",
+            description=f"belebele default source schema (using language of {_DEFAULT_LANG})",
             schema="source",
             subset_id=_DEFAULT_LANG
         ),
         SEACrowdConfig(
             name="belebele_seacrowd_qa",
             version=_SEACROWD_VERSION,
-            description=f"belebele default seacrowd schema for QA task (using language of) {_DEFAULT_LANG}",
+            description=f"belebele default seacrowd schema for QA task (using language of {_DEFAULT_LANG})",
             schema="seacrowd_qa",
             subset_id=_DEFAULT_LANG
         )]
