@@ -9,8 +9,6 @@ from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
-_SUPPORTED_TASKS = [Tasks.NAMED_ENTITY_RECOGNITION, Tasks.DEPENDENCY_PARSING]
-
 _CITATION = """\
 @misc{imperial2019sentiment,
       title={Sentiment Analysis of Typhoon Related Tweets using Standard and Bidirectional Recurrent Neural Networks}, 
@@ -96,7 +94,6 @@ class TyphoonYolandaTweets(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         emos = [-1, 0, 1]
-        # TODO: KEEP if your dataset is LOCAL; remove if NOT
         if self.config.name == "typhoon_yolanda_tweets_source" or self.config.name == "typhoon_yolanda_tweets_seacrowd_text":
             train_path = dl_manager.download_and_extract({emo: _URLS["train"][emo] for emo in emos})
 
@@ -129,11 +126,10 @@ class TyphoonYolandaTweets(datasets.GeneratorBasedBuilder):
             for emo, file in filepath.items():
                 with open(file) as f:
                     t = f.readlines()
-                    l = [str(emo) for i in range(len(t))]
+                    l = [str(emo)]*(len(t))
                     tmp_df = pd.DataFrame.from_dict({"text": t, "label": l})
                     df = pd.concat([df, tmp_df], ignore_index=True)
 
         for row in df.itertuples():
-            print(row)
             ex = {"id": str(row.Index), "text": row.text, "label": row.label}
             yield row.Index, ex
