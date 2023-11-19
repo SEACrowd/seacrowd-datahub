@@ -8,9 +8,9 @@ from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
-_CITATION = """
+_CITATION = r"""
 @misc{pilar2023cebuaner,
-    title={CebuaNER - A New Baseline Cebuano Named Entity Recognition Model},
+    title={CebuaNER: A New Baseline Cebuano Named Entity Recognition Model},
     author={Ma. Beatrice Emanuela Pilar and Ellyza Mari Papas and Mary Loise Buenaventura and Dane Dedoroy and Myron Darrel Montefalcon and Jay Rhald Padilla and Lany Maceda and Mideth Abisado and Joseph Marvin Imperial},
     year={2023},
     eprint={2310.00679},
