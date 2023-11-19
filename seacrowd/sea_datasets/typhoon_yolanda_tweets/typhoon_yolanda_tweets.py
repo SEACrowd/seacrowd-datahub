@@ -41,8 +41,6 @@ _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
-
-# TODO: Name the dataset class to match the script name using CamelCase instead of snake_case
 class TyphoonYolandaTweets(datasets.GeneratorBasedBuilder):
     """
     The dataset contains annotated typhoon and disaster-related tweets in Filipino collected before, during, and
