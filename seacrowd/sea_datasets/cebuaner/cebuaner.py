@@ -132,7 +132,9 @@ class CebuaNERDataset(datasets.GeneratorBasedBuilder):
             ner_tags = []
             for line in f:
                 # There's no clear delimiter in the IOB file so I'm separating each example based on the newline.
-                # The -DOCSTART- delimiter only shows up in the very first example.
+                # The -DOCSTART- delimiter only shows up in the very first example. In their notebook example
+                #  https://github.com/mebzmoren/CebuaNER/blob/main/notebooks/Named-Entity-Recognition-with-Conditional-Random-Fields.ipynb,
+                # they used '' as their article delimiter.
                 if line.startswith("-DOCSTART-") or line == "" or line == "\n":
                     if tokens:
                         examples.append({"tokens": tokens, label_key: ner_tags})
