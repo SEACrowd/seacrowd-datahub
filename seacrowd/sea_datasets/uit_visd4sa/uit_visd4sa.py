@@ -8,8 +8,7 @@ import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Licenses
-from seacrowd.utils.constants import Tasks
+from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @inproceedings{thanh-etal-2021-span,
@@ -32,7 +31,7 @@ _DATASETNAME = "uit_visd4sa"
 
 _DESCRIPTION = """\
 This dataset is designed for span detection for aspect-based sentiment analysis NLP task.
-A Vietnamese dataset consisting of 35,396 human-annotated spans on 11,122 feedback 
+A Vietnamese dataset consisting of 35,396 human-annotated spans on 11,122 feedback
 comments for evaluating span detection for aspect-based sentiment analysis for mobile e-commerce
 """
 
@@ -43,11 +42,10 @@ _LICENSE = Licenses.UNKNOWN.value  # example: Licenses.MIT.value, Licenses.CC_BY
 _URLS = {
     "train": "https://raw.githubusercontent.com/kimkim00/UIT-ViSD4SA/main/data/train.jsonl",
     "dev": "https://raw.githubusercontent.com/kimkim00/UIT-ViSD4SA/main/data/dev.jsonl",
-    "test": "https://raw.githubusercontent.com/kimkim00/UIT-ViSD4SA/main/data/test.jsonl"
+    "test": "https://raw.githubusercontent.com/kimkim00/UIT-ViSD4SA/main/data/test.jsonl",
 }
 
-_SUPPORTED_TASKS = [
-    Tasks.ASPECT_BASED_SENTIMENT_ANALYSIS]  # example: [Tasks.TRANSLATION, Tasks.NAMED_ENTITY_RECOGNITION, Tasks.RELATION_EXTRACTION]
+_SUPPORTED_TASKS = [Tasks.COREFERENCE_RESOLUTION]  # example: [Tasks.TRANSLATION, Tasks.NAMED_ENTITY_RECOGNITION, Tasks.RELATION_EXTRACTION]
 
 _SOURCE_VERSION = "1.0.0"
 
@@ -56,8 +54,8 @@ _SEACROWD_VERSION = "1.0.0"
 
 class UITViSD4SADataset(datasets.GeneratorBasedBuilder):
     """This dataset is designed for span detection for aspect-based sentiment analysis NLP task.
-A Vietnamese dataset consisting of 35,396 human-annotated spans on 11,122 feedback
-comments for evaluating span detection for aspect-based sentiment analysis for mobile e-commerce"""
+    A Vietnamese dataset consisting of 35,396 human-annotated spans on 11,122 feedback
+    comments for evaluating span detection for aspect-based sentiment analysis for mobile e-commerce"""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
@@ -87,12 +85,7 @@ comments for evaluating span detection for aspect-based sentiment analysis for m
             features = datasets.Features(
                 {
                     "text": datasets.Value("string"),
-                    "label": datasets.Sequence({
-                        "start": datasets.Value("int32"),
-                        "end": datasets.Value("int32"),
-                        "aspect": datasets.Value("string"),
-                        "rating": datasets.Value("string")
-                    }),
+                    "label": datasets.Sequence({"start": datasets.Value("int32"), "end": datasets.Value("int32"), "aspect": datasets.Value("string"), "rating": datasets.Value("string")}),
                 }
             )
 
@@ -148,12 +141,7 @@ comments for evaluating span detection for aspect-based sentiment analysis for m
                 labels = row["labels"]
                 entry_label = []
                 for lb in labels:
-                    entry_label.append({
-                        "start": lb[0],
-                        "end": lb[1],
-                        "aspect": lb[-1].split('#')[0],
-                        "rating": lb[-1].split('#')[-1]
-                    })
+                    entry_label.append({"start": lb[0], "end": lb[1], "aspect": lb[-1].split("#")[0], "rating": lb[-1].split("#")[-1]})
                 entry = {
                     "text": row["text"],
                     "label": entry_label,
@@ -164,21 +152,26 @@ comments for evaluating span detection for aspect-based sentiment analysis for m
             for _id, row in enumerate(df):
                 entry = {
                     "id": _id,
-                    "passages": [{
-                        "id": _id,
-                        "type": "text",
-                        "text": [row["text"]],
-                        "offsets": [[0, len(row["text"])]],
-                    }],
-                    "entities": [{
-                        "id": str(_id) + '-' + str(lbl_id),
-                        "type": label[-1].split('#')[0],  # ASPECT NAME
-                        "text": [label[-1].split('#')[-1]],  # RATING (POSITIVE / NEGATIVE)
-                        "offsets": [label[:2]],  # [START, END]
-                        "normalized": [],
-                    } for lbl_id, label in enumerate(row["labels"])],
+                    "passages": [
+                        {
+                            "id": "text-" + str(_id),
+                            "type": "text",
+                            "text": [row["text"]],
+                            "offsets": [[0, len(row["text"])]],
+                        }
+                    ],
+                    "entities": [
+                        {
+                            "id": str(_id) + "-aspect-rating-" + str(lbl_id),
+                            "type": label[-1],  # (ASPECT NAME # RATING (POSITIVE / NEGATIVE))
+                            "text": [row["text"][label[0] : label[1]]],  # PART OF TEXT AFFECTED BY THE TYPE,
+                            "offsets": [label[:2]],  # [START, END]
+                            "normalized": [],
+                        }
+                        for lbl_id, label in enumerate(row["labels"])
+                    ],
                     "events": [],
-                    "coreferences": [],
+                    "coreferences": [{"id": str(_id) + "-0", "entity_ids": [str(_id) + "-aspect-rating-" + str(lbl_id) for lbl_id, _ in enumerate(row["labels"])]}],
                     "relations": [],
                 }
                 yield _id, entry
