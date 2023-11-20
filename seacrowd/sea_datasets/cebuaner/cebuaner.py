@@ -31,9 +31,13 @@ recognition (NER) task.
 _HOMEPAGE = "https://github.com/mebzmoren/CebuaNER"
 _LICENSE = Licenses.CC_BY_NC_SA_4_0.value
 _URLS = {
-    "annotator_0": "https://github.com/mebzmoren/CebuaNER/raw/main/data/annotated_data/final-1.txt",
-    "annotator_1": "https://github.com/mebzmoren/CebuaNER/raw/main/data/annotated_data/final-2.txt",
+    "annotator_1": "https://github.com/mebzmoren/CebuaNER/raw/main/data/annotated_data/final-1.txt",
+    "annotator_2": "https://github.com/mebzmoren/CebuaNER/raw/main/data/annotated_data/final-2.txt",
 }
+
+# The alignment between annotators is high, and both can be used as gold-standard data.
+# Hence, we chose the first value on the index.
+_DEFAULT_ANNOTATOR = "annotator_1"
 
 _SUPPORTED_TASKS = [Tasks.NAMED_ENTITY_RECOGNITION]
 _SOURCE_VERSION = "1.0.0"
@@ -102,7 +106,7 @@ class CebuaNERDataset(datasets.GeneratorBasedBuilder):
         ),
     ])
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_1_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -126,7 +130,7 @@ class CebuaNERDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: DownloadManager) -> List[datasets.SplitGenerator]:
         if self.config.subset_id == _DATASETNAME:
-            url = _URLS["annotator_0"] 
+            url = _URLS[_DEFAULT_ANNOTATOR] 
         else:
             _, annotator = self.config.subset_id.split("_", 1)
             url = _URLS[annotator]
