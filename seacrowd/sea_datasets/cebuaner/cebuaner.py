@@ -83,6 +83,25 @@ class CebuaNERDataset(datasets.GeneratorBasedBuilder):
         )
         BUILDER_CONFIGS.append(seacrowd_config)
 
+    # Create a configuration that loads the annotations of the first annotator
+    # and treat that as the default.
+    BUILDER_CONFIGS.extend([
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_source",
+            version=SOURCE_VERSION,
+            description=f"{_DATASETNAME} source schema",
+            schema="source",
+            subset_id=_DATASETNAME,
+        ),
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",
+            version=SEACROWD_VERSION,
+            description=f"{_DATASETNAME} SEACrowd schema",
+            schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
+            subset_id=_DATASETNAME,
+        ),
+    ])
+
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_1_source"
 
     def _info(self) -> datasets.DatasetInfo:
@@ -106,8 +125,11 @@ class CebuaNERDataset(datasets.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl_manager: DownloadManager) -> List[datasets.SplitGenerator]:
-        _, annotator = self.config.subset_id.split("_", 1)
-        url = _URLS[annotator]
+        if self.config.subset_id == _DATASETNAME:
+            url = _URLS["annotator_0"] 
+        else:
+            _, annotator = self.config.subset_id.split("_", 1)
+            url = _URLS[annotator]
         data_file = Path(dl_manager.download_and_extract(url))
         return [
             datasets.SplitGenerator(
@@ -145,6 +167,8 @@ class CebuaNERDataset(datasets.GeneratorBasedBuilder):
                 else:
                     # CebuaNER iob are separated by spaces
                     token, _, _, ner_tag = line.split(" ")
+                    if ner_tag.rstrip() not in self.LABEL_CLASSES:
+                        print(token, ner_tag, line)
                     tokens.append(token)
                     ner_tags.append(ner_tag.rstrip())
             if tokens:
