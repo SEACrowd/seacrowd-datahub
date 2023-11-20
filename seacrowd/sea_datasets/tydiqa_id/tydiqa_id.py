@@ -180,7 +180,8 @@ class TyDiQAIdDataset(datasets.GeneratorBasedBuilder):
                     "type": 'abstractive',
                     "choices": [],
                     "context": example['context'],
-                    "answer": [example['label']]
+                    "answer": [example['label']],
+                    "meta": {}
                 }
         else:
             raise ValueError(f"Invalid config: {self.config.name}")

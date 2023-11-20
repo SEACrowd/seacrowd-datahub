@@ -240,5 +240,5 @@ class MLQADataset(datasets.GeneratorBasedBuilder):
                             count += 1
 
                         elif self.config.schema == "seacrowd_qa":
-                            yield count, {"question_id": id_, "context": context, "question": question, "answer": {"answer_start": answers_start[0], "text": answers_text[0]}, "id": id_, "choices": [], "type": "extractive", "document_id": count}
+                            yield count, {"question_id": id_, "context": context, "question": question, "answer": {"answer_start": answers_start[0], "text": answers_text[0]}, "id": id_, "choices": [], "type": "extractive", "document_id": count, "meta":{}}
                             count += 1

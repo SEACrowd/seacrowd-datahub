@@ -182,6 +182,7 @@ class BelebeleDataset(datasets.GeneratorBasedBuilder):
                         "choices": choices,
                         "context": line['flores_passage'],
                         "answer": [answer],
+                        "meta": {}
                     }
         else:
             raise ValueError(f"Invalid config {self.config.name}")
