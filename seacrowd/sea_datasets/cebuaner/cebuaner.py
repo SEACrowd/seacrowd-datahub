@@ -167,8 +167,6 @@ class CebuaNERDataset(datasets.GeneratorBasedBuilder):
                 else:
                     # CebuaNER iob are separated by spaces
                     token, _, _, ner_tag = line.split(" ")
-                    if ner_tag.rstrip() not in self.LABEL_CLASSES:
-                        print(token, ner_tag, line)
                     tokens.append(token)
                     ner_tags.append(ner_tag.rstrip())
             if tokens:
