@@ -1,0 +1,180 @@
+# coding=utf-8
+# Copyright 2022 The HuggingFace Datasets Authors and the current dataset script contributor.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+from pathlib import Path
+from typing import Dict, List, Tuple
+
+import datasets
+
+from seacrowd.utils import schemas
+from seacrowd.utils.configs import SEACrowdConfig
+from seacrowd.utils.constants import Licenses, Tasks
+
+_CITATION = """\
+@article{DBLP:journals/corr/abs-2204-02658,
+ author    = {Yingwen Fu and
+              Jinyi Chen and
+              Nankai Lin and
+              Xixuan Huang and
+              Xin Ying Qiu and
+              Shengyi Jiang},
+ title     = {Yunshan Cup 2020: Overview of the Part-of-Speech Tagging Task for
+              Low-resourced Languages},
+ journal   = {CoRR},
+ volume    = {abs/2204.02658},
+ year      = {2022},
+ url       = {https://doi.org/10.48550/arXiv.2204.02658},
+ doi       = {10.48550/arXiv.2204.02658},
+ biburl    = {https://dblp.org/rec/journals/corr/abs-2204-02658.bib},
+ bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+"""
+
+_DATASETNAME = "yunshan_cup_2020"
+
+_DESCRIPTION = """\
+Lao POS dataset containing 11,000 sentences was released as part of Yunshan-Cup-2020 evaluation track.
+"""
+
+_HOMEPAGE = "https://github.com/GKLMIP/Yunshan-Cup-2020"
+
+_LICENSE = Licenses.UNKNOWN.value  # example: Licenses.MIT.value, Licenses.CC_BY_NC_SA_4_0.value, Licenses.UNLICENSE.value, Licenses.UNKNOWN.value
+
+_URLS = {
+    "train": "https://raw.githubusercontent.com/GKLMIP/Yunshan-Cup-2020/main/train.txt",
+    "dev": "https://raw.githubusercontent.com/GKLMIP/Yunshan-Cup-2020/main/dev.txt",
+    "test": "https://raw.githubusercontent.com/GKLMIP/Yunshan-Cup-2020/main/test.txt",
+}
+_SUPPORTED_TASKS = [Tasks.POS_TAGGING]  # example: [Tasks.TRANSLATION, Tasks.NAMED_ENTITY_RECOGNITION, Tasks.RELATION_EXTRACTION]
+_SOURCE_VERSION = "1.0.0"
+
+_SEACROWD_VERSION = "1.0.0"
+
+
+class YunshanCup2020(datasets.GeneratorBasedBuilder):
+    """Lao POS dataset containing 11,000 sentences was released as part of Yunshan-Cup-2020 evaluation track."""
+
+    class_labels = ["IAC", "COJ", "ONM", "PRE", "PRS", "V", "DBQ", "IBQ", "FIX", "N", "ADJ", "DMN", "IAQ", "CLF", "PRA", "DAN", "NEG", "NTR", "REL", "PVA", "TTL", "DAQ", "PRN", "ADV", "PUNCT", "CNM"]
+
+    SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
+    SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
+    BUILDER_CONFIGS = [
+        SEACrowdConfig(
+            name="yunshan_cup_2020_source",
+            version=SOURCE_VERSION,
+            description="yunshan_cup_2020 source schema",
+            schema="source",
+            subset_id="yunshan_cup_2020",
+        ),
+        SEACrowdConfig(
+            name="yunshan_cup_2020_seacrowd_seq_label",
+            version=SEACROWD_VERSION,
+            description="yunshan_cup_2020 SEACrowd schema",
+            schema="seacrowd_seq_label",
+            subset_id="yunshan_cup_2020",
+        ),
+    ]
+
+    DEFAULT_CONFIG_NAME = "yunshan_cup_2020_source"
+
+    def _info(self) -> datasets.DatasetInfo:
+        if self.config.schema == "source":
+            features = datasets.Features(
+                {
+                    "index": datasets.Value("string"),
+                    "tokens": [datasets.Value("string")],
+                    "pos_tags": [datasets.Value("string")],
+                }
+            )
+        elif self.config.schema == "seacrowd_seq_label":
+            features = schemas.seq_label_features(self.class_labels)
+
+        return datasets.DatasetInfo(
+            description=_DESCRIPTION,
+            features=features,
+            homepage=_HOMEPAGE,
+            license=_LICENSE,
+            citation=_CITATION,
+        )
+
+    def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
+        """Returns SplitGenerators."""
+        train_path = dl_manager.download_and_extract(_URLS["train"])
+        dev_path = dl_manager.download_and_extract(_URLS["dev"])
+        test_path = dl_manager.download_and_extract(_URLS["test"])
+
+        return [
+            datasets.SplitGenerator(
+                name=datasets.Split.TRAIN,
+                gen_kwargs={
+                    "filepath": train_path,
+                    "split": "train",
+                },
+            ),
+            datasets.SplitGenerator(
+                name=datasets.Split.TEST,
+                gen_kwargs={
+                    "filepath": test_path,
+                    "split": "test",
+                },
+            ),
+            datasets.SplitGenerator(
+                name=datasets.Split.VALIDATION,
+                gen_kwargs={
+                    "filepath": dev_path,
+                    "split": "dev",
+                },
+            ),
+        ]
+
+    def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
+        df = load_postagging_data(filepath)
+        if self.config.schema == "source":
+            for i, row in enumerate(df):
+                ex = {
+                    "index": str(i),
+                    "tokens": row["sentence"],
+                    "pos_tags": row["label"],
+                }
+                yield i, ex
+
+        elif self.config.schema == "seacrowd_seq_label":
+            for i, row in enumerate(df):
+                ex = {
+                    "id": str(i),
+                    "tokens": row["sentence"],
+                    "labels": row["label"],
+                }
+                yield i, ex
+
+
+def load_postagging_data(file_path):
+    data = open(file_path, "r").readlines()
+    dataset = []
+    sentence, seq_label = [], []
+    for line in data:
+        if len(line.strip()) > 0:
+            token, label = " ", ""
+            if len(line.strip().split(" ")) < 2:
+                label = line.strip()
+            else:
+                token, label = line[:-1].split(" ")
+            sentence.append(token)
+            seq_label.append(label)
+        else:
+            dataset.append({"sentence": sentence, "label": seq_label})
+            sentence = []
+            seq_label = []
+    return dataset
