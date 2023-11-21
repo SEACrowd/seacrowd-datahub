@@ -45,7 +45,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class CulturaX(datasets.GeneratorBasedBuilder):
+class CulturaXDataset(datasets.GeneratorBasedBuilder):
     """CulturaX subset for SEA languages."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
@@ -58,7 +58,7 @@ class CulturaX(datasets.GeneratorBasedBuilder):
         SEACrowdConfig(
             name=f"{_DATASETNAME}_{subset}_source",
             version=datasets.Version(_SOURCE_VERSION),
-            description=f"{_DATASETNAME}{subset} source schema",
+            description=f"{_DATASETNAME} {subset} source schema",
             schema="source",
             subset_id=subset,
         ) for subset in SUBSETS
@@ -72,8 +72,7 @@ class CulturaX(datasets.GeneratorBasedBuilder):
         )
         for subset in SUBSETS
     ]
-    
-    # choose javanese as default
+
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_jv_source"
 
     def _info(self) -> datasets.DatasetInfo:
@@ -121,7 +120,7 @@ class CulturaX(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, filepaths: [Path], split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples.
-        
+
         Iterate over row groups in each filepaths, then yield each row as an example.
         https://medium.com/munchy-bytes/are-you-using-parquet-with-pandas-in-the-right-way-595c9ee7112
         """
@@ -145,9 +144,3 @@ class CulturaX(datasets.GeneratorBasedBuilder):
                                 "text": row.text,
                             }
                         key += 1
-
-
-# This allows you to run your dataloader with `python [dataset_name].py` during development
-# TODO: Remove this before making your PR
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)
