@@ -31,7 +31,7 @@ _URLS = {
     _DATASETNAME: {"test": "https://huggingface.co/datasets/haryoaw/COPAL/resolve/main/test_copal.csv?download=true", "test_colloquial": "https://huggingface.co/datasets/haryoaw/COPAL/resolve/main/test_copal_colloquial.csv?download=true"},
 }
 
-_SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
+_SUPPORTED_TASKS = [Tasks.COMMONSENSE_REASONING]
 
 _LOCAL = False
 _LANGUAGES = ["ind"]
@@ -89,9 +89,9 @@ class copal(datasets.GeneratorBasedBuilder):
                     "question": datasets.Value("string"),
                     "idx": datasets.Value("int64"),
                     "label": datasets.Value("int64"),
-                    "Terminology": datasets.Value("int64"),
-                    "Culture": datasets.Value("int64"),
-                    "Language": datasets.Value("int64"),
+                    "terminology": datasets.Value("int64"),
+                    "culture": datasets.Value("int64"),
+                    "language": datasets.Value("int64"),
                 }
             )
         elif self.config.schema == "seacrowd_qa":
@@ -130,9 +130,9 @@ class copal(datasets.GeneratorBasedBuilder):
                     "question": row.question,
                     "idx": row.idx,
                     "label": row.label,
-                    "Terminology": row.Terminology,
-                    "Culture": row.Culture,
-                    "Language": row.Language,
+                    "terminology": row.Terminology,
+                    "culture": row.Culture,
+                    "language": row.Language,
                 }
                 yield row.index, entry
 
@@ -147,11 +147,8 @@ class copal(datasets.GeneratorBasedBuilder):
                     "choices": [row.choice1, row.choice2],
                     "context": row.premise,
                     "answer": [row.choice1 if row.label == 0 else row.choice2],
+                    "meta": {},
                 }
                 yield row.index, entry
         else:
             raise ValueError(f"Invalid config: {self.config.name}")
-
-
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)
