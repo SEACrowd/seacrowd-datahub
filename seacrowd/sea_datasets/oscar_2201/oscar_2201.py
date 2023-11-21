@@ -3,9 +3,9 @@ import gzip
 import json
 from pathlib import Path
 from typing import Dict, List, Tuple
+from urllib.parse import urljoin
 
 import datasets
-from urllib.parse import urljoin
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
@@ -66,7 +66,15 @@ class Oscar2201Dataset(datasets.GeneratorBasedBuilder):
     SEACROWD_SCHEMA_NAME = "ssp"
     SUBSETS = ["war", "ceb", "min", "vi", "ta", "ilo", "tl", "lo", "km", "my", "jv", "id", "th", "su", "ms"]
 
-    BUILDER_CONFIGS = [SEACrowdConfig(name=f"{_DATASETNAME}_{subset}_source", version=datasets.Version(_SOURCE_VERSION), description=f"{_DATASETNAME} {subset} source schema", schema="source", subset_id=subset,) for subset in SUBSETS] + [
+    BUILDER_CONFIGS = [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{subset}_source",
+            version=datasets.Version(_SOURCE_VERSION),
+            description=f"{_DATASETNAME} {subset} source schema",
+            schema="source",
+            subset_id=subset,
+        ) for subset in SUBSETS
+    ] + [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_{subset}_seacrowd_ssp",
             version=datasets.Version(_SEACROWD_VERSION),
