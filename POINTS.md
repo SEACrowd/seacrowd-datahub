@@ -18,7 +18,7 @@ We might adjust the point requirement lower to accommodate more co-authorship if
 
 Submitting a public dataset via [jotform](https://www.jotform.com/team/232952680898069/seacrowd-sea-datasets) is worth a default score of +2. Bonus is applied based on the following conditions:
 * modality: +1 pts for speech/vision, +2 pts for others
-* language rarity based on https://microsoft.github.io/linguisticdiversity:
+* language rarity based on https://microsoft.github.io/linguisticdiversity/assets/lang2tax.txt:
    * +0 pts for languages in level 3 or above
    * +1 pts for languages in level 1 and 2
    * +2 pts for languages in level 0 or languages are not mentioned in the list.  
@@ -29,7 +29,7 @@ Submitting a private dataset via [jotform](https://www.jotform.com/team/23295268
 
 Providing open access to the private datasets will be granted +4 points, with a bonus applied based on the following conditions:
 * modality: +1 pts for speech/vision, +2 pts for others
-* language rarity based on https://microsoft.github.io/linguisticdiversity:
+* language rarity based on https://microsoft.github.io/linguisticdiversity/assets/lang2tax.txt:
    * +0 pts for languages in level 3 or above
    * +1 pts for languages in level 1 and 2
    * +2 pts for languages in level 0 or languages are not mentioned in the list. 
