@@ -39,7 +39,6 @@ terms of style across all languages, while avoiding annotation artifacts due to 
 The languages covered in the dataset include Filipino, Indonesian, Thai, and Vietnamnese
 """
 
-
 _HOMEPAGE = "https://google.github.io/crossmodal-3600/"
 
 _LICENSE = Licenses.CC_BY_4_0.value
@@ -58,7 +57,6 @@ _SEACROWD_VERSION = "1.0.0"
 
 _LANGS = ["fil", "id", "th", "vi"]
 
-# TODO: Name the dataset class to match the script name using CamelCase instead of snake_case
 class NewDataset(datasets.GeneratorBasedBuilder):
     """
     Crossmodal-3600 dataset (XM3600 in short), a geographically-diverse set of 3600 images annotated with
@@ -111,8 +109,7 @@ class NewDataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
         captions_path = dl_manager.download_and_extract(_URLS["captions"])
-        images_path = dl_manager.extract("/project/dataset/images.tgz")  # remove on PR
-        # images_path = dl_manager.download_and_extract(_URLS["images"])
+        images_path = dl_manager.download_and_extract(_URLS["images"])
         attr_path = dl_manager.download(_URLS["image_attributions"])
 
         train_caps = {}
@@ -172,7 +169,7 @@ class NewDataset(datasets.GeneratorBasedBuilder):
                         "id": img_id + "_" + str(counter),
                         "image_paths": filepath["images"][img_id],
                         "texts": {
-                            "caption": "".join(l),
+                            "caption": l,
                             "caption/tokenized": cap["caption/tokenized"][cap_index],
                             "caption/tokenized/lowercase": cap["caption/tokenized/lowercase"][cap_index],
                         },
