@@ -1,34 +1,50 @@
 {
   "ace": {
-    "name": "Acehnese",
+    "name": "Aceh",
     "source_subset": "ace"
   },
+  "akb": {
+    "name": "Batak Angkola",
+    "source_subset": "akb"
+  },
   "ban": {
-    "name": "Balinese",
+    "name": "Bali",
     "source_subset": "ban"
   },
-  "bcl": {
-    "name": "Central Bicolano",
-    "source_subset": "bcl"
+  "bbc": {
+    "name": "Batak Toba",
+    "source_subset": "bbc"
   },
-  "bjn": {
-    "name": "Banjarese",
-    "source_subset": "bjn"
+  "bew": {
+    "name": "Betawi",
+    "source_subset": "bew"
   },
-  "bug": {
-    "name": "Buginese",
-    "source_subset": "bug"
+  "btx": {
+    "name": "Batak Karo",
+    "source_subset": "btx"
   },
-  "cbk": {
-    "name": "Chavacano",
-    "source_subset": "cbk-zam"
+  "ceb": {
+    "name": "Cebuano",
+    "source_subset": "ceb"
+  },
+  "fil": {
+    "name": "Filipino",
+    "source_subset": "fil"
   },
   "gor": {
     "name": "Gorontalo",
     "source_subset": "gor"
   },
+  "hil": {
+    "name": "Hiligaynon",
+    "source_subset": "hil"
+  },
+  "iba": {
+    "name": "Iban",
+    "source_subset": "iba"
+  },
   "ilo": {
-    "name": "Ilokano",
+    "name": "Ilocano",
     "source_subset": "ilo"
   },
   "ind": {
@@ -39,61 +55,73 @@
     "name": "Javanese",
     "source_subset": "jv"
   },
+  "kac": {
+    "name": "Jingpho",
+    "source_subset": "kac"
+  },
   "khm": {
     "name": "Khmer",
     "source_subset": "km"
+  },
+  "kxd": {
+    "name": "Brunei",
+    "source_subset": "ms_Arab_BN"
   },
   "lao": {
     "name": "Lao",
     "source_subset": "lo"
   },
   "mad": {
-    "name": "Madurese",
+    "name": "Madura",
     "source_subset": "mad"
   },
-  "map_bms": {
-    "name": "Banyumasan (Dialect of Javanese)",
-    "source_subset": "map-bms"
+  "mak": {
+    "name": "Makasar",
+    "source_subset": "mak"
+  },
+  "meo": {
+    "name": "Kedah Malay",
+    "source_subset": "meo"
   },
   "min": {
     "name": "Minangkabau",
     "source_subset": "min"
   },
-  "mnw": {
-    "name": "Mon",
-    "source_subset": "min"
+  "mkn": {
+    "name": "Kupang Malay",
+    "source_subset": "mkn"
+  },
+  "msi": {
+    "name": "Sabah Malay",
+    "source_subset": "msi"
   },
   "mya": {
     "name": "Burmese",
     "source_subset": "my"
   },
-  "nia": {
-    "name": "Nias",
-    "source_subset": "nia"
+  "nij": {
+    "name": "Ngaju",
+    "source_subset": "nij"
+  },
+  "nut": {
+    "name": "Nung",
+    "source_subset": "nut"
   },
   "pag": {
     "name": "Pangasinan",
     "source_subset": "pag"
-  },
-  "pam": {
-    "name": "Kapampangan",
-    "source_subset": "pam"
   },
   "shn": {
     "name": "Shan",
     "source_subset": "shn"
   },
   "sun": {
-    "name": "Sundanese",
+    "name": "Sunda",
     "source_subset": "su"
   },
   "tet": {
-    "name": "Tetum",
+    "name": "Tetun",
     "source_subset": "tet"
-  },
-  "tgl": {
-    "name": "Tagalog",
-    "source_subset": "tl"
   },
   "tha": {
     "name": "Thai",
@@ -104,7 +132,7 @@
     "source_subset": "vi"
   },
   "war": {
-    "name": "Waray",
+    "name": "Waray-Waray",
     "source_subset": "war"
   }
 }

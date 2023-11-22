@@ -14,45 +14,48 @@ from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
-_CITATION = """
-@ONLINE{wikidump,
-    author = "Wikimedia Foundation",
-    title  = "Wikimedia Downloads",
-    url    = "https://dumps.wikimedia.org"}
-@ONLINE{wikipedia-hf,
-    title  = "Huggingface Wikipedia Dataset",
-    url    = "https://huggingface.co/datasets/wikipedia"}
-@ONLINE{wikipedia-hf,
-    title  = "Huggingface SEA Wikipedia Dataset",
-    url    = "https://huggingface.co/datasets/sabilmakbar/sea_wiki"}
+_CITATION = r"""
+@misc{kudugunta2023madlad400,
+      title={MADLAD-400: A Multilingual And Document-Level Large Audited Dataset}, 
+      author={Sneha Kudugunta and Isaac Caswell and Biao Zhang and Xavier Garcia and Christopher A. Choquette-Choo and Katherine Lee and Derrick Xin and Aditya Kusupati and Romi Stella and Ankur Bapna and Orhan Firat},
+      year={2023},
+      eprint={2309.04662},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
 """
 
 logger = datasets.logging.get_logger(__name__)
 
 
-with open(DownloadManager().download_and_extract("seacrowd/sea_datasets/sea_wiki/lang_config.json"), "r") as f:
+with open(DownloadManager().download_and_extract("seacrowd/sea_datasets/sea_madlad/lang_config.json"), "r") as f:
     _LANG_CONFIG = json.load(f)
 
 _LOCAL = False
 _LANGUAGES = list(_LANG_CONFIG.keys())
 
-_DATASETNAME = "sea_wiki"
-_DESCRIPTION = """\
-    SEA Lang & Local Langs Wikipedia Archives, dumped from WIkipedia HF and processed by boilerplate removal.
-    This dataset consists of URL of referred Wikipedia Article, its Title, and its Text Data (Article Contents).
+
+_DATASETNAME = "sea_madlad"
+_DESCRIPTION = r"""
+    SEA MADLAD is a subset of MADLAD-400 (Multilingual Audited Dataset: Low-resource And Document-level), which is a document-level multilingual dataset based on Common Crawl.
+    SEA MADLAD only filters the language of the "clean" subset, which covers 36 languages indigenous to SEA from 419 languages in total.
+    As a result, some of SEA lang codes aren't available in this version because those belongs to the languages whose decision was to "remove from its clean version" based on MADLAD auditing process.
+    MADLAD uses all snapshots of CommonCrawl available as of August 1, 2022.
+    The primary advantage of this dataset over similar datasets is that it is more multilingual, it is audited and more highly filtered, and it is document-level.
+    The main disadvantage is also its strength -- being more filtered, it may lack the recall needed for some applications.
 """
 
-_HOMEPAGE = "https://huggingface.co/datasets/sabilmakbar/sea_wiki"
-_LICENSE = Licenses.CC_BY_SA_4_0.value
+_HOMEPAGE = "https://huggingface.co/datasets/allenai/MADLAD-400"
+_LICENSE = Licenses.CC_BY_4_0.value
 
 # url won't be used since it will implement load_dataset method on HF URL provided
-_URL = "https://huggingface.co/datasets/sabilmakbar/sea_wiki"
+_URL = "https://huggingface.co/datasets/allenai/MADLAD-400"
 
-_SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING, Tasks.SUMMARIZATION]
+_SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
-CONFIG_SUFFIXES_FOR_TASK = ["ssp", "t2t"]
+CONFIG_SUFFIXES_FOR_TASK = ["ssp"]
 
 
 def conform_init_config():
@@ -67,10 +70,6 @@ def conform_init_config():
 
 conform_init_config()
 
-# construct zipped arg for config instantiation
-SCHEMA_PREFIX_AND_VERSION_PAIRS = list(zip(("source", "seacrowd"), (_SOURCE_VERSION, _SEACROWD_VERSION)))
-CONFIG_NAME_AND_TASKS_PAIRS = list(zip(CONFIG_SUFFIXES_FOR_TASK, _SUPPORTED_TASKS))
-
 
 def construct_configs(languages: list = None) -> List[SEACrowdConfig]:
     """
@@ -84,6 +83,11 @@ def construct_configs(languages: list = None) -> List[SEACrowdConfig]:
     output:
         a list of `SEACrowdConfig` objects based on instantiated init variables
     """
+
+    # construct zipped arg for config instantiation
+    CONFIG_NAME_AND_TASKS_PAIRS = list(zip(CONFIG_SUFFIXES_FOR_TASK, _SUPPORTED_TASKS))
+    SCHEMA_PREFIX_AND_VERSION_PAIRS = list(zip(("source", "seacrowd"), (_SOURCE_VERSION, _SEACROWD_VERSION)))
+
     # set output var
     config_list = []
 
@@ -140,7 +144,7 @@ def construct_configs(languages: list = None) -> List[SEACrowdConfig]:
 
 
 class SEAWikiDataset(datasets.GeneratorBasedBuilder):
-    """SEA Wiki dataset from https://huggingface.co/datasets/sabilmakbar/sea_wiki"""
+    """SEA MADLAD dataset, subsetted from https://huggingface.co/datasets/allenai/MADLAD-400"""
 
     # get all schema w/o lang arg + get all schema w/ lang arg
     BUILDER_CONFIGS = construct_configs() + construct_configs(_LANGUAGES)
@@ -158,18 +162,6 @@ class SEAWikiDataset(datasets.GeneratorBasedBuilder):
 
             else:
                 raise ValueError(f"Unexpected schema received! {_config_schema_name}")
-
-        # summarization schema
-        elif CONFIG_SUFFIXES_FOR_TASK[1] in _config_schema_name:
-            if "source" in _config_schema_name:
-                features = datasets.Features({"url": datasets.Value("string"), "title": datasets.Value("string"), "text": datasets.Value("string")})
-
-            elif "seacrowd" in _config_schema_name:
-                features = schemas.text2text_features
-
-            else:
-                raise ValueError(f"Unexpected schema received! {_config_schema_name}")
-
         else:
             raise ValueError(f"Received unexpected config schema of {_config_schema_name}!")
 
@@ -190,7 +182,7 @@ class SEAWikiDataset(datasets.GeneratorBasedBuilder):
         # construct remote_hf_reference by the last 2 of string-spliited of "/"
         _remote_hf_reference = "/".join(_URL.split("/")[-2:])
         _lang_args = _LANG_CONFIG[self.config.subset_id]["source_subset"]
-        _split = "train"
+        _split = "clean"
 
         logger.info(f"Loading dataset from remote HF {_remote_hf_reference} with seacrowd lang args of {self.config.subset_id} and source lang args of {_lang_args} and split args of {_split}")
         _hf_dataset_source = load_dataset(_remote_hf_reference, lang=_lang_args, split=_split)
@@ -210,10 +202,6 @@ class SEAWikiDataset(datasets.GeneratorBasedBuilder):
             # for ssp schema
             elif "seacrowd" in _config_schema_name and CONFIG_SUFFIXES_FOR_TASK[0] in _config_schema_name:
                 yield id_, {"id": id_, "text": _data["text"]}
-
-            # for summary schema
-            elif "seacrowd" in _config_schema_name and CONFIG_SUFFIXES_FOR_TASK[1] in _config_schema_name:
-                yield id_, {"id": id_, "text_1": _data["text"], "text_2": _data["title"], "text_1_name": "document", "text_2_name": "title"}
 
             else:
                 raise ValueError(f"Received unexpected config schema of {_config_schema_name}!")
