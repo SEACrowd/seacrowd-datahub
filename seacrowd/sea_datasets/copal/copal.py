@@ -13,7 +13,7 @@ _CITATION = """\
   year={2023}
 }
 """
-_DATASETNAME = "COPAL"
+_DATASETNAME = "copal"
 
 _DESCRIPTION = """\
 COPAL is a novel Indonesian language common sense reasoning dataset. Unlike the previous Indonesian COPA dataset (XCOPA-ID), COPAL-ID incorporates Indonesian local and cultural nuances,
@@ -27,9 +27,7 @@ _HOMEPAGE = "https://huggingface.co/datasets/haryoaw/COPAL"
 
 _LICENSE = Licenses.CC_BY_SA_4_0.value
 
-_URLS = {
-    _DATASETNAME: {"test": "https://huggingface.co/datasets/haryoaw/COPAL/resolve/main/test_copal.csv?download=true", "test_colloquial": "https://huggingface.co/datasets/haryoaw/COPAL/resolve/main/test_copal_colloquial.csv?download=true"},
-}
+_URLS = {"test": "https://huggingface.co/datasets/haryoaw/COPAL/resolve/main/test_copal.csv?download=true", "test_colloquial": "https://huggingface.co/datasets/haryoaw/COPAL/resolve/main/test_copal_colloquial.csv?download=true"}
 
 _SUPPORTED_TASKS = [Tasks.COMMONSENSE_REASONING]
 
@@ -48,28 +46,28 @@ class COPAL(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="copal_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
             description="COPAL test source schema",
             schema="source",
             subset_id="copal",
         ),
         SEACrowdConfig(
-            name="copal_colloquial_source",
+            name=f"{_DATASETNAME}_colloquial_source",
             version=SOURCE_VERSION,
             description="COPAL test colloquial source schema",
             schema="source",
             subset_id="copal",
         ),
         SEACrowdConfig(
-            name="copal_seacrowd_qa",
+            name=f"{_DATASETNAME}_seacrowd_qa",
             version=SEACROWD_VERSION,
             description="COPAL test seacrowd schema",
             schema="seacrowd_qa",
             subset_id="copal",
         ),
         SEACrowdConfig(
-            name="copal_colloquial_seacrowd_qa",
+            name=f"{_DATASETNAME}_colloquial_seacrowd_qa",
             version=SEACROWD_VERSION,
             description="COPAL test colloquial seacrowd schema",
             schema="seacrowd_qa",
@@ -107,8 +105,7 @@ class COPAL(datasets.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl_manager):
-        urls = _URLS[_DATASETNAME]
-        data_dir = dl_manager.download_and_extract(urls)
+        data_dir = dl_manager.download_and_extract(_URLS)
         if "colloquial" in self.config.name:
             data_url = data_dir["test_colloquial"]
         else:
