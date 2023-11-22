@@ -13,7 +13,7 @@ _CITATION = """\
   year={2023}
 }
 """
-_DATASETNAME = "copal"
+_DATASETNAME = "COPAL"
 
 _DESCRIPTION = """\
 COPAL is a novel Indonesian language common sense reasoning dataset. Unlike the previous Indonesian COPA dataset (XCOPA-ID), COPAL-ID incorporates Indonesian local and cultural nuances,
@@ -41,7 +41,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class copal(datasets.GeneratorBasedBuilder):
+class COPAL(datasets.GeneratorBasedBuilder):
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
@@ -96,6 +96,7 @@ class copal(datasets.GeneratorBasedBuilder):
             )
         elif self.config.schema == "seacrowd_qa":
             features = schemas.qa_features
+            features["meta"] = {"terminology": datasets.Value("int64"), "culture": datasets.Value("int64"), "language": datasets.Value("int64")}
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -147,7 +148,7 @@ class copal(datasets.GeneratorBasedBuilder):
                     "choices": [row.choice1, row.choice2],
                     "context": row.premise,
                     "answer": [row.choice1 if row.label == 0 else row.choice2],
-                    "meta": {},
+                    "meta": {"terminology": row.Terminology, "culture": row.Culture, "language": row.Language},
                 }
                 yield row.index, entry
         else:
