@@ -32,18 +32,16 @@ _LICENSE = Licenses.UNKNOWN.value
 _SOURCE_VERSION = "1.0.0"
 
 _URLS = {
-    _DATASETNAME: {
-        "word-level": {
-            "train": "https://raw.githubusercontent.com/VinAIResearch/ViText2SQL/master/data/word-level/train.json",
-            "test": "https://raw.githubusercontent.com/VinAIResearch/ViText2SQL/master/data/word-level/test.json",
-            "validation": "https://raw.githubusercontent.com/VinAIResearch/ViText2SQL/master/data/word-level/dev.json",
-        },
-        "syllable-level": {
-            "train": "https://raw.githubusercontent.com/VinAIResearch/ViText2SQL/master/data/syllable-level/train.json",
-            "test": "https://raw.githubusercontent.com/VinAIResearch/ViText2SQL/master/data/syllable-level/test.json",
-            "validation": "https://raw.githubusercontent.com/VinAIResearch/ViText2SQL/master/data/syllable-level/dev.json",
-        },
-    }
+    "word-level": {
+        "train": "https://raw.githubusercontent.com/VinAIResearch/ViText2SQL/master/data/word-level/train.json",
+        "test": "https://raw.githubusercontent.com/VinAIResearch/ViText2SQL/master/data/word-level/test.json",
+        "validation": "https://raw.githubusercontent.com/VinAIResearch/ViText2SQL/master/data/word-level/dev.json",
+    },
+    "syllable-level": {
+        "train": "https://raw.githubusercontent.com/VinAIResearch/ViText2SQL/master/data/syllable-level/train.json",
+        "test": "https://raw.githubusercontent.com/VinAIResearch/ViText2SQL/master/data/syllable-level/test.json",
+        "validation": "https://raw.githubusercontent.com/VinAIResearch/ViText2SQL/master/data/syllable-level/dev.json",
+    },
 }
 
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
@@ -51,7 +49,7 @@ _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 _SEACROWD_VERSION = "1.0.0"
 
 
-class Vitext2sqlDataset(datasets.GeneratorBasedBuilder):
+class Vitext2sql(datasets.GeneratorBasedBuilder):
     """Vitext2sql dataset is a Text-to-SQL semantic parsing dataset for Vietnamese."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
@@ -59,28 +57,28 @@ class Vitext2sqlDataset(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="vitext2sql_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
             description="Vitext2sql word level source schema",
             schema="source",
             subset_id="vitext2sql",
         ),
         SEACrowdConfig(
-            name="vitext2sql_source_syllable",
+            name=f"{_DATASETNAME}_source_syllable",
             version=SOURCE_VERSION,
             description="Vitext2sql syllable level source schema",
             schema="source",
             subset_id="vitext2sql",
         ),
         SEACrowdConfig(
-            name="vitext2sql_seacrowd_t2t",
+            name=f"{_DATASETNAME}_seacrowd_t2t",
             version=SEACROWD_VERSION,
             description="Vitext2sql SEACrowd schema for word-level",
             schema="seacrowd_t2t",
             subset_id="vitext2sql",
         ),
         SEACrowdConfig(
-            name="vitext2sql_seacrowd_syllable_t2t",
+            name=f"{_DATASETNAME}_seacrowd_syllable_t2t",
             version=SEACROWD_VERSION,
             description="Vitext2sql SEACrowd schema for syllable-level",
             schema="seacrowd_t2t",
@@ -117,18 +115,12 @@ class Vitext2sqlDataset(datasets.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
-        urls = _URLS[_DATASETNAME]
-
         if "syllable" in self.config.name:
-            level_urls = urls["syllable-level"]
+            level_urls = _URLS["syllable-level"]
         else:
-            level_urls = urls["word-level"]
+            level_urls = _URLS["word-level"]
 
-        data_files = {
-            "train": dl_manager.download_and_extract(level_urls["train"]),
-            "test": dl_manager.download_and_extract(level_urls["test"]),
-            "validation": dl_manager.download_and_extract(level_urls["validation"]),
-        }
+        data_files = dl_manager.download_and_extract(level_urls)
         split_generators = [
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
@@ -165,6 +157,6 @@ class Vitext2sqlDataset(datasets.GeneratorBasedBuilder):
                     "text_1": row["question"],
                     "text_2": row["query"],
                     "text_1_name": "question",
-                    "text_2_name": "query",
+                    "text_2_name": "sql_query",
                 }
                 yield i, entry
