@@ -105,12 +105,11 @@ class CC3M35L(datasets.GeneratorBasedBuilder):
         """Returns SplitGenerators."""
         train_path = dl_manager.download_and_extract(_URLS["train"])
         dev_path = dl_manager.download_and_extract(_URLS["dev"])
-        images_path = dl_manager.extract("/project/dataset/images.tgz")  # remove on PR
-        # images_path = dl_manager.download_and_extract(_URLS["images"])
+        images_path = dl_manager.download_and_extract(_URLS["images"])
 
         train_caps = {}
         dev_caps = {}
-        # print(self.config.subset_id.split("_"))
+        
         current_lang = self.config.subset_id.split("_")[2]
 
         with jl.open(os.path.join(train_path), mode="r") as j:
