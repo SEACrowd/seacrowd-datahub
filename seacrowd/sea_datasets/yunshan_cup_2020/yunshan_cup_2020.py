@@ -57,14 +57,14 @@ class YunshanCup2020(datasets.GeneratorBasedBuilder):
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="yunshan_cup_2020_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
             description="yunshan_cup_2020 source schema",
             schema="source",
             subset_id="yunshan_cup_2020",
         ),
         SEACrowdConfig(
-            name="yunshan_cup_2020_seacrowd_seq_label",
+            name=f"{_DATASETNAME}_seacrowd_seq_label",
             version=SEACROWD_VERSION,
             description="yunshan_cup_2020 SEACrowd schema",
             schema="seacrowd_seq_label",
