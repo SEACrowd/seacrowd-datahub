@@ -1,12 +1,13 @@
 import os
-import jsonlines as jl
-import pandas as pd
 from typing import Dict, List, Tuple
 
 import datasets
+import jsonlines as jl
+import pandas as pd
+
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
+from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @inproceedings{thapliyal-etal-2022-crossmodal,
@@ -57,7 +58,8 @@ _SEACROWD_VERSION = "1.0.0"
 
 _LANGS = ["fil", "id", "th", "vi"]
 
-class NewDataset(datasets.GeneratorBasedBuilder):
+
+class XM3600(datasets.GeneratorBasedBuilder):
     """
     Crossmodal-3600 dataset (XM3600 in short), a geographically-diverse set of 3600 images annotated with
     human-generated reference captions in 36 languages. The images were selected from across the world,
@@ -69,18 +71,18 @@ class NewDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    BUILDER_CONFIGS = [SEACrowdConfig(name=f"xm3600_{lang}_source", version=datasets.Version(_SOURCE_VERSION), description=f"xm3600_{lang} source schema", schema="source", subset_id=f"xm3600_{lang}",) for lang in _LANGS] + [
+    BUILDER_CONFIGS = [SEACrowdConfig(name=f"{_DATASETNAME}_{lang}_source", version=datasets.Version(_SOURCE_VERSION), description=f"{_DATASETNAME}_{lang} source schema", schema="source", subset_id=f"{_DATASETNAME}_{lang}",) for lang in _LANGS] + [
         SEACrowdConfig(
-            name=f"xm3600_{lang}_seacrowd_imtext",
+            name=f"{_DATASETNAME}_{lang}_seacrowd_imtext",
             version=datasets.Version(_SEACROWD_VERSION),
-            description=f"xm3600_{lang} SEACrowd schema",
+            description=f"{_DATASETNAME}_{lang} SEACrowd schema",
             schema="seacrowd_imtext",
-            subset_id=f"xm3600_{lang}",
+            subset_id=f"{_DATASETNAME}_{lang}",
         )
         for lang in _LANGS
     ]
 
-    DEFAULT_CONFIG_NAME = "xm3600_id_source"
+    DEFAULT_CONFIG_NAME = f"xm3600_{sorted(_LANGS)[0]}_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -109,13 +111,15 @@ class NewDataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
         captions_path = dl_manager.download_and_extract(_URLS["captions"])
-        images_path = dl_manager.download_and_extract(_URLS["images"])
+        # images_path = dl_manager.download_and_extract(_URLS["images"])
+        images_path = dl_manager.download_and_extract("/project/dataset/images.tgz")
         attr_path = dl_manager.download(_URLS["image_attributions"])
 
         train_caps = {}
         test_caps = {}
         val_caps = {}
 
+        print(self.config.subset_id.split("_"))
         current_lang = self.config.subset_id.split("_")[1]
 
         img_df = pd.read_csv(attr_path)
@@ -124,14 +128,14 @@ class NewDataset(datasets.GeneratorBasedBuilder):
         img_df_test = img_df.loc[img_df["Subset"] == "test"][["ImageID", "Subset"]]
         img_df_val = img_df.loc[img_df["Subset"] == "validation"][["ImageID", "Subset"]]
 
-        with jl.open(os.path.join(captions_path, "captions.jsonl"), mode="r") as j:
-            for l in j:
-                if l["image/key"] in img_df_train.ImageID.values:
-                    train_caps[l["image/key"]] = l[current_lang]
-                elif l["image/key"] in img_df_test.ImageID.values:
-                    test_caps[l["image/key"]] = l[current_lang]
-                elif l["image/key"] in img_df_val.ImageID.values:
-                    val_caps[l["image/key"]] = l[current_lang]
+        with jl.open(os.path.join(captions_path, "captions.jsonl"), mode="r") as jsonl_file:
+            for line in jsonl_file:
+                if line["image/key"] in img_df_train.ImageID.values:
+                    train_caps[line["image/key"]] = line[current_lang]
+                elif line["image/key"] in img_df_test.ImageID.values:
+                    test_caps[line["image/key"]] = line[current_lang]
+                elif line["image/key"] in img_df_val.ImageID.values:
+                    val_caps[line["image/key"]] = line[current_lang]
 
         return [
             datasets.SplitGenerator(
@@ -162,14 +166,14 @@ class NewDataset(datasets.GeneratorBasedBuilder):
         counter = 0
         for img_id in filepath["img_ids"]:
             cap = filepath["captions"][img_id]
-            for l in cap["caption"]:
-                cap_index = cap["caption"].index(l)
+            for line in cap["caption"]:
+                cap_index = cap["caption"].index(line)
                 if self.config.schema == "source":
                     yield counter, {
                         "id": img_id + "_" + str(counter),
                         "image_paths": filepath["images"][img_id],
                         "texts": {
-                            "caption": l,
+                            "caption": line,
                             "caption/tokenized": cap["caption/tokenized"][cap_index],
                             "caption/tokenized/lowercase": cap["caption/tokenized/lowercase"][cap_index],
                         },
@@ -179,7 +183,7 @@ class NewDataset(datasets.GeneratorBasedBuilder):
                     yield counter, {
                         "id": img_id + "_" + str(counter),
                         "image_paths": [filepath["images"][img_id]],
-                        "texts": l,
+                        "texts": line,
                         "metadata": {
                             "context": None,
                             "labels": None,
