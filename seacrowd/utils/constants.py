@@ -1,23 +1,15 @@
+from collections import defaultdict
 from enum import Enum
 from types import SimpleNamespace
-from collections import defaultdict
-from seacrowd.utils.schemas import (
-    kb_features,
-    qa_features,
-    text2text_features,
-    text_features,
-    text_multi_features,
-    pairs_features,
-    pairs_multi_features,
-    pairs_features_score,
-    seq_label_features,
-    ssp_features,
-    speech_text_features,
-    speech2speech_features,
-    speech_features,
-    speech_multi_features,
-    image_text_features,
-)
+
+from seacrowd.utils.schemas import (image_text_features, kb_features,
+                                    pairs_features, pairs_features_score,
+                                    pairs_multi_features, qa_features,
+                                    seq_label_features, speech2speech_features,
+                                    speech_features, speech_multi_features,
+                                    speech_text_features, ssp_features,
+                                    text2text_features, text_features,
+                                    text_multi_features)
 
 METADATA: dict = {
     "_LOCAL": bool,
@@ -99,14 +91,15 @@ class Tasks(Enum):
 
     # No seacrowd schema
     FACT_CHECKING = "FCT"
-    
+
+
 class Licenses(Enum):
     # BSD
     BSD = "BSD license family (bsd)"
     BSD_2_CLAUSE = "BSD 2-clause “Simplified” license (bsd-2-clause)"
     BSD_3_CLAUSE = "BSD 3-clause “New” or “Revised” license (bsd-3-clause)"
     BSD_3_CLAUSE_CLEAR = "BSD 3-clause Clear license (bsd-3-clause-clear)"
-    
+
     # Creative Common
     CC = "Creative Commons license family (cc)"
     CC0_1_0 = "Creative Commons Zero v1.0 Universal (cc0-1.0)"
@@ -130,12 +123,12 @@ class Licenses(Enum):
     CDLA_PERMISSIVE_2_0 = "Community Data License Agreement – Permissive, Version 2.0 (cdla-permissive-2.0)"
     WTFPL = "Do What The F*ck You Want To Public License (wtfpl)"
     ECL_2_0 = "Educational Community License v2.0 (ecl-2.0)"
-    
+
     # EPL
     EPL_1_0 = "Eclipse Public License 1.0 (epl-1.0)"
     EPL_2_0 = "Eclipse Public License 2.0 (epl-2.0)"
     EUPL_1_1 = "European Union Public License 1.1 (eupl-1.1)"
-    
+
     # GPL
     AGPL_3_0 = "GNU Affero General Public License v3.0 (agpl-3.0)"
     GFDL = "GNU Free Documentation License family (gfdl)"
@@ -174,19 +167,17 @@ class Licenses(Enum):
     PDDL = "Open Data Commons Public Domain Dedication and License (pddl)"
     DEEPFLOYD_IF_LICENSE = "DeepFloyd IF Research License Agreement (deepfloyd-if-license)"
     LLAMA2 = "Llama 2 Community License Agreement (llama2)"
-    
+
     # OTHER UNLISTED / UNLICENSED
     UNLICENSE = "The Unlicense (unlicense)"
     UNKNOWN = "Unknown (unknown)"
     # for `OTHERS` license value, a terms of use of the data must be provided and accompanied by this LICENSE value:
     # e.g: f"{Licenses.OTHERS.value} | This data has terms of use of..."
-    OTHERS = """THE DATA IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-        OUT OF OR IN CONNECTION WITH THE DATA OR THE USE OR OTHER DEALINGS IN THE
-        DATA."""
+    OTHERS = """THE DATA IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE DATA
+OR THE USE OR OTHER DEALINGS IN THE DATA."""
 
 
 TASK_TO_SCHEMA = {
