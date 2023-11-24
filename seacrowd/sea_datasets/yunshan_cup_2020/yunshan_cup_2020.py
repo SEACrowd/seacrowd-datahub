@@ -39,7 +39,7 @@ _LICENSE = Licenses.UNKNOWN.value  # example: Licenses.MIT.value, Licenses.CC_BY
 
 _URLS = {
     "train": "https://raw.githubusercontent.com/GKLMIP/Yunshan-Cup-2020/main/train.txt",
-    "dev": "https://raw.githubusercontent.com/GKLMIP/Yunshan-Cup-2020/main/dev.txt",
+    "val": "https://raw.githubusercontent.com/GKLMIP/Yunshan-Cup-2020/main/dev.txt",
     "test": "https://raw.githubusercontent.com/GKLMIP/Yunshan-Cup-2020/main/test.txt",
 }
 _SUPPORTED_TASKS = [Tasks.POS_TAGGING]  # example: [Tasks.TRANSLATION, Tasks.NAMED_ENTITY_RECOGNITION, Tasks.RELATION_EXTRACTION]
@@ -96,9 +96,8 @@ class YunshanCup2020(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        train_path = dl_manager.download_and_extract(_URLS["train"])
-        dev_path = dl_manager.download_and_extract(_URLS["dev"])
-        test_path = dl_manager.download_and_extract(_URLS["test"])
+        path_dict = dl_manager.download_and_extract(_URLS)
+        train_path, val_path, test_path = path_dict["train"], path_dict["val"], path_dict["test"]
 
         return [
             datasets.SplitGenerator(
@@ -118,8 +117,8 @@ class YunshanCup2020(datasets.GeneratorBasedBuilder):
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
-                    "filepath": dev_path,
-                    "split": "dev",
+                    "filepath": val_path,
+                    "split": "val",
                 },
             ),
         ]
