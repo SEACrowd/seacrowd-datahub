@@ -120,6 +120,7 @@ class SQuADIdDataset(datasets.GeneratorBasedBuilder):
                                     "choices": [],
                                     "context": each_data["context"],
                                     "answer": answers,
+                                    "meta": {}
                                 }
 
                             else:

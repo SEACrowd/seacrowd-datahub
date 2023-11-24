@@ -77,23 +77,45 @@ _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
-_NAMES = ["acm_Arab", "arz_Arab", "ceb_Latn", "fin_Latn", "hin_Deva", "ita_Latn", "khm_Khmr", "lvs_Latn", "npi_Deva", "pol_Latn", "slv_Latn", "swe_Latn", "tso_Latn", "xho_Latn", "afr_Latn", "asm_Beng", "ces_Latn", "fra_Latn", "hin_Latn", "jav_Latn", "kin_Latn", "mal_Mlym", "npi_Latn", "por_Latn", "sna_Latn", "swh_Latn", "tur_Latn", "yor_Latn", "als_Latn", "azj_Latn", "ckb_Arab", "fuv_Latn", "hrv_Latn", "jpn_Jpan", "kir_Cyrl", "mar_Deva", "nso_Latn", "snd_Arab", "tam_Taml", "ukr_Cyrl", "zho_Hans", "amh_Ethi", "bam_Latn", "dan_Latn", "gaz_Latn", "hun_Latn", "kac_Latn", "kor_Hang", "mkd_Cyrl", "nya_Latn", "ron_Latn", "som_Latn", "tel_Telu", "urd_Arab", "zho_Hant", "apc_Arab", "ben_Beng", "deu_Latn", "grn_Latn", "hye_Armn", "kan_Knda", "lao_Laoo", "mlt_Latn", "ory_Orya", "rus_Cyrl", "sot_Latn", "tgk_Cyrl", "urd_Latn", "zsm_Latn", "arb_Arab", "ben_Latn", "ell_Grek", "guj_Gujr", "ibo_Latn", "kat_Geor", "lin_Latn", "mri_Latn", "pan_Guru", "shn_Mymr", "spa_Latn", "tgl_Latn", "uzn_Latn", "zul_Latn", "arb_Latn", "bod_Tibt", "eng_Latn", "hat_Latn", "ilo_Latn", "kaz_Cyrl", "lit_Latn", "mya_Mymr", "pbt_Arab", "sin_Latn", "srp_Cyrl", "tha_Thai", "vie_Latn", "ars_Arab", "bul_Cyrl", "est_Latn", "hau_Latn", "ind_Latn", "kea_Latn", "lug_Latn", "nld_Latn", "pes_Arab", "sin_Sinh", "ssw_Latn", "tir_Ethi", "war_Latn", "ary_Arab", "cat_Latn", "eus_Latn", "heb_Hebr", "isl_Latn", "khk_Cyrl", "luo_Latn", "nob_Latn", "plt_Latn", "slk_Latn", "sun_Latn", "tsn_Latn", "wol_Latn"]
+_SOURCE_NAMES = ["ceb_Latn", "ilo_Latn", "ind_Latn", "jav_Latn", "kac_Latn", "khm_Khmr", "lao_Laoo", "mya_Mymr", "shn_Mymr", "sun_Latn", "tgl_Latn", "tha_Thai", "vie_Latn", "war_Latn", "zsm_Latn"]
+_LANGUAGES = [source.split("_")[0] for source in _SOURCE_NAMES]
 
-def config_constructor(lang: str, schema: str, version: str) -> SEACrowdConfig:
+_DEFAULT_LANG = "zsm"
+
+def config_constructor(belebele_subset: str, schema: str, version: str) -> SEACrowdConfig:
+    lang = _LANGUAGES[_SOURCE_NAMES.index(belebele_subset)]
     return SEACrowdConfig(
-        name="belebele_{lang}_{schema}".format(lang=lang, schema=schema),
+        name="belebele_{belebele_subset}_{schema}".format(belebele_subset=belebele_subset.lower(), schema=schema),
         version=version,
         description="belebele {lang} {schema} schema".format(lang=lang, schema=schema),
         schema=schema,
-        subset_id="belebele",
+        subset_id=lang,
     )
 
 class BelebeleDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-    BUILDER_CONFIGS = [config_constructor(lang, "source", _SOURCE_VERSION) for lang in _NAMES]
-    BUILDER_CONFIGS.extend((config_constructor(lang, "seacrowd_qa", _SEACROWD_VERSION) for lang in _NAMES))
-    DEFAULT_CONFIG_NAME = "belebele_acm_Arab_source"
+    BUILDER_CONFIGS = [config_constructor(lang, "source", _SOURCE_VERSION) for lang in _SOURCE_NAMES]
+    BUILDER_CONFIGS.extend([config_constructor(source_subset, "seacrowd_qa", _SEACROWD_VERSION) for source_subset in _SOURCE_NAMES])
+
+    #add config of "belebele_source" and "belebele_seacrowd_qa" for defined "_DEFAULT_LANG"
+    BUILDER_CONFIGS.extend([
+        SEACrowdConfig(
+            name="belebele_source",
+            version=_SOURCE_VERSION,
+            description=f"belebele default source schema (using language of {_DEFAULT_LANG})",
+            schema="source",
+            subset_id=_DEFAULT_LANG
+        ),
+        SEACrowdConfig(
+            name="belebele_seacrowd_qa",
+            version=_SEACROWD_VERSION,
+            description=f"belebele default seacrowd schema for QA task (using language of {_DEFAULT_LANG})",
+            schema="seacrowd_qa",
+            subset_id=_DEFAULT_LANG
+        )]
+    )
+    DEFAULT_CONFIG_NAME = "belebele_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -125,10 +147,9 @@ class BelebeleDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        comps = self.config.name.split("_")
-        lang = comps[1]+"_"+comps[2]
+        source_name = _SOURCE_NAMES[_LANGUAGES.index(self.config.subset_id)]
         path = dl_manager.download_and_extract(_URLS[_DATASETNAME])
-        file = "{path}/Belebele/{lang}.jsonl".format(path=path, lang=lang)
+        file = "{path}/Belebele/{source_name}.jsonl".format(path=path, source_name=source_name)
 
         return [
             datasets.SplitGenerator(
@@ -161,6 +182,7 @@ class BelebeleDataset(datasets.GeneratorBasedBuilder):
                         "choices": choices,
                         "context": line['flores_passage'],
                         "answer": [answer],
+                        "meta": {}
                     }
         else:
             raise ValueError(f"Invalid config {self.config.name}")
