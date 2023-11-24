@@ -12,18 +12,81 @@ from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Tasks
 
 _CITATION = """\
-@inproceedings{abadji2022cleaner,
-    author    = {Julien Abadji and
-                Pedro Javier Ortiz Su{\'{a}}rez and
-                Laurent Romary and
-                Beno{\^{\i}}t Sagot},
-    title     = {Towards a Cleaner Document-Oriented Multilingual Crawled Corpus},
-    booktitle = {Proceedings of the Thirteenth Language Resources and Evaluation Conference,
-                {LREC} 2022, Marseille, France, 20-25 June 2022},
-    pages     = {4344--4355},
-    publisher = {European Language Resources Association},
-    year      = {2022},
-    url       = {https://aclanthology.org/2022.lrec-1.463},
+@ARTICLE{2022arXiv220106642A,
+    author = {{Abadji}, Julien and {Ortiz Suarez}, Pedro and {Romary}, Laurent and {Sagot}, Beno{\^\i}t},
+    title = "{Towards a Cleaner Document-Oriented Multilingual Crawled Corpus}",
+    journal = {arXiv e-prints},
+    keywords = {Computer Science - Computation and Language},
+    year = 2022,
+    month = jan,
+    eid = {arXiv:2201.06642},
+    pages = {arXiv:2201.06642},
+    archivePrefix = {arXiv},
+    eprint = {2201.06642},
+    primaryClass = {cs.CL},
+    adsurl = {https://ui.adsabs.harvard.edu/abs/2022arXiv220106642A},
+    adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@inproceedings{AbadjiOrtizSuarezRomaryetal.2021,
+    author    = {Julien Abadji and Pedro Javier Ortiz Su{\'a}rez and Laurent Romary and Beno{\^i}t Sagot},
+    title     = {Ungoliant: An optimized pipeline for the generation of a very large-scale multilingual web corpus},
+    series = {Proceedings of the Workshop on Challenges in the Management of Large Corpora (CMLC-9) 2021. Limerick, 12 July 2021 (Online-Event)},
+    editor    = {Harald L{\"u}ngen and Marc Kupietz and Piotr Bański and Adrien Barbaresi and Simon Clematide and Ines Pisetta},
+    publisher = {Leibniz-Institut f{\"u}r Deutsche Sprache},
+    address   = {Mannheim},
+    doi       = {10.14618/ids-pub-10468},
+    url       = {https://nbn-resolving.org/urn:nbn:de:bsz:mh39-104688},
+    pages     = {1 -- 9},
+    year      = {2021},
+    abstract  = {Since the introduction of large language models in Natural Language Processing, large raw corpora have played a crucial role in Computational Linguistics. However, most of these large raw corpora are either available only for English or not available to the general public due to copyright issues. Nevertheless, there are some examples of freely available multilingual corpora for training Deep Learning NLP models, such as the OSCAR and Paracrawl corpora. However, they have quality issues, especially for low-resource languages. Moreover, recreating or updating these corpora is very complex. In this work, we try to reproduce and improve the goclassy pipeline used to create the OSCAR corpus. We propose a new pipeline that is faster, modular, parameterizable, and well documented. We use it to create a corpus similar to OSCAR but larger and based on recent data. Also, unlike OSCAR, the metadata information is at the document level. We release our pipeline under an open source license and publish the corpus under a research-only license.},
+    language  = {en}
+}
+
+@ARTICLE{caswell-etal-2021-quality,
+    author = {{Caswell}, Isaac and {Kreutzer}, Julia and {Wang}, Lisa and {Wahab}, Ahsan and {van Esch}, Daan and {Ulzii-Orshikh}, Nasanbayar and {Tapo}, Allahsera and {Subramani}, Nishant and {Sokolov}, Artem and {Sikasote}, Claytone and {Setyawan}, Monang and {Sarin}, Supheakmungkol and {Samb}, Sokhar and {Sagot}, Beno{\^\i}t and {Rivera}, Clara and {Rios}, Annette and {Papadimitriou}, Isabel and {Osei}, Salomey and {Ortiz Su{\'a}rez}, Pedro Javier and {Orife}, Iroro and {Ogueji}, Kelechi and {Niyongabo}, Rubungo Andre and {Nguyen}, Toan Q. and {M{\"u}ller}, Mathias and {M{\"u}ller}, Andr{\'e} and {Hassan Muhammad}, Shamsuddeen and {Muhammad}, Nanda and {Mnyakeni}, Ayanda and {Mirzakhalov}, Jamshidbek and {Matangira}, Tapiwanashe and {Leong}, Colin and {Lawson}, Nze and {Kudugunta}, Sneha and {Jernite}, Yacine and {Jenny}, Mathias and {Firat}, Orhan and {Dossou}, Bonaventure F.~P. and {Dlamini}, Sakhile and {de Silva}, Nisansa and {{\c{C}}abuk Ball{\i}}, Sakine and {Biderman}, Stella and {Battisti}, Alessia and {Baruwa}, Ahmed and {Bapna}, Ankur and {Baljekar}, Pallavi and {Abebe Azime}, Israel and {Awokoya}, Ayodele and {Ataman}, Duygu and {Ahia}, Orevaoghene and {Ahia}, Oghenefego and {Agrawal}, Sweta and {Adeyemi}, Mofetoluwa},
+    title = "{Quality at a Glance: An Audit of Web-Crawled Multilingual Datasets}",
+    journal = {arXiv e-prints},
+    keywords = {Computer Science - Computation and Language, Computer Science - Artificial Intelligence},
+    year = 2021,
+    month = mar,
+    eid = {arXiv:2103.12028},
+    pages = {arXiv:2103.12028},
+    archivePrefix = {arXiv},
+    eprint = {2103.12028},
+    primaryClass = {cs.CL},
+    adsurl = {https://ui.adsabs.harvard.edu/abs/2021arXiv210312028C},
+    adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@inproceedings{ortiz-suarez-etal-2020-monolingual,
+    title = "A Monolingual Approach to Contextualized Word Embeddings for Mid-Resource Languages",
+    author = "Ortiz Su{'a}rez, Pedro Javier  and
+    Romary, Laurent  and
+    Sagot, Benoit",
+    booktitle = "Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics",
+    month = jul,
+    year = "2020",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://www.aclweb.org/anthology/2020.acl-main.156",
+    pages = "1703--1714",
+    abstract = "We use the multilingual OSCAR corpus, extracted from Common Crawl via language classification, filtering and cleaning, to train monolingual contextualized word embeddings (ELMo) for five mid-resource languages. We then compare the performance of OSCAR-based and Wikipedia-based ELMo embeddings for these languages on the part-of-speech tagging and parsing tasks. We show that, despite the noise in the Common-Crawl-based OSCAR data, embeddings trained on OSCAR perform much better than monolingual embeddings trained on Wikipedia. They actually equal or improve the current state of the art in tagging and parsing for all five languages. In particular, they also improve over multilingual Wikipedia-based contextual embeddings (multilingual BERT), which almost always constitutes the previous state of the art, thereby showing that the benefit of a larger, more diverse corpus surpasses the cross-lingual benefit of multilingual embedding architectures.",
+}
+
+@inproceedings{OrtizSuarezSagotRomary2019,
+    author    = {Pedro Javier {Ortiz Su{'a}rez} and Benoit Sagot and Laurent Romary},
+    title     = {Asynchronous pipelines for processing huge corpora on medium to low resource infrastructures},
+    series = {Proceedings of the Workshop on Challenges in the Management of Large Corpora (CMLC-7) 2019. Cardiff, 22nd July 2019},
+    editor    = {Piotr Bański and Adrien Barbaresi and Hanno Biber and Evelyn Breiteneder and Simon Clematide and Marc Kupietz and Harald L{"u}ngen and Caroline Iliadi},
+    publisher = {Leibniz-Institut f{"u}r Deutsche Sprache},
+    address   = {Mannheim},
+    doi       = {10.14618/ids-pub-9021},
+    url       = {http://nbn-resolving.de/urn:nbn:de:bsz:mh39-90215},
+    pages     = {9 -- 16},
+    year      = {2019},
+    abstract  = {Common Crawl is a considerably large, heterogeneous multilingual corpus comprised of crawled documents from the internet, surpassing 20TB of data and distributed as a set of more than 50 thousand plain text files where each contains many documents written in a wide variety of languages. Even though each document has a metadata block associated to it, this data lacks any information about the language in which each document is written, making it extremely difficult to use Common Crawl for monolingual applications. We propose a general, highly parallel, multithreaded pipeline to clean and classify Common Crawl by language; we specifically design it so that it runs efficiently on medium to low resource infrastructures where I/O speeds are the main constraint. We develop the pipeline so that it can be easily reapplied to any kind of heterogeneous corpus and so that it can be parameterised to a wide range of infrastructures. We also distribute a 6.3TB version of Common Crawl, filtered, classified by language, shuffled at line level in order to avoid copyright issues, and ready to be used for NLP applications.},
+    language  = {en}
 }
 """
 
