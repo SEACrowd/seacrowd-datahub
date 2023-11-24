@@ -61,7 +61,8 @@ class CulturaXDataset(datasets.GeneratorBasedBuilder):
             description=f"{_DATASETNAME} {subset} source schema",
             schema="source",
             subset_id=subset,
-        ) for subset in SUBSETS
+        )
+        for subset in SUBSETS
     ] + [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_{subset}_seacrowd_ssp",
@@ -122,7 +123,6 @@ class CulturaXDataset(datasets.GeneratorBasedBuilder):
         """Yields examples as (key, example) tuples.
 
         Iterate over row groups in each filepaths, then yield each row as an example.
-        https://medium.com/munchy-bytes/are-you-using-parquet-with-pandas-in-the-right-way-595c9ee7112
         """
         key = 0
         for filepath in filepaths:
