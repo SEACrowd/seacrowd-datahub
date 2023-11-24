@@ -111,8 +111,7 @@ class XM3600(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
         captions_path = dl_manager.download_and_extract(_URLS["captions"])
-        # images_path = dl_manager.download_and_extract(_URLS["images"])
-        images_path = dl_manager.download_and_extract("/project/dataset/images.tgz")
+        images_path = dl_manager.download_and_extract(_URLS["images"])
         attr_path = dl_manager.download(_URLS["image_attributions"])
 
         train_caps = {}
