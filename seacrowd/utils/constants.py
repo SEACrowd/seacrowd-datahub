@@ -176,7 +176,6 @@ class Licenses(Enum):
     LLAMA2 = "Llama 2 Community License Agreement (llama2)"
     
     # OTHER UNLISTED / UNLICENSED
-    OTHERS = "Custom License (others)"
     UNLICENSE = "The Unlicense (unlicense)"
     UNKNOWN = "Unknown (unknown)"
 
