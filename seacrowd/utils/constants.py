@@ -121,8 +121,8 @@ class Licenses(Enum):
     CDLA_SHARING_1_0 = "Community Data License Agreement – Sharing, Version 1.0 (cdla-sharing-1.0)"
     CDLA_PERMISSIVE_1_0 = "Community Data License Agreement – Permissive, Version 1.0 (cdla-permissive-1.0)"
     CDLA_PERMISSIVE_2_0 = "Community Data License Agreement – Permissive, Version 2.0 (cdla-permissive-2.0)"
-    WTFPL = "Do What The F*ck You Want To Public License (wtfpl)"
     ECL_2_0 = "Educational Community License v2.0 (ecl-2.0)"
+    WTFPL = "Do What The F*ck You Want To Public License (wtfpl)"
 
     # EPL
     EPL_1_0 = "Eclipse Public License 1.0 (epl-1.0)"
@@ -141,39 +141,39 @@ class Licenses(Enum):
     LGPL_LR = "Lesser General Public License For Linguistic Resources (lgpl-lr)"
 
     # OTHER SPECIFIC LICENSES
+    AFL_3_0 = "Academic Free License v3.0 (afl-3.0)"
     APACHE_2_0 = "Apache license 2.0 (apache-2.0)"
-    MIT = "MIT (mit)"
-    C_UDA = "Computational Use of Data Agreement (c-uda)"
-    OPENRAIL = "OpenRAIL license family (openrail)"
+    ARTISTIC_2_0 = "Artistic license 2.0 (artistic-2.0)"
     BIGSCIENCE_OPENRAIL_M = "BigScience OpenRAIL-M (bigscience-openrail-m)"
     CREATIVEML_OPENRAIL_M = "CreativeML OpenRAIL-M (creativeml-openrail-m)"
     BIGSCIENCE_BLOOM_RAIL_1_0 = "BigScience BLOOM RAIL 1.0 (bigscience-bloom-rail-1.0)"
     BIGCODE_OPENRAIL_M = "BigCode Open RAIL-M v1 (bigcode-openrail-m)"
-    AFL_3_0 = "Academic Free License v3.0 (afl-3.0)"
-    ARTISTIC_2_0 = "Artistic license 2.0 (artistic-2.0)"
     BSL_1_0 = "Boost Software License 1.0 (bsl-1.0)"
+    C_UDA = "Computational Use of Data Agreement (c-uda)"
+    DEEPFLOYD_IF_LICENSE = "DeepFloyd IF Research License Agreement (deepfloyd-if-license)"
     ISC = "ISC (isc)"
+    LLAMA2 = "Llama 2 Community License Agreement (llama2)"
     LPPL_1_3C = "LaTeX Project Public License v1.3c (lppl-1.3c)"
+    MIT = "MIT (mit)"
     MS_PL = "Microsoft Public License (ms-pl)"
     MPL_2_0 = "Mozilla Public License 2.0 (mpl-2.0)"
+    NCSA = "University of Illinois/NCSA Open Source License (ncsa)"
     ODC_BY = "Open Data Commons License Attribution family (odc-by)"
     ODBL = "Open Database License family (odbl)"
+    OFL_1_1 = "SIL Open Font License 1.1 (ofl-1.1)"
+    OPENRAIL = "OpenRAIL license family (openrail)"
     OPENRAIL_PP = "Open Rail++-M License (openrail++)"
     OSL_3_0 = "Open Software License 3.0 (osl-3.0)"
-    POSTGRESQL = "PostgreSQL License (postgresql)"
-    OFL_1_1 = "SIL Open Font License 1.1 (ofl-1.1)"
-    NCSA = "University of Illinois/NCSA Open Source License (ncsa)"
-    ZLIB = "zLib License (zlib)"
     PDDL = "Open Data Commons Public Domain Dedication and License (pddl)"
-    DEEPFLOYD_IF_LICENSE = "DeepFloyd IF Research License Agreement (deepfloyd-if-license)"
-    LLAMA2 = "Llama 2 Community License Agreement (llama2)"
+    POSTGRESQL = "PostgreSQL License (postgresql)"
+    ZLIB = "zLib License (zlib)"
 
     # OTHER UNLISTED / UNLICENSED
-    UNLICENSE = "The Unlicense (unlicense)"
-    UNKNOWN = "Unknown (unknown)"
     # for `OTHERS` license value, a terms of use of the data must be provided and accompanied by this LICENSE value:
     # e.g: f"{Licenses.OTHERS.value} | This data has terms of use of..."
-    OTHERS = "Other License"
+    OTHERS = "Other License (others)"
+    UNLICENSE = "The Unlicense (unlicense)"
+    UNKNOWN = "Unknown (unknown)"
 
 
 TASK_TO_SCHEMA = {
