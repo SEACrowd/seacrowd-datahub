@@ -13,7 +13,7 @@ _DATASETNAME = "wikiann"
 _SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
 _UNIFIED_VIEW_NAME = DEFAULT_SEACROWD_VIEW_NAME
 
-_LANGUAGES = ["ind", "eng", "jav", "min", "sun", "ace", "mly", "map-bms"]
+_LANGUAGES = ["ind", "eng", "jav", "min", "sun", "ace", "mly", "map-bms", "mya", ""]
 _LOCAL = False
 _CITATION = """\
 @inproceedings{pan-etal-2017-cross,
@@ -107,8 +107,32 @@ def seacrowd_config_constructor(lang, schema, version):
     )
 
 
-LANGUAGES_MAP = {"eng": "english", "ind": "indonesian", "jav": "javanese", "min": "minangkabau", "sun": "sundanese", "ace": "acehnese", "mly": "malay", "map_bms": "banyumasan"}  # Actual code is map-bms
-LANG_CODES = {"eng": "en", "ind": "id", "jav": "jv", "min": "min", "sun": "su", "ace": "ace", "mly": "ms", "map_bms": "map-bms"}
+LANGUAGES_MAP = {"eng": "english", 
+                 "ind": "indonesian", 
+                 "jav": "javanese", 
+                 "min": "minangkabau", 
+                 "sun": "sundanese", 
+                 "ace": "acehnese", 
+                 "mly": "malay", 
+                 "map_bms": "banyumasan", 
+                 "mya": "myanmar", 
+                 "tgl": "tagalog", 
+                 "tha": "thailand",
+                 "vie": "vietnam",
+                 "khm": "khmer"}
+LANG_CODES = {"eng": "en", 
+              "ind": "id", 
+              "jav": "jv", 
+              "min": "min", 
+              "sun": "su", 
+              "ace": "ace", 
+              "mly": "ms", 
+              "map_bms": "map-bms", 
+              "mya": "my", 
+              "tgl": "tl", 
+              "tha": "th",
+              "vie": "vi",
+              "khm": "km"}
 
 
 class WikiAnnDataset(datasets.GeneratorBasedBuilder):
