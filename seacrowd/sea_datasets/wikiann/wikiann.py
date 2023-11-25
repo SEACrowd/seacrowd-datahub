@@ -73,6 +73,11 @@ Sundanese	su	sun
 Acehnese	ace	ace
 Malay	ms	mly
 Banyumasan	map-bms	map-bms
+Myanmar my mya
+Tagalog tl tgl
+Thailand th tha
+Vietnam vi vie
+Khmer km khm
 
 
 """
@@ -107,32 +112,8 @@ def seacrowd_config_constructor(lang, schema, version):
     )
 
 
-LANGUAGES_MAP = {"eng": "english", 
-                 "ind": "indonesian", 
-                 "jav": "javanese", 
-                 "min": "minangkabau", 
-                 "sun": "sundanese", 
-                 "ace": "acehnese", 
-                 "mly": "malay", 
-                 "map_bms": "banyumasan", 
-                 "mya": "myanmar", 
-                 "tgl": "tagalog", 
-                 "tha": "thailand",
-                 "vie": "vietnam",
-                 "khm": "khmer"}
-LANG_CODES = {"eng": "en", 
-              "ind": "id", 
-              "jav": "jv", 
-              "min": "min", 
-              "sun": "su", 
-              "ace": "ace", 
-              "mly": "ms", 
-              "map_bms": "map-bms", 
-              "mya": "my", 
-              "tgl": "tl", 
-              "tha": "th",
-              "vie": "vi",
-              "khm": "km"}
+LANGUAGES_MAP = {"eng": "english", "ind": "indonesian", "jav": "javanese", "min": "minangkabau", "sun": "sundanese", "ace": "acehnese", "mly": "malay", "map_bms": "banyumasan", "mya": "myanmar", "tgl": "tagalog", "tha": "thailand", "vie": "vietnam", "khm": "khmer"}
+LANG_CODES = {"eng": "en", "ind": "id", "jav": "jv", "min": "min", "sun": "su", "ace": "ace", "mly": "ms", "map_bms": "map-bms", "mya": "my", "tgl": "tl", "tha": "th","vie": "vi","khm": "km"}
 
 
 class WikiAnnDataset(datasets.GeneratorBasedBuilder):
