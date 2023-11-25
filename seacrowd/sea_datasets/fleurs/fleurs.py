@@ -36,6 +36,9 @@ with open(DownloadManager().download_and_extract("seacrowd/sea_datasets/fleurs/l
 _LOCAL = False
 _LANGUAGES = list(_LANG_CONFIG.keys())
 
+# since this fleurs source already subsets SEA langs, the names on lang group id is hard-coded
+_LANG_GROUP_ID = ["south_east_asian_sea"]
+
 _DATASETNAME = "fleurs"
 _DESCRIPTION = """\
     Fleurs dataset is a part of XTREME-S benchmark to evaluate universal cross-lingual speech representations in many languages.
@@ -50,11 +53,14 @@ _LICENSE = Licenses.CC_BY_4_0.value
 # url won't be used since it will implement load_dataset method on HF URL provided
 _URL = "https://huggingface.co/datasets/google/xtreme_s"
 
+# construct remote_hf_reference by the last 2 of string-spliited of "/" (expected: "google/xtreme_s")
+_HF_REMOTE_REF = "/".join(_URL.split("/")[-2:])
+
 _SUPPORTED_TASKS = [Tasks.SPEECH_RECOGNITION, Tasks.SPEECH_LANGUAGE_IDENTIFICATION]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
-CONFIG_SUFFIXES_FOR_TASK = ["_" + TASK_TO_SCHEMA.get(task).lower() for task in _SUPPORTED_TASKS if task != task.FACT_CHECKING]
+CONFIG_SUFFIXES_FOR_TASK = [TASK_TO_SCHEMA.get(task).lower() for task in _SUPPORTED_TASKS if task != task.FACT_CHECKING]
 
 
 def conform_init_config():
@@ -70,13 +76,13 @@ def conform_init_config():
 conform_init_config()
 
 
-def construct_configs(languages: list = None) -> List[SEACrowdConfig]:
+def construct_configs_on_langs(languages: list = None) -> List[SEACrowdConfig]:
     """
     The function `construct_configs` constructs a list of SEACrowdConfig objects based on the provided
     languages or a default language, and returns the list.
 
     input:
-        languages (list, default None): The `languages` parameter is a list that specifies the languages for which the
+        languages (list): The `languages` parameter is a list that specifies the languages for which the
         configurations need to be constructed. If no languages are provided (value=None), the first value in language config
         will be used.
     output:
@@ -88,100 +94,89 @@ def construct_configs(languages: list = None) -> List[SEACrowdConfig]:
     # set flag whether the task is lang-agnostic based on extended `_SUPPORTED_TASKS`
     IS_TASK_LANG_SUBSETTED = [True, False]
 
-    # set default task for default config w/o task arg name
-    _DEFAULT_TASK = Tasks.SPEECH_RECOGNITION
-
-    __SUPPORTED_TASKS = [_DEFAULT_TASK] + _SUPPORTED_TASKS
-    __CONFIG_SUFFIXES_FOR_TASK = [""] + CONFIG_SUFFIXES_FOR_TASK
-
-    # set flag whether the task is lang-agnostic based on extended `__SUPPORTED_TASKS`
-    __IS_TASK_LANG_SUBSETTED = [True] + IS_TASK_LANG_SUBSETTED
-
     TASKS_AND_CONFIG_SUFFIX_PAIRS = list(zip(_SUPPORTED_TASKS, CONFIG_SUFFIXES_FOR_TASK, IS_TASK_LANG_SUBSETTED))
-    EXT_TASKS_AND_CONFIG_SUFFIX_PAIRS = list(zip(__SUPPORTED_TASKS, __CONFIG_SUFFIXES_FOR_TASK, __IS_TASK_LANG_SUBSETTED))
-    VERSION_AND_CONFIG_PREFIX_PAIRS = list(zip((_SOURCE_VERSION, _SEACROWD_VERSION), ("source", "seacrowd")))
 
-    # check `languages` variable and create config accordingly
-    if languages is None:
-        # set languages arg as list of first entry in `_LANGUAGES` if no lang arg received
-        _languages = _LANGUAGES[0]
+    # implement source schema
+    version, config_name_prefix = _SOURCE_VERSION, "source"
+    config_list += [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{_LANG}_{config_name_prefix}",
+            version=datasets.Version(version),
+            description=f"{_DATASETNAME} {config_name_prefix} schema for language code {_LANG}",
+            schema=f"{config_name_prefix}",
+            subset_id=_LANG,
+        )
+        for _LANG in languages
+    ]
 
-        config_list += [
-            SEACrowdConfig(
-                name=f"{_DATASETNAME}_{config_name_prefix}{config_name_suffix}",
-                version=datasets.Version(version),
-                description=f"{_DATASETNAME} {config_name_prefix} schema for {task_obj.name}",
-                schema=f"{config_name_prefix}{config_name_suffix if config_name_suffix != '' else CONFIG_SUFFIXES_FOR_TASK[_SUPPORTED_TASKS.index(_DEFAULT_TASK)]}",
-                subset_id=_languages if is_lang_subsetted else "all",
-            )
-            for (version, config_name_prefix), (task_obj, config_name_suffix, is_lang_subsetted) in product(VERSION_AND_CONFIG_PREFIX_PAIRS, EXT_TASKS_AND_CONFIG_SUFFIX_PAIRS)
-        ]
-
-    # else, construct configs based on its lang
-    else:
-        for _LANG in languages:
+    # implement SEACrowd schema
+    version, config_name_prefix = _SEACROWD_VERSION, "seacrowd"
+    for (task_obj, config_name_suffix, is_lang_subsetted) in TASKS_AND_CONFIG_SUFFIX_PAIRS:
+        if is_lang_subsetted:
+            # construct configs based on its lang, since the task & config needs to defined per lang
+            # for this dataloader, Tasks.SPEECH_RECOGNITION will enter this condition
             config_list += [
                 SEACrowdConfig(
-                    name=f"{_DATASETNAME}_{config_name_prefix}_{_LANG}{config_name_suffix}",
+                    name=f"{_DATASETNAME}_{_LANG}_{config_name_prefix}_{config_name_suffix}",
                     version=datasets.Version(version),
                     description=f"{_DATASETNAME} {config_name_prefix} schema for {task_obj.name} and language code {_LANG}",
-                    schema=f"{config_name_prefix}{config_name_suffix}",
+                    schema=f"{config_name_prefix}_{config_name_suffix}",
                     subset_id=_LANG,
                 )
-                for (version, config_name_prefix), (task_obj, config_name_suffix, is_lang_subsetted) in product(VERSION_AND_CONFIG_PREFIX_PAIRS, TASKS_AND_CONFIG_SUFFIX_PAIRS)
-                if is_lang_subsetted
+                for _LANG in languages
             ]
+
+        else:
+            # else, its defined for all languages
+            # for this dataloader, Tasks.SPEECH_LANGUAGE_IDENTIFICATION will enter this condition
+            config_list.append(
+                SEACrowdConfig(
+                    name=f"{_DATASETNAME}_all_{config_name_prefix}_{config_name_suffix}",
+                    version=datasets.Version(version),
+                    description=f"{_DATASETNAME} {config_name_prefix} schema for {task_obj.name}",
+                    schema=f"{config_name_prefix}_{config_name_suffix}",
+                    subset_id="all",
+                )
+            )
 
     return config_list
 
 
-class SEAWikiDataset(datasets.GeneratorBasedBuilder):
+class Fleurs(datasets.GeneratorBasedBuilder):
     """Fleurs dataset from https://huggingface.co/datasets/google/xtreme_s"""
 
     # get all schema w/o lang arg + get all schema w/ lang arg
-    BUILDER_CONFIGS = construct_configs() + construct_configs(_LANGUAGES)
+    BUILDER_CONFIGS = construct_configs_on_langs(_LANGUAGES)
 
     def _info(self) -> datasets.DatasetInfo:
         _config_schema_name = self.config.schema
         logger.info(f"Received schema name: {self.config.schema}")
-        # asr transcription schema
-        if CONFIG_SUFFIXES_FOR_TASK[0] in _config_schema_name:
-            if "source" in _config_schema_name:
-                features = datasets.Features(
-                    {
-                        "id": datasets.Value("int32"),
-                        "path": datasets.Value("string"),
-                        "audio": datasets.Audio(sampling_rate=16_000),
-                        "transcription": datasets.Value("string"),
-                        "raw_transcription": datasets.Value("string"),
-                        "gender": datasets.ClassLabel(names=["male", "female", "other"]),
-                    }
-                )
 
-            elif "seacrowd" in _config_schema_name:
-                features = schemas.speech_text_features
+        # source schema
+        if _config_schema_name == "source":
+            features = datasets.Features(
+                {
+                    "id": datasets.Value("int32"),
+                    "num_samples": datasets.Value("int32"),
+                    "path": datasets.Value("string"),
+                    "audio": datasets.Audio(sampling_rate=16_000),
+                    "transcription": datasets.Value("string"),
+                    "raw_transcription": datasets.Value("string"),
+                    "gender": datasets.ClassLabel(names=["male", "female", "other"]),
+                    "lang_id": datasets.ClassLabel(names=_LANGUAGES),
+                    "language": datasets.Value("string"),
+                    "lang_group_id": datasets.ClassLabel(
+                        names=_LANG_GROUP_ID)
+                }
+            )
 
-            else:
-                raise ValueError(f"Unexpected schema received! {_config_schema_name}")
+        # asr transcription schema for seacrowd
+        elif _config_schema_name == f"seacrowd_{CONFIG_SUFFIXES_FOR_TASK[0]}":
+            features = schemas.speech_text_features
 
-        # speech lang classification schema
-        elif CONFIG_SUFFIXES_FOR_TASK[1] in _config_schema_name:
-            if "source" in _config_schema_name:
-                features = datasets.Features(
-                    {
-                        "id": datasets.Value("int32"),
-                        "path": datasets.Value("string"),
-                        "audio": datasets.Audio(sampling_rate=16_000),
-                        "gender": datasets.ClassLabel(names=["male", "female", "other"]),
-                        "language": datasets.Value("string"),
-                    }
-                )
-
-            elif "seacrowd" in _config_schema_name:
-                features = schemas.speech_features(label_names=_LANGUAGES)
-
-            else:
-                raise ValueError(f"Unexpected schema received! {_config_schema_name}")
+        # speech lang classification schema for seacrowd
+        elif _config_schema_name == f"seacrowd_{CONFIG_SUFFIXES_FOR_TASK[1]}":
+            features = schemas.speech_features(label_names=_LANGUAGES)
 
         else:
             raise ValueError(f"Unexpected schema received! {_config_schema_name}")
@@ -190,46 +185,59 @@ class SEAWikiDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: DownloadManager) -> List[datasets.SplitGenerator]:
         # args of dl_manager is useless since this data loader will wrap the hf `load_dataset` from given _URL
-        return [datasets.SplitGenerator(name=split_name, gen_kwargs={"split_name": split_name._name}) for split_name in (datasets.Split.TRAIN, datasets.Split.VALIDATION, datasets.Split.TEST)]
+        return [
+            datasets.SplitGenerator(
+                name=split_name,
+                gen_kwargs={"split_name": split_name._name})
+            for split_name in (
+                datasets.Split.TRAIN,
+                datasets.Split.VALIDATION,
+                datasets.Split.TEST)
+        ]
 
     def _load_hf_data_from_remote(self, split_name: str) -> datasets.DatasetDict:
-        # construct remote_hf_reference by the last 2 of string-spliited of "/"
-        _remote_hf_reference = "/".join(_URL.split("/")[-2:])
+
         if self.config.subset_id == "all":
             raise ValueError("Unexpected subset_id value of `all` received in eager-load of SEACrowd fleurs loader!")
         else:
             _config_name_args = "fleurs." + _LANG_CONFIG[self.config.subset_id]["fleurs_lang_code"] + "_" + _LANG_CONFIG[self.config.subset_id]["fleurs_country_code"]
 
-        logger.info(f"Loading dataset from remote HF {_remote_hf_reference} with seacrowd lang args of {self.config.subset_id} and hf-source config args of {_config_name_args}")
-        _hf_dataset_source = load_dataset(_remote_hf_reference, _config_name_args, split=split_name)
+        logger.info(f"Loading dataset from remote HF {_HF_REMOTE_REF} with seacrowd lang args of {self.config.subset_id} and hf-source config args of {_config_name_args}")
+        _hf_dataset_source = load_dataset(_HF_REMOTE_REF, _config_name_args, split=split_name)
 
         return _hf_dataset_source
 
     def _lazy_load_hf_data_from_remote(self, split_name: str) -> datasets.DatasetDict:
-        _remote_hf_reference = "/".join(_URL.split("/")[-2:])
+
         if self.config.subset_id != "all":
             raise ValueError(f"Unexpected subset_id value of {self.config.subset_id} received in lazy-load of SEACrowd fleurs loader!")
         else:
             _config_name_args = [(f"fleurs.{fleurs_lang_info['fleurs_lang_code']}_{fleurs_lang_info['fleurs_country_code']}", lang) for lang, fleurs_lang_info in _LANG_CONFIG.items()]
 
         for _config, lang_name in _config_name_args:
-            logger.info(f"Loading dataset from remote HF {_remote_hf_reference} with seacrowd lang args of {self.config.subset_id} and hf-source config args of {_config}")
-            yield load_dataset(_remote_hf_reference, _config, split=split_name), lang_name
+            logger.info(f"Loading dataset from remote HF {_HF_REMOTE_REF} with seacrowd lang args of {self.config.subset_id} and hf-source config args of {_config}")
+            yield load_dataset(_HF_REMOTE_REF, _config, split=split_name), lang_name
 
     def _generate_examples(self, split_name: str) -> Tuple[int, Dict]:
 
         _config_schema_name = self.config.schema
 
-        # for asr transcription schema (the data is loaded eagerly)
-        if CONFIG_SUFFIXES_FOR_TASK[0] in _config_schema_name:
+        # for source schema and asr transcription schema (the data is loaded eagerly, since it's splitted by lang)
+        if _config_schema_name in ("source", f"seacrowd_{CONFIG_SUFFIXES_FOR_TASK[0]}"):
             loaded_data = self._load_hf_data_from_remote(split_name)
 
             # iterate over datapoints and arrange hf dataset schema in source to match w/ config args:
             for id_, _data in enumerate(loaded_data):
-                if "source" in _config_schema_name:
-                    yield id_, {colname: _data[colname] for colname in self.info.features}
+                if _config_schema_name == "source":
 
-                # 2 notes on seacrowd schema:
+                    #re-map "language_id" and "lang_group_id"
+                    _data["lang_id"] = _LANGUAGES.index(self.config.subset_id)
+                    _data["lang_group_id"] = 0
+
+                    yield id_, {
+                        colname: _data[colname] for colname in self.info.features}
+
+                # 2 notes on seacrowd schema for ASR:
                 # 1. since in source data, no speakers id nor its info were provided, it will be filled by default values:
                 #    ("" for any data string-typed, and -1 for age data int-typed)
                 # 2. the "id" is re-created on sequential order on loaded data bcs it's original id
@@ -251,8 +259,11 @@ class SEAWikiDataset(datasets.GeneratorBasedBuilder):
                 else:
                     raise ValueError(f"Received unexpected config schema of {_config_schema_name}!")
 
+                # add id_ so it will be globally unique
+                id_ += 1
+
         # for speech lang classification schema (the data is loaded lazily per lang)
-        if CONFIG_SUFFIXES_FOR_TASK[1] in _config_schema_name:
+        elif _config_schema_name == f"seacrowd_{CONFIG_SUFFIXES_FOR_TASK[1]}":
             loaded_data = self._lazy_load_hf_data_from_remote(split_name)
             id_ = 0
             while True:
@@ -261,24 +272,20 @@ class SEAWikiDataset(datasets.GeneratorBasedBuilder):
                     break
                 # iterate over datapoints and arrange hf dataset schema in source to match w/ config args:
                 for _data in _loaded_data:
-                    if "source" in _config_schema_name:
-                        yield id_, {colname: _data[colname] for colname in self.info.features}
-
-                    elif "seacrowd" in _config_schema_name:
-                        yield id_, {
-                            "id": id_,
-                            "path": _data["path"],
-                            "audio": _data["audio"],
-                            "labels": _LANGUAGES.index(lang_info),
-                            "speaker_id": "",
-                            "metadata": {
-                                "speaker_age": -1,
-                                "speaker_gender": _data["gender"],
-                            },
-                        }
-
-                    else:
-                        raise ValueError(f"Received unexpected config schema of {_config_schema_name}!")
+                    yield id_, {
+                        "id": id_,
+                        "path": _data["path"],
+                        "audio": _data["audio"],
+                        "labels": _LANGUAGES.index(lang_info),
+                        "speaker_id": "",
+                        "metadata": {
+                            "speaker_age": -1,
+                            "speaker_gender": _data["gender"],
+                        },
+                    }
 
                     # add id_ so it will be globally unique
                     id_ += 1
+
+        else:
+            raise ValueError(f"Received unexpected config schema of {_config_schema_name}!")
