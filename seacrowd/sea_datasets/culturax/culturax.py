@@ -7,7 +7,7 @@ from pyarrow import parquet as pq
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks
+from seacrowd.utils.constants import Tasks, Licenses
 
 _CITATION = """\
 @article{nguyen2023culturax,
@@ -32,7 +32,7 @@ KenLM language models, utilizing recent Wikipedia dumps for perplexity scoring.
 """
 
 _HOMEPAGE = "https://huggingface.co/datasets/uonlp/CulturaX"
-_LICENSE = """
+_LICENSE = f"""{Licenses.OTHERS.value} | \
     The licence terms for CulturaX strictly follows those of mC4 and OSCAR. \
     Please refer to both below licenses when using this dataset. \
     - mC4 license: https://huggingface.co/datasets/allenai/c4#license \
