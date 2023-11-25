@@ -19,9 +19,9 @@ _DESCRIPTION = """\
 
 _HOMEPAGE = "https://huggingface.co/datasets/indonesian-nlp/mc4-id"
 _LICENSE = Licenses.ODC_BY.value
-_LOCAL = False
-_LANGUAGES = ["ceb"]
-_DATASETNAME = "cebuaner"
+
+_LANGUAGES = ["ind"]
+_DATASETNAME = "mc4_indo"
 
 _CITATION = """
 @inproceedings{xue-etal-2021-mt5,
@@ -46,11 +46,12 @@ _CITATION = """
 """
 
 _URLS = {"raw": "https://huggingface.co/datasets/munggok/mc4-id/resolve/main/mc4-id-filter/c4-id{split_suffix}.tfrecord-{index:05d}-of-{n_shards:05d}.json.gz"}
+
+_CONFIGS = {"full": {"train": 1016, "validation": 8}}
 # The entire dataset is 150 Gigs. You can adjust the number of "parquet" files you want to download here
 # _CONFIGS = {
 #     "full": {"train": 1, "validation": 1}
 # }
-_CONFIGS = {"full": {"train": 1016, "validation": 8}}
 
 
 _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
@@ -58,28 +59,27 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class MC4_Indo(datasets.GeneratorBasedBuilder):
+class MC4Indo(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="mc4_indo_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
             description="mc4_indo source schema",
             schema="source",
             subset_id="mc4_indo",
         ),
         SEACrowdConfig(
-            name="mc4_indo_seacrowd_ssp",
+            name=f"{_DATASETNAME}_seacrowd_ssp",
             version=SEACROWD_VERSION,
             description="mc4_indo SEACrowd schema",
             schema="seacrowd_ssp",
             subset_id="mc4_indo",
         ),
     ]
-
-    DEFAULT_CONFIG_NAME = "[dataset_name]_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -133,14 +133,14 @@ class MC4_Indo(datasets.GeneratorBasedBuilder):
                 for line in f:
                     if line:
                         example = json.loads(line)
-                        if self.config.schema == "source":
-                            sourcee_json = {"text": str(example["text"]), "timestamp": str(example["timestamp"]), "url": str(example["url"])}
 
-                            yield id_, sourcee_json
+                        if self.config.schema == "source":
+                            yield id_, example
                         elif self.config.schema == "seacrowd_ssp":
                             seacrowd_json = {
                                 "id": str(id_),
                                 "text": str(example["text"]),
                             }
                             yield id_, seacrowd_json
+
                         id_ += 1
