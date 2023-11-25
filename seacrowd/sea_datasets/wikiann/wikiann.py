@@ -13,7 +13,7 @@ _DATASETNAME = "wikiann"
 _SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
 _UNIFIED_VIEW_NAME = DEFAULT_SEACROWD_VIEW_NAME
 
-_LANGUAGES = ["ind", "eng", "jav", "min", "sun", "ace", "mly", "map-bms", "mya", ""]
+_LANGUAGES = ["ind", "eng", "jav", "min", "sun", "ace", "mly", "map-bms", "mya", "tgl", "tha", "vie", "khm"]
 _LOCAL = False
 _CITATION = """\
 @inproceedings{pan-etal-2017-cross,
