@@ -9,7 +9,7 @@ import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks
+from seacrowd.utils.constants import Tasks, Licenses
 
 _CITATION = """\
 @inproceedings{abadji2022cleaner,
@@ -213,20 +213,7 @@ deduplicated form.
 """
 
 _HOMEPAGE = "https://huggingface.co/datasets/oscar-corpus/OSCAR-2201"
-_LICENSE = """\
-These data are released under this licensing scheme \
-We do not own any of the text from which these data has been extracted. \
-We license the actual packaging of these data under the Creative Commons CC0 license ("no rights reserved") http://creativecommons.org/publicdomain/zero/1.0/ \
-To the extent possible under law, Inria has waived all copyright and related or neighboring rights to OSCAR \
-This work is published from: France. \
-\
-Should you consider that our data contains material that is owned by you and should therefore not be reproduced here, please: \
-* Clearly identify yourself, with detailed contact data such as an address, telephone number or email address at which you can be contacted. \
-* Clearly identify the copyrighted work claimed to be infringed. \
-* Clearly identify the material that is claimed to be infringing and information reasonably sufficient to allow us to locate the material. \
-\
-We will comply to legitimate requests by removing the affected sources from the next release of the corpus.
-"""
+_LICENSE = Licenses.CC0_1_0.value
 _BASE_URL = "https://huggingface.co/datasets/oscar-corpus/OSCAR-2201/resolve/main/compressed/{lang}_meta/"
 
 _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
