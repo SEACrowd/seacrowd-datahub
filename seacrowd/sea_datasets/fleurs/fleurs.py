@@ -142,7 +142,7 @@ def construct_configs_on_langs(languages: list = None) -> List[SEACrowdConfig]:
     return config_list
 
 
-class Fleurs(datasets.GeneratorBasedBuilder):
+class FleursDataset(datasets.GeneratorBasedBuilder):
     """Fleurs dataset from https://huggingface.co/datasets/google/xtreme_s"""
 
     # get all schema w/o lang arg + get all schema w/ lang arg
