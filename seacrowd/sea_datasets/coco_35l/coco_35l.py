@@ -58,7 +58,7 @@ _SEACROWD_VERSION = "1.0.0"
 _LANGS = ["fil", "id", "th", "vi"]
 
 
-class COCO35L(datasets.GeneratorBasedBuilder):
+class Coco35LDataset(datasets.GeneratorBasedBuilder):
     """
     COCO-35L is a machine-generated image caption dataset, constructed by translating COCO Captions (Chen et al., 2015) to the other 34 languages using Google’s machine translation API.
     """
