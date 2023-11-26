@@ -71,7 +71,16 @@ class XM3600(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    BUILDER_CONFIGS = [SEACrowdConfig(name=f"{_DATASETNAME}_{lang}_source", version=datasets.Version(_SOURCE_VERSION), description=f"{_DATASETNAME}_{lang} source schema", schema="source", subset_id=f"{_DATASETNAME}_{lang}",) for lang in _LANGS] + [
+    BUILDER_CONFIGS = [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{lang}_source",
+            version=datasets.Version(_SOURCE_VERSION),
+            description=f"{_DATASETNAME}_{lang} source schema",
+            schema="source",
+            subset_id=f"{_DATASETNAME}_{lang}",
+        )
+        for lang in _LANGS
+    ] + [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_{lang}_seacrowd_imtext",
             version=datasets.Version(_SEACROWD_VERSION),
@@ -118,7 +127,6 @@ class XM3600(datasets.GeneratorBasedBuilder):
         test_caps = {}
         val_caps = {}
 
-        print(self.config.subset_id.split("_"))
         current_lang = self.config.subset_id.split("_")[1]
 
         img_df = pd.read_csv(attr_path)
@@ -141,26 +149,23 @@ class XM3600(datasets.GeneratorBasedBuilder):
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
                     "filepath": {"img_ids": img_df_train.ImageID.values, "images": {img_id: os.path.join(images_path, img_id + ".jpg") for img_id in img_df_train.ImageID.values}, "captions": train_caps},
-                    "split": "train",
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
                 gen_kwargs={
                     "filepath": {"img_ids": img_df_test.ImageID.values, "images": {img_id: os.path.join(images_path, img_id + ".jpg") for img_id in img_df_test.ImageID.values}, "captions": test_caps},
-                    "split": "test",
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
                     "filepath": {"img_ids": img_df_val.ImageID.values, "images": {img_id: os.path.join(images_path, img_id + ".jpg") for img_id in img_df_val.ImageID.values}, "captions": val_caps},
-                    "split": "dev",
                 },
             ),
         ]
 
-    def _generate_examples(self, filepath: dict, split: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepath: dict) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         counter = 0
         for img_id in filepath["img_ids"]:
