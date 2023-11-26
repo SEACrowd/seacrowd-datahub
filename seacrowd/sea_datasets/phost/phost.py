@@ -39,7 +39,7 @@ _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
-_LANGUAGES = ["en", "vi"]
+_LANGUAGES = ["eng", "vie"]
 
 def seacrowd_config_constructor(src_lang, tgt_lang, schema, version):
     if src_lang == "" or tgt_lang == "":
