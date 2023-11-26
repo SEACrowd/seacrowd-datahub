@@ -2,6 +2,8 @@
 General Video-to-Text Schema, including:
 - Video captioning
 - Video to text retrieval
+
+Video datasets can be very large. For datasets with remote videos ('video_path' = video URL), ensure that the URL is publicly accessible and the video is downloadable. Extra caution is needed, as the URL might contain harmful and/or malicious files.
 """
 import datasets
 
