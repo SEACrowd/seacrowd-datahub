@@ -133,34 +133,32 @@ class KhmerAltPOS(datasets.GeneratorBasedBuilder):
         ]
 
     def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
-        data_tokens = open(f"{filepath}/km-nova-181101/data_km.km-tag.nova", "r").readlines()
+        data_labels = open(f"{filepath}/km-nova-181101/data_km.km-tag.nova", "r").readlines()
 
-        data_sentences = open(f"{filepath}/km-nova-181101/data_km.km-tok.nova", "r").readlines()
+        data_tokens = open(f"{filepath}/km-nova-181101/data_km.km-tok.nova", "r").readlines()
 
         mapping_sentences = {}
-
-        for line in data_sentences:
-            id, labels = line.split("\t")
-            labels, _ = labels.split("\n")
-
-            if id not in mapping_sentences:
-                mapping_sentences[id] = {}
-            
-            mapping_sentences[id]["labels"] = labels.split(" ")
 
         for line in data_tokens:
             id, tokens = line.split("\t")
             tokens, _ = tokens.split("\n")
-            
+
             if id not in mapping_sentences:
                 mapping_sentences[id] = {}
             
             mapping_sentences[id]["tokens"] = tokens.split(" ")
 
+        for line in data_labels:
+            id, labels = line.split("\t")
+            labels, _ = labels.split("\n")
+            
+            if id not in mapping_sentences:
+                mapping_sentences[id] = {}
+            
+            mapping_sentences[id]["labels"] = labels.split(" ")
+
         if self.config.schema == "source" or self.config.schema == "seacrowd_seq_label":
-            num = -1
             for num, key in enumerate(mapping_sentences):
-                num+=1
                 yield num, {
                     "id": key,
                     "tokens": mapping_sentences[key]["tokens"],
