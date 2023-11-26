@@ -21,7 +21,6 @@ _HOMEPAGE = "https://huggingface.co/datasets/indonesian-nlp/mc4-id"
 _LICENSE = Licenses.ODC_BY.value
 
 _LANGUAGES = ["ind"]
-_DATASETNAME = "mc4_indo"
 
 _CITATION = """
 @inproceedings{xue-etal-2021-mt5,
