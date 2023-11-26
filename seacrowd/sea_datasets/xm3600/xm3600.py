@@ -59,7 +59,7 @@ _SEACROWD_VERSION = "1.0.0"
 _LANGS = ["fil", "id", "th", "vi"]
 
 
-class XM3600(datasets.GeneratorBasedBuilder):
+class XM3600Dataset(datasets.GeneratorBasedBuilder):
     """
     Crossmodal-3600 dataset (XM3600 in short), a geographically-diverse set of 3600 images annotated with
     human-generated reference captions in 36 languages. The images were selected from across the world,
