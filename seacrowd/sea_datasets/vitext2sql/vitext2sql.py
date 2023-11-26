@@ -62,7 +62,7 @@ _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 _SEACROWD_VERSION = "1.0.0"
 
 
-class Vitext2sql(datasets.GeneratorBasedBuilder):
+class ViText2SQLDataset(datasets.GeneratorBasedBuilder):
     """Vitext2sql dataset is a Text-to-SQL semantic parsing dataset for Vietnamese."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
