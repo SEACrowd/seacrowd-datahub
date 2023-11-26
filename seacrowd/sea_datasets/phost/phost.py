@@ -80,8 +80,8 @@ class Phost(datasets.GeneratorBasedBuilder):
                 {
                     "file": datasets.Value("string"),
                     "audio": datasets.Audio(sampling_rate=16_000),
-                    "en_sentence": datasets.Sequence(datasets.Value("string")),
-                    "vi_translation": datasets.Sequence(datasets.Value("string")),
+                    "en_text": datasets.Sequence(datasets.Value("string")),
+                    "vi_text": datasets.Sequence(datasets.Value("string")),
                     "timing": datasets.Sequence(datasets.Value("string")),
                 }
             )
