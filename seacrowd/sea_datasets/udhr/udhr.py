@@ -74,7 +74,7 @@ def seacrowd_config_constructor(src_lang, schema, version):
     )
 
 
-class NewDataset(datasets.GeneratorBasedBuilder):
+class UDHRDataset(datasets.GeneratorBasedBuilder):
     """
     The Universal Declaration of Human Rights (UDHR) is a milestone document in the history of
     human rights. Drafted by representatives with different legal and cultural backgrounds from
