@@ -22,9 +22,9 @@ _CITATION = """\
 _DATASETNAME = "phost"
 
 _DESCRIPTION = """\
-	PhoST is a high-quality and large-scale benchmark dataset for English-Vietnamese speech translation
-    with 508 audio hours, consisting of 331K triplets of (sentence-lengthed audio, English source
-    transcript sentence, Vietnamese target subtitle sentence).
+PhoST is a high-quality and large-scale benchmark dataset for English-Vietnamese speech translation
+with 508 audio hours, consisting of 331K triplets of (sentence-lengthed audio, English source
+transcript sentence, Vietnamese target subtitle sentence).
 """
 
 _HOMEPAGE = "https://github.com/VinAIResearch/PhoST"
@@ -33,13 +33,14 @@ _LICENSE = Licenses.CC_BY_NC_ND_4_0.value
 
 _LOCAL = True
 
-_SUPPORTED_TASKS = [Tasks.SPEECH_RECOGNITION, Tasks.SPEECH_TO_TEXT_TRANSLATION, Tasks.MACHINE_TRANSLATION]  
+_SUPPORTED_TASKS = [Tasks.SPEECH_RECOGNITION, Tasks.SPEECH_TO_TEXT_TRANSLATION, Tasks.MACHINE_TRANSLATION]
 
 _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
 _LANGUAGES = ["eng", "vie"]
+
 
 def seacrowd_config_constructor(src_lang, tgt_lang, schema, version):
     if src_lang == "" or tgt_lang == "":
@@ -55,6 +56,7 @@ def seacrowd_config_constructor(src_lang, tgt_lang, schema, version):
         schema=schema,
         subset_id="phost_{src}_{tgt}".format(src=src_lang, tgt=tgt_lang),
     )
+
 
 class Phost(datasets.GeneratorBasedBuilder):
     """
@@ -80,8 +82,8 @@ class Phost(datasets.GeneratorBasedBuilder):
                 {
                     "file": datasets.Value("string"),
                     "audio": datasets.Audio(sampling_rate=16_000),
-                    "en_text": datasets.Sequence(datasets.Value("string")),
-                    "vi_text": datasets.Sequence(datasets.Value("string")),
+                    "en_text": datasets.Value("string"),
+                    "vi_text": datasets.Value("string"),
                     "timing": datasets.Sequence(datasets.Value("string")),
                 }
             )
@@ -164,6 +166,7 @@ class Phost(datasets.GeneratorBasedBuilder):
         timing = []
         en_sub = []
         vi_sub = []
+        counter = 0
         for key, track_id in enumerate(track_ids):
             with open(os.path.join(filepath["text"], track_id, track_id + ".yaml")) as timing_file:
                 timing = yaml.safe_load(timing_file)
@@ -175,7 +178,7 @@ class Phost(datasets.GeneratorBasedBuilder):
                 vi_sub = [line.strip() for line in vi_text]
 
             if self.config.schema == "source":
-                yield key, {"file": os.path.join(filepath["audio"], track_id + ".wav"), "audio": os.path.join(filepath["audio"], track_id + ".wav"), "en_text": en_sub, "vi_text": vi_sub, "timing": timing}
+                yield key, {"file": os.path.join(filepath["audio"], track_id + ".wav"), "audio": os.path.join(filepath["audio"], track_id + ".wav"), "en_text": " ".join(en_sub), "vi_text": " ".join(vi_sub), "timing": timing}
 
             elif self.config.schema == "seacrowd_sptext":
                 if tgt_lang not in ["en", "vi"]:
@@ -185,7 +188,7 @@ class Phost(datasets.GeneratorBasedBuilder):
                     "id": track_id,
                     "path": os.path.join(filepath["audio"], track_id + ".wav"),
                     "audio": os.path.join(filepath["audio"], track_id + ".wav"),
-                    "text": en_sub if tgt_lang == "en" else vi_sub,
+                    "text": " ".join(en_sub) if tgt_lang == "en" else " ".join(vi_sub),
                     "speaker_id": None,
                     "metadata": {
                         "speaker_age": None,
@@ -198,13 +201,14 @@ class Phost(datasets.GeneratorBasedBuilder):
                     raise NotImplementedError(f"Source language '{src_lang}' is not defined.")
                 if tgt_lang not in ["en", "vi"]:
                     raise NotImplementedError(f"Target language '{tgt_lang}' is not defined.")
-
-                yield key, {
-                    "id": track_id,
-                    "text_1": en_sub if src_lang == "en" else vi_sub,
-                    "text_2": en_sub if tgt_lang == "en" else vi_sub,
-                    "text_1_name": src_lang,
-                    "text_2_name": tgt_lang,
-                }
+                for en_line, vi_line in zip(en_sub, vi_sub):
+                    yield counter, {
+                        "id": f"{track_id}_{str(counter)}",
+                        "text_1": en_line if src_lang == "en" else vi_line,
+                        "text_2": en_line if tgt_lang == "en" else vi_line,
+                        "text_1_name": src_lang,
+                        "text_2_name": tgt_lang,
+                    }
+                    counter += 1
             else:
                 raise NotImplementedError(f"Schema '{self.config.schema}' is not defined.")
