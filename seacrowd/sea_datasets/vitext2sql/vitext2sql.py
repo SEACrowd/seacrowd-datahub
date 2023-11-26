@@ -27,7 +27,20 @@ The dataset is created by manually translating the Spider dataset into Vietnames
 
 _HOMEPAGE = "https://github.com/VinAIResearch/ViText2SQL"
 
-_LICENSE = Licenses.UNKNOWN.value
+_LICENSE = f"""{Licenses.OTHERS.value} |
+By downloading the ViText2SQL dataset, USER agrees:
+1. to use ViText2SQL for research or educational purposes only.
+2. to not distribute ViText2SQL or part of ViText2SQL in any original or modified form.
+3. and to cite our EMNLP-2020 Findings paper above whenever ViText2SQL is employed to help produce published results.
+Copyright (c) 2020 VinAI Research
+THE DATA IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE DATA OR THE USE OR OTHER DEALINGS IN THE
+DATA.
+"""
 
 _SOURCE_VERSION = "1.0.0"
 
