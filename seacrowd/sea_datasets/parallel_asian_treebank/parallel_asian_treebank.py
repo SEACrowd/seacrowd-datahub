@@ -36,7 +36,7 @@ _HOMEPAGE = "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/"
 
 _LICENSE = Licenses.CC_BY_4_0.value
 
-_URLs = {"parallel_asian_treebank": "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/ALT-Parallel-Corpus-20191206.zip"}
+_URL = "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/ALT-Parallel-Corpus-20191206.zip"
 
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 
@@ -89,7 +89,7 @@ class ParallelAsianTreebank(datasets.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
-        data_path = dl_manager.download_and_extract(_URLs[_DATASETNAME])
+        data_path = dl_manager.download_and_extract(_URL)
 
         return [
             datasets.SplitGenerator(
