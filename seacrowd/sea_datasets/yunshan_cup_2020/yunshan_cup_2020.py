@@ -51,7 +51,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class YunshanCup2020(datasets.GeneratorBasedBuilder):
+class YunshanCup2020Dataset(datasets.GeneratorBasedBuilder):
     """Lao POS dataset containing 11,000 sentences was released as part of Yunshan-Cup-2020 evaluation track."""
 
     class_labels = ["IAC", "COJ", "ONM", "PRE", "PRS", "V", "DBQ", "IBQ", "FIX", "N", "ADJ", "DMN", "IAQ", "CLF", "PRA", "DAN", "NEG", "NTR", "REL", "PVA", "TTL", "DAQ", "PRN", "ADV", "PUNCT", "CNM"]
