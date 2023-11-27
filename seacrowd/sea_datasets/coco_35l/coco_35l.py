@@ -2,6 +2,7 @@ import json
 import os
 from typing import Dict, List, Tuple
 
+# import csv
 import datasets
 import jsonlines as jl
 import pandas as pd
@@ -42,9 +43,11 @@ _HOMEPAGE = "https://google.github.io/crossmodal-3600/"
 _LICENSE = Licenses.CC_BY_4_0.value
 
 _URLS = {
+    "coco2017_train_images": "http://images.cocodataset.org/zips/train2017.zip",
     "coco2014_train_images": "http://images.cocodataset.org/zips/train2014.zip",
     "coco2014_val_images": "http://images.cocodataset.org/zips/val2014.zip",
     "coco2014_train_val_annots": "http://images.cocodataset.org/annotations/annotations_trainval2014.zip",
+    "coco2017_train_val_annots": "http://images.cocodataset.org/annotations/annotations_trainval2017.zip",
     "trans_train": "https://storage.googleapis.com/crossmodal-3600/coco_mt_train.jsonl.gz",
     "trans_dev": "https://storage.googleapis.com/crossmodal-3600/coco_mt_dev.jsonl.gz",
 }
@@ -58,7 +61,7 @@ _SEACROWD_VERSION = "1.0.0"
 _LANGS = ["fil", "id", "th", "vi"]
 
 
-class COCO35L(datasets.GeneratorBasedBuilder):
+class Coco35LDataset(datasets.GeneratorBasedBuilder):
     """
     COCO-35L is a machine-generated image caption dataset, constructed by translating COCO Captions (Chen et al., 2015) to the other 34 languages using Google’s machine translation API.
     """
@@ -107,35 +110,60 @@ class COCO35L(datasets.GeneratorBasedBuilder):
         """Returns SplitGenerators."""
         trans_train_path = dl_manager.download_and_extract(_URLS["trans_train"])
         trans_val_path = dl_manager.download_and_extract(_URLS["trans_dev"])
+
         coco2014_train_val_annots_path = dl_manager.download_and_extract(_URLS["coco2014_train_val_annots"])
-        coco2014_train_images_path = dl_manager.download_and_extract(_URLS["coco2014_train_images"])
         coco2014_val_images_path = dl_manager.download_and_extract(_URLS["coco2014_val_images"])
+
+        # coco2017_train_val_annots_path = dl_manager.download_and_extract(_URLS["coco2017_train_val_annots"])
+        # coco2017_train_images_path = dl_manager.download_and_extract(_URLS["coco2017_train_images"])
+        coco2014_train_images_path = dl_manager.download_and_extract(_URLS["coco2014_train_images"])
 
         trans_train_captions = {}
         trans_dev_captions = {}
         train_df = pd.DataFrame()
         val_df = pd.DataFrame()
+        # train_df_annot = pd.DataFrame()
+        # val_df_annot = pd.DataFrame()
 
         current_lang = self.config.subset_id.split("_")[2]
 
         with open(os.path.join(coco2014_train_val_annots_path, "annotations", "captions_val2014.json")) as json_captions:
             captions = json.load(json_captions)
             val_df = pd.DataFrame(captions["images"])
+            # val_df_annot = pd.DataFrame(captions["annotations"])
 
         with open(os.path.join(coco2014_train_val_annots_path, "annotations", "captions_train2014.json")) as json_captions:
             captions = json.load(json_captions)
             train_df = pd.DataFrame(captions["images"])
+            # train_df_annot = pd.DataFrame(captions["annotations"])
 
-        with jl.open(os.path.join(trans_train_path), mode="r") as j:
+        with jl.open(trans_train_path, mode="r") as j:
+            total = 0
+            not_found = 0
+            missing_ids = []
             for line in j:
                 if line["trg_lang"] == current_lang:
-                    trans_img_id = line["image_id"]
-                    trans_train_captions[trans_img_id] = line
-                    coco2014_img_id = int(trans_img_id.split("_")[0])
-                    filename = train_df.query(f"id=={coco2014_img_id}")["file_name"].values[0]
-                    trans_train_captions[trans_img_id]["filename"] = os.path.join(coco2014_train_images_path, "train2014", filename)
+                    total += 1
 
-        with jl.open(os.path.join(trans_val_path), mode="r") as j:
+                    trans_img_id = line["image_id"]
+                    coco2014_img_id = line["image_id"].split("_")[0]
+
+                    try:
+                        filename = train_df.query(f"id=={int(coco2014_img_id)}")["file_name"].values[0]
+                        trans_train_captions[trans_img_id] = line
+                        trans_train_captions[trans_img_id]["filename"] = os.path.join(coco2014_train_images_path, "train2014", filename)
+                    except IndexError:
+                        missing_ids.append(trans_img_id)
+                        not_found += 1
+                        pass
+
+            # with open(some_path, "w") as missingfile:
+            #     writer =csv.writer(missingfile)
+            #     writer.writerows(missing_ids)
+
+            # print(f"{not_found}/{total} are lost")
+
+        with jl.open(trans_val_path, mode="r") as j:
             for line in j:
                 if line["trg_lang"] == current_lang:
                     trans_img_id = line["image_id"]
