@@ -50,9 +50,7 @@ _HOMEPAGE = "https://huggingface.co/datasets/cis-lmu/udhr-lid"
 
 _LICENSE = Licenses.CC0_1_0.value
 
-_URLS = {
-    _DATASETNAME: "https://huggingface.co/datasets/cis-lmu/udhr-lid/raw/main/udhr-lid.csv",
-}
+_URL = "https://huggingface.co/datasets/cis-lmu/udhr-lid/raw/main/udhr-lid.csv"
 
 _SUPPORTED_TASKS = [Tasks.TOKEN_LEVEL_LANGUAGE_IDENTIFICATION]
 
@@ -110,8 +108,7 @@ class UDHRLID(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        urls = _URLS[_DATASETNAME]
-        data_path = dl_manager.download(urls)
+        data_path = dl_manager.download(_URL)
 
         return [
             datasets.SplitGenerator(
