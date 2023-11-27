@@ -6,11 +6,9 @@ from datasets import NamedSplit
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import DEFAULT_SEACROWD_VIEW_NAME, DEFAULT_SOURCE_VIEW_NAME, Tasks, Licenses
+from seacrowd.utils.constants import Tasks, Licenses
 
 _DATASETNAME = "wikiann"
-_SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
-_UNIFIED_VIEW_NAME = DEFAULT_SEACROWD_VIEW_NAME
 
 _LANGUAGES = ["ind", "eng", "jav", "min", "sun", "ace", "zlm", "map-bms", "mya", "tgl", "tha", "vie", "khm"]
 _LOCAL = False
@@ -83,7 +81,7 @@ Khmer km khm
 
 _HOMEPAGE = "https://github.com/afshinrahimi/mmner"
 
-_LICENSE = Licenses.APACHE_2_0
+_LICENSE = Licenses.APACHE_2_0.value
 
 _URLs = {
     "wikiann": "https://s3.amazonaws.com/datasets.huggingface.co/wikiann/1.1.0/panx_dataset.zip",
