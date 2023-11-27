@@ -83,9 +83,7 @@ _HOMEPAGE = "https://github.com/afshinrahimi/mmner"
 
 _LICENSE = Licenses.APACHE_2_0.value
 
-_URLs = {
-    "wikiann": "https://s3.amazonaws.com/datasets.huggingface.co/wikiann/1.1.0/panx_dataset.zip",
-}
+_URL = "https://s3.amazonaws.com/datasets.huggingface.co/wikiann/1.1.0/panx_dataset.zip"
 
 _SUPPORTED_TASKS = [Tasks.NAMED_ENTITY_RECOGNITION]
 
@@ -141,7 +139,7 @@ class WikiAnnDataset(datasets.GeneratorBasedBuilder):
         return name.removesuffix("_source").removesuffix("_seacrowd_seq_label").removeprefix("wikiann_")
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
-        path = Path(dl_manager.download_and_extract(_URLs["wikiann"]))
+        path = Path(dl_manager.download_and_extract(_URL))
         lang = LANG_CODES[self.get_lang(self.config.name)]
         wikiann_dl_dir = path / f"{lang}.tar.gz"
         return [
