@@ -102,8 +102,9 @@ class MyPOSDataset(datasets.GeneratorBasedBuilder):
             line = line.rstrip("\n")
             tags = self._tokenize(line)
 
-            tokens = [tag.split("/")[0] for tag in tags if tag]
-            labels = [tag.split("/")[1] for tag in tags if tag]
+            split_token = [tag.split("/") for tag in tags if tag]
+            tokens = [split[0] for split in split_token]
+            labels = [split[1] for split in split_token]
             example = {"id": str(idx), "tokens": tokens, "labels": labels}
 
             yield idx, example
