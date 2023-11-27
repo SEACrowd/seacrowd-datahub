@@ -21,7 +21,7 @@ import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks
+from seacrowd.utils.constants import Tasks, Licenses
 
 _CITATION = """\
 @article{10.1145/3464378,
@@ -56,7 +56,7 @@ The data contains 20,000-sentence Khmer corpus with manual tokenization and POS-
 
 _HOMEPAGE = "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/km-nova-181101/README.txt"
 
-_LICENSE = "Creative Commons Attribution 4.0"
+_LICENSE = Licenses.CC_BY_4_0
 
 _URLS = {
     _DATASETNAME: "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/km-nova-181101.zip",
