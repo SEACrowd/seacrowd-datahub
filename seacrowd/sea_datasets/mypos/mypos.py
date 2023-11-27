@@ -26,7 +26,7 @@ _CITATION = """
 
 _LOCAL = False
 _LANGUAGES = ["mya"]
-_DATASETNAME = "mypos_v3"
+_DATASETNAME = "mypos"
 _DESCRIPTION = """\
 This version of the myPOS corpus extends the original myPOS corpus from
 11,000 to 43,196 Burmese sentences by adding data from the ASEAN MT NECTEC
