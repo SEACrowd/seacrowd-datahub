@@ -209,6 +209,9 @@ class MABLDataset(datasets.GeneratorBasedBuilder):
                 choices = [end1, end2]
                 answer = choices[int(label)]
 
+                # MABL doesn't differentiate between question and context.
+                # It only contains a startphrase. Given that, I put the
+                # startphrase in question and kept the context blank.
                 example = {
                     "id": str(idx),
                     "question_id": idx,
@@ -216,9 +219,9 @@ class MABLDataset(datasets.GeneratorBasedBuilder):
                     "question": start,
                     "type": "multiple_choice",
                     "choices": choices,
-                    "context": start,
+                    "context": "",
                     "answer": [answer],
                     "meta": {},
                 }
-        
+
             yield idx, example
