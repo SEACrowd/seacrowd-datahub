@@ -89,9 +89,9 @@ class MyPOSDataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
         data_file = Path(dl_manager.download_and_extract(_URL))
-        return [datasets.SplitGenerator(name=datasets.Split.TRAIN, gen_kwargs={"filepath": data_file, "split": "train"})]
+        return [datasets.SplitGenerator(name=datasets.Split.TRAIN, gen_kwargs={"filepath": data_file})]
 
-    def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
         """Yield examples as (key, example) tuples"""
 
         with open(filepath, encoding="utf-8") as f:
