@@ -57,9 +57,7 @@ _HOMEPAGE = "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/km-nova-1811
 
 _LICENSE = Licenses.CC_BY_4_0.value
 
-_URLS = {
-    _DATASETNAME: "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/km-nova-181101.zip",
-}
+_URL = "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/km-nova-181101.zip"
 
 _SUPPORTED_TASKS = [Tasks.POS_TAGGING]
 
@@ -119,8 +117,7 @@ class KhmerAltPOS(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        urls = _URLS[_DATASETNAME]
-        data_path = dl_manager.download_and_extract(urls)
+        data_path = dl_manager.download_and_extract(_URL)
 
         return [
             datasets.SplitGenerator(
