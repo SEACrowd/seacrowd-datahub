@@ -22,6 +22,9 @@ _CITATION = """\
  year      = {2022},
  url       = {https://doi.org/10.48550/arXiv.2204.02658},
  doi       = {10.48550/arXiv.2204.02658},
+ eprinttype = {arXiv},
+ eprint    = {2204.02658},
+ timestamp = {Tue, 12 Apr 2022 18:42:14 +0200},
  biburl    = {https://dblp.org/rec/journals/corr/abs-2204-02658.bib},
  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
