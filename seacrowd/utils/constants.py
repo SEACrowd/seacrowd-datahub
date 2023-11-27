@@ -9,7 +9,7 @@ from seacrowd.utils.schemas import (image_text_features, kb_features,
                                     speech_features, speech_multi_features,
                                     speech_text_features, ssp_features,
                                     text2text_features, text_features,
-                                    text_multi_features)
+                                    text_multi_features, video_features)
 
 METADATA: dict = {
     "_LOCAL": bool,
@@ -88,6 +88,10 @@ class Tasks(Enum):
     IMAGE_CAPTIONING = "IC"
     STYLIZED_IMAGE_CAPTIONING = "SIC"
     VISUALLY_GROUNDED_REASONING = "VGR"
+
+    # VideoText
+    VIDEO_CAPTIONING = "VC"
+    VIDEO_TO_TEXT_RETRIEVAL = "V2TR"
 
     # No seacrowd schema
     FACT_CHECKING = "FCT"
@@ -221,6 +225,8 @@ TASK_TO_SCHEMA = {
     Tasks.HOAX_NEWS_CLASSIFICATION: "TEXT",
     Tasks.CONCEPT_ALIGNMENT_CLASSIFICATION: "PAIRS",
     Tasks.FACT_CHECKING: None,
+    Tasks.VIDEO_CAPTIONING: "VIDTEXT",
+    Tasks.VIDEO_TO_TEXT_RETRIEVAL: "VIDTEXT",
 }
 
 SCHEMA_TO_TASKS = defaultdict(set)
@@ -247,6 +253,7 @@ SCHEMA_TO_FEATURES = {
     "SPEECH": speech_features(),
     "SPEECH_MULTI": speech_multi_features(),
     "IMTEXT": image_text_features(),
+    "VIDTEXT": video_features,
 }
 
 TASK_TO_FEATURES = {
