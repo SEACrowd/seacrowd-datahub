@@ -107,21 +107,18 @@ class YunshanCup2020(datasets.GeneratorBasedBuilder):
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
                     "filepath": train_path,
-                    "split": "train",
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
                 gen_kwargs={
-                    "filepath": test_path,
-                    "split": "test",
+                    "filepath": test_path
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
                     "filepath": val_path,
-                    "split": "val",
                 },
             ),
         ]
