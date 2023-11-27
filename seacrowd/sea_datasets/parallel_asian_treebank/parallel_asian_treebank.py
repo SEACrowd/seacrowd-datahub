@@ -7,7 +7,7 @@ import json
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, DEFAULT_SOURCE_VIEW_NAME, DEFAULT_SEACROWD_VIEW_NAME
+from seacrowd.utils.constants import Tasks, DEFAULT_SOURCE_VIEW_NAME, DEFAULT_SEACROWD_VIEW_NAME, Licenses
 
 _DATASETNAME = "parallel_asian_treebank"
 _SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
@@ -37,7 +37,7 @@ ALT now has 13 languages: Bengali, English, Filipino, Hindi, Bahasa Indonesia, J
 
 _HOMEPAGE = "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/"
 
-_LICENSE = " Creative Commons Attribution 4.0 International (CC BY 4.0)"
+_LICENSE = Licenses.CC_BY_4_0
 
 _URLs = {"parallel_asian_treebank": "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/ALT-Parallel-Corpus-20191206.zip"}
 
