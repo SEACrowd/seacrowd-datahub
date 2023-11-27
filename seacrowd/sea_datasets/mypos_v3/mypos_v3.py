@@ -16,6 +16,12 @@ _CITATION = """
   year={2020},
   pages={1-6},
   doi={10.1109/iSAI-NLP51646.2020.9376835}}
+@inproceedings{htike2017comparison,
+  title={Comparison of six POS tagging methods on 10K sentences Myanmar language (Burmese) POS tagged corpus},
+  author={Htike, Khin War War and Thu, Ye Kyaw and Zuping Zhang, Win Pa Pa and Sagisaka, Yoshinori and Iwahashi, Naoto},
+  booktitle={Proceedings of the CICLING},
+  year={2017}
+}
 """
 
 _LOCAL = False
