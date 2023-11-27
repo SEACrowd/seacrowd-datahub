@@ -25,11 +25,13 @@ DEFAULT_SEACROWD_VIEW_NAME = "seacrowd"
 
 
 class Tasks(Enum):
+    # Knowledge Base
     DEPENDENCY_PARSING = "DEP"
     WORD_SENSE_DISAMBIGUATION = "WSD"
     WORD_ANALOGY = "WA"
     KEYWORD_EXTRACTION = "KE"
     COREFERENCE_RESOLUTION = "COREF"
+    SPAN_BASED_ABSA = "SPAN_ABSA"
 
     # Single Text Classification
     SENTIMENT_ANALYSIS = "SA"
@@ -220,6 +222,7 @@ TASK_TO_SCHEMA = {
     Tasks.VISUALLY_GROUNDED_REASONING: "IMTEXT",
     Tasks.HOAX_NEWS_CLASSIFICATION: "TEXT",
     Tasks.CONCEPT_ALIGNMENT_CLASSIFICATION: "PAIRS",
+    Tasks.SPAN_BASED_ABSA: "KB",
     Tasks.FACT_CHECKING: None,
 }
 
@@ -253,6 +256,7 @@ TASK_TO_FEATURES = {
     Tasks.NAMED_ENTITY_RECOGNITION: {"entities"},
     Tasks.DEPENDENCY_PARSING: {"relations", "entities"},
     Tasks.COREFERENCE_RESOLUTION: {"entities", "coreferences"},
+    Tasks.SPAN_BASED_ABSA: {"relations", "entities"},
     # Tasks.NAMED_ENTITY_DISAMBIGUATION: {"entities", "normalized"},
     # Tasks.EVENT_EXTRACTION: {"events"}
 }
