@@ -20,7 +20,7 @@ import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks
+from seacrowd.utils.constants import Tasks, Licenses
 import pandas as pd
 
 _CITATION = """\
@@ -48,7 +48,7 @@ This dataset is particularly useful for non-parallel, language-specific text ana
 
 _HOMEPAGE = "https://huggingface.co/datasets/cis-lmu/udhr-lid"
 
-_LICENSE = "Creative Commons Zero v1.0 Universal"
+_LICENSE = Licenses.CC0_1_0
 
 _URLS = {
     _DATASETNAME: "https://huggingface.co/datasets/cis-lmu/udhr-lid/raw/main/udhr-lid.csv",
