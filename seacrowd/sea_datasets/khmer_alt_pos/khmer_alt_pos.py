@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import re
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -56,7 +55,7 @@ The data contains 20,000-sentence Khmer corpus with manual tokenization and POS-
 
 _HOMEPAGE = "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/km-nova-181101/README.txt"
 
-_LICENSE = Licenses.CC_BY_4_0
+_LICENSE = Licenses.CC_BY_4_0.value
 
 _URLS = {
     _DATASETNAME: "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/km-nova-181101.zip",
