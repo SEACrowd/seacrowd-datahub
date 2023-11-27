@@ -3,7 +3,6 @@ from typing import List
 from itertools import combinations
 
 import datasets
-import json
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
