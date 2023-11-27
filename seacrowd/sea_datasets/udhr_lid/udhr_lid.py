@@ -48,7 +48,7 @@ This dataset is particularly useful for non-parallel, language-specific text ana
 
 _HOMEPAGE = "https://huggingface.co/datasets/cis-lmu/udhr-lid"
 
-_LICENSE = Licenses.CC0_1_0
+_LICENSE = Licenses.CC0_1_0.value
 
 _URLS = {
     _DATASETNAME: "https://huggingface.co/datasets/cis-lmu/udhr-lid/raw/main/udhr-lid.csv",
