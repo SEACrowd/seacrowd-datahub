@@ -126,7 +126,7 @@ class YunshanCup2020(datasets.GeneratorBasedBuilder):
             ),
         ]
 
-    def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
         df = load_postagging_data(filepath)
         if self.config.schema == "source":
             for i, row in enumerate(df):
