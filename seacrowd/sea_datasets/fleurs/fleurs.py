@@ -129,9 +129,10 @@ def construct_configs_on_langs(languages: list = None) -> List[SEACrowdConfig]:
         else:
             # else, its defined for all languages
             # for this dataloader, Tasks.SPEECH_LANGUAGE_IDENTIFICATION will enter this condition
+            # however no "source" schema will be defined here (the source will follow this `fleurs_{lang_code}_source` config name)
             config_list.append(
                 SEACrowdConfig(
-                    name=f"{_DATASETNAME}_all_{config_name_prefix}_{config_name_suffix}",
+                    name=f"{_DATASETNAME}_{config_name_prefix}_{config_name_suffix}",
                     version=datasets.Version(version),
                     description=f"{_DATASETNAME} {config_name_prefix} schema for {task_obj.name}",
                     schema=f"{config_name_prefix}_{config_name_suffix}",
