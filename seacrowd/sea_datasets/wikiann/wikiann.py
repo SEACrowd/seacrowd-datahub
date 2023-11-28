@@ -6,14 +6,11 @@ from datasets import NamedSplit
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import (DEFAULT_SEACROWD_VIEW_NAME,
-                                       DEFAULT_SOURCE_VIEW_NAME, Tasks)
+from seacrowd.utils.constants import Tasks, Licenses
 
 _DATASETNAME = "wikiann"
-_SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
-_UNIFIED_VIEW_NAME = DEFAULT_SEACROWD_VIEW_NAME
 
-_LANGUAGES = ["ind", "eng", "jav", "min", "sun", "ace", "mly", "map-bms"]
+_LANGUAGES = ["ind", "jav", "min", "sun", "ace", "zlm", "map-bms", "mya", "tgl", "tha", "vie", "khm"]
 _LOCAL = False
 _CITATION = """\
 @inproceedings{pan-etal-2017-cross,
@@ -71,19 +68,22 @@ Javanese	jv	jav
 Minangkabau	min	min
 Sundanese	su	sun
 Acehnese	ace	ace
-Malay	ms	mly
+Malay	ms	zlm
 Banyumasan	map-bms	map-bms
+Myanmar my mya
+Tagalog tl tgl
+Thailand th tha
+Vietnam vi vie
+Khmer km khm
 
 
 """
 
 _HOMEPAGE = "https://github.com/afshinrahimi/mmner"
 
-_LICENSE = "Apache-2.0 license"
+_LICENSE = Licenses.APACHE_2_0.value
 
-_URLs = {
-    "wikiann": "https://s3.amazonaws.com/datasets.huggingface.co/wikiann/1.1.0/panx_dataset.zip",
-}
+_URL = "https://s3.amazonaws.com/datasets.huggingface.co/wikiann/1.1.0/panx_dataset.zip"
 
 _SUPPORTED_TASKS = [Tasks.NAMED_ENTITY_RECOGNITION]
 
@@ -107,8 +107,8 @@ def seacrowd_config_constructor(lang, schema, version):
     )
 
 
-LANGUAGES_MAP = {"eng": "english", "ind": "indonesian", "jav": "javanese", "min": "minangkabau", "sun": "sundanese", "ace": "acehnese", "mly": "malay", "map_bms": "banyumasan"}  # Actual code is map-bms
-LANG_CODES = {"eng": "en", "ind": "id", "jav": "jv", "min": "min", "sun": "su", "ace": "ace", "mly": "ms", "map_bms": "map-bms"}
+LANGUAGES_MAP = {"ind": "indonesian", "jav": "javanese", "min": "minangkabau", "sun": "sundanese", "ace": "acehnese", "zlm": "malay", "map_bms": "banyumasan", "mya": "myanmar", "tgl": "tagalog", "tha": "thailand", "vie": "vietnam", "khm": "khmer"}
+LANG_CODES = {"ind": "id", "jav": "jv", "min": "min", "sun": "su", "ace": "ace", "zlm": "ms", "map_bms": "map-bms", "mya": "my", "tgl": "tl", "tha": "th","vie": "vi","khm": "km"}
 
 
 class WikiAnnDataset(datasets.GeneratorBasedBuilder):
@@ -139,7 +139,7 @@ class WikiAnnDataset(datasets.GeneratorBasedBuilder):
         return name.removesuffix("_source").removesuffix("_seacrowd_seq_label").removeprefix("wikiann_")
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
-        path = Path(dl_manager.download_and_extract(_URLs["wikiann"]))
+        path = Path(dl_manager.download_and_extract(_URL))
         lang = LANG_CODES[self.get_lang(self.config.name)]
         wikiann_dl_dir = path / f"{lang}.tar.gz"
         return [
