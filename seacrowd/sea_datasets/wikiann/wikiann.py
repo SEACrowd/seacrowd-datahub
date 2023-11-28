@@ -10,7 +10,7 @@ from seacrowd.utils.constants import Tasks, Licenses
 
 _DATASETNAME = "wikiann"
 
-_LANGUAGES = ["ind", "eng", "jav", "min", "sun", "ace", "zlm", "map-bms", "mya", "tgl", "tha", "vie", "khm"]
+_LANGUAGES = ["ind", "jav", "min", "sun", "ace", "zlm", "map-bms", "mya", "tgl", "tha", "vie", "khm"]
 _LOCAL = False
 _CITATION = """\
 @inproceedings{pan-etal-2017-cross,
@@ -107,8 +107,8 @@ def seacrowd_config_constructor(lang, schema, version):
     )
 
 
-LANGUAGES_MAP = {"eng": "english", "ind": "indonesian", "jav": "javanese", "min": "minangkabau", "sun": "sundanese", "ace": "acehnese", "zlm": "malay", "map_bms": "banyumasan", "mya": "myanmar", "tgl": "tagalog", "tha": "thailand", "vie": "vietnam", "khm": "khmer"}
-LANG_CODES = {"eng": "en", "ind": "id", "jav": "jv", "min": "min", "sun": "su", "ace": "ace", "zlm": "ms", "map_bms": "map-bms", "mya": "my", "tgl": "tl", "tha": "th","vie": "vi","khm": "km"}
+LANGUAGES_MAP = {"ind": "indonesian", "jav": "javanese", "min": "minangkabau", "sun": "sundanese", "ace": "acehnese", "zlm": "malay", "map_bms": "banyumasan", "mya": "myanmar", "tgl": "tagalog", "tha": "thailand", "vie": "vietnam", "khm": "khmer"}
+LANG_CODES = {"ind": "id", "jav": "jv", "min": "min", "sun": "su", "ace": "ace", "zlm": "ms", "map_bms": "map-bms", "mya": "my", "tgl": "tl", "tha": "th","vie": "vi","khm": "km"}
 
 
 class WikiAnnDataset(datasets.GeneratorBasedBuilder):
