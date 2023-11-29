@@ -9,10 +9,11 @@ from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Tasks, Licenses
 
 _CITATION = """\
-@online{UDHR,
-    title = {UDHR in Unicode},
-    howpublished = {\\url{https://unicode.org/udhr/index.html}},
-    note = {Accessed: 2023-11-20}
+@misc{united1998universal,
+    title={The Universal Declaration of Human Rights, 1948-1998},
+    author={United Nations},
+    year={1998},
+    publisher={United Nations Dept. of Public Information New York}
 }
 """
 _DATASETNAME = "udhr"
@@ -55,8 +56,28 @@ _LANGS = {
     # "iba": "",
     # "dbj": "",
     "jav": "Javanese",
-}  # ada jav_java, default: jav (latin)
-
+    "ilo": "Ilocano", 
+    "mnw": "Mon", 
+    "tet": "Tetun", 
+    "pam": "Pampangan", 
+    "lus": "Mizo", 
+    "min": "Minangkabau", 
+    "hni": "Hani", 
+    "shn": "Shan", 
+    "bcl": "Bicolano, Central", 
+    "hil": "Hiligaynon", 
+    "sun": "Sunda", 
+    "kkh": "Khun", 
+    "duu": "Drung", 
+    "tdt": "Tetun Dili", 
+    "mad": "Madura", 
+    "war": "Waray-waray", 
+    "blt": "Tai Dam", 
+    "hlt": "Chin, Matu",
+    "jav_java": "Javanese (Javanese)"
+}
+#Sort the keys
+_LANGS = dict(sorted(_LANGS.items()))
 
 def seacrowd_config_constructor(src_lang, schema, version):
     if src_lang == "":
@@ -113,21 +134,30 @@ class UDHRDataset(datasets.GeneratorBasedBuilder):
         """Returns SplitGenerators."""
         urls = _URLS
         data_dir = dl_manager.download_and_extract(urls)
-        lang = self.config.subset_id.split("_")[1]
-        if lang == "zlm":
-            lang = "mly_latn"
-
-        if lang == "cfm":
-            lang = "flm"
-
-        if lang == "hnj":
-            lang = "blu"
+        lang = self.config.subset_id.split("_")
+        file_key=""
+        if lang[1] == "zlm":
+            file_key = "mly_latn"
+        elif lang[1] == "cfm":
+            file_key = "flm"
+        elif lang[1] == "hnj":
+            file_key = "blu"        
+        elif lang[1] == "kkh":
+            file_key = "kkh_lana"       
+        elif lang[1] == "duu":
+            file_key = "020"
+        elif lang[1] == "tdt":
+            file_key = "010"
+        elif len(lang)>2 and f"{lang[1]}_{lang[2]}" == "jav_java":
+            file_key = "jav_java"
+        else:
+            file_key = lang[1]
 
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
-                    "filepath": os.path.join(data_dir, f"udhr_{lang}.txt".format(lang=lang)),
+                    "filepath": os.path.join(data_dir, f"udhr_{file_key}.txt".format(file_key=file_key)),
                     "split": "train",
                 },
             ),
@@ -136,7 +166,6 @@ class UDHRDataset(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         data = []
-        lang = self.config.subset_id.split("_")[1]
 
         with open(filepath, "r") as f:
             data = [line.rstrip() for line in f.readlines()]
