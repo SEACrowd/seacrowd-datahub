@@ -75,7 +75,9 @@ class Coco35LDataset(datasets.GeneratorBasedBuilder):
             version=datasets.Version(_SOURCE_VERSION), 
             description=f"{_DATASETNAME}_{lang} source schema", 
             schema="source", 
-            subset_id=f"{_DATASETNAME}_{lang}",) for lang in _LANGS
+            subset_id=f"{_DATASETNAME}_{lang}",
+        ) 
+        for lang in _LANGS
     ] 
     + [
         SEACrowdConfig(
