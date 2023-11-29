@@ -40,7 +40,7 @@ _SEACROWD_VERSION = "1.0.0"
 
 
 class CubBahasaDataset(datasets.GeneratorBasedBuilder):
-    """TODO: Short description of my dataset."""
+    """CUB-200-2011 image-text dataset in Indonesian language for bird domain."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
@@ -306,14 +306,6 @@ class CubBahasaDataset(datasets.GeneratorBasedBuilder):
 
         label_meta = Path(data_path["image"]) / "CUB_200_2011" / "image_class_labels.txt"
         df_label = pd.read_csv(label_meta, sep=" ", names=["image_id", "class_id"])
-
-        # working with label
-        class_meta = Path(data_path["image"]) / "CUB_200_2011" / "classes.txt"
-        self.IMAGE_CLASS = {}
-        with open(class_meta, "r") as f:
-            for line in f:
-                class_id, class_name = line.strip().split()
-                self.IMAGE_CLASS[int(class_id)] = class_name
 
         # working with text dataset
         text_path = Path(data_path["text"])
