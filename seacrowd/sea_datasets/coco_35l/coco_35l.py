@@ -69,7 +69,15 @@ class Coco35LDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    BUILDER_CONFIGS = [SEACrowdConfig(name=f"{_DATASETNAME}_{lang}_source", version=datasets.Version(_SOURCE_VERSION), description=f"{_DATASETNAME}_{lang} source schema", schema="source", subset_id=f"{_DATASETNAME}_{lang}",) for lang in _LANGS] + [
+    BUILDER_CONFIGS = [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{lang}_source", 
+            version=datasets.Version(_SOURCE_VERSION), 
+            description=f"{_DATASETNAME}_{lang} source schema", 
+            schema="source", 
+            subset_id=f"{_DATASETNAME}_{lang}",) for lang in _LANGS
+    ] 
+    + [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_{lang}_seacrowd_imtext",
             version=datasets.Version(_SEACROWD_VERSION),
@@ -113,30 +121,29 @@ class Coco35LDataset(datasets.GeneratorBasedBuilder):
 
         coco2014_train_val_annots_path = dl_manager.download_and_extract(_URLS["coco2014_train_val_annots"])
         coco2014_val_images_path = dl_manager.download_and_extract(_URLS["coco2014_val_images"])
-
-        # coco2017_train_val_annots_path = dl_manager.download_and_extract(_URLS["coco2017_train_val_annots"])
-        # coco2017_train_images_path = dl_manager.download_and_extract(_URLS["coco2017_train_images"])
         coco2014_train_images_path = dl_manager.download_and_extract(_URLS["coco2014_train_images"])
 
         trans_train_captions = {}
         trans_dev_captions = {}
         train_df = pd.DataFrame()
         val_df = pd.DataFrame()
-        # train_df_annot = pd.DataFrame()
-        # val_df_annot = pd.DataFrame()
 
         current_lang = self.config.subset_id.split("_")[2]
-
+        
+        # the COCO dataset structure has separated the captions and images information. The caption's "image_id" key will refer to the image's "id" key.
+        # load the image informations from COCO 2014 dataset and put it into a dataframe
         with open(os.path.join(coco2014_train_val_annots_path, "annotations", "captions_val2014.json")) as json_captions:
             captions = json.load(json_captions)
             val_df = pd.DataFrame(captions["images"])
-            # val_df_annot = pd.DataFrame(captions["annotations"])
 
         with open(os.path.join(coco2014_train_val_annots_path, "annotations", "captions_train2014.json")) as json_captions:
             captions = json.load(json_captions)
             train_df = pd.DataFrame(captions["images"])
-            # train_df_annot = pd.DataFrame(captions["annotations"])
 
+        # the translated caption has "image_id" which refers to the "image_id" in the COCO annotations. 
+        # however we can skip this and connect it to the images' "id"
+        # the example of an "image_id" in the translated caption -> "123456_0" since an image can has many descriptions.
+        # thus, the real image_id to map it into the COCO image dataset is the "123456"
         with jl.open(trans_train_path, mode="r") as j:
             total = 0
             not_found = 0
@@ -147,7 +154,9 @@ class Coco35LDataset(datasets.GeneratorBasedBuilder):
 
                     trans_img_id = line["image_id"]
                     coco2014_img_id = line["image_id"].split("_")[0]
-
+                    
+                    # unfortunately, not all image_id in the translated caption can be found in the original COCO 2014.
+                    # hence, we need to handle such errors
                     try:
                         filename = train_df.query(f"id=={int(coco2014_img_id)}")["file_name"].values[0]
                         trans_train_captions[trans_img_id] = line
@@ -157,12 +166,7 @@ class Coco35LDataset(datasets.GeneratorBasedBuilder):
                         not_found += 1
                         pass
 
-            # with open(some_path, "w") as missingfile:
-            #     writer =csv.writer(missingfile)
-            #     writer.writerows(missing_ids)
-
-            # print(f"{not_found}/{total} are lost")
-
+        # the validation set are strangely okay. with no missing image_id(s)
         with jl.open(trans_val_path, mode="r") as j:
             for line in j:
                 if line["trg_lang"] == current_lang:
