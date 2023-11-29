@@ -12,10 +12,10 @@ from seacrowd.utils.constants import Licenses, Tasks
 _CITATION = """
 @article{riegoenhancement,
   title={Enhancement to Low-Resource Text Classification via Sequential Transfer Learning},
-  author={Riego, Neil Christian R and Villarba, Danny Bell and Sison, Ariel Antwaun Rolando C and Pineda, Fernandez C and Lagunzad, Herminino C}
-  journal={United International Journal for Research and Technology},
-  volume={4},
-  issue={8},
+  author={Riego, Neil Christian R. and Villarba, Danny Bell and Sison, Ariel Antwaun Rolando C. and Pineda, Fernandez C. and Lagunzad, Herminiño C.}
+  journal={United International Journal for Research & Technology},
+  volume={04},
+  issue={08},
   pages={72--82}
 }
 """
@@ -50,6 +50,7 @@ class ShopeeReviewsTagalogDataset(datasets.GeneratorBasedBuilder):
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
     SEACROWD_SCHEMA_NAME = "text"
+    # "N" means N+1 star(s) review, e.g. "2" means 3 stars review
     LABEL_CLASSES = ["0", "1", "2", "3", "4"]
 
     BUILDER_CONFIGS = [
