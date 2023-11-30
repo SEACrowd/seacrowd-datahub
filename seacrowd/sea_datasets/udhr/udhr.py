@@ -34,50 +34,43 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 _LANGS = {
-    "khm": "Khmer",
-    "tha": "Thai",
-    "vie": "Vietnamese",
-    "ind": "Indonesian",
-    "zlm": "Malay",  # default mly_latn
-    "lao": "Lao",
-    "ban": "Bali",
-    "mya": "Burmese",
-    "ceb": "Cebuano",
     "ace": "Aceh",
-    "tgl": "Tagalog",
-    # "abs": "",
+    "ban": "Bali",
+    "bcl": "Bicolano, Central",
+    "blt": "Tai Dam", 
     "bug": "Bugis",
-    # "cja": "",
+    "ceb": "Cebuano",
     "cfm": "Chin, Falam",  # flm
     "cnh": "Chin, Haka",
     "ctd": "Chin, Tedim",
-    # "fil": "",
-    "hnj": "Hmong Njua",  # blu
-    # "iba": "",
-    # "dbj": "",
-    "jav": "Javanese",
-    "ilo": "Ilocano", 
-    "mnw": "Mon", 
-    "tet": "Tetun", 
-    "pam": "Pampangan", 
-    "lus": "Mizo", 
-    "min": "Minangkabau", 
-    "hni": "Hani", 
-    "shn": "Shan", 
-    "bcl": "Bicolano, Central", 
-    "hil": "Hiligaynon", 
-    "sun": "Sunda", 
-    "kkh": "Khun", 
     "duu": "Drung", 
-    "tdt": "Tetun Dili", 
-    "mad": "Madura", 
-    "war": "Waray-waray", 
-    "blt": "Tai Dam", 
+    "hil": "Hiligaynon", 
     "hlt": "Chin, Matu",
-    "jav_java": "Javanese (Javanese)"
+    "hni": "Hani",
+    "hnj": "Hmong Njua",  # blu
+    "ilo": "Ilocano", 
+    "ind": "Indonesian",
+    "jav": "Javanese",
+    "jav_java": "Javanese (Javanese)",
+    "khm": "Khmer",
+    "kkh": "Khun", 
+    "lao": "Lao",
+    "lus": "Mizo",
+    "mad": "Madura",
+    "min": "Minangkabau", 
+    "mnw": "Mon", 
+    "mya": "Burmese",
+    "pam": "Pampangan", 
+    "shn": "Shan",
+    "sun": "Sunda",
+    "tdt": "Tetun Dili", 
+    "tet": "Tetun", 
+    "tgl": "Tagalog",
+    "tha": "Thai",
+    "vie": "Vietnamese",
+    "war": "Waray-waray", 
+    "zlm": "Malay",  # default mly_latn
 }
-#Sort the keys
-_LANGS = dict(sorted(_LANGS.items()))
 
 def seacrowd_config_constructor(src_lang, schema, version):
     if src_lang == "":
