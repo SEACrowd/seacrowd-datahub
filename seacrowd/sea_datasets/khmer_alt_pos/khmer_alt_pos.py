@@ -55,7 +55,7 @@ The data contains 20,000-sentence Khmer corpus with manual tokenization and POS-
 
 _HOMEPAGE = "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/km-nova-181101/README.txt"
 
-_LICENSE = Licenses.CC_BY_4_0.value
+_LICENSE = Licenses.CC_BY_NC_SA_4_0.value
 
 _URL = "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/km-nova-181101.zip"
 
@@ -85,7 +85,7 @@ class KhmerAltPOS(datasets.GeneratorBasedBuilder):
         SEACrowdConfig(
             name=f"{_DATASETNAME}_seacrowd_seq_label",
             version=SEACROWD_VERSION,
-            description=f"{_DATASETNAME} Nusantara Seq Label schema",
+            description=f"{_DATASETNAME} SEACrowd Seq Label schema",
             schema="seacrowd_seq_label",
             subset_id=f"{_DATASETNAME}",
         ),
