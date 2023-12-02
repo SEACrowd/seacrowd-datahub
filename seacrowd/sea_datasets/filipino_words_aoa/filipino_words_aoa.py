@@ -54,12 +54,14 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 class FilipinoWordsAOADataset(datasets.GeneratorBasedBuilder):
-    """TODO: Short description of my dataset."""
+    """\
+    Dataset of Filipino words, their English meanings, and their part-of-speech tag
+    obtained from an age-of-acquisition study.
+    """
 
     pos_labels = ["adjective", "adverb", "noun", "pronoun", "verb"]
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-    SEACROWD_SCHEMA_NAME = "seq_label"
     
     BUILDER_CONFIGS = [
         SEACrowdConfig(
@@ -70,12 +72,18 @@ class FilipinoWordsAOADataset(datasets.GeneratorBasedBuilder):
             subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",
+            name=f"{_DATASETNAME}_seacrowd_seq_label",
             version=SEACROWD_VERSION,
-            description=f"{_DATASETNAME} SEACrowd schema",
-            schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
+            description=f"{_DATASETNAME} SEACrowd sequence labeling schema"
             subset_id=_DATASETNAME,
         ),
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_seacrowd_t2t",
+            version=SEACROWD_VERSION,
+            description=f"{_DATASETNAME} SeaCrowd text-to-text schema",
+            schema="seacrowd_t2t",
+            subset_id=_DATASETNAME,
+        )
     ]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
@@ -96,7 +104,10 @@ class FilipinoWordsAOADataset(datasets.GeneratorBasedBuilder):
                     "book_ageband": datasets.Value("string"),
                 }
             )
-        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
+        elif self.config.schema == "t2t":
+            features = schemas.text2text_features
+        
+        elif self.config.schema == "seq_label":
             features = schemas.seq_label_features(self.pos_labels)
             
         return datasets.DatasetInfo(
@@ -118,24 +129,27 @@ class FilipinoWordsAOADataset(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         df = pd.read_csv(filepath, index_col=None)
-        if self.config.schema == "source":
-            for index, row in enumerate(df):
-                example = {
-                    "index": str(index),
-                    "tokens": row["word"],
-                    "pos_tags": row["POS_tag"],
-                }
-                yield index, example
+        for index, row in enumerate(df):
+            if self.config.schema == "source":
+                pass
 
-        elif self.config.schema == "seacrowd_[seacrowd_schema_name]":
-            for index, row in enumerate(df):
+            elif self.config.scheme == "t2t":
+                example = {
+                    "id": str(index),
+                    "text_1": row["word"],
+                    "text_2": row["meaning"].split(","),
+                    "text_1_name": "fil",
+                    "text_2_name": "eng",
+                }
+
+            elif self.config.schema == "seq_label":
                 example = {
                     "id": str(index),
                     "tokens": row["word"],
                     "labels": row["POS_tag"],
                 }
                 
-                yield index, example
+            yield index, example
 
 
 # This template is based on the following template from the datasets package:
