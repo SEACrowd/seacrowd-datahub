@@ -58,7 +58,7 @@ class ParallelAsianTreebank(datasets.GeneratorBasedBuilder):
         SEACrowdConfig(
             name=f"{_DATASETNAME}_seacrowd_t2t",
             version=_SEACROWD_VERSION,
-            description=f"{_DATASETNAME} Nusantara schema",
+            description=f"{_DATASETNAME} SEACrowd schema",
             schema="seacrowd_t2t",
             subset_id=_DATASETNAME,
         ),
