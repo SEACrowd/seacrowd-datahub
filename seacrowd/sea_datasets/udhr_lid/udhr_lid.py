@@ -74,7 +74,7 @@ class UDHRLID(datasets.GeneratorBasedBuilder):
         SEACrowdConfig(
             name=f"{_DATASETNAME}_seacrowd_seq_label",
             version=SEACROWD_VERSION,
-            description=f"{_DATASETNAME} Nusantara Schema",
+            description=f"{_DATASETNAME} SEACrowd Schema",
             schema="seacrowd_seq_label",
             subset_id=f"{_DATASETNAME}",
         ),
