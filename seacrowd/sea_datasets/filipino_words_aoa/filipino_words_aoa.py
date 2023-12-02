@@ -21,7 +21,7 @@ import pandas as pd
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
+from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @techreport{dulaynag2021filaoa,
@@ -36,11 +36,11 @@ _CITATION = """\
 """
 
 _LOCAL = False
-_LANGUAGES = ["fil"]
+_LANGUAGES = ["fil", "eng"]
 _DATASETNAME = "filipino_words_aoa"
 _DESCRIPTION = """\
-The dataset contains 885 Filipino words derived from an age-of-acquisition participant study. The words are derived child-directed corpora 
-using pre-specified linguistic criteria. Each word in the corpora contains information about its meaning, part-of-speech (POS), age band, 
+The dataset contains 885 Filipino words derived from an age-of-acquisition participant study. The words are derived child-directed corpora
+using pre-specified linguistic criteria. Each word in the corpora contains information about its meaning, part-of-speech (POS), age band,
 morpheme count, syllable length, phoneme length, and the level of book it was derived from. The dataset can be used for lexical complexity
 prediction, lexical simplification, and readability assessment research.
 """
@@ -53,14 +53,16 @@ _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
+
 class FilipinoWordsAOADataset(datasets.GeneratorBasedBuilder):
     """\
     Dataset of Filipino words, their English meanings, and their part-of-speech tag
     obtained from an age-of-acquisition study.
     """
+
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-    
+
     BUILDER_CONFIGS = [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_source",
@@ -75,7 +77,7 @@ class FilipinoWordsAOADataset(datasets.GeneratorBasedBuilder):
             description=f"{_DATASETNAME} SeaCrowd text-to-text schema",
             schema="seacrowd_t2t",
             subset_id=_DATASETNAME,
-        )
+        ),
     ]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
@@ -97,7 +99,7 @@ class FilipinoWordsAOADataset(datasets.GeneratorBasedBuilder):
             )
         elif self.config.schema == "seacrowd_t2t":
             features = schemas.text2text_features
-            
+
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
             features=features,
@@ -109,12 +111,7 @@ class FilipinoWordsAOADataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
         filepath, _ = urllib.request.urlretrieve(_URL)
-        return [
-            datasets.SplitGenerator(
-                name=datasets.Split.TRAIN,
-                gen_kwargs={"filepath": filepath}
-            )
-        ]
+        return [datasets.SplitGenerator(name=datasets.Split.TRAIN, gen_kwargs={"filepath": filepath})]
 
     def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
@@ -132,6 +129,7 @@ class FilipinoWordsAOADataset(datasets.GeneratorBasedBuilder):
                     "text_2_name": "eng",
                 }
             yield index, example
+
 
 # This allows you to run your dataloader with `python [dataset_name].py` during development
 # TODO: Remove this before making your PR
