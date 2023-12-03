@@ -54,7 +54,7 @@ _URLS = {
     ]
 }
 
-_SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
+_SUPPORTED_TASKS = [Tasks.COMMONSENSE_REASONING]
 
 _SOURCE_VERSION = "1.0.0"
 
@@ -157,6 +157,7 @@ class Xcopa(datasets.GeneratorBasedBuilder):
                         "choices": [data["choice1"], data["choice2"]],
                         "context": data["premise"],
                         "answer": [data["choice1"] if data["label"] == 0 else data["choice2"]],
+                        "meta": {}
                     }
                     yield idx, sample
             
