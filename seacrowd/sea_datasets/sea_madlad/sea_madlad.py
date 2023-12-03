@@ -2,8 +2,8 @@
 SEA Crowd Data Loader for SEA Wiki.
 """
 
+import gzip
 import json
-from itertools import product
 from typing import Dict, List, Tuple
 
 import datasets
@@ -27,6 +27,7 @@ _CITATION = r"""
 
 logger = datasets.logging.get_logger(__name__)
 
+# this config is created for SEACrowd Dataloader
 _LANG_CONFIG = {
     "ace": {"name": "Aceh", "source_subset": "ace"},
     "akb": {"name": "Batak Angkola", "source_subset": "akb"},
@@ -51,6 +52,7 @@ _LANG_CONFIG = {
     "meo": {"name": "Kedah Malay", "source_subset": "meo"},
     "min": {"name": "Minangkabau", "source_subset": "min"},
     "mkn": {"name": "Kupang Malay", "source_subset": "mkn"},
+    "msa": {"name": "Malay", "source_subset": "ms"},
     "msi": {"name": "Sabah Malay", "source_subset": "msi"},
     "mya": {"name": "Burmese", "source_subset": "my"},
     "nij": {"name": "Ngaju", "source_subset": "nij"},
@@ -62,6 +64,46 @@ _LANG_CONFIG = {
     "tha": {"name": "Thai", "source_subset": "th"},
     "vie": {"name": "Vietnamese", "source_subset": "vi"},
     "war": {"name": "Waray-Waray", "source_subset": "war"},
+}
+
+# this config is copied and added from source dataloader
+# only using the `clean` values
+_N_SHARDS_PER_SPLIT = {
+    "ace": 1,
+    "akb": 1,
+    "ban": 1,
+    "bbc": 1,
+    "bew": 1,
+    "btx": 1,
+    "ceb": 1,
+    "fil": 1,
+    "gor": 1,
+    "hil": 1,
+    "iba": 1,
+    "id": 18,
+    "ilo": 1,
+    "jv": 1,
+    "kac": 1,
+    "km": 1,
+    "lo": 1,
+    "mad": 1,
+    "mak": 1,
+    "meo": 1,
+    "min": 1,
+    "mkn": 1,
+    "ms": 2,
+    "ms_Arab_BN": 1,
+    "msi": 1,
+    "my": 1,
+    "nij": 1,
+    "nut": 1,
+    "pag": 1,
+    "shn": 1,
+    "su": 1,
+    "tet": 1,
+    "th": 21,
+    "vi": 32,
+    "war": 1,
 }
 
 _LOCAL = False
@@ -81,9 +123,7 @@ _DESCRIPTION = r"""
 _HOMEPAGE = "https://huggingface.co/datasets/allenai/MADLAD-400"
 _LICENSE = Licenses.CC_BY_4_0.value
 
-# url won't be used since it will implement load_dataset method on HF URL provided
-_URL = "https://huggingface.co/datasets/allenai/MADLAD-400"
-_REMOTE_HF_REFERENCE = ("/".join(_URL.split("/")[-2:])).lower()
+_URL = "https://huggingface.co/datasets/allenai/MADLAD-400/resolve/ecd71297d60c1eb996cd3d7c44c60ad5b55adfc6/data/{language}/{language}_{split}_{index:04d}.jsonl.gz"
 
 _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
 _SOURCE_VERSION = "1.0.0"
@@ -181,32 +221,36 @@ class SEA_MADLAD_Dataset(datasets.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl_manager: DownloadManager) -> List[datasets.SplitGenerator]:
-        # args of dl_manager is a placeholder since this data loader will wrap the hf `load_dataset` from given _URL
-        # directly using `_load_hf_data_from_remote`
-        return [datasets.SplitGenerator(name=datasets.Split.TRAIN)]
-
-    def _load_hf_data_from_remote(self):
-        # construct remote_hf_reference by the last 2 of string-spliited of "/"
-        _lang_args = _LANG_CONFIG[self.config.subset_id]["source_subset"]
+        # construct URL from "lang", "split" -> "clean" split, and "index" based on `_N_SHARDS_PER_SPLIT`
+        _lang = self.config.subset_id
         _split = "clean"
+        _data_list = [_URL.format(language=_lang, split=_split, index=idx) for idx in range(_N_SHARDS_PER_SPLIT[_lang])]
 
-        logger.info(f"Loading dataset from remote HF {_REMOTE_HF_REFERENCE} with seacrowd lang args of {self.config.subset_id} and source lang args of {_lang_args} and split args of {_split}")
-        _hf_dataset_source = load_dataset(_REMOTE_HF_REFERENCE, languages=[_lang_args], split=_split)
+        filepaths = dl_manager.download(_data_list)
 
-        return _hf_dataset_source
+        return [datasets.SplitGenerator(name=datasets.Split.TRAIN, gen_kwargs={"filepaths": filepaths})]
 
-    def _generate_examples(self) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepaths) -> Tuple[int, Dict]:
         _config_schema_name = self.config.schema
-        loaded_data = self._load_hf_data_from_remote()
 
-        # iterate over datapoints and arrange hf dataset schema in source to match w/ config args:
-        for id_, _data in enumerate(loaded_data):
-            if _config_schema_name == "source":
-                yield id_, {colname: _data[colname] for colname in self.info.features}
+        # the id_ constructions follows the source Dataloader
+        id_ = 0
+        for filepath in filepaths:
+            logger.info("generating examples from = %s", filepath)
+            with gzip.open(open(filepath, "rb"), "rt", encoding="utf-8") as f:
+                for line in f:
+                    if line:
+                        example = json.loads(line)
 
-            # for ssp schema
-            elif _config_schema_name == "seacrowd_ssp":
-                yield id_, {"id": id_, "text": _data["text"]}
+                        # for source_schema
+                        if _config_schema_name == "source":
+                            yield id_, {colname: example[colname] for colname in self.info.features}
 
-            else:
-                raise ValueError(f"Received unexpected config schema of {_config_schema_name}!")
+                        # for ssp schema
+                        elif _config_schema_name == "seacrowd_ssp":
+                            yield id_, {"id": id_, "text": example["text"]}
+
+                        else:
+                            raise ValueError(f"Received unexpected config schema of {_config_schema_name}!")
+
+                        id_ += 1
