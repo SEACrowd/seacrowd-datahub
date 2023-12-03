@@ -222,7 +222,7 @@ class SEA_MADLAD_Dataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: DownloadManager) -> List[datasets.SplitGenerator]:
         # construct URL from "lang", "split" -> "clean" split, and "index" based on `_N_SHARDS_PER_SPLIT`
-        _lang = self.config.subset_id
+        _lang = _LANG_CONFIG[self.config.subset_id]["source_subset"]
         _split = "clean"
         _data_list = [_URL.format(language=_lang, split=_split, index=idx) for idx in range(_N_SHARDS_PER_SPLIT[_lang])]
 
