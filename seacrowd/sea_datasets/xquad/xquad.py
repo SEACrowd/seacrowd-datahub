@@ -24,8 +24,8 @@ _DATASETNAME = "xquad"
 
 _DESCRIPTION = """\
 XQuAD (Cross-lingual Question Answering Dataset) is a benchmark dataset for evaluating cross-lingual question answering performance.
-The dataset consists of a subset of 240 paragraphs and 1190 question-answer pairs from the development set of SQuAD v1.1 together
-with their professional translations into ten languages: Spanish, German, Greek, Russian, Turkish, Arabic, Vietnamese, Thai, Chinese, and Hindi.
+The dataset consists of a subset of 240 paragraphs and 1190 question-answer pairs from the development set of SQuAD v1.1 together (Rajpurkar et al., 2016)
+with their professional translations into ten languages in their original implementation: Spanish, German, Greek, Russian, Turkish, Arabic, Vietnamese, Thai, Chinese, and Hindi and two in this dataloader: Vietnamese & Thai
 """
 
 _HOMEPAGE = "https://github.com/google-deepmind/xquad"
@@ -145,13 +145,10 @@ class XQuADDataset(datasets.GeneratorBasedBuilder):
                                 "answer": {"answer_start": answers_start[0], "text": answers_text[0]},
                                 "id": count,
                                 "choices": [],
-                                "type": "extractive",
+                                "type": "",
                                 "document_id": document_count,
+                                "meta": {},
                             }
 
                         count += 1
                     document_count += 1
-
-
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)
