@@ -47,7 +47,7 @@ class XQuADDataset(datasets.GeneratorBasedBuilder):
     with their professional translations into ten languages: Spanish, German, Greek, Russian, Turkish, Arabic, Vietnamese, Thai, Chinese, and Hindi.
     """
 
-    subsets = ["xquad", "xquad.vi", "xquad.th"]
+    subsets = ["xquad.vi", "xquad.th"]
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
@@ -90,22 +90,13 @@ class XQuADDataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         name_split = self.config.name.split("_")
         subset_name = name_split[0]
-
-        if subset_name == "xquad":
-            # For 'xquad' subset, download and combine Vietnamese and Thai subsets
-            vi_filepath = dl_manager.download_and_extract(_URLS + "xquad.vi.json")
-            th_filepath = dl_manager.download_and_extract(_URLS + "xquad.th.json")
-            filepaths = [vi_filepath, th_filepath]
-        else:
-            # For specific language subsets
-            filepath = dl_manager.download_and_extract(_URLS + subset_name + ".json")
-            filepaths = [filepath]
+        filepath = dl_manager.download_and_extract(_URLS + subset_name + ".json")
 
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
-                    "filepaths": filepaths,
+                    "filepaths": [filepath],
                     "split": "train",
                 },
             )
