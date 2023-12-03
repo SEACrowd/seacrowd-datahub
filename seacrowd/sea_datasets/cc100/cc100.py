@@ -135,9 +135,17 @@ _HOMEPAGE = "https://data.statmt.org/cc-100/"
 _LICENSE = "MIT"
 
 _LANGUAGES_MAP = {
-    "ind": "id",
-    "jav": "jv",
-    "sun": "su",
+    "ind": "id", # Indonesia
+    "jav": "jv", # Java
+    "sun": "su", # Sundanese
+    "mya": "my", # Burmese
+    "mya_zaw": "my_zaw", # Burmese (Zawgyi)
+    "lao": "lo", # Lao
+    "khm": "km", #Central Khmer, Khmer
+    "tgl": "tl", # Tagalog
+    "vie": "vi", # Vietnamese
+    "tha": "th", # Thai
+    "zlm": "ms", # Malay 
 }
 
 _URLS = {
@@ -156,7 +164,13 @@ def seacrowd_config_constructor(lang, schema, version):
         raise ValueError(f"Invalid schema: {schema}")
 
     if lang == "":
-        raise ValueError(f"Language is required. Choose one of these languages: {_LANGUAGES}.")
+        return SEACrowdConfig(
+                name=f"cc100_{schema}",
+                version=datasets.Version(version),
+                description=f"CC100 with {schema} schema for all languages",
+                schema=schema,
+                subset_id="cc100",
+            )
     elif lang in _LANGUAGES:
         return SEACrowdConfig(
             name=f"cc100_{lang}_{schema}",
@@ -172,12 +186,13 @@ def seacrowd_config_constructor(lang, schema, version):
 class CC100(datasets.GeneratorBasedBuilder):
     """Monolingual Datasets from Web Crawl Data."""
 
-    DEFAULT_CONFIG_NAME = "cc100_jav_source"
-
     BUILDER_CONFIGS = [
         seacrowd_config_constructor(lang, "source", _SOURCE_VERSION) for lang in _LANGUAGES_MAP
     ] + [
         seacrowd_config_constructor(lang, "seacrowd_ssp", _SEACROWD_VERSION) for lang in _LANGUAGES_MAP
+    ] + [
+        seacrowd_config_constructor("", "source", _SOURCE_VERSION), 
+        seacrowd_config_constructor("", "seacrowd_ssp", _SOURCE_VERSION), 
     ]
 
     def _info(self) -> datasets.DatasetInfo:
@@ -201,14 +216,13 @@ class CC100(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-
         split_name = self.config.name.split("_")
-        if split_name[1] == "source" or split_name[1] == "seacrowd":
-            lang = _DEFAULT_LANGUAGE
+        if self.config.name == "cc100_source" or self.config.name == "cc100_seacrowd_ssp":
+            # Load all languages
+            path = dl_manager.download_and_extract([_URLS["train"].format(lang=_LANGUAGES_MAP[lang]) for lang in _LANGUAGES_MAP])
         else:
-            lang = split_name[1]
-        url = _URLS["train"].format(lang=_LANGUAGES_MAP[lang])
-        path = dl_manager.download_and_extract(url)
+            url = _URLS["train"].format(lang=_LANGUAGES_MAP[split_name[1]])
+            path = dl_manager.download_and_extract(url)
 
         return [
             datasets.SplitGenerator(
