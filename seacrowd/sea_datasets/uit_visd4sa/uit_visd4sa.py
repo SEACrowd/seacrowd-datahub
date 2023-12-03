@@ -103,35 +103,31 @@ class UITViSD4SADataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        train_path = dl_manager.download_and_extract(_URLS["train"])
-        dev_path = dl_manager.download_and_extract(_URLS["dev"])
-        test_path = dl_manager.download_and_extract(_URLS["test"])
+        path_dict = dl_manager.download_and_extract(_URLS)
+        train_path, dev_path, test_path = path_dict["train"], path_dict["dev"], path_dict["test"]
 
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
                     "filepath": train_path,
-                    "split": "train",
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
                 gen_kwargs={
                     "filepath": test_path,
-                    "split": "test",
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
                     "filepath": dev_path,
-                    "split": "dev",
                 },
             ),
         ]
 
-    def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         with open(filepath, "r") as f:
             df = [json.loads(line) for line in f.readlines()]
