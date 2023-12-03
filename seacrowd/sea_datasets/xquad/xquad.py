@@ -47,9 +47,6 @@ class XQuADDataset(datasets.GeneratorBasedBuilder):
     with their professional translations into ten languages: Spanish, German, Greek, Russian, Turkish, Arabic, Vietnamese, Thai, Chinese, and Hindi.
     """
 
-    SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
-    SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-
     subsets = ["xquad", "xquad.vi", "xquad.th"]
 
     BUILDER_CONFIGS = [
@@ -135,7 +132,7 @@ class XQuADDataset(datasets.GeneratorBasedBuilder):
                                 "context": context,
                                 "question": question,
                                 "answers": {"answer_start": answers_start, "text": answers_text},
-                                "id": count,
+                                "id": "{}_{}".format(qa["id"], count),
                             }
                         elif self.config.schema == "seacrowd_qa":
                             yield count, {
@@ -143,7 +140,7 @@ class XQuADDataset(datasets.GeneratorBasedBuilder):
                                 "context": context,
                                 "question": question,
                                 "answer": {"answer_start": answers_start[0], "text": answers_text[0]},
-                                "id": count,
+                                "id": "{}_{}".format(qa["id"], count),
                                 "choices": [],
                                 "type": "",
                                 "document_id": document_count,
