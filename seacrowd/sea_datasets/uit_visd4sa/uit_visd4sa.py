@@ -45,7 +45,7 @@ _URLS = {
     "test": "https://raw.githubusercontent.com/kimkim00/UIT-ViSD4SA/main/data/test.jsonl",
 }
 
-_SUPPORTED_TASKS = [Tasks.COREFERENCE_RESOLUTION]  # example: [Tasks.TRANSLATION, Tasks.NAMED_ENTITY_RECOGNITION, Tasks.RELATION_EXTRACTION]
+_SUPPORTED_TASKS = [Tasks.SPAN_BASED_ABSA]  # example: [Tasks.TRANSLATION, Tasks.NAMED_ENTITY_RECOGNITION, Tasks.RELATION_EXTRACTION]
 
 _SOURCE_VERSION = "1.0.0"
 
