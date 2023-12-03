@@ -37,7 +37,7 @@ comments for evaluating span detection for aspect-based sentiment analysis for m
 
 _HOMEPAGE = "https://github.com/kimkim00/UIT-ViSD4SA"
 
-_LICENSE = Licenses.UNKNOWN.value  # example: Licenses.MIT.value, Licenses.CC_BY_NC_SA_4_0.value, Licenses.UNLICENSE.value, Licenses.UNKNOWN.value
+_LICENSE = Licenses.UNKNOWN.value
 
 _URLS = {
     "train": "https://raw.githubusercontent.com/kimkim00/UIT-ViSD4SA/main/data/train.jsonl",
@@ -45,7 +45,7 @@ _URLS = {
     "test": "https://raw.githubusercontent.com/kimkim00/UIT-ViSD4SA/main/data/test.jsonl",
 }
 
-_SUPPORTED_TASKS = [Tasks.SPAN_BASED_ABSA]  # example: [Tasks.TRANSLATION, Tasks.NAMED_ENTITY_RECOGNITION, Tasks.RELATION_EXTRACTION]
+_SUPPORTED_TASKS = [Tasks.SPAN_BASED_ABSA]
 
 _SOURCE_VERSION = "1.0.0"
 
@@ -62,14 +62,14 @@ class UITViSD4SADataset(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="uit_visd4sa_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
             description="uit_visd4sa source schema",
             schema="source",
             subset_id="uit_visd4sa",
         ),
         SEACrowdConfig(
-            name="uit_visd4sa_seacrowd_kb",
+            name=f"{_DATASETNAME}_seacrowd_kb",
             version=SEACROWD_VERSION,
             description="uit_visd4sa SEACrowd schema",
             schema="seacrowd_kb",
@@ -77,7 +77,7 @@ class UITViSD4SADataset(datasets.GeneratorBasedBuilder):
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = "uit_visd4sa_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
 
