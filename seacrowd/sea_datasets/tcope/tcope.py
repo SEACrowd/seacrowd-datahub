@@ -135,7 +135,7 @@ class TCOPEDataset(datasets.GeneratorBasedBuilder):
            )
 
         elif self.config.schema == "seacrowd_kb":
-            #features = schemas.kb_features
+            pass
         
         elif self.config.schema == "seacrowd_seq_label":
             features = schemas.seq_label_features(label_names=self.pos_labels)
@@ -174,26 +174,32 @@ class TCOPEDataset(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         df = pd.read_csv(filepath, index_col=None)
-        if self.config.schema == "source":
-            # TODO: yield (key, example) tuples in the original dataset schema
-            #for key, example in thing:
-                #yield key, example
+        df = df[df["divided.tweet"].notna()]
+        for index, row in df.iterrows():
+            if self.config.schema == "source":
+                example = dict(row)
+            elif self.config.schema == "seacrowd_seq_label":
+                print(row["postag"])
+                tokens, tags = self.split_token_and_tag(row["postag"], valid_tags=self.pos_labels)
+                example = {
+                    "id": str(index),
+                    "tokens": tokens,
+                    "labels": tags,
+                }
+                print(example)
 
-        elif self.config.schema == "seacrowd_seq_label":
-            # TODO: yield (key, example) tuples in the seacrowd schema
-            for key, example in thing:
-                yield key, example
+            yield index, example
 
     def split_token_and_tag(self, tweet: str, valid_tags: List[str]) -> Tuple[List[str], List[str]]:
+        """Split tweet into two separate lists of tokens and tags."""
         tokens_with_tags = tweet.split()
-
         tokens = []
         tags = []
         for indiv_token_with_tag in tokens_with_tags:
-            token, tag = indiv_token_with_tag.split("_")
+            token, tag = indiv_token_with_tag.rsplit("_", 1)
             if tag in valid_tags:
                 tokens.append(token)
-                tags.append(tags)
+                tags.append(tag)
         return tokens, tags
 
 # This template is based on the following template from the datasets package:
