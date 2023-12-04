@@ -10,8 +10,8 @@ from seacrowd.utils.constants import Tasks, Licenses
 
 _DATASETNAME = "parallel_asian_treebank"
 
-_LANGUAGES = ["khm", "lao", "mya", "ind", "fil", "zlm", "tha", "vie"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
-_MAPPING_LANGUAGES = { "khm": "khm", "lao": "lo", "mya": "my", "ind": "id", "fil": "fil", "zlm": "ms", "tha": "th", "vie": "vi", }
+_LANGUAGES = ["khm", "lao", "mya", "ind", "fil", "zlm", "tha", "vie"]
+_LANGUAGES_TO_FILENAME_LANGUAGE_CODE = { "khm": "khm", "lao": "lo", "mya": "my", "ind": "id", "fil": "fil", "zlm": "ms", "tha": "th", "vie": "vi", }
 _LOCAL = False
 _CITATION = """\
 @inproceedings{riza2016introduction,
@@ -102,49 +102,46 @@ class ParallelAsianTreebank(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, filepath: Path):
 
-        mapping_datas = {}
+        if self.config.schema not in ["source", "seacrowd_t2t"]:
+            raise ValueError(f"Invalid config: {self.config.name}")
+
+        mapping_data = {}
 
         for language in _LANGUAGES:
-            datas = open(f"{filepath}/ALT-Parallel-Corpus-20191206/data_{_MAPPING_LANGUAGES[language]}.txt", "r").readlines()
+            datas = open(f"{filepath}/ALT-Parallel-Corpus-20191206/data_{_LANGUAGES_TO_FILENAME_LANGUAGE_CODE[language]}.txt", "r").readlines()
 
             for line in datas:
                 id, sentence = line.split("\t")
-                sentence, _ = sentence.split("\n")
+                sentence = sentence.rsplit()
 
-                if id not in mapping_datas:
-                    mapping_datas[id] = {}
+                if id not in mapping_data:
+                    mapping_data[id] = {}
 
-                if language not in mapping_datas[id]:
-                    mapping_datas[id][language] = {}
-
-                mapping_datas[id][language] = sentence
+                mapping_data[id][language] = sentence
         
         combination_languages = list(combinations(_LANGUAGES, 2))
 
-        if self.config.schema == "source" or self.config.schema == "seacrowd_t2t":
-            i = 0
-            for id in mapping_datas:
-                for each_pair in combination_languages:
-                    if each_pair[0] in mapping_datas[id] and each_pair[1] in mapping_datas[id]:
-                        yield i, {
-                            "id": f"{id}-{each_pair[0]}-{each_pair[1]}",
-                            "text_1": mapping_datas[id][each_pair[0]],
-                            "text_2": mapping_datas[id][each_pair[1]],
-                            "text_1_name": each_pair[0],
-                            "text_2_name": each_pair[1],
-                        }
+        i = 0
 
-                        i+=1
+        for id in mapping_data:
+            for each_pair in combination_languages:
+                if each_pair[0] in mapping_data[id] and each_pair[1] in mapping_data[id]:
+                    yield i, {
+                        "id": f"{id}-{each_pair[0]}-{each_pair[1]}",
+                        "text_1": mapping_data[id][each_pair[0]],
+                        "text_2": mapping_data[id][each_pair[1]],
+                        "text_1_name": each_pair[0],
+                        "text_2_name": each_pair[1],
+                    }
 
-                        yield i, {
-                            "id": f"{id}-{each_pair[1]}-{each_pair[0]}",
-                            "text_1": mapping_datas[id][each_pair[1]],
-                            "text_2": mapping_datas[id][each_pair[0]],
-                            "text_1_name": each_pair[1],
-                            "text_2_name": each_pair[0],
-                        }
+                    i+=1
 
-                        i+=1
+                    yield i, {
+                        "id": f"{id}-{each_pair[1]}-{each_pair[0]}",
+                        "text_1": mapping_data[id][each_pair[1]],
+                        "text_2": mapping_data[id][each_pair[0]],
+                        "text_1_name": each_pair[1],
+                        "text_2_name": each_pair[0],
+                    }
 
-        else:
-            raise ValueError(f"Invalid config: {self.config.name}")
+                    i+=1
