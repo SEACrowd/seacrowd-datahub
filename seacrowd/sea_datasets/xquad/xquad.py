@@ -32,8 +32,6 @@ _HOMEPAGE = "https://github.com/google-deepmind/xquad"
 
 _LICENSE = Licenses.CC_BY_SA_4_0.value
 
-_URLS = "https://raw.githubusercontent.com/google-deepmind/xquad/master/"
-
 _SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
 
 _SOURCE_VERSION = "1.0.0"
@@ -69,7 +67,7 @@ class XQuADDataset(datasets.GeneratorBasedBuilder):
         for subset in subsets
     ]
 
-    DEFAULT_CONFIG_NAME = "xquad_source"
+    DEFAULT_CONFIG_NAME = "xquad.vi_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -88,55 +86,36 @@ class XQuADDataset(datasets.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
-        name_split = self.config.name.split("_")
-        subset_name = name_split[0]
-        filepath = dl_manager.download_and_extract(_URLS + subset_name + ".json")
-
         return [
             datasets.SplitGenerator(
-                name=datasets.Split.TRAIN,
-                gen_kwargs={
-                    "filepaths": [filepath],
-                    "split": "train",
-                },
+                name=datasets.Split.TRAIN
             )
         ]
 
-    def _generate_examples(self, filepaths: List[Path], split: str) -> Tuple[int, Dict]:
-        count = 0
-        document_count = 0
-        for filepath in filepaths:
-            with open(filepath, encoding="utf-8") as f:
-                data = json.load(f)
+    def _generate_examples(self) -> Tuple[int, Dict]:
+        name_split = self.config.name.split("_")
+        subset_name = name_split[0]
+        dataset = datasets.load_dataset(_DATASETNAME, subset_name)
+        
+        # Validation is the only subset name available for this dataset
+        for data in dataset['validation']:
+            if self.config.schema == "source":
+                yield data['id'], {
+                    "context": data['context'],
+                    "question": data['question'],
+                    "answers": {"answer_start": str(data['answers']['answer_start'][0]), "text": data['answers']['text'][0]},
+                    "id": data['id'],
+                }
 
-            for paragraphs in data["data"]:
-                for example in paragraphs["paragraphs"]:
-                    context = example["context"]
-                    for qa in example["qas"]:
-                        question = qa["question"]
-                        answers = qa["answers"]
-                        answers_start = [answer["answer_start"] for answer in answers]
-                        answers_text = [answer["text"] for answer in answers]
-
-                        if self.config.schema == "source":
-                            yield count, {
-                                "context": context,
-                                "question": question,
-                                "answers": {"answer_start": answers_start, "text": answers_text},
-                                "id": "{}_{}".format(qa["id"], count),
-                            }
-                        elif self.config.schema == "seacrowd_qa":
-                            yield count, {
-                                "question_id": count,
-                                "context": context,
-                                "question": question,
-                                "answer": {"answer_start": answers_start[0], "text": answers_text[0]},
-                                "id": "{}_{}".format(qa["id"], count),
-                                "choices": [],
-                                "type": "",
-                                "document_id": document_count,
-                                "meta": {},
-                            }
-
-                        count += 1
-                    document_count += 1
+            elif self.config.schema == "seacrowd_qa":
+                yield data['id'], {
+                    "question_id": data['id'],
+                    "context": data['context'],
+                    "question": data['question'],
+                    "answer": {"answer_start": data['answers']['answer_start'][0], "text": data['answers']['text'][0]},
+                    "id": data['id'],
+                    "choices": [],
+                    "type": "",
+                    "document_id": data['id'],
+                    "meta": {},
+                }
