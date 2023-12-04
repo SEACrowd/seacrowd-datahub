@@ -130,7 +130,7 @@ class Memolon(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         rows = []
-        with open(filepath) as file:
+        with open(filepath, encoding='utf-8') as file:
             for line in file:
                 rows.append(line.split("\t"))
 
