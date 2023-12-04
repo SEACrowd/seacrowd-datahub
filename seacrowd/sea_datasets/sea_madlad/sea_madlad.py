@@ -1,5 +1,5 @@
 """
-SEA Crowd Data Loader for SEA Wiki.
+SEA Crowd Data Loader for SEA MADLAD.
 """
 
 import gzip
