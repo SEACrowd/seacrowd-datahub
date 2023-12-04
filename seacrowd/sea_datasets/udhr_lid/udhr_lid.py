@@ -52,9 +52,9 @@ _LICENSE = Licenses.CC0_1_0.value
 
 _URL = "https://huggingface.co/datasets/cis-lmu/udhr-lid/raw/main/udhr-lid.csv"
 
-_SUPPORTED_TASKS = [Tasks.TOKEN_LEVEL_LANGUAGE_IDENTIFICATION]
+_SUPPORTED_TASKS = [Tasks.LANGUAGE_IDENTIFICATION]
 
-_SOURCE_VERSION = "1.1.0"
+_SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
@@ -72,10 +72,10 @@ class UDHRLID(datasets.GeneratorBasedBuilder):
             subset_id=f"{_DATASETNAME}",
         ),
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_seq_label",
+            name=f"{_DATASETNAME}_seacrowd_text",
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd Schema",
-            schema="seacrowd_seq_label",
+            schema="seacrowd_text",
             subset_id=f"{_DATASETNAME}",
         ),
     ]
@@ -92,8 +92,8 @@ class UDHRLID(datasets.GeneratorBasedBuilder):
                 "iso15924": datasets.Value("string"),
                 "language": datasets.Value("string"),
             })
-        elif self.config.schema == "seacrowd_seq_label":
-            features = schemas.seq_label_features(_LANGUAGES)
+        elif self.config.schema == "seacrowd_text":
+            features = schemas.text_features(_LANGUAGES)
 
         else:
             raise NotImplementedError(f"Schema '{self.config.schema}' is not defined.")
@@ -133,11 +133,11 @@ class UDHRLID(datasets.GeneratorBasedBuilder):
                         "iso15924": row["iso15924"],
                         "language": row["language"]
                     }
-                elif self.config.schema == "seacrowd_seq_label":
+                elif self.config.schema == "seacrowd_text":
                     yield i, {
                         "id": str(i),
-                        "tokens": [row["sentence"]],
-                        "labels": [row["iso639-3"]]
+                        "text": row["sentence"],
+                        "label": row["iso639-3"]
                     }
                 else:
                     raise ValueError(f"Invalid config: {self.config.name}")
