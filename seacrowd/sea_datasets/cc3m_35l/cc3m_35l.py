@@ -1,8 +1,10 @@
+import concurrent.futures
 import os
 from typing import Dict, List, Tuple
 
 import datasets
 import jsonlines as jl
+import pandas as pd
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
@@ -40,10 +42,13 @@ _HOMEPAGE = "https://google.github.io/crossmodal-3600/"
 
 _LICENSE = Licenses.CC_BY_4_0.value
 
+# the image URLs are contained in tsv file together with the original captions which can be downloaded locally using google account.
+# those tsv file originally can be found and downloaded from this page https://ai.google.com/research/ConceptualCaptions/download
+# there are no direct image folder ready, so it needs to be downloaded one by one
+# some warnings may occur when downloading due to reasons such as security certificate and others
 _URLS = {
-    "images": "https://open-images-dataset.s3.amazonaws.com/crossmodal-3600/images.tgz",
-    "train": "https://storage.googleapis.com/crossmodal-3600/cc3m_mt_train.jsonl.gz",
-    "dev": "https://storage.googleapis.com/crossmodal-3600/cc3m_mt_dev.jsonl.gz",
+    "trans_train": "https://storage.googleapis.com/crossmodal-3600/cc3m_mt_train.jsonl.gz",
+    "trans_dev": "https://storage.googleapis.com/crossmodal-3600/cc3m_mt_dev.jsonl.gz",
 }
 
 _SUPPORTED_TASKS = [Tasks.IMAGE_CAPTIONING]
@@ -53,6 +58,8 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 _LANGS = ["fil", "id", "th", "vi"]
+
+_LOCAL = True
 
 
 class CC3M35L(datasets.GeneratorBasedBuilder):
@@ -101,71 +108,147 @@ class CC3M35L(datasets.GeneratorBasedBuilder):
             citation=_CITATION,
         )
 
+    def fill_img_path(self, df: pd.DataFrame, line: dict):
+        exceptions = []
+        selected_row = df.query('caption==@line["caption_tokenized"]')
+        # it may return several rows, skip of empty
+        if not selected_row.empty:
+            # for each row, download the image, use its path and put the translation
+            for idx, row in selected_row.iterrows():
+                row["trans_caption"] = line["translation_tokenized"]
+                row["backtrans_caption"] = line["backtranslation_tokenized"]
+                # if the image cannot be downloaded for some reason, skip it
+                # may cause difference in the total data each run
+                try:
+                    row["img_path"] = datasets.DownloadManager().download(row["img_url"])
+                except:
+                    exceptions.append(idx)
+
+        return selected_row, exceptions
+
+    def is_target(self, line: dict, trg_lang: str):
+        if line["trg_lang"] == trg_lang:
+            return line
+
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        train_path = dl_manager.download_and_extract(_URLS["train"])
-        dev_path = dl_manager.download_and_extract(_URLS["dev"])
-        images_path = dl_manager.download_and_extract(_URLS["images"])
+        dev_path = dl_manager.download_and_extract(_URLS["trans_dev"])
+        train_path = dl_manager.download_and_extract(_URLS["trans_train"])
 
-        train_caps = {}
-        dev_caps = {}
-        
+        if self.config.data_dir is None:
+            raise ValueError("This is a local dataset. Please pass the data_dir kwarg to load_dataset.")
+        else:
+            data_dir = self.config.data_dir
+
+        # read tsv from local train and validation files
+        gcc_val = os.path.join(data_dir, "Validation_GCC-1.1.0-Validation.tsv")
+        gcc_train = os.path.join(data_dir, "Train_GCC-training.tsv")
+
+        # make it into pandas dataframe
+        colnames = ["caption", "img_url"]
+        gcc_val_df = pd.read_csv(gcc_val, sep="\t", header=None, names=colnames)
+        gcc_train_df = pd.read_csv(gcc_train, sep="\t", header=None, names=colnames)
+
+        # add new column to keep the downloaded image path
+        gcc_val_df["img_path"] = None
+        gcc_train_df["img_path"] = None
+
+        # add new column to keep the translated caption
+        gcc_val_df["trans_caption"] = None
+        gcc_train_df["trans_caption"] = None
+
+        gcc_val_df["backtrans_caption"] = None
+        gcc_train_df["backtrans_caption"] = None
+
+        # match the original captions in the translated set to the dataframe caption
+        # download the images from the URL and use it as the filepath
+        train_exceptions = []
+        val_exceptions = []
+
         current_lang = self.config.subset_id.split("_")[2]
+        val_caption_targets = []
+        train_caption_targets = []
 
-        with jl.open(os.path.join(train_path), mode="r") as j:
-            for line in j:
-                if line["trg_lang"] == current_lang:
-                    train_caps[line["image_id"]] = line
-
+        # filter validation data
         with jl.open(os.path.join(dev_path), mode="r") as j:
-            for line in j:
-                if line["trg_lang"] == current_lang:
-                    dev_caps[line["image_id"]] = line
+            with concurrent.futures.ProcessPoolExecutor() as fill_target_cap:
+                fut = [fill_target_cap.submit(self.is_target, line, current_lang) for line in j]
+
+                for r in concurrent.futures.as_completed(fut):
+                    if r.result() is not None:
+                        val_caption_targets.append(r.result())
+        # fill val data
+        with concurrent.futures.ThreadPoolExecutor() as upd_df:
+            results = [upd_df.submit(self.fill_img_path, gcc_val_df, line) for line in val_caption_targets]
+            for res in concurrent.futures.as_completed(results):
+                val_exceptions.extend(res.result()[1])
+                gcc_val_df.update(res.result()[0])
+
+        # clean the memory
+        val_caption_targets = []
+
+        # filter train data
+        with jl.open(os.path.join(train_path), mode="r") as j:
+            with concurrent.futures.ProcessPoolExecutor() as fill_target_cap:
+                fut = [fill_target_cap.submit(self.is_target, line, current_lang) for line in j]
+
+                for r in concurrent.futures.as_completed(fut):
+                    if r.result() is not None:
+                        train_caption_targets.append(r.result())
+        # fill train data
+        with concurrent.futures.ThreadPoolExecutor() as upd_df:
+            results = [upd_df.submit(self.fill_img_path, gcc_val_df, line) for line in train_caption_targets]
+            for res in concurrent.futures.as_completed(results):
+                train_exceptions.extend(res.result()[1])
+                gcc_train_df.update(res.result()[0])
+
+        # clean the memory
+        train_caption_targets = []
 
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
-                    "filepath": {"img_ids": train_caps.keys(), "images": {img_id: os.path.join(images_path, img_id + ".jpg") for img_id in train_caps.keys()}, "captions": train_caps},
+                    "filepath": gcc_train_df,
+                    "exceptions": train_exceptions,
                     "split": "train",
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
-                    "filepath": {"img_ids": dev_caps.keys(), "images": {img_id: os.path.join(images_path, img_id + ".jpg") for img_id in dev_caps.keys()}, "captions": dev_caps},
+                    "filepath": gcc_val_df,
+                    "exceptions": val_exceptions,
                     "split": "dev",
                 },
             ),
         ]
 
-    def _generate_examples(self, filepath: dict, split: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepath: dict, exceptions: list, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
-        counter = 0
-        for img_id in filepath["img_ids"]:
-            if self.config.schema == "source":
-                yield counter, {
-                    "id": img_id + "_" + str(counter),
-                    "image_paths": filepath["images"][img_id],
-                    "src_lang": filepath["captions"][img_id]["src_lang"],
-                    "caption_tokenized": filepath["captions"][img_id]["caption_tokenized"],
-                    "trg_lang": filepath["captions"][img_id]["trg_lang"],
-                    "translation_tokenized": filepath["captions"][img_id]["translation_tokenized"],
-                    "backtranslation_tokenized": filepath["captions"][img_id]["backtranslation_tokenized"],
-                }
+        for idx, row in filepath.iterrows():
+            if idx not in exceptions:
+                if self.config.schema == "source":
+                    yield idx, {
+                        "id": str(idx),
+                        "image_paths": row["img_path"],
+                        "src_lang": "en",
+                        "caption_tokenized": row["caption"],
+                        "trg_lang": self.config.subset_id.split("_")[2],
+                        "translation_tokenized": row["trans_caption"],
+                        "backtranslation_tokenized": row["backtrans_caption"],
+                    }
 
-            elif self.config.schema == "seacrowd_imtext":
-                yield counter, {
-                    "id": img_id + "_" + str(counter),
-                    "image_paths": [filepath["images"][img_id]],
-                    "texts": filepath["captions"][img_id]["translation_tokenized"],
-                    "metadata": {
-                        "context": None,
-                        "labels": None,
-                    },
-                }
+                elif self.config.schema == "seacrowd_imtext":
+                    yield idx, {
+                        "id": str(idx),
+                        "image_paths": [row["img_path"]],
+                        "texts": row["trans_caption"],
+                        "metadata": {
+                            "context": None,
+                            "labels": None,
+                        },
+                    }
 
-            else:
-                raise ValueError(f"Invalid config: {self.config.name}")
-
-            counter += 1
+                else:
+                    raise ValueError(f"Invalid config: {self.config.name}")
