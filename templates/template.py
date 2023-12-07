@@ -35,7 +35,7 @@ from typing import Dict, List, Tuple
 import datasets
 
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants Tasks, Licenses
+from seacrowd.utils.constants import Tasks, Licenses
 
 # TODO: Add BibTeX citation
 _CITATION = """\
@@ -71,6 +71,10 @@ _HOMEPAGE = ""
 # In the case that it's not clear whether the dataset has a license or not, please use `Licenses.UNKNOWN.value`
 # Some datasets may also have custom licenses. In this case, simply put f'{Licenses.OTHERS.value} | {FULL_LICENSE_TERM}' into `_LICENSE`
 _LICENSE = "" # example: Licenses.MIT.value, Licenses.CC_BY_NC_SA_4_0.value, Licenses.UNLICENSE.value, Licenses.UNKNOWN.value
+
+# TODO: Add a _LOCAL flag to indicate whether the data cannot be sourced from a public link 
+#  E.g. the dataset requires signing a specific term of use, the dataset is sent through email, etc.
+_LOCAL = False
 
 # TODO: Add links to the urls needed to download your dataset files.
 #  For local datasets, this variable can be an empty dictionary.
