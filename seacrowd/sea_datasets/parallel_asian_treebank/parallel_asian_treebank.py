@@ -12,7 +12,7 @@ _DATASETNAME = "parallel_asian_treebank"
 
 _LANGUAGES = ["khm", "lao", "mya", "ind", "fil", "zlm", "tha", "vie"]
 _LANGUAGES_TO_FILENAME_LANGUAGE_CODE = { "khm": "khm", "lao": "lo", "mya": "my", "ind": "id", "fil": "fil", "zlm": "ms", "tha": "th", "vie": "vi", }
-_LOCAL = False
+_LOCAL = True
 _CITATION = """\
 @inproceedings{riza2016introduction,
   title={Introduction of the asian language treebank},
@@ -89,18 +89,38 @@ class ParallelAsianTreebank(datasets.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
-        data_path = dl_manager.download_and_extract(_URL)
+        if self.config.data_dir is None:
+            raise ValueError(
+                "This is a local dataset. Please pass the data_dir kwarg to load_dataset."
+            )
+        else:
+            data_dir = self.config.data_dir
 
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
-                    "filepath": data_path
+                    "data_dir": data_dir,
+                    "split": "train"
+                },
+            ),
+            datasets.SplitGenerator(
+                name=datasets.Split.TEST,
+                gen_kwargs={
+                    "data_dir": data_dir,
+                    "split": "test"
+                },
+            ),
+            datasets.SplitGenerator(
+                name=datasets.Split.VALIDATION,
+                gen_kwargs={
+                    "data_dir": data_dir,
+                    "split": "dev"
                 },
             )
         ]
 
-    def _generate_examples(self, filepath: Path):
+    def _generate_examples(self, data_dir, split: str):
 
         if self.config.schema not in ["source", "seacrowd_t2t"]:
             raise ValueError(f"Invalid config: {self.config.name}")
@@ -108,7 +128,7 @@ class ParallelAsianTreebank(datasets.GeneratorBasedBuilder):
         mapping_data = {}
 
         for language in _LANGUAGES:
-            datas = open(f"{filepath}/ALT-Parallel-Corpus-20191206/data_{_LANGUAGES_TO_FILENAME_LANGUAGE_CODE[language]}.txt", "r").readlines()
+            datas = open(f"{data_dir}/data_{_LANGUAGES_TO_FILENAME_LANGUAGE_CODE[language]}.txt.{split}", "r").readlines()
 
             for line in datas:
                 id, sentence = line.split("\t")
