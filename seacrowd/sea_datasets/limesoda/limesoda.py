@@ -149,19 +149,18 @@ class LimesodaDataset(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
         with open(filepath, "r") as f:
-            df = [json.loads(line) for line in f.readlines()]
-        f.close()
+            entries = [json.loads(line) for line in f.readlines()]
         if self.config.schema == "source":
             if self.config.subset_id == "limesoda_raw":
-                for i, row in enumerate(df):
+                for i, row in enumerate(entries):
                     ex = {"id": str(i), "title": row["Title"], "detail": row["Detail"], "title_token_tags": row["Title Token Tags"], "detail_token_tags": row["Detail Token Tags"], "document_tag": row["Document Tag"]}
                     yield i, ex
             else:
-                for i, row in enumerate(df):
+                for i, row in enumerate(entries):
                     ex = {"id": str(i), "text": row["Text"], "document_tag": row["Document Tag"]}
                     yield i, ex
         elif self.config.schema == "seacrowd_text":
-            for i, row in enumerate(df):
+            for i, row in enumerate(entries):
                 ex = {
                     "id": str(i),
                     "text": row["Detail"] if self.config.subset_id == "limesoda_raw" else row["Text"],
