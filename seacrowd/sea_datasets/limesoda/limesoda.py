@@ -86,7 +86,6 @@ class LimesodaDataset(datasets.GeneratorBasedBuilder):
     DEFAULT_CONFIG_NAME = "limesoda_raw_source"
 
     def _info(self) -> datasets.DatasetInfo:
-
         if self.config.schema == "source":
             if self.config.subset_id == "limesoda_raw":
                 features = datasets.Features(
@@ -120,7 +119,6 @@ class LimesodaDataset(datasets.GeneratorBasedBuilder):
             return [
                 datasets.SplitGenerator(
                     name=datasets.Split.TRAIN,
-                    # Whatever you put in gen_kwargs will be passed to _generate_examples
                     gen_kwargs={
                         "filepath": raw_path,
                     },
@@ -131,7 +129,6 @@ class LimesodaDataset(datasets.GeneratorBasedBuilder):
             return [
                 datasets.SplitGenerator(
                     name=datasets.Split.TRAIN,
-                    # Whatever you put in gen_kwargs will be passed to _generate_examples
                     gen_kwargs={
                         "filepath": train_path,
                     },
@@ -163,7 +160,6 @@ class LimesodaDataset(datasets.GeneratorBasedBuilder):
                 for i, row in enumerate(df):
                     ex = {"id": str(i), "text": row["Text"], "document_tag": row["Document Tag"]}
                     yield i, ex
-        # For example seacrowd_kb, seacrowd_t2t
         elif self.config.schema == "seacrowd_text":
             for i, row in enumerate(df):
                 ex = {
