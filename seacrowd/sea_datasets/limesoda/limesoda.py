@@ -54,11 +54,11 @@ class LimesodaDataset(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="limesoda_raw_source",
+            name="limesoda_source",
             version=SOURCE_VERSION,
             description="limesoda source schema",
             schema="source",
-            subset_id="limesoda_raw",
+            subset_id="limesoda",
         ),
         SEACrowdConfig(
             name="limesoda_split_source",
@@ -68,11 +68,11 @@ class LimesodaDataset(datasets.GeneratorBasedBuilder):
             subset_id="limesoda_split",
         ),
         SEACrowdConfig(
-            name="limesoda_raw_seacrowd_text",
+            name="limesoda_seacrowd_text",
             version=SEACROWD_VERSION,
             description="limesoda SEACrowd schema",
             schema="seacrowd_text",
-            subset_id="limesoda_raw",
+            subset_id="limesoda",
         ),
         SEACrowdConfig(
             name="limesoda_split_seacrowd_text",
@@ -83,11 +83,11 @@ class LimesodaDataset(datasets.GeneratorBasedBuilder):
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = "limesoda_raw_source"
+    DEFAULT_CONFIG_NAME = "limesoda_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
-            if self.config.subset_id == "limesoda_raw":
+            if self.config.subset_id == "limesoda":
                 features = datasets.Features(
                     {
                         "id": datasets.Value("string"),
@@ -114,7 +114,7 @@ class LimesodaDataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
         path_dict = dl_manager.download_and_extract(_URLS)
-        if self.config.subset_id == "limesoda_raw":
+        if self.config.subset_id == "limesoda":
             raw_path = path_dict["raw"]
             return [
                 datasets.SplitGenerator(
@@ -151,7 +151,7 @@ class LimesodaDataset(datasets.GeneratorBasedBuilder):
         with open(filepath, "r") as f:
             entries = [json.loads(line) for line in f.readlines()]
         if self.config.schema == "source":
-            if self.config.subset_id == "limesoda_raw":
+            if self.config.subset_id == "limesoda":
                 for i, row in enumerate(entries):
                     ex = {"id": str(i), "title": row["Title"], "detail": row["Detail"], "title_token_tags": row["Title Token Tags"], "detail_token_tags": row["Detail Token Tags"], "document_tag": row["Document Tag"]}
                     yield i, ex
@@ -163,7 +163,7 @@ class LimesodaDataset(datasets.GeneratorBasedBuilder):
             for i, row in enumerate(entries):
                 ex = {
                     "id": str(i),
-                    "text": row["Detail"] if self.config.subset_id == "limesoda_raw" else row["Text"],
+                    "text": row["Detail"] if self.config.subset_id == "limesoda" else row["Text"],
                     "label": row["Document Tag"],
                 }
                 yield i, ex
