@@ -249,7 +249,7 @@ TASK_TO_SCHEMA = {
 
     Tasks.HOAX_NEWS_CLASSIFICATION: "TEXT",
     Tasks.CONCEPT_ALIGNMENT_CLASSIFICATION: "PAIRS",
-    Tasks.SPAN_BASED_ABSA: "KB",
+    Tasks.SPAN_BASED_ABSA: "SEQ_LABEL",
     Tasks.FACT_CHECKING: None,
     Tasks.VIDEO_CAPTIONING: "VIDTEXT",
     Tasks.VIDEO_TO_TEXT_RETRIEVAL: "VIDTEXT",
@@ -289,7 +289,7 @@ TASK_TO_FEATURES = {
     Tasks.NAMED_ENTITY_RECOGNITION: {"entities"},
     Tasks.DEPENDENCY_PARSING: {"relations", "entities"},
     Tasks.COREFERENCE_RESOLUTION: {"entities", "coreferences"},
-    Tasks.SPAN_BASED_ABSA: {"entities", "coreferences"},
+    # Tasks.SPAN_BASED_ABSA: {"entities", "coreferences"},
     # Tasks.NAMED_ENTITY_DISAMBIGUATION: {"entities", "normalized"},
     # Tasks.EVENT_EXTRACTION: {"events"}
 }
