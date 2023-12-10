@@ -28,3 +28,4 @@ jobs:
         include-only-assigned: true
         exempt-issue-labels: 'in-progress,pr-ready'
         operations-per-run: 100
+        debug-only: true
