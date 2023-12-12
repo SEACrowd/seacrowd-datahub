@@ -129,9 +129,3 @@ class FilipinoWordsAOADataset(datasets.GeneratorBasedBuilder):
                     "text_2_name": "eng",
                 }
             yield index, example
-
-
-# This allows you to run your dataloader with `python [dataset_name].py` during development
-# TODO: Remove this before making your PR
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)
