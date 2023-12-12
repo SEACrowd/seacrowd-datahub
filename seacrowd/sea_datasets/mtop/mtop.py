@@ -31,7 +31,6 @@ _CITATION = """\
   url       = {https://aclanthology.org/2021.eacl-main.257},
   doi       = {10.18653/v1/2021.eacl-main.257},
   pages    = {2950-2962},
-  bibsource = {}
 }
 """
 _LOCAL = False
