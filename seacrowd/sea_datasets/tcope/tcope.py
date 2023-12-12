@@ -166,27 +166,24 @@ class TCOPEDataset(datasets.GeneratorBasedBuilder):
                 },
             ),
         ]
-
-    # method parameters are unpacked from `gen_kwargs` as given in `_split_generators`
-
-    # TODO: change the args of this function to match the keys in `gen_kwargs`. You may add any necessary kwargs.
-
+    
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
+        if self.config.schema not in ("source", "seacrowd_seq_label"):
+            raise ValueError(f"Received unexpected config schema {self.config.schema}")
+
         df = pd.read_csv(filepath, index_col=None)
         df = df[df["divided.tweet"].notna()]
         for index, row in df.iterrows():
             if self.config.schema == "source":
                 example = dict(row)
             elif self.config.schema == "seacrowd_seq_label":
-                print(row["postag"])
                 tokens, tags = self.split_token_and_tag(row["postag"], valid_tags=self.pos_labels)
                 example = {
                     "id": str(index),
                     "tokens": tokens,
                     "labels": tags,
                 }
-                print(example)
 
             yield index, example
 
