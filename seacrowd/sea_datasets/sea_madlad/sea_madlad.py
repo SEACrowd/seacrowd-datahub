@@ -7,7 +7,6 @@ import json
 from typing import Dict, List, Tuple
 
 import datasets
-from datasets import load_dataset
 from datasets.download.download_manager import DownloadManager
 
 from seacrowd.utils import schemas
@@ -16,7 +15,7 @@ from seacrowd.utils.constants import TASK_TO_SCHEMA, Licenses, Tasks
 
 _CITATION = r"""
 @misc{kudugunta2023madlad400,
-      title={MADLAD-400: A Multilingual And Document-Level Large Audited Dataset}, 
+      title={MADLAD-400: A Multilingual And Document-Level Large Audited Dataset},
       author={Sneha Kudugunta and Isaac Caswell and Biao Zhang and Xavier Garcia and Christopher A. Choquette-Choo and Katherine Lee and Derrick Xin and Aditya Kusupati and Romi Stella and Ankur Bapna and Orhan Firat},
       year={2023},
       eprint={2309.04662},
@@ -137,7 +136,7 @@ def conform_init_config():
     if len(_LANGUAGES) == 0:
         raise AssertionError("No Languages detected from config!")
     if len(CONFIG_SUFFIXES_FOR_TASK) != len(_SUPPORTED_TASKS):
-        raise AssertionError("Config prefixes doesn't matched in terms of `len` with `_SUPPORTED_TASKS`!")
+        raise AssertionError("Config prefixes don't matched in terms of `len` with `_SUPPORTED_TASKS`!")
     if len(CONFIG_SUFFIXES_FOR_TASK) == 0:
         raise AssertionError("Config prefixes and `_SUPPORTED_TASKS` have `len` of 0!")
 
