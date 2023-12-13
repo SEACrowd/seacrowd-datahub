@@ -76,7 +76,7 @@ _SEACROWD_VERSION = "1.0.0"
 _SUBSETS = ["id_ID", "jv_ID", "su_ID", "th_TH", "vi_VN", "ms_MY", "lo_LA", "km_KH", "my_MM", "cx_PH"]
 
 
-class CCAlignedSentences(datasets.GeneratorBasedBuilder):
+class CCAlignedSentencesDataset(datasets.GeneratorBasedBuilder):
     """CC Aligned Sentences dataset by Chaudhary et al., (2019)"""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
