@@ -2,6 +2,7 @@
 
 import json
 from pathlib import Path
+import re
 from typing import Dict, List, Tuple
 
 import datasets
@@ -52,6 +53,52 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
+def construct_label_classes():
+    IOB_tag = ["I", "O", "B"]
+    aspects = ["SCREEN", "CAMERA", "FEATURES", "BATTERY", "PERFORMANCE", "STORAGE", "DESIGN", "PRICE", "GENERAL", "SER&ACC"]
+    ratings = ["POSITIVE", "NEUTRAL", "NEGATIVE"]
+    label_classes = []
+    for iob in IOB_tag:
+        if iob == "O":
+            label_classes.append("O")
+        else:
+            for aspect in aspects:
+                for rating in ratings:
+                    label_classes.append("{iob}-{aspect}#{rating}".format(iob=iob, aspect=aspect, rating=rating))
+    return label_classes
+
+
+def construct_IOB_sequences(text, labels):
+    labels.sort()
+    word_start = [0] + [match.start() + 1 for match in re.finditer(" ", text)]
+    is_not_O = False
+    iob_sequence = []
+    word_count = 0
+    lb_count = 0
+
+    while word_count < len(word_start):
+        if lb_count == len(labels):
+            for x in range(word_count, len(word_start)):
+                iob_sequence.append("O")
+            break
+        if not is_not_O:
+            if word_start[word_count] >= labels[lb_count][0]:
+                is_not_O = True
+                iob_sequence.append("B-" + labels[lb_count][-1])
+                word_count += 1
+            else:
+                iob_sequence.append("O")
+                word_count += 1
+        else:
+            if word_start[word_count] > labels[lb_count][1]:
+                is_not_O = False
+                lb_count += 1
+            else:
+                iob_sequence.append("I-" + labels[lb_count][-1])
+                word_count += 1
+    return iob_sequence
+
+
 class UITViSD4SADataset(datasets.GeneratorBasedBuilder):
     """This dataset is designed for span detection for aspect-based sentiment analysis NLP task.
     A Vietnamese dataset consisting of 35,396 human-annotated spans on 11,122 feedback
@@ -69,10 +116,10 @@ class UITViSD4SADataset(datasets.GeneratorBasedBuilder):
             subset_id="uit_visd4sa",
         ),
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_kb",
+            name=f"{_DATASETNAME}_seacrowd_seq_label",
             version=SEACROWD_VERSION,
             description="uit_visd4sa SEACrowd schema",
-            schema="seacrowd_kb",
+            schema="seacrowd_seq_label",
             subset_id="uit_visd4sa",
         ),
     ]
@@ -80,7 +127,6 @@ class UITViSD4SADataset(datasets.GeneratorBasedBuilder):
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
-
         if self.config.schema == "source":
             features = datasets.Features(
                 {
@@ -89,9 +135,8 @@ class UITViSD4SADataset(datasets.GeneratorBasedBuilder):
                 }
             )
 
-        elif self.config.schema == "seacrowd_kb":
-            # e.g. features = schemas.kb_features
-            features = schemas.kb_features
+        elif self.config.schema == "seacrowd_seq_label":
+            features = schemas.seq_label_features(construct_label_classes())
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -135,39 +180,19 @@ class UITViSD4SADataset(datasets.GeneratorBasedBuilder):
         if self.config.schema == "source":
             for _id, row in enumerate(df):
                 labels = row["labels"]
-                entry_label = []
+                entry_labels = []
                 for lb in labels:
-                    entry_label.append({"start": lb[0], "end": lb[1], "aspect": lb[-1].split("#")[0], "rating": lb[-1].split("#")[-1]})
+                    entry_labels.append({"start": lb[0], "end": lb[1], "aspect": lb[-1].split("#")[0], "rating": lb[-1].split("#")[-1]})
                 entry = {
                     "text": row["text"],
-                    "label": entry_label,
+                    "label": entry_labels,
                 }
                 yield _id, entry
-
-        elif self.config.schema == "seacrowd_kb":
+        elif self.config.schema == "seacrowd_seq_label":
             for _id, row in enumerate(df):
                 entry = {
-                    "id": _id,
-                    "passages": [
-                        {
-                            "id": "text-" + str(_id),
-                            "type": "text",
-                            "text": [row["text"]],
-                            "offsets": [[0, len(row["text"])]],
-                        }
-                    ],
-                    "entities": [
-                        {
-                            "id": str(_id) + "-aspect-rating-" + str(lbl_id),
-                            "type": label[-1],  # (ASPECT NAME # RATING (POSITIVE / NEGATIVE))
-                            "text": [row["text"][label[0] : label[1]]],  # PART OF TEXT AFFECTED BY THE TYPE,
-                            "offsets": [label[:2]],  # [START, END]
-                            "normalized": [],
-                        }
-                        for lbl_id, label in enumerate(row["labels"])
-                    ],
-                    "events": [],
-                    "coreferences": [{"id": str(_id) + "-0", "entity_ids": [str(_id) + "-aspect-rating-" + str(lbl_id) for lbl_id, _ in enumerate(row["labels"])]}],
-                    "relations": [],
+                    "id": str(_id),
+                    "tokens": row["text"].split(" "),
+                    "labels": construct_IOB_sequences(row["text"], row["labels"]),
                 }
                 yield _id, entry
