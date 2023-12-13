@@ -70,7 +70,7 @@ _SOURCE_VERSION = "4.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class Unimorph(datasets.GeneratorBasedBuilder):
+class UnimorphDataset(datasets.GeneratorBasedBuilder):
     """Unimorh 4.0 dataset by Batsuren et al., (2022)"""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
