@@ -61,7 +61,7 @@ _URLS = {
 }
 
 
-class Palito(datasets.GeneratorBasedBuilder):
+class PalitoDataset(datasets.GeneratorBasedBuilder):
     """Palito corpus"""
 
     subsets = [
