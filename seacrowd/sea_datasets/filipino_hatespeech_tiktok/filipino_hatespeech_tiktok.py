@@ -35,7 +35,7 @@ _SEACROWD_VERSION = "1.0.0"
 _URL = "https://raw.githubusercontent.com/imperialite/filipino-tiktok-hatespeech/main/data"
 
 
-class FilipinoHateSpeechTikTok(datasets.GeneratorBasedBuilder):
+class FilipinoHateSpeechTikTokDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
@@ -109,20 +109,19 @@ class FilipinoHateSpeechTikTok(datasets.GeneratorBasedBuilder):
         id = 0
         if self.config.schema == "source":
             for row in df.itertuples():
-                ex = {
-                    "text": row.text,
-                    "label": str(int(row.label)) if not pd.isna(row.label) else "0",
-                }
+                # Skip NA labels
+                if pd.isna(row.label):
+                    continue
+                ex = {"text": row.text, "label": str(int(row.label))}
                 yield id, ex
                 id += 1
 
         elif self.config.schema == "seacrowd_text":
             for row in df.itertuples():
-                ex = {
-                    "id": id,
-                    "text": row.text,
-                    "label": str(int(row.label)) if not pd.isna(row.label) else "0",
-                }
+                # Skip NA labels
+                if pd.isna(row.label):
+                    continue
+                ex = {"id": id, "text": row.text, "label": str(int(row.label))}
                 yield id, ex
                 id += 1
         else:
