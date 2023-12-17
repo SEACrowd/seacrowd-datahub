@@ -2,12 +2,11 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 import datasets
-import pandas as pd
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import (DEFAULT_SEACROWD_VIEW_NAME,
-                                       DEFAULT_SOURCE_VIEW_NAME, Tasks)
+                                      DEFAULT_SOURCE_VIEW_NAME, Tasks)
 
 _DATASETNAME = "palito"
 _SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
@@ -40,7 +39,7 @@ _LANGUAGES = {
     "pam": "Kapampangan",
     "pag": "Pangasinense",
     "war": "Waray",
-  }
+}
 
 _LOCAL = False
 
@@ -55,7 +54,7 @@ as novels and stories) and religious texts (such as the Bible). Automated tools 
 for language analysis such as word count, collocates, and others. This is part of a bigger
 corpora building project for Philippine languages that would consider text, speech and
 video forms, and the corresponding development of automated tools for language analysis
-of these various forms. 
+of these various forms.
 """
 
 _HOMEPAGE = "https://github.com/imperialite/Philippine-Languages-Online-Corpora/tree/master/PALITO%20Corpus"
@@ -70,7 +69,7 @@ _SEACROWD_VERSION = "1.0.0"
 
 _URLS = {
     "literary": "https://raw.githubusercontent.com/imperialite/Philippine-Languages-Online-Corpora/master/PALITO%20Corpus/Data/{lang}_Literary_Text.txt",
-    "religious": "https://raw.githubusercontent.com/imperialite/Philippine-Languages-Online-Corpora/master/PALITO%20Corpus/Data/{lang}_Religious_Text.txt"
+    "religious": "https://raw.githubusercontent.com/imperialite/Philippine-Languages-Online-Corpora/master/PALITO%20Corpus/Data/{lang}_Religious_Text.txt",
 }
 
 
@@ -86,7 +85,7 @@ class PalitoDataset(datasets.GeneratorBasedBuilder):
         "palito_pam",
         "palito_pag",
         "palito_war",
-        ]
+    ]
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
@@ -131,8 +130,7 @@ class PalitoDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         lang = self.config.name.split("_")[1]
-        filepaths = [Path(dl_manager.download(_URLS["literary"].format(lang=_LANGUAGES[lang]))), 
-                     Path(dl_manager.download(_URLS["religious"].format(lang=_LANGUAGES[lang])))]
+        filepaths = [Path(dl_manager.download(_URLS["literary"].format(lang=_LANGUAGES[lang]))), Path(dl_manager.download(_URLS["religious"].format(lang=_LANGUAGES[lang])))]
 
         return [
             datasets.SplitGenerator(
@@ -166,4 +164,4 @@ class PalitoDataset(datasets.GeneratorBasedBuilder):
                             },
                         )
 
-                    counter += 1                
+                    counter += 1
