@@ -192,7 +192,7 @@ def construct_configs_on_langs(languages: list = None) -> List[SEACrowdConfig]:
     return config_list
 
 
-class SEA_MADLAD_Dataset(datasets.GeneratorBasedBuilder):
+class SEAMADLADDataset(datasets.GeneratorBasedBuilder):
     """SEA MADLAD dataset, subsetted from https://huggingface.co/datasets/allenai/MADLAD-400"""
 
     # get all schema w/o lang arg + get all schema w/ lang arg
