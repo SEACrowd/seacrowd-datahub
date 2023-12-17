@@ -109,10 +109,7 @@ class FilipinoHateSpeechTikTokDataset(datasets.GeneratorBasedBuilder):
         id = 0
         if self.config.schema == "source":
             for row in df.itertuples():
-                # Skip NA labels
-                if pd.isna(row.label):
-                    continue
-                ex = {"text": row.text, "label": str(int(row.label))}
+                ex = {"text": row.text, "label": str(row.label)}
                 yield id, ex
                 id += 1
 
