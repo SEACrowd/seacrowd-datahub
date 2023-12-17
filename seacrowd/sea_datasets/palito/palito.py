@@ -14,7 +14,20 @@ _SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
 _UNIFIED_VIEW_NAME = DEFAULT_SEACROWD_VIEW_NAME
 
 _CITATION = """
-Shirley Dita, Rachel Edita Roxas, Paul Inventado. 2008. Building online corpora of Philippine languages. Proceedings of the 23rd Pacific Asia Conference on Language, Information and Computation. Available online: http://aclweb.org/anthology/Y/Y09/Y09-2024.pdf
+@inproceedings{dita-etal-2009-building,
+    title = "Building Online Corpora of {P}hilippine Languages",
+    author = "Dita, Shirley N.  and
+      Roxas, Rachel Edita O.  and
+      Inventado, Paul",
+    editor = "Kwong, Olivia",
+    booktitle = "Proceedings of the 23rd Pacific Asia Conference on Language, Information and Computation, Volume 2",
+    month = dec,
+    year = "2009",
+    address = "Hong Kong",
+    publisher = "City University of Hong Kong",
+    url = "https://aclanthology.org/Y09-2024",
+    pages = "646--653",
+}
 """
 
 # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
