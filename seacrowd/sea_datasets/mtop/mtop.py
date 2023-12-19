@@ -34,7 +34,7 @@ _CITATION = """\
 }
 """
 _LOCAL = False
-_LANGUAGES = "tha"
+_LANGUAGES = ["tha"]
 _DATASETNAME = "mtop"
 _DESCRIPTION = """\
 This dataset contains annotated utterances from 6 languages, including Thai,
