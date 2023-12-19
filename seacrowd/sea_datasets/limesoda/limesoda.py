@@ -32,6 +32,8 @@ _HOMEPAGE = "https://github.com/byinth/LimeSoda"
 
 _LICENSE = Licenses.CC_BY_4_0.value
 
+_LANGUAGES = ["tha"]
+
 _URLS = {
     "split": {
         "train": "https://raw.githubusercontent.com/byinth/LimeSoda/main/dataset_train_wo_tokentags_v1/train_v1.jsonl",
