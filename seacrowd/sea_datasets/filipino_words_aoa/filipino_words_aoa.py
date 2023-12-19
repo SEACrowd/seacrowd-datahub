@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import urllib
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -23,7 +22,7 @@ from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
-_CITATION = """\
+_CITATION = """
 @techreport{dulaynag2021filaoa,
   author    = {Dulay, Katrina May and Nag, Somali},
   title     = {TalkTogether Age-of-Acquisition Word Lists for 885 Kannada and Filipino Words},
@@ -55,7 +54,7 @@ _SEACROWD_VERSION = "1.0.0"
 
 
 class FilipinoWordsAOADataset(datasets.GeneratorBasedBuilder):
-    """\
+    """
     Dataset of Filipino words, their English meanings, and their part-of-speech tag
     obtained from an age-of-acquisition study.
     """
