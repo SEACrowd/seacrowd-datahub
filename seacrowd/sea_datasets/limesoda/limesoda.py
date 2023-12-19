@@ -54,36 +54,36 @@ class LimesodaDataset(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="limesoda_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
             description="limesoda source schema",
             schema="source",
-            subset_id="limesoda",
+            subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
-            name="limesoda_split_source",
+            name=f"{_DATASETNAME}_split_source",
             version=SOURCE_VERSION,
             description="limesoda source schema",
             schema="source",
-            subset_id="limesoda_split",
+            subset_id=f"{_DATASETNAME}_split",
         ),
         SEACrowdConfig(
-            name="limesoda_seacrowd_text",
+            name=f"{_DATASETNAME}_seacrowd_text",
             version=SEACROWD_VERSION,
             description="limesoda SEACrowd schema",
             schema="seacrowd_text",
-            subset_id="limesoda",
+            subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
-            name="limesoda_split_seacrowd_text",
+            name=f"{_DATASETNAME}_split_seacrowd_text",
             version=SEACROWD_VERSION,
             description="limesoda: split SEACrowd schema",
             schema="seacrowd_text",
-            subset_id="limesoda_split",
+            subset_id=f"{_DATASETNAME}_split",
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = "limesoda_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
