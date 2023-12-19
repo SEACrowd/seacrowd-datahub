@@ -40,7 +40,7 @@ _HOMEPAGE = "https://github.com/kimkim00/UIT-ViSD4SA"
 
 _LICENSE = Licenses.UNKNOWN.value
 
-_LANGUAGES = "vie"
+_LANGUAGES = ["vie"]
 
 _URLS = {
     "train": "https://raw.githubusercontent.com/kimkim00/UIT-ViSD4SA/main/data/train.jsonl",
