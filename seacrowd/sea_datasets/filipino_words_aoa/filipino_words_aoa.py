@@ -110,7 +110,7 @@ class FilipinoWordsAOADataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        filepath, _ = urllib.request.urlretrieve(_URL)
+        filepath = dl_manager.download(_URL)
         return [datasets.SplitGenerator(name=datasets.Split.TRAIN, gen_kwargs={"filepath": filepath})]
 
     def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
@@ -118,13 +118,13 @@ class FilipinoWordsAOADataset(datasets.GeneratorBasedBuilder):
         df = pd.read_excel(filepath, index_col=None)
         for index, row in df.iterrows():
             if self.config.schema == "source":
-                example = dict(row)
+                example = row.to_dict()
 
             elif self.config.schema == "seacrowd_t2t":
                 example = {
                     "id": str(index),
                     "text_1": row["word"],
-                    "text_2": row["meaning"].split(","),
+                    "text_2": row["meaning"],
                     "text_1_name": "fil",
                     "text_2_name": "eng",
                 }
