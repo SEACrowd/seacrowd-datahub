@@ -33,6 +33,7 @@ _HOMEPAGE = "https://github.com/byinth/LimeSoda"
 _LICENSE = Licenses.CC_BY_4_0.value
 
 _LANGUAGES = ["tha"]
+_LOCAL = False
 
 _URLS = {
     "split": {
