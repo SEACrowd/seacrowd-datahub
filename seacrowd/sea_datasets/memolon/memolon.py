@@ -82,7 +82,7 @@ def seacrowd_config_constructor(lang, schema, version):
 class Memolon(datasets.GeneratorBasedBuilder):
     """MEmoLon is an emotion lexicons for 91 languages, each one covers eight emotional variables and comprises over 100k word entries."""
 
-    BUILDER_CONFIGS = [SEACrowdConfig(name=f"memolon_{lang}_source", version=datasets.Version(_SOURCE_VERSION), description=f"MEmoLon source schema for {lang} language", schema="source", subset_id="memolon") for lang in _LANGUAGE_MAP]
+    BUILDER_CONFIGS = [SEACrowdConfig(name=f"{_DATASETNAME}_{lang}_source", version=datasets.Version(_SOURCE_VERSION), description=f"MEmoLon source schema for {lang} language", schema="source", subset_id="memolon") for lang in _LANGUAGE_MAP]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
