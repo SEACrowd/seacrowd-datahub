@@ -55,6 +55,7 @@ class Tasks(Enum):
     # Pair Text Classification
     COMMONSENSE_REASONING = "CR"
     QUESTION_ANSWERING = "QA"
+    TEXT_RETRIEVAL = "TRV"
     TEXTUAL_ENTAILMENT = "TE"
     SEMANTIC_SIMILARITY = "STS"
     NEXT_SENTENCE_PREDICTION = "NSP"
@@ -68,7 +69,7 @@ class Tasks(Enum):
     MULTILEXNORM = "MLN"
     PARAPHRASING = "PARA"
     SUMMARIZATION = "SUM"
-    TRANSLITERATION = "TR"
+    TRANSLITERATION = "TRL"
 
     # Multi Text Generation
     DIALOGUE_SYSTEM = "DS"
@@ -205,6 +206,7 @@ TASK_TO_SCHEMA = {
     Tasks.QUESTION_ANSWERING: "QA",
 
     Tasks.NEXT_SENTENCE_PREDICTION: "PAIRS",
+    Tasks.TEXT_RETRIEVAL: "PAIRS",
     Tasks.TEXTUAL_ENTAILMENT: "PAIRS",
     Tasks.SEMANTIC_SIMILARITY: "PAIRS_SCORE",
     Tasks.SHORT_ANSWER_GRADING: "PAIRS_SCORE",
@@ -247,7 +249,7 @@ TASK_TO_SCHEMA = {
 
     Tasks.HOAX_NEWS_CLASSIFICATION: "TEXT",
     Tasks.CONCEPT_ALIGNMENT_CLASSIFICATION: "PAIRS",
-    Tasks.SPAN_BASED_ABSA: "KB",
+    Tasks.SPAN_BASED_ABSA: "SEQ_LABEL",
     Tasks.FACT_CHECKING: None,
     Tasks.VIDEO_CAPTIONING: "VIDTEXT",
     Tasks.VIDEO_TO_TEXT_RETRIEVAL: "VIDTEXT",
@@ -287,7 +289,7 @@ TASK_TO_FEATURES = {
     Tasks.NAMED_ENTITY_RECOGNITION: {"entities"},
     Tasks.DEPENDENCY_PARSING: {"relations", "entities"},
     Tasks.COREFERENCE_RESOLUTION: {"entities", "coreferences"},
-    Tasks.SPAN_BASED_ABSA: {"entities", "coreferences"},
+    # Tasks.SPAN_BASED_ABSA: {"entities", "coreferences"},
     # Tasks.NAMED_ENTITY_DISAMBIGUATION: {"entities", "normalized"},
     # Tasks.EVENT_EXTRACTION: {"events"}
 }

@@ -18,7 +18,7 @@ soundfile
 torchaudio==0.11
 ffmpeg
 conllu
-openpyxl
+openpyxl==3.1.2
 translate-toolkit==3.7.3
 typing_extensions
 scikit-learn==1.1.2
