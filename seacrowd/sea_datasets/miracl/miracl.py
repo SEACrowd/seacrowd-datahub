@@ -59,8 +59,9 @@ MIRACL is a multilingual dataset for ad hoc retrieval across 18 languages that c
 
 _HOMEPAGE = "https://project-miracl.github.io/"
 
-_LICENSE = Licenses.APACHE_2_0.value
+_LANGUAGES = ["ind", "tha"]
 
+_LICENSE = Licenses.APACHE_2_0.value
 
 _LANGUAGE_MAP = {
     "id": "Thai", 
