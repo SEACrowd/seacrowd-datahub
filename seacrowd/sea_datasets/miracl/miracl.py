@@ -129,7 +129,7 @@ def seacrowd_config_constructor(lang, schema, version):
         version=datasets.Version(version),
         description="MIRACL {schema} schema for {lang} language".format(lang=_LANGUAGE_MAP[lang], schema=schema),
         schema=schema,
-        subset_id="miracl",
+        subset_id="miracl_{lang}".format(lang=lang),
     )
 
 class Miracl(datasets.GeneratorBasedBuilder):
