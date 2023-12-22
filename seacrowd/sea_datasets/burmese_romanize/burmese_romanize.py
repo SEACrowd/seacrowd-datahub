@@ -32,6 +32,7 @@ graphemes.
 """
 
 _HOMEPAGE = "http://www.nlpresearch-ucsy.edu.mm/NLP_UCSY/name-db.html"
+_LANGUAGES = ["mya"]
 _LICENSE = Licenses.CC_BY_NC_SA_4_0.value
 _URLS = "http://www.nlpresearch-ucsy.edu.mm/NLP_UCSY/myanmaroma.zip"
 
