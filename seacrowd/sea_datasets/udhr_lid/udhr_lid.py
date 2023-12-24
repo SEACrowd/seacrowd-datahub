@@ -17,13 +17,13 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 import datasets
+import pandas as pd
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
-import pandas as pd
+from seacrowd.utils.constants import Licenses, Tasks
 
-_CITATION = """\
+_CITATION = r"""\
 @inproceedings{
   kargaran2023glotlid,
   title={{GlotLID}: Language Identification for Low-Resource Languages},
@@ -34,15 +34,40 @@ _CITATION = """\
 }
 """
 
-_LANGUAGES = ["sun", "ace", "mad", "lao", "cfm", "hnj", "min", "zlm", "tha", "blt", "hni", "jav", "tdt", "cnh", "khm", "ban", "ind", "mya", "ccp", "duu", "tet", "kkh", "bug", "vie"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
+_LANGUAGES = [
+    "sun",
+    "ace",
+    "mad",
+    "lao",
+    "cfm",
+    "hnj",
+    "min",
+    "zlm",
+    "tha",
+    "blt",
+    "hni",
+    "jav",
+    "tdt",
+    "cnh",
+    "khm",
+    "ban",
+    "ind",
+    "mya",
+    "ccp",
+    "duu",
+    "tet",
+    "kkh",
+    "bug",
+    "vie",
+]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 _LOCAL = False
 
 _DATASETNAME = "udhr_lid"
 
 _DESCRIPTION = """\
-The UDHR-LID dataset is a refined version of the Universal Declaration of Human Rights, tailored for language identification tasks. 
-It removes filler texts, repeated phrases, and inaccuracies from the original UDHR, focusing only on cleaned paragraphs. 
-Each entry in the dataset is associated with a specific language, providing long, linguistically rich content. 
+The UDHR-LID dataset is a refined version of the Universal Declaration of Human Rights, tailored for language identification tasks.
+It removes filler texts, repeated phrases, and inaccuracies from the original UDHR, focusing only on cleaned paragraphs.
+Each entry in the dataset is associated with a specific language, providing long, linguistically rich content.
 This dataset is particularly useful for non-parallel, language-specific text analysis in natural language processing.
 """
 
@@ -85,13 +110,15 @@ class UDHRLID(datasets.GeneratorBasedBuilder):
     def _info(self) -> datasets.DatasetInfo:
 
         if self.config.schema == "source":
-            features = datasets.Features({
-                "id": datasets.Value("string"),
-                "sentence": datasets.Value("string"),
-                "iso639-3": datasets.Value("string"),
-                "iso15924": datasets.Value("string"),
-                "language": datasets.Value("string"),
-            })
+            features = datasets.Features(
+                {
+                    "id": datasets.Value("string"),
+                    "sentence": datasets.Value("string"),
+                    "iso639-3": datasets.Value("string"),
+                    "iso15924": datasets.Value("string"),
+                    "language": datasets.Value("string"),
+                }
+            )
         elif self.config.schema == "seacrowd_text":
             features = schemas.text_features(_LANGUAGES)
 
@@ -126,18 +153,8 @@ class UDHRLID(datasets.GeneratorBasedBuilder):
         for i, row in datas.iterrows():
             if row["iso639-3"] in _LANGUAGES:
                 if self.config.schema == "source":
-                    yield i, {
-                        "id": str(i),
-                        "sentence": row["sentence"],
-                        "iso639-3": row["iso639-3"],
-                        "iso15924": row["iso15924"],
-                        "language": row["language"]
-                    }
+                    yield i, {"id": str(i), "sentence": row["sentence"], "iso639-3": row["iso639-3"], "iso15924": row["iso15924"], "language": row["language"]}
                 elif self.config.schema == "seacrowd_text":
-                    yield i, {
-                        "id": str(i),
-                        "text": row["sentence"],
-                        "label": row["iso639-3"]
-                    }
+                    yield i, {"id": str(i), "text": row["sentence"], "label": row["iso639-3"]}
                 else:
                     raise ValueError(f"Invalid config: {self.config.name}")
