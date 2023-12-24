@@ -38,68 +38,69 @@ logger = datasets.logging.get_logger(__name__)
 
 # this config is created for SEACrowd Dataloader
 _LANG_CONFIG = {
-    'abc': 'Ambala Ayta',
-    'ahk': 'Akha',
-    'bfn': 'Bunak',
-    'bjn': 'Banjar',
-    'bkx': 'Baikeno',
-    'brb': 'Brao',
-    'brv': 'Western Bru',
-    'bya': 'Batak',
-    'bzi': 'Bisu',
-    'ceb': 'Cebuano',
-    'cgc': 'Kagayanen',
-    'cmo': 'Central Mnong',
-    'ddg': 'Fataluku',
-    'dmg': 'Upper Kinabatangan',
-    'dnw': 'Western Dani',
-    'dtp': 'Kadazan Dusun',
-    'enc': 'En',
-    'fil': 'Filipino',
-    'hil': 'Hiligaynon',
-    'hro': 'Haroi',
-    'idt': 'Idaté',
-    'ilo': 'Ilocano',
-    'ind': 'Indonesian',
-    'jra': 'Jarai',
-    'kak': 'Kalanguya',
-    'khb': 'Lü',
-    'khm': 'Khmer',
-    'kqr': 'Kimaragang',
-    'krr': 'Krung',
-    'ksw': 'S’gaw Karen',
-    'lhu': 'Lahu',
-    'lsi': 'Lacid',
-    'lwl': 'Eastern Lawa',
-    'mdr': 'Mandar',
-    'mgm': 'Mambae',
-    'mhx': 'Lhao Vo',
-    'mkz': 'Makasae',
-    'mry': 'Mandaya',
-    'msb': 'Masbatenyo',
-    'mya': 'Burmese',
-    'nod': 'Northern Thai',
-    'nxa': 'Nauete',
-    'nxl': 'South Nuaulu',
-    'pag': 'Pangasinan',
-    'pce': 'Ruching Palaung',
-    'pea': 'Peranakan Indonesian',
-    'pmf': 'Pamona',
-    'psp': 'Filipino Sign Language',
-    'sea': 'Semai',
-    'sgd': 'Surigaonon',
-    'sml': 'Central Sama',
-    'snl': 'Sangil',
-    'tdt': 'Tetun Dili',
-    'tet': 'Tetun',
-    'tha': 'Thai',
-    'tkd': 'Tukudede',
-    'tpu': 'Tampuan',
-    'war': 'Waray-Waray',
-    'wms': 'Wambon',
-    'yet': 'Yetfa',
-    'yin': 'Riang Lai',
-    'zlm': 'Malay'}
+    "abc": "Ambala Ayta",
+    "ahk": "Akha",
+    "bfn": "Bunak",
+    "bjn": "Banjar",
+    "bkx": "Baikeno",
+    "brb": "Brao",
+    "brv": "Western Bru",
+    "bya": "Batak",
+    "bzi": "Bisu",
+    "ceb": "Cebuano",
+    "cgc": "Kagayanen",
+    "cmo": "Central Mnong",
+    "ddg": "Fataluku",
+    "dmg": "Upper Kinabatangan",
+    "dnw": "Western Dani",
+    "dtp": "Kadazan Dusun",
+    "enc": "En",
+    "fil": "Filipino",
+    "hil": "Hiligaynon",
+    "hro": "Haroi",
+    "idt": "Idaté",
+    "ilo": "Ilocano",
+    "ind": "Indonesian",
+    "jra": "Jarai",
+    "kak": "Kalanguya",
+    "khb": "Lü",
+    "khm": "Khmer",
+    "kqr": "Kimaragang",
+    "krr": "Krung",
+    "ksw": "S’gaw Karen",
+    "lhu": "Lahu",
+    "lsi": "Lacid",
+    "lwl": "Eastern Lawa",
+    "mdr": "Mandar",
+    "mgm": "Mambae",
+    "mhx": "Lhao Vo",
+    "mkz": "Makasae",
+    "mry": "Mandaya",
+    "msb": "Masbatenyo",
+    "mya": "Burmese",
+    "nod": "Northern Thai",
+    "nxa": "Nauete",
+    "nxl": "South Nuaulu",
+    "pag": "Pangasinan",
+    "pce": "Ruching Palaung",
+    "pea": "Peranakan Indonesian",
+    "pmf": "Pamona",
+    "psp": "Filipino Sign Language",
+    "sea": "Semai",
+    "sgd": "Surigaonon",
+    "sml": "Central Sama",
+    "snl": "Sangil",
+    "tdt": "Tetun Dili",
+    "tet": "Tetun",
+    "tha": "Thai",
+    "tkd": "Tukudede",
+    "tpu": "Tampuan",
+    "war": "Waray-Waray",
+    "wms": "Wambon",
+    "yet": "Yetfa",
+    "yin": "Riang Lai",
+    "zlm": "Malay",
+}
 
 _LOCAL = False
 _LANGUAGES = list(_LANG_CONFIG.keys())
@@ -203,13 +204,9 @@ class BloomVISTDataset(datasets.GeneratorBasedBuilder):
                     "title": datasets.Value("string"),
                     "license": datasets.Value("string"),
                     "album_id": datasets.Value("string"),
-                    "story": datasets.Sequence(feature={
-                            'image_id': datasets.Value("string"),
-                            'image_url': datasets.Value("string"),
-                            'story_index': datasets.Value("int32"),
-                            'story_id': datasets.Value("string"),
-                            'text': datasets.Value("string")
-                        }, length=-1, id=None)
+                    "story": datasets.Sequence(
+                        feature={"image_id": datasets.Value("string"), "image_url": datasets.Value("string"), "story_index": datasets.Value("int32"), "story_id": datasets.Value("string"), "text": datasets.Value("string")}, length=-1, id=None
+                    ),
                 }
             )
 
@@ -249,7 +246,7 @@ class BloomVISTDataset(datasets.GeneratorBasedBuilder):
                 # check the len of the features in sequenced columns
                 # since in source hf there's no validation on data integrity
                 _len_vars = []
-                _ftrs_in_seq = ('image_id', 'image_url', 'story_index', 'story_id', 'text')
+                _ftrs_in_seq = ("image_id", "image_url", "story_index", "story_id", "text")
                 story_data = datapoints["story"]
                 for ftr in _ftrs_in_seq:
                     _len_vars.append(len(story_data[ftr]))
@@ -259,15 +256,7 @@ class BloomVISTDataset(datasets.GeneratorBasedBuilder):
                     continue
 
                 for num_data in range(max(_len_vars)):
-                    yield _idx, {
-                        "id": _idx,
-                        "image_paths": [story_data["image_url"][num_data]],
-                        "texts": story_data["text"][num_data],
-                        "metadata": {
-                            "context": datapoints["title"],
-                            "labels": []
-                        }
-                    }
+                    yield _idx, {"id": _idx, "image_paths": [story_data["image_url"][num_data]], "texts": story_data["text"][num_data], "metadata": {"context": datapoints["title"], "labels": []}}
                     _idx += 1
 
             else:
