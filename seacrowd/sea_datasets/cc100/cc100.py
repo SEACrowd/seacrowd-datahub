@@ -29,7 +29,6 @@ This contains the Indonesian (ind), the Javanese (jav), and the Sundanese (sun) 
 [seacrowd_schema_name] = ssp
 """
 
-from posixpath import split
 from typing import Dict, List, Tuple
 
 import datasets
@@ -37,14 +36,14 @@ import datasets
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import (DEFAULT_SEACROWD_VIEW_NAME,
-                                       DEFAULT_SOURCE_VIEW_NAME, Tasks)
+                                      DEFAULT_SOURCE_VIEW_NAME, Tasks)
 
 _DATASETNAME = "cc100"
 _SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
 _UNIFIED_VIEW_NAME = DEFAULT_SEACROWD_VIEW_NAME
 
 # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
-_LANGUAGES = ["ind", "jav", "sun", "mya", "mya_zaw", "lao", "khm", "tgl", "vie", "tha", "zlm"]  
+_LANGUAGES = ["ind", "jav", "sun", "mya", "mya_zaw", "lao", "khm", "tgl", "vie", "tha", "zlm"]
 _LOCAL = False
 
 _CITATION = """\
@@ -136,17 +135,17 @@ _HOMEPAGE = "https://data.statmt.org/cc-100/"
 _LICENSE = "MIT"
 
 _LANGUAGES_MAP = {
-    "ind": "id", # Indonesian
-    "jav": "jv", # Javanese
-    "sun": "su", # Sundanese
-    "mya": "my", # Burmese
-    "mya_zaw": "my_zaw", # Burmese (Zawgyi)
-    "lao": "lo", # Lao
-    "khm": "km", #Central Khmer, Khmer
-    "tgl": "tl", # Tagalog
-    "vie": "vi", # Vietnamese
-    "tha": "th", # Thai
-    "zlm": "ms", # Malay 
+    "ind": "id",  # Indonesian
+    "jav": "jv",  # Javanese
+    "sun": "su",  # Sundanese
+    "mya": "my",  # Burmese
+    "mya_zaw": "my_zaw",  # Burmese (Zawgyi)
+    "lao": "lo",  # Lao
+    "khm": "km",  # Central Khmer, Khmer
+    "tgl": "tl",  # Tagalog
+    "vie": "vi",  # Vietnamese
+    "tha": "th",  # Thai
+    "zlm": "ms",  # Malay
 }
 
 _URLS = {
@@ -159,6 +158,7 @@ _SOURCE_VERSION = "2018.12.01"
 
 _SEACROWD_VERSION = "1.0.0"
 
+
 def seacrowd_config_constructor(lang, schema, version):
     """Construct SEACrowdConfig with cc100_{lang}_{schema} as the name format."""
     if schema != "source" and schema != "seacrowd_ssp":
@@ -166,12 +166,12 @@ def seacrowd_config_constructor(lang, schema, version):
 
     if lang == "":
         return SEACrowdConfig(
-                name=f"cc100_{schema}",
-                version=datasets.Version(version),
-                description=f"CC100 with {schema} schema for all languages",
-                schema=schema,
-                subset_id="cc100",
-            )
+            name=f"cc100_{schema}",
+            version=datasets.Version(version),
+            description=f"CC100 with {schema} schema for all languages",
+            schema=schema,
+            subset_id="cc100",
+        )
     elif lang in _LANGUAGES:
         return SEACrowdConfig(
             name=f"cc100_{lang}_{schema}",
@@ -187,14 +187,14 @@ def seacrowd_config_constructor(lang, schema, version):
 class CC100(datasets.GeneratorBasedBuilder):
     """Monolingual Datasets from Web Crawl Data."""
 
-    BUILDER_CONFIGS = [
-        seacrowd_config_constructor(lang, "source", _SOURCE_VERSION) for lang in _LANGUAGES_MAP
-    ] + [
-        seacrowd_config_constructor(lang, "seacrowd_ssp", _SEACROWD_VERSION) for lang in _LANGUAGES_MAP
-    ] + [
-        seacrowd_config_constructor("", "source", _SOURCE_VERSION), 
-        seacrowd_config_constructor("", "seacrowd_ssp", _SOURCE_VERSION), 
-    ]
+    BUILDER_CONFIGS = (
+        [seacrowd_config_constructor(lang, "source", _SOURCE_VERSION) for lang in _LANGUAGES_MAP]
+        + [seacrowd_config_constructor(lang, "seacrowd_ssp", _SEACROWD_VERSION) for lang in _LANGUAGES_MAP]
+        + [
+            seacrowd_config_constructor("", "source", _SOURCE_VERSION),
+            seacrowd_config_constructor("", "seacrowd_ssp", _SOURCE_VERSION),
+        ]
+    )
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
