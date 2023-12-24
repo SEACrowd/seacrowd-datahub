@@ -114,7 +114,7 @@ _DESCRIPTION = r"""
 """
 
 _HOMEPAGE = "https://huggingface.co/datasets/sil-ai/bloom-vist"
-_LICENSE = Licenses.CC_BY_4_0.value
+_LICENSE = Licenses.CC.value
 
 _URL = "https://huggingface.co/datasets/sil-ai/bloom-vist"
 _HF_REMOTE_REF = "/".join(_URL.split("/")[-2:])
@@ -196,7 +196,7 @@ class BloomVISTDataset(datasets.GeneratorBasedBuilder):
     def _info(self) -> datasets.DatasetInfo:
         _config_schema_name = self.config.schema
         logger.info(f"Received schema name: {self.config.schema}")
-        # self supervised training schema
+        # image-text schema
         if _config_schema_name == "source":
             features = datasets.Features(
                 {
@@ -238,11 +238,11 @@ class BloomVISTDataset(datasets.GeneratorBasedBuilder):
 
         _idx = 0
         for datapoints in hf_dset:
-            # for source_schema, the `_idx` will be taken from "album_id" value
+            # for source schema, the `_idx` will be taken from "album_id" value
             if _config_schema_name == "source":
                 yield datapoints["album_id"], {colname: datapoints[colname] for colname in self.info.features}
 
-            # for ssp schema, the `_idx` will be created manually
+            # for seacrowd schema, the `_idx` will be created manually
             # since one album_id has multiple pairs of image-text
             elif _config_schema_name == "seacrowd_imtext":
                 # check the len of the features in sequenced columns
