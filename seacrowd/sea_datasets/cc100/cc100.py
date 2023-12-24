@@ -43,7 +43,8 @@ _DATASETNAME = "cc100"
 _SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
 _UNIFIED_VIEW_NAME = DEFAULT_SEACROWD_VIEW_NAME
 
-_LANGUAGES = ["ind", "jav", "sun"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
+# We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
+_LANGUAGES = ["ind", "jav", "sun", "mya", "mya_zaw", "lao", "khm", "tgl", "vie", "tha", "zlm"]  
 _LOCAL = False
 
 _CITATION = """\
