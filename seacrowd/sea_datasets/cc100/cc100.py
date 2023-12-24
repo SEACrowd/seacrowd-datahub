@@ -135,8 +135,8 @@ _HOMEPAGE = "https://data.statmt.org/cc-100/"
 _LICENSE = "MIT"
 
 _LANGUAGES_MAP = {
-    "ind": "id", # Indonesia
-    "jav": "jv", # Java
+    "ind": "id", # Indonesian
+    "jav": "jv", # Javanese
     "sun": "su", # Sundanese
     "mya": "my", # Burmese
     "mya_zaw": "my_zaw", # Burmese (Zawgyi)
