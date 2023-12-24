@@ -78,16 +78,7 @@ _URLS = {
 class PalitoDataset(datasets.GeneratorBasedBuilder):
     """Palito corpus"""
 
-    subsets = [
-        "palito_bik",
-        "palito_ceb",
-        "palito_hil",
-        "palito_ilo",
-        "palito_tgl",
-        "palito_pam",
-        "palito_pag",
-        "palito_war",
-    ]
+    subsets = [f"{_DATASETNAME}_{lang}" for lang in _LANGUAGES]
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
