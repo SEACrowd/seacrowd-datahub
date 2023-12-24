@@ -239,10 +239,9 @@ class BloomCaptioningDataset(datasets.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl_manager: DownloadManager) -> List[datasets.SplitGenerator]:
-        _split = "train"
-        hf_dset = datasets.load_dataset(_HF_REMOTE_REF, self.config.subset_id, split=_split)
+        hf_dset_dict = datasets.load_dataset(_HF_REMOTE_REF, self.config.subset_id)
 
-        return [datasets.SplitGenerator(name=datasets.Split.TRAIN, gen_kwargs={"hf_dset": hf_dset})]
+        return [datasets.SplitGenerator(name=datasets.Split(dset_key), gen_kwargs={"hf_dset": dset}) for dset_key, dset in hf_dset_dict.items()]
 
     def _generate_examples(self, hf_dset) -> Tuple[int, Dict]:
         _config_schema_name = self.config.schema
