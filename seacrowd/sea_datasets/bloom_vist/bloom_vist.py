@@ -196,7 +196,7 @@ class BloomVISTDataset(datasets.GeneratorBasedBuilder):
     def _info(self) -> datasets.DatasetInfo:
         _config_schema_name = self.config.schema
         logger.info(f"Received schema name: {self.config.schema}")
-        # image-text schema
+        # source schema
         if _config_schema_name == "source":
             features = datasets.Features(
                 {
@@ -213,6 +213,7 @@ class BloomVISTDataset(datasets.GeneratorBasedBuilder):
                 }
             )
 
+        # image-text schema
         elif _config_schema_name == "seacrowd_imtext":
             features = schemas.image_text_features()
 
