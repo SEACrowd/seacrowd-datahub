@@ -59,7 +59,7 @@ of these various forms.
 
 _HOMEPAGE = "https://github.com/imperialite/Philippine-Languages-Online-Corpora/tree/master/PALITO%20Corpus"
 
-_LICENSE = "GNU Lesser General Public License family (lgpl)"
+_LICENSE = Licenses.LGPL.value
 
 _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
 
