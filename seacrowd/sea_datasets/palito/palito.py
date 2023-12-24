@@ -6,7 +6,8 @@ import datasets
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import (DEFAULT_SEACROWD_VIEW_NAME,
-                                      DEFAULT_SOURCE_VIEW_NAME, Tasks)
+                                      DEFAULT_SOURCE_VIEW_NAME, Licenses,
+                                      Tasks)
 
 _DATASETNAME = "palito"
 _SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
@@ -30,7 +31,8 @@ _CITATION = """
 """
 
 # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
-_LANGUAGES = {
+_LANGUAGES = ["bik", "ceb", "hil", "ilo", "tgl", "pam", "pag", "war"]
+_LANG_CONFIG = {
     "bik": "Bikol",
     "ceb": "Cebuano",
     "hil": "Hiligaynon",
@@ -130,7 +132,7 @@ class PalitoDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         lang = self.config.name.split("_")[1]
-        filepaths = [Path(dl_manager.download(_URLS["literary"].format(lang=_LANGUAGES[lang]))), Path(dl_manager.download(_URLS["religious"].format(lang=_LANGUAGES[lang])))]
+        filepaths = [Path(dl_manager.download(_URLS["literary"].format(lang=_LANG_CONFIG[lang]))), Path(dl_manager.download(_URLS["religious"].format(lang=_LANG_CONFIG[lang])))]
 
         return [
             datasets.SplitGenerator(
