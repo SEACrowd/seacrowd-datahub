@@ -114,7 +114,8 @@ _LANG_CONFIG = {
     "zlm": "Malay",
 }
 
-_LOCAL = False
+#it's a gated dataset, hence _LOCAL = True
+_LOCAL = True
 _LANGUAGES = list(_LANG_CONFIG.keys())
 
 
