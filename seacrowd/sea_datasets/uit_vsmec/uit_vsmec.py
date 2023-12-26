@@ -31,6 +31,8 @@ _HOMEPAGE = "https://drive.google.com/drive/folders/1HooABJyrddVGzll7fgkJ6VzkG_X
 
 _LICENSE = Licenses.UNKNOWN.value
 
+_LANGUAGES = ["vie"]
+
 _LOCAL = False
 
 _URLS = {
