@@ -54,7 +54,7 @@ _CITATION = """\
 _DATASETNAME = "miracl"
 
 _DESCRIPTION = """\
-MIRACL is a multilingual dataset for ad hoc retrieval across 18 languages that collectively encompass over three billion native speakers around the world. This resource is designed to support monolingual retrieval tasks, where the queries and the corpora are in the same language. In total, we have gathered over 726k high-quality relevance judgments for 78k queries over Wikipedia in these languages, where all annotations have been performed by native speakers. MIRACL covers Indonesian and Thai languages
+MIRACL is a multilingual dataset for ad hoc retrieval across 18 languages that collectively encompass over three billion native speakers around the world. This resource is designed to support monolingual retrieval tasks, where the queries and the corpora are in the same language. In total, we have gathered over 726k high-quality relevance judgments for 78k queries over Wikipedia in these languages, where all annotations have been performed by native speakers. MIRACL covers Indonesian and Thai languages. Before using this dataloader, please accept the acknowledgement at https://huggingface.co/datasets/miracl/miracl and use huggingface-cli login for authentication.
 """
 
 _HOMEPAGE = "https://project-miracl.github.io/"
