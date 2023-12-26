@@ -14,6 +14,7 @@ from .text import features as text_features
 from .text_multilabel import features as text_multi_features
 from .text_to_text import features as text2text_features
 from .video import features as video_features
+from .e2e_tod import features as e2e_tod_features
 
 __all__ = [
     "image_text_features",
@@ -32,4 +33,5 @@ __all__ = [
     "text_multi_features",
     "text2text_features",
     "video_features",
+    "e2e_tod_features",
 ]
