@@ -58,6 +58,8 @@ _URLS = {
 
 _SOURCE_VERSION = "1.0.0"
 
+_LANGUAGES = ["ceb", "tl", "id", "su", "jv", "ms", "vi", "th", "my"]
+
 _LANGUAGE_MAP = {"ceb": "Cebuano", "tl": "Tagalog", "id": "Indonesian", "su": "Sundanese", "jv": "Javanese", "ms": "Malay", "vi": "Vietnamese", "th": "Thai", "my": "Burmese"}
 
 _SUPPORTED_TASKS = [Tasks.EMOTION_CLASSIFICATION]
