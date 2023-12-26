@@ -84,6 +84,8 @@ class Memolon(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [SEACrowdConfig(name=f"{_DATASETNAME}_{lang}_source", version=datasets.Version(_SOURCE_VERSION), description=f"MEmoLon source schema for {lang} language", schema="source", subset_id="memolon") for lang in _LANGUAGE_MAP]
 
+    DEFAULT_CONFIG_NAME = None
+
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
             features = datasets.Features(
