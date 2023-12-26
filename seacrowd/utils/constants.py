@@ -2,14 +2,25 @@ from collections import defaultdict
 from enum import Enum
 from types import SimpleNamespace
 
-from seacrowd.utils.schemas import (image_text_features, kb_features,
-                                    pairs_features, pairs_features_score,
-                                    pairs_multi_features, qa_features,
-                                    seq_label_features, speech2speech_features,
-                                    speech_features, speech_multi_features,
-                                    speech_text_features, ssp_features,
-                                    text2text_features, text_features,
-                                    text_multi_features, video_features)
+from seacrowd.utils.schemas import (
+    image_text_features,
+    kb_features,
+    pairs_features,
+    pairs_features_score,
+    pairs_multi_features,
+    qa_features,
+    seq_label_features,
+    speech2speech_features,
+    speech_features,
+    speech_multi_features,
+    speech_text_features,
+    ssp_features,
+    text2text_features,
+    text_features,
+    text_multi_features,
+    video_features,
+    e2e_tod_features,
+)
 
 METADATA: dict = {
     "_LOCAL": bool,
@@ -75,6 +86,7 @@ class Tasks(Enum):
 
     # Multi Text Generation
     DIALOGUE_SYSTEM = "DS"
+    E2E_TASK_ORIENTED_DIALOGUE_SYSTEM = "E2E_TOD"
 
     # Self Supervised & Unsupervised Text
     PROMPTING = "PRT"
@@ -195,9 +207,8 @@ TASK_TO_SCHEMA = {
     Tasks.WORD_ANALOGY: "T2T",
     Tasks.KEYWORD_EXTRACTION: "SEQ_LABEL",
     Tasks.COREFERENCE_RESOLUTION: "KB",
-
     Tasks.DIALOGUE_SYSTEM: "T2T",
-
+    Tasks.E2E_TASK_ORIENTED_DIALOGUE_SYSTEM: "E2E_TOD",
     Tasks.NAMED_ENTITY_RECOGNITION: "SEQ_LABEL",
     Tasks.POS_TAGGING: "SEQ_LABEL",
     Tasks.KEYWORD_TAGGING: "SEQ_LABEL",
@@ -207,23 +218,19 @@ TASK_TO_SCHEMA = {
 
     Tasks.COMMONSENSE_REASONING: "QA",
     Tasks.QUESTION_ANSWERING: "QA",
-
     Tasks.NEXT_SENTENCE_PREDICTION: "PAIRS",
     Tasks.TEXT_RETRIEVAL: "PAIRS",
     Tasks.TEXTUAL_ENTAILMENT: "PAIRS",
     Tasks.SEMANTIC_SIMILARITY: "PAIRS_SCORE",
     Tasks.SHORT_ANSWER_GRADING: "PAIRS_SCORE",
     Tasks.MORPHOLOGICAL_INFLECTION: "PAIRS_MULTI",
-    
     Tasks.INSTRUCTION_TUNING: "T2T",
     Tasks.PARAPHRASING: "T2T",
     Tasks.MACHINE_TRANSLATION: "T2T",
     Tasks.SUMMARIZATION: "T2T",
     Tasks.MULTILEXNORM: "T2T",
     Tasks.TRANSLITERATION: "T2T",
-
     Tasks.ASPECT_BASED_SENTIMENT_ANALYSIS: "TEXT_MULTI",
-
     Tasks.SENTIMENT_ANALYSIS: "TEXT",
     Tasks.TAX_COURT_VERDICT: "TEXT",
     Tasks.EMOTION_CLASSIFICATION: "TEXT",
@@ -232,32 +239,24 @@ TASK_TO_SCHEMA = {
     Tasks.INTENT_CLASSIFICATION: "TEXT",
     Tasks.RHETORIC_MODE_CLASSIFICATION: "TEXT",
     Tasks.TOPIC_MODELING: "TEXT",
-
     Tasks.PROMPTING: "SSP",
     Tasks.SELF_SUPERVISED_PRETRAINING: "SSP",
-
     Tasks.SPEECH_RECOGNITION: "SPTEXT",
     Tasks.SPEECH_TO_TEXT_TRANSLATION: "SPTEXT",
     Tasks.TEXT_TO_SPEECH: "SPTEXT",
-
     Tasks.SPEECH_TO_SPEECH_TRANSLATION: "S2S",
-
     Tasks.SPEECH_LANGUAGE_IDENTIFICATION: "SPEECH",
     Tasks.SPEECH_EMOTION_RECOGNITION: "SPEECH",
-
     Tasks.SPEECH_EMOTION_RECOGNITION_MULTILABEL: "SPEECH_MULTI",
-
     Tasks.IMAGE_CAPTIONING: "IMTEXT",
     Tasks.STYLIZED_IMAGE_CAPTIONING: "IMTEXT",
     Tasks.VISUALLY_GROUNDED_REASONING: "IMTEXT",
-
     Tasks.HOAX_NEWS_CLASSIFICATION: "TEXT",
     Tasks.CONCEPT_ALIGNMENT_CLASSIFICATION: "PAIRS",
     Tasks.SPAN_BASED_ABSA: "SEQ_LABEL",
     Tasks.FACT_CHECKING: None,
     Tasks.VIDEO_CAPTIONING: "VIDTEXT",
     Tasks.VIDEO_TO_TEXT_RETRIEVAL: "VIDTEXT",
-
     Tasks.CONCEPT_ALIGNMENT_CLASSIFICATION: "PAIRS",
     Tasks.FACT_CHECKING: None,
 }
@@ -287,6 +286,7 @@ SCHEMA_TO_FEATURES = {
     "SPEECH_MULTI": speech_multi_features(),
     "IMTEXT": image_text_features(),
     "VIDTEXT": video_features,
+    "E2E_TOD": e2e_tod_features,
 }
 
 TASK_TO_FEATURES = {
