@@ -63,7 +63,7 @@ _LANGUAGE_MAP = {"ceb": "Cebuano", "tl": "Tagalog", "id": "Indonesian", "su": "S
 _SUPPORTED_TASKS = [Tasks.EMOTION_CLASSIFICATION]
 
 
-def seacrowd_config_constructor(lang, schema, version):
+def seacrowd_config_constructor(lang: str, schema: str, version: str) -> SEACrowdConfig:
     if lang not in _LANGUAGE_MAP:
         raise ValueError(f"Invalid lang {lang}")
 
