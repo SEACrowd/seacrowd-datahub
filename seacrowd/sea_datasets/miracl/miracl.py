@@ -140,7 +140,7 @@ class Miracl(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [seacrowd_config_constructor(lang, "source", _SOURCE_VERSION) for lang in _LANGUAGE_MAP] + [seacrowd_config_constructor(lang, "seacrowd_pairs", _SEACROWD_VERSION) for lang in _LANGUAGE_MAP]
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_id_source"
+    DEFAULT_CONFIG_NAME = None
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
