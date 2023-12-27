@@ -39,6 +39,7 @@ _LANGUAGES = ["eng", "fil"]
 _DATASETNAME = "tcope"
 _DESCRIPTION = """
 The TCOPE dataset consists of 1,048,576 public tweets (amounting to about 13.5 million words) collected from 13 major cities from the Philippines.
+Tweets are either purely in English or involve code-switching between English and Filipino.
 Tweets are tagged for part-of-speech and dependency parsing using spaCy. Tweets collected are from 2010 to 2021.
 The publicly available dataset is only a random sample (10%) from the whole TCOPE dataset, which consist of roughly 27 million tweets
 (amounting to about 135 million words) collected from 29 major cities during the same date range.
