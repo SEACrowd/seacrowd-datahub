@@ -145,7 +145,6 @@ class TCOPEDataset(datasets.GeneratorBasedBuilder):
                     "tokens": tokens,
                     "labels": tags,
                 }
-
             yield index, example
 
     def split_token_and_tag(self, tweet: str, valid_tags: List[str]) -> Tuple[List[str], List[str]]:
@@ -155,7 +154,9 @@ class TCOPEDataset(datasets.GeneratorBasedBuilder):
         tags = []
         for indiv_token_with_tag in tokens_with_tags:
             token, tag = indiv_token_with_tag.rsplit("_", 1)
+            tokens.append(token)
             if tag in valid_tags:
-                tokens.append(token)
                 tags.append(tag)
+            else:  # Use "X"/other spaCy tag for invalid POS tags
+                tags.append("X")
         return tokens, tags
