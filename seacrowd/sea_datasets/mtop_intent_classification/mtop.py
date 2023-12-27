@@ -16,7 +16,8 @@ from typing import Dict, List, Tuple
 
 import datasets
 
-from seacrowd.sea_datasets.mtop.labels import DOMAIN_LABELS, INTENT_LABELS
+from seacrowd.sea_datasets.mtop_intent_classification.labels import (
+    DOMAIN_LABELS, INTENT_LABELS)
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
@@ -35,8 +36,8 @@ _CITATION = """\
 """
 _LOCAL = False
 _LANGUAGES = ["tha"]
-_DATASETNAME = "mtop"
-_DESCRIPTION = """\
+_DATASETNAME = "mtop_intent_classification"
+_DESCRIPTION = """
 This dataset contains annotated utterances from 6 languages, including Thai,
 for semantic parsing. Queries corresponding to the chosen domains are crowdsourced.
  Two subsets are included in this dataset: 'domain' (eg. 'news', 'people', 'weather')
@@ -53,7 +54,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class MTOPDataset(datasets.GeneratorBasedBuilder):
+class MTOPIntentClassificationDataset(datasets.GeneratorBasedBuilder):
     """Dataset of Thai sentences and their domains or intents."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
@@ -71,7 +72,7 @@ class MTOPDataset(datasets.GeneratorBasedBuilder):
         for subset in SUBSETS
     ] + [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_{subset}_text",
+            name=f"{_DATASETNAME}_{subset}_seacrowd_text",
             version=datasets.Version(_SEACROWD_VERSION),
             description=f"{_DATASETNAME} SEACrowd schema for {subset} subset",
             schema="seacrowd_text",
