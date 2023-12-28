@@ -37,18 +37,9 @@ _CITATION = r"""
 logger = datasets.logging.get_logger(__name__)
 
 # this config is created for SEACrowd Dataloader
-_LANG_CONFIG = {
-    "bjn": "Banjar",
-    "bzi": "Bisu",
-    "ceb": "Cebuano",
-    "ind": "Indonesian",
-    "jra": "Jarai",
-    "kqr": "Kimaragang",
-    "mya": "Burmese",
-    "tgl": "Tagalog"
-}
+_LANG_CONFIG = {"bjn": "Banjar", "bzi": "Bisu", "ceb": "Cebuano", "ind": "Indonesian", "jra": "Jarai", "kqr": "Kimaragang", "mya": "Burmese", "tgl": "Tagalog"}
 
-#it's a gated dataset, hence _LOCAL = True
+# it's a gated dataset, hence _LOCAL = True
 _LOCAL = True
 _LANGUAGES = list(_LANG_CONFIG.keys())
 
@@ -131,16 +122,18 @@ class BloomSpeechDataset(datasets.GeneratorBasedBuilder):
         logger.info(f"Received schema name: {self.config.schema}")
         # source schema
         if _config_schema_name == "source":
-            features = datasets.Features({
-                "file": datasets.Value("string"),
-                "audio": datasets.Audio(sampling_rate=16_000),
-                "text": datasets.Value("string"),
-                "book": datasets.Value("string"),
-                "instance": datasets.Value("string"),
-                "license": datasets.Value("string"),
-                "credits": datasets.Value("string"),
-                "original_lang_tag": datasets.Value("string"),
-            })
+            features = datasets.Features(
+                {
+                    "file": datasets.Value("string"),
+                    "audio": datasets.Audio(sampling_rate=16_000),
+                    "text": datasets.Value("string"),
+                    "book": datasets.Value("string"),
+                    "instance": datasets.Value("string"),
+                    "license": datasets.Value("string"),
+                    "credits": datasets.Value("string"),
+                    "original_lang_tag": datasets.Value("string"),
+                }
+            )
 
         # speech-text schema
         elif _config_schema_name == "seacrowd_sptext":
