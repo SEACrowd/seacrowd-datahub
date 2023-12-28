@@ -63,8 +63,7 @@ features = datasets.Features(
         "dialogue": [
             {
                 "turn_label": datasets.Sequence(datasets.Sequence(datasets.Value("string"))),
-                "asr": datasets.Sequence(datasets.Sequence(datasets.Value("string"))),
-                "system_transcript": datasets.Value("string"),
+                "system_utterance": datasets.Value("string"),
                 "turn_idx": datasets.Value("int32"),
                 "belief_state": [
                     {
@@ -72,7 +71,7 @@ features = datasets.Features(
                         "act": datasets.Value("string"),
                     }
                 ],
-                "transcript": datasets.Value("string"),
+                "user_utterance": datasets.Value("string"),
                 "system_acts": datasets.Sequence(datasets.Sequence(datasets.Value("string"))),
             }
         ],

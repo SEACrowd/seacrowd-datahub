@@ -19,7 +19,7 @@ from seacrowd.utils.schemas import (
     text_features,
     text_multi_features,
     video_features,
-    e2e_tod_features,
+    tod_features,
 )
 
 METADATA: dict = {
@@ -85,7 +85,7 @@ class Tasks(Enum):
 
     # Multi Text Generation
     DIALOGUE_SYSTEM = "DS"
-    E2E_TASK_ORIENTED_DIALOGUE_SYSTEM = "E2E_TOD"
+    E2E_TASK_ORIENTED_DIALOGUE = "TOD"
 
     # Self Supervised & Unsupervised Text
     PROMPTING = "PRT"
@@ -207,7 +207,7 @@ TASK_TO_SCHEMA = {
     Tasks.KEYWORD_EXTRACTION: "SEQ_LABEL",
     Tasks.COREFERENCE_RESOLUTION: "KB",
     Tasks.DIALOGUE_SYSTEM: "T2T",
-    Tasks.E2E_TASK_ORIENTED_DIALOGUE_SYSTEM: "E2E_TOD",
+    Tasks.E2E_TASK_ORIENTED_DIALOGUE: "TOD",
     Tasks.NAMED_ENTITY_RECOGNITION: "SEQ_LABEL",
     Tasks.POS_TAGGING: "SEQ_LABEL",
     Tasks.KEYWORD_TAGGING: "SEQ_LABEL",
@@ -283,7 +283,7 @@ SCHEMA_TO_FEATURES = {
     "SPEECH_MULTI": speech_multi_features(),
     "IMTEXT": image_text_features(),
     "VIDTEXT": video_features,
-    "E2E_TOD": e2e_tod_features,
+    "TOD": tod_features,
 }
 
 TASK_TO_FEATURES = {
