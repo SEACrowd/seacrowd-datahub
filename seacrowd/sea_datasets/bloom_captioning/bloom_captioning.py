@@ -139,19 +139,6 @@ _SEACROWD_VERSION = "1.0.0"
 CONFIG_SUFFIXES_FOR_TASK = [TASK_TO_SCHEMA.get(task).lower() for task in _SUPPORTED_TASKS]
 
 
-def conform_init_config():
-    """Assertion Function for Instantiated Configs"""
-    if len(_LANGUAGES) == 0:
-        raise AssertionError("No Languages detected from config!")
-    if len(CONFIG_SUFFIXES_FOR_TASK) != len(_SUPPORTED_TASKS):
-        raise AssertionError("Config prefixes don't matched in terms of `len` with `_SUPPORTED_TASKS`!")
-    if len(CONFIG_SUFFIXES_FOR_TASK) == 0:
-        raise AssertionError("Config prefixes and `_SUPPORTED_TASKS` have `len` of 0!")
-
-
-conform_init_config()
-
-
 def construct_configs_on_langs(languages: list = None) -> List[SEACrowdConfig]:
     """
     The function `construct_configs` constructs a list of SEACrowdConfig objects based on the provided
@@ -242,20 +229,21 @@ class BloomCaptioningDataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: DownloadManager) -> List[datasets.SplitGenerator]:
         hf_dset_dict = datasets.load_dataset(_HF_REMOTE_REF, self.config.subset_id)
 
-        return [datasets.SplitGenerator(name=datasets.Split(dset_key), gen_kwargs={"hf_dset": dset}) for dset_key, dset in hf_dset_dict.items()]
+        return [datasets.SplitGenerator(name=datasets.Split(dset_key), gen_kwargs={"hf_dset": dset}) for dset_key, dset in hf_dset_dict.items() if dset.num_rows > 0]
 
     def _generate_examples(self, hf_dset) -> Tuple[int, Dict]:
         _config_schema_name = self.config.schema
 
         _idx = 0
         for datapoints in hf_dset:
-            # for both schema, the `_idx` will be taken from "image_id" value
+            # the `_idx` will be generated manually since no `id` present in the dataset fulfill the purpose as primary key
             if _config_schema_name == "source":
-                yield datapoints["image_id"], {colname: datapoints[colname] for colname in self.info.features}
+                yield _idx, {colname: datapoints[colname] for colname in self.info.features}
 
             elif _config_schema_name == "seacrowd_imtext":
-                yield datapoints["image_id"], {"id": datapoints["image_id"], "image_paths": [datapoints["image_url"]], "texts": datapoints["caption"], "metadata": {"context": "", "labels": []}}
-                _idx += 1
+                yield _idx, {"id": _idx, "image_paths": [datapoints["image_url"]], "texts": datapoints["caption"], "metadata": {"context": "", "labels": []}}
 
             else:
                 raise ValueError(f"Received unexpected config schema of {_config_schema_name}!")
+
+            _idx += 1
