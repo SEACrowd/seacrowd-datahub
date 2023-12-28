@@ -134,7 +134,7 @@ class UITVSFC(datasets.GeneratorBasedBuilder):
             )
         elif self.config.name == f"{_DATASETNAME}_sentiment_seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             features = schemas.text_features(self.SENTIMENT_LABEL_CLASSES)
-        elif self.config.name == f"{_DATASETNAME}_topicseacrowd_{self.SEACROWD_SCHEMA_NAME}":
+        elif self.config.name == f"{_DATASETNAME}_topic_seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             features = schemas.text_features(self.TOPIC_LABEL_CLASSES)
 
         return datasets.DatasetInfo(
