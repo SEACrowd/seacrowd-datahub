@@ -38,7 +38,7 @@ _URLS = {
     },
 }
 
-_SUPPORTED_TASKS = [Tasks.DIALOGUE_SYSTEM]
+_SUPPORTED_TASKS = [Tasks.E2E_TASK_ORIENTED_DIALOGUE]
 
 _SOURCE_VERSION = "1.0.0"
 
@@ -232,12 +232,43 @@ class IndoSMD(datasets.GeneratorBasedBuilder):
                 yield str(idx), example
 
         elif self.config.schema == "seacrowd_tod":
-            for idx, example in enumerate(data):
-                example["index"] = str(idx)
+            for idx, tod_dialogue in enumerate(data):
+                example = {}
+                example["dialogue_idx"] = idx
+
+                dialogue = []
+                # NOTE: the dialogue always started with `driver` as first utterance
+                for turn, i in enumerate(range(0, len(tod_dialogue["dialogue"]) + 2, 2)):
+                    dial = {}
+                    dial["turn_idx"] = turn
+
+                    # system_utterance properties
+                    dial["system_utterance"] = ""
+                    dial["system_acts"] = []
+                    if turn != 0:
+                        dial["system_utterance"] = tod_dialogue["dialogue"][i - 1]["data"]["utterance"]
+                    if i < len(tod_dialogue["dialogue"]):
+                        # NOTE: system_acts will be filled with every slot that has 'True' value on the origin dataset (on the requested field)
+                        for act in tod_dialogue["dialogue"][i + 1]["data"]["requested"]:
+                            if tod_dialogue["dialogue"][i + 1]["data"]["requested"][act]:
+                                dial["system_acts"].append([act])
+
+                    # user_utterance properties
+                    dial["turn_label"] = []
+                    dial["belief_state"] = []
+                    if i == len(tod_dialogue["dialogue"]):
+                        # case if turn_idx > len(dialogue) --> add dummy user_utterance
+                        dial["user_utterance"] = ""
+                    else:
+                        dial["user_utterance"] = tod_dialogue["dialogue"][i]["data"]["utterance"]
+                        # NOTE: belief_state will be filled with request act from `requested` field & inform act from `slots` field in the origin dataset
+                        for act in tod_dialogue["dialogue"][i + 1]["data"]["requested"]:
+                            if tod_dialogue["dialogue"][i + 1]["data"]["requested"][act]:
+                                dial["belief_state"].append({"slots": [["slot", act]], "act": "request"})
+                        for slot, slot_value in tod_dialogue["dialogue"][i + 1]["data"]["slots"].items():
+                            dial["belief_state"].append({"slots": [[slot, slot_value]], "act": "inform"})
+
+                    # append to dialogue
+                    dialogue.append(dial)
+                example["dialogue"] = dialogue
                 yield str(idx), example
-
-
-# This allows you to run your dataloader with `python [dataset_name].py` during development
-# TODO: Remove this before making your PR
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)
