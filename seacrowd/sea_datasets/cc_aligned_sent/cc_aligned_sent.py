@@ -56,18 +56,7 @@ covered by LASER.
 
 _HOMEPAGE = "https://www2.statmt.org/cc-aligned/"
 _LICENSE = Licenses.UNKNOWN.value
-_URLS = {
-    "ind": "https://data.statmt.org/cc-aligned/sentence-aligned/en_XX-id_ID.tsv.xz",
-    "jav": "https://data.statmt.org/cc-aligned/sentence-aligned/en_XX-jv_ID.tsv.xz",
-    "sun": "https://data.statmt.org/cc-aligned/sentence-aligned/en_XX-su_ID.tsv.xz",
-    "tha": "https://data.statmt.org/cc-aligned/sentence-aligned/en_XX-th_TH.tsv.xz",
-    "vie": "https://data.statmt.org/cc-aligned/sentence-aligned/en_XX-vi_VN.tsv.xz",
-    "zlm": "https://data.statmt.org/cc-aligned/sentence-aligned/en_XX-ms_MY.tsv.xz",
-    "lao": "https://data.statmt.org/cc-aligned/sentence-aligned/en_XX-lo_LA.tsv.xz",
-    "khm": "https://data.statmt.org/cc-aligned/sentence-aligned/en_XX-km_KH.tsv.xz",
-    "mya": "https://data.statmt.org/cc-aligned/sentence-aligned/en_XX-my_MM.tsv.xz",
-    "ceb": "https://data.statmt.org/cc-aligned/sentence-aligned/cx_PH-en_XX.tsv.xz",
-}
+_URL = "https://data.statmt.org/cc-aligned/sentence-aligned/"
 
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 _SOURCE_VERSION = "1.0.0"
@@ -85,7 +74,7 @@ class CCAlignedSentencesDataset(datasets.GeneratorBasedBuilder):
     SEACROWD_SCHEMA_NAME = "t2t"
 
     # Add configurations for loading a dataset per language.
-    dataset_names = sorted([f"{_DATASETNAME}_{lang}" for lang in _LANGUAGES])
+    dataset_names = sorted([f"{_DATASETNAME}_{subset}" for subset in _SUBSETS])
     BUILDER_CONFIGS = []
     for name in dataset_names:
         source_config = SEACrowdConfig(
@@ -105,30 +94,9 @@ class CCAlignedSentencesDataset(datasets.GeneratorBasedBuilder):
         )
         BUILDER_CONFIGS.append(seacrowd_config)
 
-    # Add configuration that allows loading all datasets at once.
-    BUILDER_CONFIGS.extend(
-        [
-            # cc_aligned_sent_source
-            SEACrowdConfig(
-                name=f"{_DATASETNAME}_source",
-                version=SOURCE_VERSION,
-                description=f"{_DATASETNAME} source schema (all)",
-                schema="source",
-                subset_id=_DATASETNAME,
-            ),
-            # cc_aligned_sent_t2t
-            SEACrowdConfig(
-                name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",
-                version=SEACROWD_VERSION,
-                description=f"{_DATASETNAME} SEACrowd schema (all)",
-                schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
-                subset_id=_DATASETNAME,
-            ),
-        ]
-    )
-
     # Choose first language as default
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
+    first_subset = sorted(_SUBSETS)[0]
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{first_subset}_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -148,78 +116,46 @@ class CCAlignedSentencesDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: DownloadManager) -> List[datasets.SplitGenerator]:
         """Return SplitGenerators."""
-        source_files = []
-        source_languages = []
-        target_languages = []
-
         # Define some functions for parsing config and URL names
         def _split_at_n(text: str, n: int) -> Tuple[str, str]:
+            """Split text on the n-th instance"""
             return ("_".join(text.split("_")[:n]), "_".join(text.split("_")[n:]))
 
-        def _get_source_target_langs(url: str) -> Tuple[str, str]:
-            return Path(url).stem.split(".")[0].split("-")
+        # Get URL. For cx_PH, the source and target languages are reversed
+        _, subset = _split_at_n(_split_at_n(self.config.name, 5)[0], 3)
+        (source_lang, target_lang) = (subset, "en_XX") if subset == "cx_PH" else ("en_xx", subset)
+        url = _URL + f"{source_lang}-{target_lang}.tsv.xz"
+        filepath = dl_manager.download_and_extract(url)
 
-        # Get language from config name
-        _, name = _split_at_n(self.config.name, 3)
-        lang, _ = name.split("_", 1)
-
-        if lang in _LANGUAGES:
-            # Load data per language
-            url = _URLS[lang]
-            source_lang, target_lang = _get_source_target_langs(url)
-
-            source_files.append(dl_manager.download_and_extract(_URLS[lang]))
-            source_languages.append(source_lang)
-            target_languages.append(target_lang)
-        else:
-            # Load examples for all languages at once
-            for lang in _LANGUAGES:
-                url = _URLS[lang]
-                source_lang, target_lang = _get_source_target_langs(url)
-
-                source_files.append(dl_manager.download_and_extract(_URLS[lang]))
-                source_languages.append(source_lang)
-                target_languages.append(target_lang)
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
-                    "filepaths": source_files,
-                    "languages": (source_languages, target_languages),
+                    "filepath": filepath,
+                    "source_lang": source_lang,
+                    "target_lang": target_lang,
                 },
             )
         ]
 
-    def _generate_examples(self, filepaths: List[Path], languages: Tuple[List[str], List[str]]) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepath: Path, source_lang: str, target_lang: str) -> Tuple[int, Dict]:
         """Yield examples as (key, example) tuples"""
-        source_languages, target_languages = languages
-        examples = []
-
-        idx = 0
-        for source_file, source_lang, target_lang in zip(filepaths, source_languages, target_languages):
-            with open(source_file, encoding="utf-8") as file:
-                for row in file:
-                    text_1, text_2, score = row.strip().split("\t")
-                    if self.config.schema == "source":
-                        examples.append(
-                            {
-                                "id": idx,
-                                "Source_Sentence": text_1,
-                                "Target_Sentence": text_2,
-                                "LASER_similarity": float(score),
-                            }
-                        )
-                    if self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
-                        examples.append(
-                            {
-                                "id": idx,
-                                "text_1": text_1,
-                                "text_2": text_2,
-                                "text_1_name": source_lang,
-                                "text_2_name": target_lang,
-                            }
-                        )
-                    idx += 1
-
-        for idx, eg in enumerate(examples):
-            yield idx, eg
+        with open(filepath, encoding="utf-8") as file:
+            for idx, row in enumerate(file):
+                text_1, text_2, score = row.strip().split("\t")
+                if self.config.schema == "source":
+                    example = {
+                        "id": idx,
+                        "Source_Sentence": text_1,
+                        "Target_Sentence": text_2,
+                        "LASER_similarity": float(score),
+                    }
+                if self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
+                    example = {
+                        "id": idx,
+                        "text_1": text_1,
+                        "text_2": text_2,
+                        "text_1_name": source_lang,
+                        "text_2_name": target_lang,
+                    }
+                yield idx, example
