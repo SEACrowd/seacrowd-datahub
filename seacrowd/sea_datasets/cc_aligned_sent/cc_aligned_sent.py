@@ -112,7 +112,13 @@ class CCAlignedSentencesDataset(datasets.GeneratorBasedBuilder):
         if self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             features = schemas.text_to_text.features
 
-        return datasets.DatasetInfo(description=_DESCRIPTION, features=features, homepage=_HOMEPAGE, license=_LICENSE, citation=_CITATION)
+        return datasets.DatasetInfo(
+            description=_DESCRIPTION,
+            features=features,
+            homepage=_HOMEPAGE,
+            license=_LICENSE,
+            citation=_CITATION,
+        )
 
     def _split_generators(self, dl_manager: DownloadManager) -> List[datasets.SplitGenerator]:
         """Return SplitGenerators."""
