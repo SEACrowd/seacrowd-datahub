@@ -228,4 +228,5 @@ class IdkMrc(datasets.GeneratorBasedBuilder):
                         "choices": [],
                         "context": example["context"],
                         "answer": [ans["text"] for ans in qa["answers"]],
+                        "meta": {}
                     }

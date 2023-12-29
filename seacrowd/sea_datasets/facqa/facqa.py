@@ -151,5 +151,6 @@ class FacqaDataset(datasets.GeneratorBasedBuilder):
                     "choices": [],
                     "context": listToString(ast.literal_eval(row.passage)),
                     "answer": [getAnswerString(ast.literal_eval(row.passage), ast.literal_eval(row.seq_label))],
+                    "meta": {}
                 }
                 yield row.index, entry
