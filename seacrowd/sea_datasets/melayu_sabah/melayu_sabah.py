@@ -60,7 +60,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class MelayuSarawak(datasets.GeneratorBasedBuilder):
+class MelayuSabah(datasets.GeneratorBasedBuilder):
     """Korpus Variasi Bahasa Melayu:
     Sabah is a language corpus sourced from various folklores in Melayu Sabah dialect."""
 
