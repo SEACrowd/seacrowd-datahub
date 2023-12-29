@@ -82,7 +82,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class MelayuSarawak(datasets.GeneratorBasedBuilder):
+class MelayuStandardLisan(datasets.GeneratorBasedBuilder):
     """Korpus Variasi Bahasa Melayu:
     Standard Lisan is a language corpus sourced from monologues of various melayu folklores."""
 
