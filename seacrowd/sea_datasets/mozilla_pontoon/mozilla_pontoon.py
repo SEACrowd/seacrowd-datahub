@@ -12,33 +12,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-"""
-This template serves as a starting point for contributing a dataset to the SEACrowd Datahub repo.
-
-When modifying it for your dataset, look for TODO items that offer specific instructions.
-
-Full documentation on writing dataset loading scripts can be found here:
-https://huggingface.co/docs/datasets/add_dataset.html
-
-To create a dataset loading script you will create a class and implement 3 methods:
-  * `_info`: Establishes the schema for the dataset, and returns a datasets.DatasetInfo object.
-  * `_split_generators`: Downloads and extracts data for each split (e.g. train/val/test) or associate local data with each split.
-  * `_generate_examples`: Creates examples from data on disk that conform to each schema defined in `_info`.
-
-TODO: Before submitting your script, delete this doc string and replace it with a description of your dataset.
-"""
-import os
-from pathlib import Path
 from typing import Dict, List, Tuple
 
 import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
+from seacrowd.utils.constants import Licenses, Tasks
 
-# TODO: Add BibTeX citation
+# Keep blank; dataset has no associated paper
 _CITATION = """\
 @article{,
   author    = {},
@@ -54,34 +36,18 @@ _CITATION = """\
 """
 
 _LOCAL = False
-_LANGUAGES = [
-    "eng",
-    "mya",
-    "ceb",
-    "gor",
-    "hil",
-    "ilo",
-    "ind",
-    "jav",
-    "khm",
-    "lao",
-    "zlm",
-    "nia",
-    "tgl",
-    "tha",
-    "vie"
-]
+_LANGUAGES = ["mya", "ceb", "gor", "hil", "ilo", "ind", "jav", "khm", "lao", "zlm", "nia", "tgl", "tha", "vie"]
+
 _DATASETNAME = "mozilla_pontoon"
 _DESCRIPTION = """
-This dataset contains translations from Mozilla's Pontoon localization platform
-for more than 200 languages. Source sentences are in English.
+This dataset contains crowdsource translations of more than 200 languages for
+different Mozilla open-source projects from Mozilla's Pontoon localization platform.
+Source sentences are in English.
 """
 
 _HOMEPAGE = "https://huggingface.co/datasets/ayymen/Pontoon-Translations"
-_LICENSE = Licenses.BSD_3_CLAUSE
-_URLS = {
-    _DATASETNAME: "url or list of urls or ... ",
-}
+_LICENSE = Licenses.BSD_3_CLAUSE.value
+_URL = "https://huggingface.co/datasets/ayymen/Pontoon-Translations"
 
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 _SOURCE_VERSION = "1.0.0"
@@ -89,17 +55,17 @@ _SEACROWD_VERSION = "1.0.0"
 
 
 class MozillaPontoonDataset(datasets.GeneratorBasedBuilder):
-    """TODO: Short description of my dataset."""
+    """Dataset of translations from Mozilla's Pontoon platform."""
 
-    SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
-    SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-    SEACROWD_SCHEMA_NAME = "t2t"
+    # Two-letter ISO code is used when available
+    # otherwise 3-letter one is used
+    LANG_CODE_MAPPER = {"mya": "my", "ceb": "ceb", "gor": "gor", "hil": "hil", "ilo": "ilo", "ind": "id", "jav": "jv", "khm": "km", "lao": "lo", "zlm": "ms", "nia": "nia", "tgl": "tl", "tha": "th", "vie": "vi"}
 
     # Config to load individual datasets per language
     BUILDER_CONFIGS = [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_{lang}_source",
-            version=SOURCE_VERSION,
+            version=datasets.Version(_SOURCE_VERSION),
             description=f"{_DATASETNAME} source schema for {lang} language",
             schema="source",
             subset_id=lang,
@@ -107,10 +73,10 @@ class MozillaPontoonDataset(datasets.GeneratorBasedBuilder):
         for lang in _LANGUAGES
     ] + [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_{lang}_{SEACROWD_SCHEMA_NAME}",
-            version=SEACROWD_VERSION,
+            name=f"{_DATASETNAME}_{lang}_seacrowd_t2t",
+            version=datasets.Version(_SEACROWD_VERSION),
             description=f"{_DATASETNAME} SEACrowd schema for {lang} language",
-            schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
+            schema="seacrowd_t2t",
             subset_id=lang,
         )
         for lang in _LANGUAGES
@@ -121,21 +87,20 @@ class MozillaPontoonDataset(datasets.GeneratorBasedBuilder):
         [
             SEACrowdConfig(
                 name=f"{_DATASETNAME}_source",
-                version=SOURCE_VERSION,
+                version=datasets.Version(_SOURCE_VERSION),
                 description=f"{_DATASETNAME} source schema for all languages",
                 schema="source",
                 subset_id=_DATASETNAME,
             ),
             SEACrowdConfig(
-                name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",
-                version=SEACROWD_VERSION,
+                name=f"{_DATASETNAME}_seacrowd_t2t",
+                version=datasets.Version(_SEACROWD_VERSION),
                 description=f"{_DATASETNAME} SEACrowd schema for all languages",
-                schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
+                schema="seacrowd_t2t",
                 subset_id=_DATASETNAME,
-            )
+            ),
         ]
     )
-
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
@@ -147,7 +112,7 @@ class MozillaPontoonDataset(datasets.GeneratorBasedBuilder):
                     "target_sentence": datasets.Value("string"),
                 }
             )
-        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
+        elif self.config.schema == "seacrowd_t2t":
             features = schemas.text2text_features
 
         return datasets.DatasetInfo(
@@ -160,83 +125,47 @@ class MozillaPontoonDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        # TODO: This method is tasked with downloading/extracting the data and defining the splits depending on the configuration
-
-        # If you need to access the "source" or "seacrowd" config choice, that will be in self.config.name
-
-        # LOCAL DATASETS: You do not need the dl_manager; you can ignore this argument. Make sure `gen_kwargs` in the return gets passed the right filepath
-
-        # PUBLIC DATASETS: Assign your data-dir based on the dl_manager.
-
-        # dl_manager is a datasets.download.DownloadManager that can be used to download and extract URLs; many examples use the download_and_extract method; see the DownloadManager docs here: https://huggingface.co/docs/datasets/package_reference/builder_classes.html#datasets.DownloadManager
-
-        # dl_manager can accept any type of nested list/dict and will give back the same structure with the url replaced with the path to local files.
-
-        # TODO: KEEP if your dataset is PUBLIC; remove if not
-        urls = _URLS[_DATASETNAME]
-        data_dir = dl_manager.download_and_extract(urls)
-
-        # TODO: KEEP if your dataset is LOCAL; remove if NOT
-        if self.config.data_dir is None:
-            raise ValueError("This is a local dataset. Please pass the data_dir kwarg to load_dataset.")
-        else:
-            data_dir = self.config.data_dir
-
-        # Not all datasets have predefined canonical train/val/test splits.
-        # If your dataset has no predefined splits, use datasets.Split.TRAIN for all of the data.
-
+        # dl_manager not used since dataloader uses HF 'load_dataset'
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
-                # Whatever you put in gen_kwargs will be passed to _generate_examples
-                gen_kwargs={
-                    "filepath": os.path.join(data_dir, "train.jsonl"),
-                    "split": "train",
-                },
-            ),
-            datasets.SplitGenerator(
-                name=datasets.Split.TEST,
-                gen_kwargs={
-                    "filepath": os.path.join(data_dir, "test.jsonl"),
-                    "split": "test",
-                },
-            ),
-            datasets.SplitGenerator(
-                name=datasets.Split.VALIDATION,
-                gen_kwargs={
-                    "filepath": os.path.join(data_dir, "dev.jsonl"),
-                    "split": "dev",
-                },
+                gen_kwargs={"split": "train"},
             ),
         ]
 
-    # method parameters are unpacked from `gen_kwargs` as given in `_split_generators`
+    def _load_hf_data_from_remote(self, language: str) -> datasets.DatasetDict:
+        """Load dataset from HuggingFace."""
+        hf_lang_code = self.LANG_CODE_MAPPER[language]
+        hf_remote_ref = "/".join(_URL.split("/")[-2:])
+        return datasets.load_dataset(hf_remote_ref, f"{hf_lang_code}-en", split="train")
 
-    # TODO: change the args of this function to match the keys in `gen_kwargs`. You may add any necessary kwargs.
-
-    def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
+        languages = []
+        pontoon_datasets = []
 
-        for index, row in enumerate(data):
-            if self.config.schema == "source":
-                example = row
+        lang = self.config.name.split("_")[2]
+        if lang in _LANGUAGES:
+            languages.append(lang)
+            pontoon_datasets.append(self._load_hf_data_from_remote(lang))
+        else:
+            for lang in _LANGUAGES:
+                languages.append(lang)
+                pontoon_datasets.append(self._load_hf_data_from_remote(lang))
 
-            elif self.config.schema == f"seacrowd_{SEACROWD_SCHEMA_NAME}":
-                example = {
-                    "id": str(index),
-                    "text_1": row["source_sentence"],
-                    "text_2": row["target_sentence"],
-                    "text_1_name": "eng",
-                    "text_2_name": lang,
-                }
-            
+        index = 0
+        for lang, lang_subset in zip(languages, pontoon_datasets):
+            for _, row in enumerate(lang_subset):
+                if self.config.schema == "source":
+                    example = row
 
-
-# This template is based on the following template from the datasets package:
-# https://github.com/huggingface/datasets/blob/master/templates/new_dataset_script.py
-
-
-# This allows you to run your dataloader with `python [dataset_name].py` during development
-# TODO: Remove this before making your PR
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)
+                elif self.config.schema == "seacrowd_t2t":
+                    example = {
+                        "id": str(index),
+                        "text_1": row["source_sentence"],
+                        "text_2": row["target_sentence"],
+                        "text_1_name": "eng",
+                        "text_2_name": lang,
+                    }
+                yield index, example
+                index += 1
