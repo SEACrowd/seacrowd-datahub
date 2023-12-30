@@ -155,7 +155,7 @@ class MozillaPontoonDataset(datasets.GeneratorBasedBuilder):
 
         index = 0
         for lang, lang_subset in zip(languages, pontoon_datasets):
-            for _, row in enumerate(lang_subset):
+            for row in lang_subset:
                 if self.config.schema == "source":
                     example = row
 
