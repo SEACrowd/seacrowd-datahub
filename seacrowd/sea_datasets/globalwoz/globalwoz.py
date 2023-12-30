@@ -5,6 +5,7 @@ from typing import Dict, List, Tuple
 
 import datasets
 
+from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Tasks, Licenses
 
@@ -53,7 +54,7 @@ _SEACROWD_VERSION = "1.0.0"
 
 
 def seacrowd_config_constructor(dial_type, lang, schema, version):
-    if dial_type not in ["E&F", "F&E", "F&F"]:
+    if dial_type not in ["EandF", "FandE", "FandF"]:
         raise ValueError(f"Invalid dialogue type {dial_type}")
 
     if lang == "":
@@ -81,27 +82,27 @@ class GlobalWoZ(datasets.GeneratorBasedBuilder):
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
     BUILDER_CONFIGS = [
-        seacrowd_config_constructor("E&F", "id", "source", _SOURCE_VERSION),
-        seacrowd_config_constructor("E&F", "th", "source", _SOURCE_VERSION),
-        seacrowd_config_constructor("E&F", "vi", "source", _SOURCE_VERSION),
-        seacrowd_config_constructor("F&E", "id", "source", _SOURCE_VERSION),
-        seacrowd_config_constructor("F&E", "th", "source", _SOURCE_VERSION),
-        seacrowd_config_constructor("F&E", "vi", "source", _SOURCE_VERSION),
-        seacrowd_config_constructor("F&F", "id", "source", _SOURCE_VERSION),
-        seacrowd_config_constructor("F&F", "th", "source", _SOURCE_VERSION),
-        seacrowd_config_constructor("F&F", "vi", "source", _SOURCE_VERSION),
-        seacrowd_config_constructor("E&F", "id", "seacrowd_tod", _SEACROWD_VERSION),
-        seacrowd_config_constructor("E&F", "th", "seacrowd_tod", _SEACROWD_VERSION),
-        seacrowd_config_constructor("E&F", "vi", "seacrowd_tod", _SEACROWD_VERSION),
-        seacrowd_config_constructor("F&E", "id", "seacrowd_tod", _SEACROWD_VERSION),
-        seacrowd_config_constructor("F&E", "th", "seacrowd_tod", _SEACROWD_VERSION),
-        seacrowd_config_constructor("F&E", "vi", "seacrowd_tod", _SEACROWD_VERSION),
-        seacrowd_config_constructor("F&F", "id", "seacrowd_tod", _SEACROWD_VERSION),
-        seacrowd_config_constructor("F&F", "th", "seacrowd_tod", _SEACROWD_VERSION),
-        seacrowd_config_constructor("F&F", "vi", "seacrowd_tod", _SEACROWD_VERSION),
+        seacrowd_config_constructor("EandF", "id", "source", _SOURCE_VERSION),
+        seacrowd_config_constructor("EandF", "th", "source", _SOURCE_VERSION),
+        seacrowd_config_constructor("EandF", "vi", "source", _SOURCE_VERSION),
+        seacrowd_config_constructor("FandE", "id", "source", _SOURCE_VERSION),
+        seacrowd_config_constructor("FandE", "th", "source", _SOURCE_VERSION),
+        seacrowd_config_constructor("FandE", "vi", "source", _SOURCE_VERSION),
+        seacrowd_config_constructor("FandF", "id", "source", _SOURCE_VERSION),
+        seacrowd_config_constructor("FandF", "th", "source", _SOURCE_VERSION),
+        seacrowd_config_constructor("FandF", "vi", "source", _SOURCE_VERSION),
+        seacrowd_config_constructor("EandF", "id", "seacrowd_tod", _SEACROWD_VERSION),
+        seacrowd_config_constructor("EandF", "th", "seacrowd_tod", _SEACROWD_VERSION),
+        seacrowd_config_constructor("EandF", "vi", "seacrowd_tod", _SEACROWD_VERSION),
+        seacrowd_config_constructor("FandE", "id", "seacrowd_tod", _SEACROWD_VERSION),
+        seacrowd_config_constructor("FandE", "th", "seacrowd_tod", _SEACROWD_VERSION),
+        seacrowd_config_constructor("FandE", "vi", "seacrowd_tod", _SEACROWD_VERSION),
+        seacrowd_config_constructor("FandF", "id", "seacrowd_tod", _SEACROWD_VERSION),
+        seacrowd_config_constructor("FandF", "th", "seacrowd_tod", _SEACROWD_VERSION),
+        seacrowd_config_constructor("FandF", "vi", "seacrowd_tod", _SEACROWD_VERSION),
     ]
 
-    DEFAULT_CONFIG_NAME = "globalwoz_E&F_id_source"
+    DEFAULT_CONFIG_NAME = "globalwoz_EandF_id_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -128,9 +129,9 @@ class GlobalWoZ(datasets.GeneratorBasedBuilder):
                 }
             )
 
-        elif self.config.schema == "seacrowd_[seacrowdschema_name]":
-            # e.g. features = schemas.kb_features
-            # TODO: Choose your seacrowd schema here
+        elif self.config.schema == "seacrowd_tod":
+            features = schemas.tod_features
+        else:
             raise NotImplementedError()
 
         return datasets.DatasetInfo(
@@ -145,12 +146,15 @@ class GlobalWoZ(datasets.GeneratorBasedBuilder):
         """Returns SplitGenerators."""
         _split_generators = []
 
-        type_and_lang = {"dial_type": self.config.subset_id.split("_")[1], "lang": self.config.subset_id.split("_")[2]}  # globalwoz_{dial_type}_{lang}
+        type_and_lang = {"dial_type": self.config.subset_id.split("_")[1].replace("and", "&"), "lang": self.config.subset_id.split("_")[2]}  # globalwoz_{dial_type}_{lang}
 
         if self.config.data_dir is None:
             raise ValueError("This is a local dataset. Please pass the data_dir kwarg to load_dataset.")
         else:
             data_dir = self.config.data_dir
+
+        if not os.path.exists(os.path.join(data_dir, f"{type_and_lang['dial_type']}_{type_and_lang['lang']}.json")):
+            raise FileNotFoundError()
 
         return [
             datasets.SplitGenerator(
@@ -168,26 +172,7 @@ class GlobalWoZ(datasets.GeneratorBasedBuilder):
         # For local datasets you will have access to self.config.data_dir and self.config.data_files
         with open(filepath, "r+", encoding="utf8") as fw:
             data = json.load(fw)
-        # {
-        #     "id": datasets.Value("string"),
-        #     "goal": {
-        #         "attraction": datasets.Value("string"),
-        #         "hospital": datasets.Value("string"),
-        #         "hotel": datasets.Value("string"),
-        #         "police": datasets.Value("string"),
-        #         "restaurant": datasets.Value("string"),
-        #         "taxi": datasets.Value("string"),
-        #         "train": datasets.Value("string"),
-        #     },
-        #     "log": [
-        #         {
-        #             "dialog_act": datasets.Value("string"),
-        #             "metadata": datasets.Value("string"),
-        #             "span_info": [[datasets.Value("string")]],
-        #             "text": datasets.Value("string"),
-        #         }
-        #     ]
-        # }
+
         if self.config.schema == "source":
             for idx, tod_dialogue in enumerate(data.values()):
                 example = {}
@@ -212,13 +197,48 @@ class GlobalWoZ(datasets.GeneratorBasedBuilder):
 
                 yield example["id"], example
 
-        elif self.config.schema == "seacrowd_[seacrowd_schema_name]":
-            # TODO: yield (key, example) tuples in the seacrowd schema
-            for key, example in thing:
-                yield key, example
+        elif self.config.schema == "seacrowd_tod":
+            for idx, tod_dialogue in enumerate(data.values()):
+                example = {}
+                example["dialogue_idx"] = idx
 
+                dialogue = []
+                # NOTE: the dialogue always started with `user` as first utterance
+                for turn, i in enumerate(range(0, len(tod_dialogue["log"]) + 2, 2)):
+                    dial = {}
+                    dial["turn_idx"] = turn
 
-# This allows you to run your dataloader with `python [dataset_name].py` during development
-# TODO: Remove this before making your PR
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)
+                    # system_utterance properties
+                    dial["system_utterance"] = ""
+                    dial["system_acts"] = []
+                    if turn != 0:
+                        dial["system_utterance"] = tod_dialogue["log"][i - 1]["text"]
+                    if i < len(tod_dialogue["log"]):
+                        # NOTE: "system_acts will be populated with the `dialog_act` from the user utterance in the original dataset, as our schema dictates
+                        # that `system_acts` should represent the system's intended actions based on the user's utterance."
+                        for acts in tod_dialogue["log"][i]["dialog_act"].values():
+                            for act in acts:
+                                dial["system_acts"].append([act[0]])
+
+                    # user_utterance properties
+                    dial["turn_label"] = []  # left as an empty array
+                    dial["belief_state"] = []
+                    if i == len(tod_dialogue["log"]):
+                        # case if turn_idx > len(dialogue) --> add dummy user_utterance
+                        dial["user_utterance"] = ""
+                    else:
+                        dial["user_utterance"] = tod_dialogue["log"][i]["text"]
+                        # NOTE: "the belief_state will be populated with the `span_info` from the user utterance in the original dataset, as our schema dictates
+                        # that `belief_state` should represent the system's belief state based on the user's utterance."
+                        for span in tod_dialogue["log"][i]["span_info"]:
+                            if span[0].split("-")[1] == "request":  # Request action
+                                dial["belief_state"].append({"slots": [["slot", span[1]]], "act": "request"})
+                            else:
+                                dial["belief_state"].append({"slots": [[span[1], span[2]]], "act": span[0].split("-")[1]})
+
+                    # append to dialogue
+                    dialogue.append(dial)
+
+                example["dialogue"] = dialogue
+
+                yield example["dialogue_idx"], example
