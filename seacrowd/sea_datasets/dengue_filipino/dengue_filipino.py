@@ -1,5 +1,3 @@
-import json
-from pathlib import Path
 from typing import Dict, List, Tuple
 
 import datasets
@@ -33,10 +31,11 @@ _HOMEPAGE = "https://github.com/jcblaisecruz02/Filipino-Text-Benchmarks"
 
 _LICENSE = Licenses.GPL_3_0.value
 
-_SUPPORTED_TASKS = [] # TODO: What's the appropriate task? Seems like we need to add a general text_multi_features task const
+_SUPPORTED_TASKS = []  # TODO: What's the appropriate task?
 
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
+
 
 class DengueFilipinoDataset(datasets.GeneratorBasedBuilder):
     """Dengue Dataset Low-Resource Multi-label Text Classification Dataset in Filipino"""
@@ -50,12 +49,12 @@ class DengueFilipinoDataset(datasets.GeneratorBasedBuilder):
             subset_id=f"{_DATASETNAME}",
         ),
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd",
+            name=f"{_DATASETNAME}_seacrowd_text_multi",
             version=datasets.Version(_SEACROWD_VERSION),
-            description=f"{_DATASETNAME} SEACrowd schema",
-            schema="seacrowd",
+            description=f"{_DATASETNAME} SEACrowd schema text multi",
+            schema="seacrowd_text_multi",
             subset_id=f"{_DATASETNAME}",
-        )
+        ),
     ]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
@@ -72,10 +71,9 @@ class DengueFilipinoDataset(datasets.GeneratorBasedBuilder):
                     "sick": datasets.features.ClassLabel(names=["0", "1"]),
                 }
             )
-        elif self.config.schema == "seacrowd_qa":
-            features = schemas.text_multi_features(["absent", "dengue", "health", "mosquito", "sick"])
+        elif self.config.schema == "seacrowd_text_multi":
+            features = schemas.text_multi_features(["0", "1"])
 
-        
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
             features=features,
@@ -85,18 +83,50 @@ class DengueFilipinoDataset(datasets.GeneratorBasedBuilder):
             citation=_CITATION,
         )
 
-    def _split_generators(self) -> List[datasets.SplitGenerator]:
+    def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         return [
             datasets.SplitGenerator(
-                name=datasets.Split.TRAIN
+                name=datasets.Split.TRAIN,
+                gen_kwargs={
+                    "split": "train",
+                },
             ),
             datasets.SplitGenerator(
-                name=datasets.Split.TEST
+                name=datasets.Split.VALIDATION,
+                gen_kwargs={
+                    "split": "validation",
+                },
             ),
             datasets.SplitGenerator(
-                name=datasets.Split.VALIDATION
-            )
+                name=datasets.Split.TEST,
+                gen_kwargs={
+                    "split": "test",
+                },
+            ),
         ]
 
-    def _generate_examples(self) -> Tuple[int, Dict]:
-        pass # TODO
+    def _generate_examples(self, split: str) -> Tuple[int, Dict]:
+        dataset = datasets.load_dataset(_DATASETNAME, split=split)
+        for id, data in enumerate(dataset):
+            if self.config.schema == "source":
+                yield id, {
+                    "text": data["text"],
+                    "absent": data["absent"],
+                    "dengue": data["dengue"],
+                    "health": data["health"],
+                    "mosquito": data["mosquito"],
+                    "sick": data["sick"],
+                }
+
+            elif self.config.schema == "seacrowd_text_multi":
+                yield id, {
+                    "id": id,
+                    "text": data["text"],
+                    "labels": [
+                        data["absent"],
+                        data["dengue"],
+                        data["health"],
+                        data["mosquito"],
+                        data["sick"],
+                    ],
+                }
