@@ -84,7 +84,8 @@ class ThaiDatabricksDollyDataset(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, filepath: Path):
         """Yield examples as (key, example) tuples"""
-        df = pd.read_parquet(filepath)
+        # pyarrow is an implicit dependency to load the parquet files
+        df = pd.read_parquet(filepath, engine="pyarrow")
         for idx, row in df.iterrows():
             if self.config.schema == "source":
                 example = {"instruction": row.get("instruction"), "context": row.get("context"), "response": row.get("response"), "category": row.get("category")}
