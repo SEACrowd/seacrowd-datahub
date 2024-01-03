@@ -50,7 +50,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "0.0.1"
 
 
-class STB_EXT(datasets.GeneratorBasedBuilder):
+class id_vaccines_tweetDataset(datasets.GeneratorBasedBuilder):
     """Dataset containing tweets about COVID-19 vaccines with manually labelled information about whether they are
     a subjective tweet and their sentiment polarity. Tweets are from 20-27 June 2021 and 15-22 July 2021."""
 
