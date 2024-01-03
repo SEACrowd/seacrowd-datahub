@@ -19,7 +19,7 @@ South East Asia is home to more than 1,000 native languages. Nevertheless, South
 
 ## How to contribute?
 
-You can contribute by proposing **unregistered NLP dataset** on [our record](https://seacrowd.github.io/seacrowd-catalogue/). [Just fill out this form](https://jotform.com/team/232952680898069/seacrowd-sea-datasets), and we will check and approve your entry.
+You can contribute by proposing **unregistered NLP dataset** on [our approved record](https://seacrowd.github.io/seacrowd-catalogue/) and our [in-review datasets](https://docs.google.com/spreadsheets/d/1ibbywsC1tQ_sLPX8bUAjC-vrTrUqZgZA46W_sxWw4Ss/edit?usp=sharing). [Just fill out this form](https://jotform.com/team/232952680898069/seacrowd-sea-datasets), and we will check and approve your entry if it meets our requirements (see [this](https://github.com/SEACrowd/seacrowd-datahub/blob/master/REVIEWING.md#approval-checklist) for the detailed checklist).
 
 We will give **contribution points** based on several factors, including: **supported modality**, **language scarcity**, or **task scarcity**.
 
