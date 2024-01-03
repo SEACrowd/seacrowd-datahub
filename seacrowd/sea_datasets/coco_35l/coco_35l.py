@@ -36,6 +36,7 @@ _DATASETNAME = "coco_35l"
 
 _DESCRIPTION = """\
     COCO-35L is a machine-generated image caption dataset, constructed by translating COCO Captions (Chen et al., 2015) to the other 34 languages using Google’s machine translation API.
+    152520 image ids are not found in the coco 2014 training caption. Validation set is ok Using COCO 2014 train and validation set.
     """
 
 _HOMEPAGE = "https://google.github.io/crossmodal-3600/"
@@ -58,8 +59,7 @@ _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
-_LANGS = ["fil", "id", "th", "vi"]
-
+_LANGUAGES = {"fil": "fil", "ind": "id", "tha": "th", "vie": "vi"}
 
 class Coco35LDataset(datasets.GeneratorBasedBuilder):
     """
@@ -71,26 +71,23 @@ class Coco35LDataset(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_{lang}_source", 
-            version=datasets.Version(_SOURCE_VERSION), 
-            description=f"{_DATASETNAME}_{lang} source schema", 
-            schema="source", 
+            name=f"{_DATASETNAME}_{lang}_source",
+            version=datasets.Version(_SOURCE_VERSION),
+            description=f"{_DATASETNAME}_{lang} source schema",
+            schema="source",
             subset_id=f"{_DATASETNAME}_{lang}",
-        ) 
-        for lang in _LANGS
-    ] 
-    + [
+        ) for lang in _LANGUAGES
+    ] + [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_{lang}_seacrowd_imtext",
             version=datasets.Version(_SEACROWD_VERSION),
             description=f"{_DATASETNAME}_{lang} SEACrowd schema",
             schema="seacrowd_imtext",
             subset_id=f"{_DATASETNAME}_{lang}",
-        )
-        for lang in _LANGS
+        ) for lang in _LANGUAGES
     ]
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{sorted(_LANGS)[0]}_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{sorted(_LANGUAGES)[0]}_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -130,8 +127,8 @@ class Coco35LDataset(datasets.GeneratorBasedBuilder):
         train_df = pd.DataFrame()
         val_df = pd.DataFrame()
 
-        current_lang = self.config.subset_id.split("_")[2]
-        
+        current_lang = _LANGUAGES[self.config.subset_id.split("_")[2]]
+
         # the COCO dataset structure has separated the captions and images information. The caption's "image_id" key will refer to the image's "id" key.
         # load the image informations from COCO 2014 dataset and put it into a dataframe
         with open(os.path.join(coco2014_train_val_annots_path, "annotations", "captions_val2014.json")) as json_captions:
@@ -142,7 +139,7 @@ class Coco35LDataset(datasets.GeneratorBasedBuilder):
             captions = json.load(json_captions)
             train_df = pd.DataFrame(captions["images"])
 
-        # the translated caption has "image_id" which refers to the "image_id" in the COCO annotations. 
+        # the translated caption has "image_id" which refers to the "image_id" in the COCO annotations.
         # however we can skip this and connect it to the images' "id"
         # the example of an "image_id" in the translated caption -> "123456_0" since an image can has many descriptions.
         # thus, the real image_id to map it into the COCO image dataset is the "123456"
@@ -156,7 +153,7 @@ class Coco35LDataset(datasets.GeneratorBasedBuilder):
 
                     trans_img_id = line["image_id"]
                     coco2014_img_id = line["image_id"].split("_")[0]
-                    
+
                     # unfortunately, not all image_id in the translated caption can be found in the original COCO 2014.
                     # hence, we need to handle such errors
                     try:
