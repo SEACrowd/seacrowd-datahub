@@ -45,7 +45,7 @@ _IAPP = {
 }
 
 
-class IappWikiQaSquad(datasets.GeneratorBasedBuilder):
+class IappSquadDataset(datasets.GeneratorBasedBuilder):
     BUILDER_CONFIGS = [
         SEACrowdConfig(name="iapp_squad_source", version=datasets.Version(_SOURCE_VERSION), description=_DESCRIPTION, subset_id="iapp_squad", schema="source"),
         SEACrowdConfig(name="iapp_squad_seacrowd_qa", version=datasets.Version(_SOURCE_VERSION), description=_DESCRIPTION, subset_id="iapp_squad", schema="seacrowd"),
