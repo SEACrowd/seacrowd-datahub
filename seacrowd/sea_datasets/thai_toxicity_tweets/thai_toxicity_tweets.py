@@ -34,7 +34,7 @@ _LOCAL = False
 _LANGUAGES = ["tha"]
 _DATASETNAME = "thai_toxicity_tweets"
 _DESCRIPTION = """\
-Thai Toxicity Tweet Corpus contains 3,300 tweets (506 tweets with texts missing) annotated by humans with guidelines
+The Thai Toxicity Tweet Corpus contains 3,300 tweets (506 tweets with texts missing) annotated by humans with guidelines
 including a 44-word dictionary. The author acquired 2,027 toxic and 1,273 non-toxic tweets, which were
 manually labeled by three annotators. Toxicity is defined by the author as any message conveying harmful,
 damaging, or negative intent, in accordance with their defined criteria for toxicity.
