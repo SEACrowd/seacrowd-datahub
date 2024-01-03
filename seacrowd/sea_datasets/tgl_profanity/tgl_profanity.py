@@ -71,7 +71,7 @@ class TagalogProfanityDataset(datasets.GeneratorBasedBuilder):
             features = datasets.Features(
                 {
                     "text": datasets.Value("string"),
-                    "value": datasets.Value("int64"),
+                    "value": datasets.Value("string"),
                 }
             )
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
