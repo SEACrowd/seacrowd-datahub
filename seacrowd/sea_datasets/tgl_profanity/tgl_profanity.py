@@ -64,18 +64,18 @@ class TagalogProfanityDataset(datasets.GeneratorBasedBuilder):
     ]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
-    CLASS_LABELS = ["1", "0"]
+    CLASS_LABELS = [1, 0]
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
             features = datasets.Features(
                 {
                     "text": datasets.Value("string"),
-                    "value": datasets.Value("string"),
+                    "label": datasets.Value("int64"),
                 }
             )
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
-            features = schemas.text.features(label_names=self.CLASS_LABELS)
+            features = schemas.text_features(label_names=self.CLASS_LABELS)
         else:
             raise ValueError(f"Invalid config name: {self.config.schema}")
         return datasets.DatasetInfo(
@@ -88,10 +88,7 @@ class TagalogProfanityDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        data_files = {
-            "train": Path(dl_manager.download_and_extract(_URLS["train"])),
-            "val": Path(dl_manager.download_and_extract(_URLS["val"])),
-        }
+        data_files = Path(dl_manager.download_and_extract(_URLS))
 
         return [
             datasets.SplitGenerator(
