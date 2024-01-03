@@ -106,7 +106,7 @@ class BuraphaThDataset(datasets.GeneratorBasedBuilder):
 
         task = self.config.subset_id.split("_")[2]
 
-        _local_path = dl_manager.download_and_extract(_URLS[task]) 
+        _local_path = dl_manager.download_and_extract(_URLS[task])
         train_path, test_path = _local_path["train"], _local_path["test"]
         if task in ["character", "digit"]:
             train_path = os.path.join(train_path, "train")
