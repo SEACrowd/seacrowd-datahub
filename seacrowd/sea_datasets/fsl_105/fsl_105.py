@@ -38,6 +38,8 @@ _URLS = {
     "test": "https://prod-dcd-datasets-public-files-eu-west-1.s3.eu-west-1.amazonaws.com/39af8117-6b44-47b9-a551-0bdc40837295",
 }
 
+_LANGUAGES = ["psp"]
+
 _SUPPORTED_TASKS = [Tasks.VIDEO_TO_TEXT_RETRIEVAL, Tasks.VIDEO_CAPTIONING]
 
 _SOURCE_VERSION = "1.0.0"
