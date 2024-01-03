@@ -64,7 +64,7 @@ _Split_Path = {
 }
 
 
-class UIT_VIIC(datasets.GeneratorBasedBuilder):
+class UITViICDataset(datasets.GeneratorBasedBuilder):
     BUILDER_CONFIGS = [
         SEACrowdConfig(name="uit-viic_source", version=datasets.Version(_SOURCE_VERSION), description=_DESCRIPTION, subset_id="uit-viicd", schema="source"),
         SEACrowdConfig(name="uit-viic_seacrowd_imtext", version=datasets.Version(_SOURCE_VERSION), description=_DESCRIPTION, subset_id="uit-viic", schema="seacrowd"),
