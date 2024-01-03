@@ -90,7 +90,7 @@ _SECONDARY_DESP = """Gold passage task (GoldP): Given a passage that is guarante
           """
 
 
-class Tydiqa(datasets.GeneratorBasedBuilder):
+class TydiqaDataset(datasets.GeneratorBasedBuilder):
     """
     TyDi QA is a question answering dataset covering 11 typologically diverse languages with 204K question-answer pairs.
     The languages of TyDi QA are diverse with regard to their typology -- the set of linguistic features that each language
