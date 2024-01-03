@@ -72,8 +72,6 @@ We greatly appreciate your help!
 
 The artifacts of this initiative will be described in a forthcoming academic paper targeting a machine learning or NLP audience. Please refer to [this section](https://github.com/SEACrowd#how-much-should-i-contribute) for your contribution rewards in helping South-East Asian NLP. We recognize that some datasets require more effort than others, so please reach out if you have questions. Our goal is to be inclusive with credit!
 
-Contribution point tracking is now live at [this sheet](https://docs.google.com/spreadsheets/d/e/2PACX-1vQDZtJjA6i7JsxS5IlMtVuwOYjr2Pbl_b47yMSH4aAdHDBIpf-CiJQjNQAzcJPEu_aE7kwH4ZvKvPm0/pubhtml?gid=225616890&single=true) and will be updated regularly (although not automatically, yet)!
-
 ## Acknowledgements
 
 Our initiative is heavily inspired by [NusaCrowd](https://github.com/IndoNLP/nusa-crowd/tree/master/nusacrowd) which provides open access data to 100+ Indonesian NLP corpora. You can check NusaCrowd paper on the following [link](https://aclanthology.org/2023.findings-acl.868/).
