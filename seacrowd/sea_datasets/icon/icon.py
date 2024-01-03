@@ -74,7 +74,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "0.1.1"
 
 
-class ICON(datasets.GeneratorBasedBuilder):
+class ICONDataset(datasets.GeneratorBasedBuilder):
     """ICON (Indonesian CONstituency treebank) is a large-scale high-quality constituency treebank (10000 sentences)
     for the Indonesian language, sourced from Wikipedia and news data from Tempo, spanning the period from 1971 to 2016."""
 
