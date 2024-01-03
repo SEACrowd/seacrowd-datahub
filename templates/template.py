@@ -65,6 +65,9 @@ This dataset is designed for XXX NLP task.
 # TODO: Add a link to an official homepage for the dataset here (if possible)
 _HOMEPAGE = ""
 
+# TODO: Add languages related to this dataset
+_LANGUAGES = []  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
+
 # TODO: Add the licence for the dataset here 
 # Note that this doesn't have to be a common open source license.
 # In the case of the dataset intentionally is built without license, please use `Licenses.UNLICENSE.value`
