@@ -108,9 +108,10 @@ class BuraphaThDataset(datasets.GeneratorBasedBuilder):
 
         _local_path = dl_manager.download_and_extract(_URLS[task]) 
         train_path, test_path = _local_path["train"], _local_path["test"]
-        if task != "syllable":
+        if task in ["character", "digit"]:
             train_path = os.path.join(train_path, "train")
             test_path = os.path.join(test_path, "test")
+        # for "syllable" type task
         else:
             train_path = os.path.join(train_path, "train-ori")
             test_path = os.path.join(test_path, "test-ori")
