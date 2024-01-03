@@ -55,7 +55,7 @@ The license for a dataset is not always obvious. Here are some strategies to try
 If no official license is listed anywhere, but you find a webpage that describes general data usage policies for the dataset, you can fall back to providing that URL in the `_LICENSE` variable. If you can't find any license information, please note in your PR and put `_LICENSE="Unknown"` in your dataset script.
 
 #### What if my dataset is not yet publicly available?
-You can upload your dataset publicly first, eg. on Github. If you're an owner of a Private Dataset that is being contacted by SEACrowd Representative for a possibility of opening that dataset, you may visit this [Private Dataset FAQ](PRIVATE.md)
+You can upload your dataset publicly first, eg. on Github. If you're an owner of a Private Dataset that is being contacted by SEACrowd Representative for a possibility of opening that dataset, you may visit this [Private Dataset FAQ](PRIVATE.md).
 
 #### Can I create a PR if I have an idea?
 
