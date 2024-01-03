@@ -88,7 +88,7 @@ class TagalogProfanityDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        data_files = Path(dl_manager.download_and_extract(_URLS))
+        data_files = dl_manager.download_and_extract(_URLS)
 
         return [
             datasets.SplitGenerator(
@@ -106,7 +106,7 @@ class TagalogProfanityDataset(datasets.GeneratorBasedBuilder):
             for idx, row in enumerate(csv_reader):
                 text, label = row
                 if self.config.schema == "source":
-                    example = {"text": text, "value": int(label)}
+                    example = {"text": text, "label": int(label)}
                 elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
                     example = {"id": idx, "text": text, "label": label}
                 yield idx, example
