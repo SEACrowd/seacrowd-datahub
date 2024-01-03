@@ -5,7 +5,7 @@ import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks
+from seacrowd.utils.constants import Tasks, Licenses
 
 # TODO: Add BibTeX citation
 _CITATION = """\
@@ -27,7 +27,7 @@ This is first public intent detection and slot filling dataset for Vietnamese. T
 
 _HOMEPAGE = "https://github.com/VinAIResearch/JointIDSF/"
 
-_LICENSE = "Licenses.UNKNOWN.value"
+_LICENSE = Licenses.UNKNOWN.value
 
 _URLS = {
     _DATASETNAME: {
@@ -130,7 +130,7 @@ class PhoATIS(datasets.GeneratorBasedBuilder):
             )
 
         elif self.config.schema == "seacrowd_seq_label":
-            with open(".\seacrowd\sea_datasets\phoatis_slot_filling\slot_label.txt", "r+", encoding="utf8") as fw:
+            with open("./seacrowd/sea_datasets/phoatis_slot_filling/slot_label.txt", "r+", encoding="utf8") as fw:
                 slot_label = fw.read()
                 slot_label = slot_label.split("\n")
             features = schemas.seq_label_features(slot_label)
@@ -189,8 +189,7 @@ class PhoATIS(datasets.GeneratorBasedBuilder):
                 example["id"] = str(idx)
                 example["text"] = text
                 example["intent_label"] = data_intent[idx]
-                data_slot[idx] = data_slot[idx].split()
-                example["slot_label"] = data_slot[idx]
+                example["slot_label"] = data_slot[idx].split()
                 yield example["id"], example
 
         elif self.config.schema == "seacrowd_seq_label":
