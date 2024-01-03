@@ -26,7 +26,7 @@ _CITATION = """\
     url={https://doi.org/10.1007/s10579-021-09536-6}
 """
 
-_DATASETNAME = "scb-mt-en-th"
+_DATASETNAME = "scb_mt_en_th"
 
 _DESCRIPTION = """\
 A Large English-Thai Parallel Corpus The primary objective of our work is to build a large-scale English-Thai dataset
