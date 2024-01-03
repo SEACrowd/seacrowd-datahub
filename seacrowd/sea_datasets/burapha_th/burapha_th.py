@@ -160,7 +160,7 @@ class BuraphaThDataset(datasets.GeneratorBasedBuilder):
                         "texts": None,
                         "metadata": {
                             "context": None,
-                            "labels": [self.label_chr_dig.index(key) if task == "character" or task == "digit" else self.label_syl.index(key)],
+                            "labels": [self.label_chr_dig.index(key) if task in ["character", "digit"] else self.label_syl.index(key)],
                         },
                     }
                 counter += 1
