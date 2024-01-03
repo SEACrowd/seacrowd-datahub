@@ -64,7 +64,7 @@ _STB_DATASETS = {
     "gold_pos": {
         "train": _PREFIX + "gold_pos/train.ext.conll",
     },
-    "en-ud-autopos": {"train": _PREFIX + "en-ud-autopos/en-ud-train.conllu.autoupos", "validation": _PREFIX + "en-ud-autopos/en-ud-dev.conllu.ann.auto.epoch24.upos", "test": _PREFIX + "en-ud-autopos/en-ud-test.conllu.ann.auto.epoch24.upos"},
+    "en_ud_autopos": {"train": _PREFIX + "en-ud-autopos/en-ud-train.conllu.autoupos", "validation": _PREFIX + "en-ud-autopos/en-ud-dev.conllu.ann.auto.epoch24.upos", "test": _PREFIX + "en-ud-autopos/en-ud-test.conllu.ann.auto.epoch24.upos"},
     "auto_pos_multiview": {
         "train": _PREFIX + "auto_pos/multiview/train.autopos.multiview.conll",
         "validation": _PREFIX + "auto_pos/multiview/dev.autopos.multiview.conll",
@@ -79,10 +79,10 @@ _STB_DATASETS = {
 
 _SUPPORTED_TASKS = [Tasks.POS_TAGGING, Tasks.DEPENDENCY_PARSING]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "0.1.1"
+_SEACROWD_VERSION = "1.0.0"
 
 
-class STB_EXT(datasets.GeneratorBasedBuilder):
+class stbextDataset(datasets.GeneratorBasedBuilder):
     """the STB-EXT dataset offers a 3-times larger training set, while keeping the same dev and test sets from STB-ACL.
     We provide treebanks with both gold-standard as well as automatically generated POS tags."""
 
@@ -102,11 +102,11 @@ class STB_EXT(datasets.GeneratorBasedBuilder):
             subset_id="auto_pos_multiview",
         ),
         SEACrowdConfig(
-            name="en-ud-autopos_source",
+            name="en_ud_autopos_source",
             version=datasets.Version(_SOURCE_VERSION),
             description="STB-EXT for Singapore English dependency and pos-tagging task",
             schema="source",
-            subset_id="en-ud-autopos",
+            subset_id="en_ud_autopos",
         ),
         SEACrowdConfig(
             name="gold_pos_source",
