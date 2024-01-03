@@ -55,6 +55,7 @@ class ThaiToxicityTweetsDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
     SEACROWD_SCHEMA = "text"
+    CLASS_LABELS = [0, 1]
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
@@ -88,7 +89,7 @@ class ThaiToxicityTweetsDataset(datasets.GeneratorBasedBuilder):
             )
 
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA}":
-            features = schemas.text_features(label_names=[0, 1])
+            features = schemas.text_features(label_names=self.CLASS_LABELS)
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
