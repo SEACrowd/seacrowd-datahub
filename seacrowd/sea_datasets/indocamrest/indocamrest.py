@@ -6,7 +6,7 @@ import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks
+from seacrowd.utils.constants import Tasks, Licenses
 
 _CITATION = """\
 @article{kautsar2023indotod,
@@ -30,7 +30,7 @@ It also consists of slots and dialogue acts from the user and the agent.
 
 _HOMEPAGE = "https://github.com/dehanalkautsar/IndoToD/tree/main/IndoCamRest"
 
-_LICENSE = "Licenses.CC_BY_SA_4_0"
+_LICENSE = Licenses.CC_BY_SA_4_0.value
 
 _URLS = {
     _DATASETNAME: "https://raw.githubusercontent.com/dehanalkautsar/IndoToD/main/IndoCamRest/IndoCamRest676.json",
