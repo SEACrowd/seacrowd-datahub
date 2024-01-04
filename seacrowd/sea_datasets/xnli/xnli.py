@@ -63,7 +63,7 @@ _SOURCE_VERSION = "1.1.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class XNLI(datasets.GeneratorBasedBuilder):
+class XNLIDataset(datasets.GeneratorBasedBuilder):
     """
     XNLI is an evaluation corpus for language transfer and cross-lingual sentence classification in 15 languages.
     In SeaCrowd, we currently only have Thailand and Vietnam Language.
@@ -118,9 +118,7 @@ class XNLI(datasets.GeneratorBasedBuilder):
             citation=_CITATION,
         )
 
-    def _split_generators(
-        self, dl_manager: datasets.DownloadManager
-    ) -> List[datasets.SplitGenerator]:
+    def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
 
         urls = _URLS[_DATASETNAME]
@@ -162,9 +160,7 @@ class XNLI(datasets.GeneratorBasedBuilder):
             ),
         ]
 
-    def _generate_examples(
-        self, filepath: Path, split: str, language: str
-    ) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepath: Path, split: str, language: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
         if self.config.schema == "source":
