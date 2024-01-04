@@ -68,14 +68,14 @@ _URLS = {
     }
 }
 
-_SUPPORTED_TASKS = [Tasks.INTENT_CLASSIFICATION]
+_SUPPORTED_TASKS = [Tasks.INTENT_CLASSIFICATION, Tasks.SLOT_FILLING]
 
 _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
 
-def config_constructor(schema: str, version: str, phoatis_subset: str = "syllable") -> SEACrowdConfig:
+def config_constructor_intent_cls(schema: str, version: str, phoatis_subset: str = "syllable") -> SEACrowdConfig:
     assert phoatis_subset == "syllable" or phoatis_subset == "word"
 
     return SEACrowdConfig(
@@ -87,35 +87,56 @@ def config_constructor(schema: str, version: str, phoatis_subset: str = "syllabl
     )
 
 
+def config_constructor_slot_filling(schema: str, version: str, phoatis_subset: str = "syllable") -> SEACrowdConfig:
+    assert phoatis_subset == "syllable" or phoatis_subset == "word"
+
+    return SEACrowdConfig(
+        name="phoatis_slot_filling_{phoatis_subset}_{schema}".format(phoatis_subset=phoatis_subset.lower(), schema=schema),
+        version=version,
+        description="PhoATIS Slot Filling: {subset} {schema} schema".format(subset=phoatis_subset, schema=schema),
+        schema=schema,
+        subset_id=phoatis_subset,
+    )
+
+
 class PhoATIS(datasets.GeneratorBasedBuilder):
     """This is first public intent detection and slot filling dataset for Vietnamese. The data contains 5871 English utterances from ATIS that are manually translated by professional translators into Vietnamese."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    BUILDER_CONFIGS = [config_constructor("source", _SOURCE_VERSION, schema) for schema in ["syllable", "word"]]
-    BUILDER_CONFIGS.extend([config_constructor("seacrowd_text", _SOURCE_VERSION, schema) for schema in ["syllable", "word"]])
+    BUILDER_CONFIGS = [config_constructor_intent_cls("source", _SOURCE_VERSION, subset) for subset in ["syllable", "word"]]
+    BUILDER_CONFIGS.extend([config_constructor_intent_cls("seacrowd_text", _SEACROWD_VERSION, subset) for subset in ["syllable", "word"]])
+    BUILDER_CONFIGS.extend([config_constructor_slot_filling("source", _SOURCE_VERSION, subset) for subset in ["syllable", "word"]])
+    BUILDER_CONFIGS.extend([config_constructor_slot_filling("seacrowd_seq_label", _SEACROWD_VERSION, subset) for subset in ["syllable", "word"]])
 
     BUILDER_CONFIGS.extend(
         [  # Default config
             SEACrowdConfig(
-                name="phoatis_intent_cls_source",
+                name="phoatis_source",
                 version=SOURCE_VERSION,
                 description="PhoATIS Intent Classification source schema (Syllable version)",
                 schema="source",
                 subset_id="syllable",
             ),
             SEACrowdConfig(
-                name="phoatis_intent_cls_seacrowd_text",
+                name="phoatis_seacrowd_text",
                 version=SEACROWD_VERSION,
                 description="PhoATIS Intent Classification SEACrowd schema (Syllable version)",
                 schema="seacrowd_text",
                 subset_id="syllable",
             ),
+            SEACrowdConfig(
+                name="phoatis_seacrowd_seq_label",
+                version=SEACROWD_VERSION,
+                description="PhoATIS Slot Filling SEACrowd schema (Syllable version)",
+                schema="seacrowd_seq_label",
+                subset_id="syllable",
+            ),
         ]
     )
 
-    DEFAULT_CONFIG_NAME = "phoatis_intent_cls_source"
+    DEFAULT_CONFIG_NAME = "phoatis_intent_cls_syllable_source"
 
     def _info(self) -> datasets.DatasetInfo:
 
@@ -134,6 +155,12 @@ class PhoATIS(datasets.GeneratorBasedBuilder):
                 intent_label = fw.read()
                 intent_label = intent_label.split("\n")
             features = schemas.text_features(intent_label)
+
+        elif self.config.schema == "seacrowd_seq_label":
+            with open("./seacrowd/sea_datasets/phoatis_slot_filling/slot_label.txt", "r+", encoding="utf8") as fw:
+                slot_label = fw.read()
+                slot_label = slot_label.split("\n")
+            features = schemas.seq_label_features(slot_label)
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -198,4 +225,12 @@ class PhoATIS(datasets.GeneratorBasedBuilder):
                 example["id"] = str(idx)
                 example["text"] = text
                 example["label"] = data_intent[idx]
+                yield example["id"], example
+
+        elif self.config.schema == "seacrowd_seq_label":
+            for idx, text in enumerate(data_input):
+                example = {}
+                example["id"] = str(idx)
+                example["tokens"] = text.split()
+                example["labels"] = data_slot[idx].split()
                 yield example["id"], example
