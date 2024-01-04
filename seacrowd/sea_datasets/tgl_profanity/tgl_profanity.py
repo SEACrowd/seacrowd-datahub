@@ -64,7 +64,7 @@ class TagalogProfanityDataset(datasets.GeneratorBasedBuilder):
     ]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
-    CLASS_LABELS = [1, 0]
+    CLASS_LABELS = ["1", "0"]
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
