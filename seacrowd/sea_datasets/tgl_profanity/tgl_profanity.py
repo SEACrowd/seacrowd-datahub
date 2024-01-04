@@ -108,5 +108,5 @@ class TagalogProfanityDataset(datasets.GeneratorBasedBuilder):
                 if self.config.schema == "source":
                     example = {"text": text, "label": int(label)}
                 elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
-                    example = {"id": idx, "text": text, "label": label}
+                    example = {"id": idx, "text": text, "label": int(label)}
                 yield idx, example
