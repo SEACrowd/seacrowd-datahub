@@ -95,7 +95,10 @@ class TagalogProfanityDataset(datasets.GeneratorBasedBuilder):
                 name=datasets.Split.TRAIN,
                 gen_kwargs={"filepath": data_files["train"]},
             ),
-            datasets.SplitGenerator(name=datasets.Split.VALIDATION, gen_kwargs={"filepath": data_files["val"]}),
+            datasets.SplitGenerator(
+                name=datasets.Split.VALIDATION,
+                gen_kwargs={"filepath": data_files["val"]},
+            )
         ]
 
     def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
