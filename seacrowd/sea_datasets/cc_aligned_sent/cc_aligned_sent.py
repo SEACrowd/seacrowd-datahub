@@ -129,7 +129,7 @@ class CCAlignedSentencesDataset(datasets.GeneratorBasedBuilder):
 
         # Get URL. For cx_PH, the source and target languages are reversed
         _, subset = _split_at_n(_split_at_n(self.config.name, 5)[0], 3)
-        (source_lang, target_lang) = (subset, "en_XX") if subset == "cx_PH" else ("en_xx", subset)
+        (source_lang, target_lang) = (subset, "en_XX") if subset == "cx_PH" else ("en_XX", subset)
         url = _URL + f"{source_lang}-{target_lang}.tsv.xz"
         filepath = dl_manager.download_and_extract(url)
 
