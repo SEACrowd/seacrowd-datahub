@@ -81,7 +81,10 @@ _SEACROWD_VERSION = "1.0.0"
 
 
 class Ntrex128Dataset(datasets.GeneratorBasedBuilder):
-    """TODO: Short description of my dataset."""
+    """NTREX-128, a data set for machine translation (MT) evaluation, includes 123 documents \
+    (1,997 sentences, 42k words) translated from English into 128 target languages. \
+    9 languages are natively spoken in Southeast Asia, i.e., Burmese, Filipino, \
+    Hmong, Indonesian, Khmer, Lao, Malay, Thai, and Vietnamese."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
@@ -113,6 +116,8 @@ class Ntrex128Dataset(datasets.GeneratorBasedBuilder):
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_mya_fil_source"
 
     def _info(self):
+        # The format of the source is just texts in different .txt files (each file corresponds to one language).
+        # Decided make source schema the same as the seacrowd_t2t schema.
         if self.config.schema == "source" or self.config.schema == "seacrowd_t2t":
             features = schemas.text2text_features
 
