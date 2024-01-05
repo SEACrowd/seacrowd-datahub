@@ -71,7 +71,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class mysentencesDataset(datasets.GeneratorBasedBuilder):
+class mysentenceDataset(datasets.GeneratorBasedBuilder):
     """mySentence is a corpus with a total size of around 55K for Myanmar sentence segmentation. In formal Burmese (Myanmar language), sentences are grammatically
     structured and typically end with the "။" pote-ma symbol. However, informal language, more commonly used in daily conversations due to its natural flow, does not
     always follow predefined rules for ending sentences, making it challenging for machines to identify sentence boundaries. In this corpus, each token of the sentences and paragraphs is tagged from start to finish."""
@@ -81,42 +81,51 @@ class mysentencesDataset(datasets.GeneratorBasedBuilder):
     print(schemas.seq_label)
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="mysentences_source",
+            name="sentences_source",
             version=SOURCE_VERSION,
             description="sentences source schema",
             schema="source",
-            subset_id="mysentences",
+            subset_id="sentences",
         ),
         SEACrowdConfig(
-            name="mysentences_seacrowd_seq_label",
+            name="sentences_seacrowd_seq_label",
             version=SEACROWD_VERSION,
             description="sentences SEACrowd schema",
             schema="seacrowd_seacrowd_seq_label",
-            subset_id="mysentences",
+            subset_id="sentences",
         ),
         SEACrowdConfig(
-            name="mysentences_para_source",
+            name="sentences+paragraphs_source",
             version=SOURCE_VERSION,
             description="sentences para source schema",
             schema="source",
-            subset_id="mysentences_para",
+            subset_id="sentences+paragraphs",
         ),
         SEACrowdConfig(
-            name="mysentences_para_seacrowd_seq_label",
+            name="sentences+paragraphs_seacrowd_seq_label",
             version=SEACROWD_VERSION,
             description="sentence para SEACrowd schema",
             schema="seacrowd_seacrowd_seq_label",
-            subset_id="mysentences_para",
+            subset_id="sentences+paragraphs",
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = "mysentences_source"
+    DEFAULT_CONFIG_NAME = "sentences_source"
 
     def _info(self) -> datasets.DatasetInfo:
-
+        if self.config.schema == "source":
+            features = datasets.Features(
+                {
+                    "id": datasets.Value("string"),
+                    "tokens": datasets.Sequence(datasets.Value("string")),
+                    "labels": datasets.Sequence(datasets.Value("string")),
+                }
+            )
+        else:
+            features = schemas.seq_label_features(["B", "O", "N", "E"])
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
-            features=schemas.seq_label_features(["B", "O", "N", "E"]),  # B (Begin), O (Other), N (Next), and E (End)
+            features=features,  # B (Begin), O (Other), N (Next), and E (End)
             homepage=_HOMEPAGE,
             license=_LICENSE,
             citation=_CITATION,
@@ -124,9 +133,9 @@ class mysentencesDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        if self.config.subset_id == "mysentences":
+        if self.config.subset_id == "sentences":
             DATA_URL_ = _URLS["sent"]
-        elif self.config.subset_id == "mysentences_para":
+        elif self.config.subset_id == "sentences+paragraphs":
             DATA_URL_ = _URLS["sent+para"]
         else:
             raise ValueError(f"No related dataset id for {self.config.subset_id}")
