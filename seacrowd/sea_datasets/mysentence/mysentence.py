@@ -78,39 +78,39 @@ class mysentenceDataset(datasets.GeneratorBasedBuilder):
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-    print(schemas.seq_label)
+    # print(schemas.seq_label)
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="sentences_source",
+            name="mysentence_source",
             version=SOURCE_VERSION,
             description="sentences source schema",
             schema="source",
-            subset_id="sentences",
+            subset_id="mysentence",
         ),
         SEACrowdConfig(
-            name="sentences_seacrowd_seq_label",
+            name="mysentence_seacrowd_seq_label",
             version=SEACROWD_VERSION,
             description="sentences SEACrowd schema",
-            schema="seacrowd_seacrowd_seq_label",
-            subset_id="sentences",
+            schema="seacrowd_seq_label",
+            subset_id="mysentence",
         ),
         SEACrowdConfig(
-            name="sentences+paragraphs_source",
+            name="mysentence+paragraphs_source",
             version=SOURCE_VERSION,
             description="sentences para source schema",
             schema="source",
-            subset_id="sentences+paragraphs",
+            subset_id="mysentence+paragraphs",
         ),
         SEACrowdConfig(
-            name="sentences+paragraphs_seacrowd_seq_label",
+            name="mysentence+paragraphs_seacrowd_seq_label",
             version=SEACROWD_VERSION,
             description="sentence para SEACrowd schema",
-            schema="seacrowd_seacrowd_seq_label",
-            subset_id="sentences+paragraphs",
+            schema="seacrowd_seq_label",
+            subset_id="mysentence+paragraphs",
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = "sentences_source"
+    DEFAULT_CONFIG_NAME = "mysentence_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -133,9 +133,9 @@ class mysentenceDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        if self.config.subset_id == "sentences":
+        if self.config.subset_id == "mysentence":
             DATA_URL_ = _URLS["sent"]
-        elif self.config.subset_id == "sentences+paragraphs":
+        elif self.config.subset_id == "mysentence+paragraphs":
             DATA_URL_ = _URLS["sent+para"]
         else:
             raise ValueError(f"No related dataset id for {self.config.subset_id}")
