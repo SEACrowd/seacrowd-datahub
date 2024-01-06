@@ -33,12 +33,12 @@ _CITATION = """\
     url = "https://aclanthology.org/2021.eacl-main.115",
     doi = "10.18653/v1/2021.eacl-main.115",
     pages = "1351--1361",
-    abstract = "We present an approach based on multilingual sentence embeddings to automatically extract parallel sentences from the content 
-    of Wikipedia articles in 96 languages, including several dialects or low-resource languages. We do not limit the extraction process to 
-    alignments with English, but we systematically consider all possible language pairs. In total, we are able to extract 135M parallel sentences 
-    for 16720 different language pairs, out of which only 34M are aligned with English. This corpus is freely available. To get an indication 
-    on the quality of the extracted bitexts, we train neural MT baseline systems on the mined data only for 1886 languages pairs, and evaluate 
-    them on the TED corpus, achieving strong BLEU scores for many language pairs. The WikiMatrix bitexts seem to be particularly interesting 
+    abstract = "We present an approach based on multilingual sentence embeddings to automatically extract parallel sentences from the content
+    of Wikipedia articles in 96 languages, including several dialects or low-resource languages. We do not limit the extraction process to
+    alignments with English, but we systematically consider all possible language pairs. In total, we are able to extract 135M parallel sentences
+    for 16720 different language pairs, out of which only 34M are aligned with English. This corpus is freely available. To get an indication
+    on the quality of the extracted bitexts, we train neural MT baseline systems on the mined data only for 1886 languages pairs, and evaluate
+    them on the TED corpus, achieving strong BLEU scores for many language pairs. The WikiMatrix bitexts seem to be particularly interesting
     to train MT systems between distant languages without the need to pivot through English.",
 }
 """
