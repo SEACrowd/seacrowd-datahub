@@ -225,7 +225,7 @@ _TAGS = ['O', 'B-food_type', 'B-movie_type', 'B-person', 'B-change_amount', 'I-r
 ]
 
 
-class MASSIVE(datasets.GeneratorBasedBuilder):
+class MASSIVEDataset(datasets.GeneratorBasedBuilder):
     """MASSIVE datasets contains datasets to detect the intent from the text and fill the dialogue slots"""
 
     BUILDER_CONFIGS = [
@@ -355,7 +355,7 @@ class MASSIVE(datasets.GeneratorBasedBuilder):
         ]
     
 
-    def _getBioFormat(self, text):
+    def _get_bio_format(self, text):
         """This function is modified from https://huggingface.co/datasets/qanastek/MASSIVE/blob/main/MASSIVE.py"""
         tags, tokens = [], []
 
@@ -466,7 +466,7 @@ class MASSIVE(datasets.GeneratorBasedBuilder):
                 
                 if self.config.schema == "source":
 
-                    tokens, tags = self._getBioFormat(data["annot_utt"])
+                    tokens, tags = self._get_bio_format(data["annot_utt"])
 
                     yield _id, {
                         "id": str(_id) + "_" + data["id"],
@@ -486,7 +486,7 @@ class MASSIVE(datasets.GeneratorBasedBuilder):
                 
                 elif self.config.schema == "seacrowd_seq_label":
 
-                    tokens, tags = self._getBioFormat(data["annot_utt"])
+                    tokens, tags = self._get_bio_format(data["annot_utt"])
 
                     yield _id, {
                         "id": str(_id) + "_" + data["id"],
