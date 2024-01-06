@@ -46,7 +46,7 @@ _DATASETNAME = "bloom_speech"
 _DESCRIPTION = r"""
 This version of the Bloom Library data is developed specifically for the automatic speech recognition and speech-to-text tasks.
 It includes data from 56 languages across 18 language families. 8 languages are spoken in Southeast Asia.
-Before using this dataloader, please accept the acknowledgement at https://huggingface.co/datasets/sil-ai/bloom-captioning and use huggingface-cli login for authentication.
+Before using this dataloader, please accept the acknowledgement at https://huggingface.co/datasets/sil-ai/bloom-speech and use huggingface-cli login for authentication.
 """
 
 _HOMEPAGE = "https://huggingface.co/datasets/sil-ai/bloom-speech"
