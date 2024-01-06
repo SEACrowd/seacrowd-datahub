@@ -30,7 +30,6 @@ _CITATION = r"""
     url = "https://aclanthology.org/2022.emnlp-main.590",
     doi = "10.18653/v1/2022.emnlp-main.590",
     pages = "8608--8621",
-    abstract = "We present Bloom Library, a linguistically diverse set of multimodal and multilingual datasets for language modeling, image captioning, visual storytelling, and speech synthesis/recognition. These datasets represent either the most, or among the most, multilingual datasets for each of the included downstream tasks. In total, the initial release of the Bloom Library datasets covers 363 languages across 32 language families. We train downstream task models for various languages represented in the data, showing the viability of the data for future work in low-resource, multimodal NLP and establishing the first known baselines for these downstream tasks in certain languages (e.g., Bisu [bzi], with an estimated population of 700 users). Some of these first-of-their-kind baselines are comparable to state-of-the-art performance for higher-resourced languages. The Bloom Library datasets are released under Creative Commons licenses on the Hugging Face datasets hub to catalyze more linguistically diverse research in the included downstream tasks.",
 }
 """
 
@@ -114,8 +113,7 @@ _LANG_CONFIG = {
     "zlm": "Malay",
 }
 
-#it's a gated dataset, hence _LOCAL = True
-_LOCAL = True
+_LOCAL = False
 _LANGUAGES = list(_LANG_CONFIG.keys())
 
 
@@ -124,6 +122,7 @@ _DESCRIPTION = r"""
     This is a Bloom Library dataset developed for the image captioning task.
     It covers 74 languages indigenous to SEA overall, amounting to total data of 21K.
     This dataset belongs to a CC license, where its datapoints has specific license attached to it.
+    Before using this dataloader, please accept the acknowledgement at https://huggingface.co/datasets/sil-ai/bloom-captioning and use huggingface-cli login for authentication.
 """
 
 _HOMEPAGE = "https://huggingface.co/datasets/sil-ai/bloom-captioning"
