@@ -13,10 +13,10 @@ from seacrowd.utils.constants import TASK_TO_SCHEMA, Licenses, Tasks
 # since the dataset doesn't have any citation and it was derived using someone else's work, this citation variable will cite source work instead (total of 3, ML Spoken Words 1 and Trabina 2)
 _CITATION = r"""
 @inproceedings{mazumder2021multilingual,
-  title={Multilingual Spoken Words Corpus},
-  author={Mazumder, Mark and Chitlangia, Sharad and Banbury, Colby and Kang, Yiping and Ciro, Juan Manuel and Achorn, Keith and Galvez, Daniel and Sabini, Mark and Mattson, Peter and Kanter, David and others},
-  booktitle={Thirty-fifth Conference on Neural Information Processing Systems Datasets and Benchmarks Track (Round 2)},
-  year={2021}
+    title={Multilingual Spoken Words Corpus},
+    author={Mazumder, Mark and Chitlangia, Sharad and Banbury, Colby and Kang, Yiping and Ciro, Juan Manuel and Achorn, Keith and Galvez, Daniel and Sabini, Mark and Mattson, Peter and Kanter, David and others},
+    booktitle={Thirty-fifth Conference on Neural Information Processing Systems Datasets and Benchmarks Track (Round 2)},
+    year={2021}
 }
 @inproceedings{wu-etal-2018-creating,
     title = "Creating a Translation Matrix of the {B}ible{'}s Names Across 591 Languages",
@@ -75,7 +75,6 @@ logger = datasets.logging.get_logger(__name__)
 
 _LOCAL = False
 _LANGUAGES = ["ind"]
-
 
 _DATASETNAME = "audio_keyword_spotting"
 _DESCRIPTION = r"This dataset is a ASR for short text & voices, focusing in identifying common words (or keywords) with entities of Person name and Place Name found in Bible, as found in trabina (https://github.com/wswu/trabina)."
