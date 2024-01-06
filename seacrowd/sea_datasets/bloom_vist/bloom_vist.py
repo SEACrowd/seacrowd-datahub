@@ -111,7 +111,7 @@ BLOOM VIST is a visual storytelling of books that consists of 62 languages indig
 This dataset is owned by Bloom, a free, open-source software developed by SIL International and associated with Bloom Library, app, and services.
 This dataset is released with the LICENSE family of Creative Commons (although each story datapoints has its licensing in more detail,
 e.g cc-by, cc-by-nc, cc-by-nd, cc-by-sa, cc-by-nc-nd, cc-by-nc-sa).
-Before using this dataloader, please accept the acknowledgement at https://huggingface.co/datasets/sil-ai/bloom-captioning and use huggingface-cli login for authentication.
+Before using this dataloader, please accept the acknowledgement at https://huggingface.co/datasets/sil-ai/bloom-vist and use huggingface-cli login for authentication.
 """
 
 _HOMEPAGE = "https://huggingface.co/datasets/sil-ai/bloom-vist"
