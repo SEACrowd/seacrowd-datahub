@@ -119,10 +119,10 @@ _LANGUAGES = list(_LANG_CONFIG.keys())
 
 _DATASETNAME = "bloom_captioning"
 _DESCRIPTION = r"""
-    This is a Bloom Library dataset developed for the image captioning task.
-    It covers 74 languages indigenous to SEA overall, amounting to total data of 21K.
-    This dataset belongs to a CC license, where its datapoints has specific license attached to it.
-    Before using this dataloader, please accept the acknowledgement at https://huggingface.co/datasets/sil-ai/bloom-captioning and use huggingface-cli login for authentication.
+This is a Bloom Library dataset developed for the image captioning task.
+It covers 74 languages indigenous to SEA overall, amounting to total data of 21K.
+This dataset belongs to a CC license, where its datapoints has specific license attached to it.
+Before using this dataloader, please accept the acknowledgement at https://huggingface.co/datasets/sil-ai/bloom-captioning and use huggingface-cli login for authentication.
 """
 
 _HOMEPAGE = "https://huggingface.co/datasets/sil-ai/bloom-captioning"
