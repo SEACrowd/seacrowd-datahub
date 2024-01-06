@@ -135,8 +135,8 @@ def construct_configs() -> List[SEACrowdConfig]:
     return config_list
 
 
-class BloomSpeechDataset(datasets.GeneratorBasedBuilder):
-    """Bloom Speech dataset, subsetted from https://huggingface.co/datasets/sil-ai/audio-keyword-spotting"""
+class AudioKeywordSpottingDataset(datasets.GeneratorBasedBuilder):
+    """AudioKeywordSpotting dataset, subsetted from https://huggingface.co/datasets/sil-ai/audio-keyword-spotting"""
 
     # get all schema w/o lang arg + get all schema w/ lang arg
     BUILDER_CONFIGS = construct_configs()
