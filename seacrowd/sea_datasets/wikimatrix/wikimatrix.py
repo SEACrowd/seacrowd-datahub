@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import List
 
 import datasets
-import json
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
