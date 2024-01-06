@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import List
 
 import datasets
 import pandas as pd
@@ -24,37 +24,37 @@ can be used to conduct instruction-tuning for language models and make the langu
 _HOMEPAGE = "https://huggingface.co/datasets/Thaweewat/alpaca-cleaned-52k-th"
 _LICENSE = Licenses.CC_BY_NC_4_0.value
 _URL = "https://huggingface.co/datasets/Thaweewat/alpaca-cleaned-52k-th/resolve/main/alpaca-cleaned-th.parquet"
-_SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
+_SUPPORTED_TASKS = [Tasks.INSTRUCTION_TUNING]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class ThaiDatabricksDollyDataset(datasets.GeneratorBasedBuilder):
+class ThaiAlpacaDataset(datasets.GeneratorBasedBuilder):
     """Thai Alpaca Dataset"""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    SEACROWD_SCHEMA_NAME = "qa"
+    SEACROWD_SCHEMA_NAME = "t2t"
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_source", 
             version=SOURCE_VERSION, 
-            description=f"Thai-Alpaca source schema", 
+            description="Thai-Alpaca source schema", 
             schema="source", 
             subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
             name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",
             version=SEACROWD_VERSION,
-            description=f"Thai-Alpaca SEACrowd schema",
+            description="Thai-Alpaca SEACrowd schema",
             schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
             subset_id=_DATASETNAME,
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
+    DEFAULT_CONFIG_NAME = "thai_alpaca_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -66,7 +66,7 @@ class ThaiDatabricksDollyDataset(datasets.GeneratorBasedBuilder):
                 }
             )
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
-            features = schemas.qa.features
+            features = schemas.text2text_features
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -93,16 +93,18 @@ class ThaiDatabricksDollyDataset(datasets.GeneratorBasedBuilder):
                 }
 
             elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
+                inputs = row.get('input')
+                if inputs:
+                    text_1 = f"Context: {inputs}\n\n{row.get('instruction')}"
+                else:
+                    text_1 = f"Context: {row.get('instruction')}"
+                
                 example = {
                     "id": str(idx),
-                    "question_id": None,
-                    "document_id": None,
-                    "question": row.get("instruction"),
-                    "type": None,
-                    "choices": [],
-                    "context": row.get("input"),
-                    "answer": [row.get("output")],
-                    "meta": {}
+                    "text_1": text_1,
+                    "text_2": row.get("output"),
+                    "text_1_name": "input_instruction",
+                    "text_2_name": "output",
                 }
 
             yield idx, example
