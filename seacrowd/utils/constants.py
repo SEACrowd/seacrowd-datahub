@@ -44,6 +44,7 @@ class Tasks(Enum):
     COREFERENCE_RESOLUTION = "COREF"
 
     # Single Text Classification (single-label)
+    ABUSIVE_LANGUAGE_PREDICTION = "ABL"
     DOMAIN_KNOWLEDGE_CLASSIFICATION = "DKC" # classification for non NLP-oriented label
     EMOTION_CLASSIFICATION = "EC"
     LANGUAGE_IDENTIFICATION = "LI"
