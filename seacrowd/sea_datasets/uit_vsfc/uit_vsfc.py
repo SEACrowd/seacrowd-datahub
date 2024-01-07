@@ -201,7 +201,3 @@ class UITVSFCDataset(datasets.GeneratorBasedBuilder):
                         "text": sentence.strip(),
                         "label": int(topic.strip()),
                     }
-
-
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)
