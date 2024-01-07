@@ -63,7 +63,7 @@ class TCOPEDataset(datasets.GeneratorBasedBuilder):
     # Actual data has invalid "labels" likely due to coding errors,
     # such as "BODY", "BIRTHDAY", "HAVAIANAS", etc. Only valid
     # POS tags are included here and in loaded data.
-    pos_labels = ["NOUN", "PUNCT", "PROPN", "VERB", "PRON", "ADP", "ADJ", "ADV", "DET", "AUX", "PART", "CCONJ", "INTJ", "SPACE", "SCONJ", "NUM", "X", "SYM"]
+    POS_LABELS = ["NOUN", "PUNCT", "PROPN", "VERB", "PRON", "ADP", "ADJ", "ADV", "DET", "AUX", "PART", "CCONJ", "INTJ", "SPACE", "SCONJ", "NUM", "X", "SYM"]
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
@@ -90,7 +90,7 @@ class TCOPEDataset(datasets.GeneratorBasedBuilder):
                 {
                     "copeid": datasets.Value("string"),
                     "userid": datasets.Value("int64"),
-                    "divided.tweet": datasets.Value("string"),
+                    "divided_tweet": datasets.Value("string"),
                     "postag": datasets.Value("string"),
                     "deptag": datasets.Value("string"),
                     "citycode": datasets.Value("string"),
@@ -100,7 +100,7 @@ class TCOPEDataset(datasets.GeneratorBasedBuilder):
             )
 
         elif self.config.schema == "seacrowd_seq_label":
-            features = schemas.seq_label_features(label_names=self.pos_labels)
+            features = schemas.seq_label_features(label_names=self.POS_LABELS)
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -134,12 +134,13 @@ class TCOPEDataset(datasets.GeneratorBasedBuilder):
             raise ValueError(f"Received unexpected config schema {self.config.schema}")
 
         df = pd.read_csv(filepath, index_col=None)
-        df = df[df["divided.tweet"].notna()]
+        df = df.rename(columns={"divided.tweet": "divided_tweet"}).query("divided_tweet.notna()")
+
         for index, row in df.iterrows():
             if self.config.schema == "source":
                 example = row.to_dict()
             elif self.config.schema == "seacrowd_seq_label":
-                tokens, tags = self.split_token_and_tag(row["postag"], valid_tags=self.pos_labels)
+                tokens, tags = self.split_token_and_tag(row["postag"], valid_tags=self.POS_LABELS)
                 example = {
                     "id": str(index),
                     "tokens": tokens,
