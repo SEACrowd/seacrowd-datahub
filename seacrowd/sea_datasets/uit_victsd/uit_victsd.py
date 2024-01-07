@@ -66,7 +66,7 @@ class UiTViCTSDDataset(datasets.GeneratorBasedBuilder):
             version=datasets.Version(_SOURCE_VERSION),
             description=f"{_DATASETNAME} source schema for {subset} subset",
             schema="source",
-            subset_id=subset,
+            subset_id=f"{_DATASETNAME}_{subset}",
         )
         for subset in SUBSETS
     ] + [
@@ -75,12 +75,12 @@ class UiTViCTSDDataset(datasets.GeneratorBasedBuilder):
             version=datasets.Version(_SEACROWD_VERSION),
             description=f"{_DATASETNAME} SEACrowd schema for {subset} subset",
             schema="seacrowd_text",
-            subset_id=subset,
+            subset_id=f"{_DATASETNAME}_{subset}",
         )
         for subset in SUBSETS
     ]
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_constructiveness_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -88,8 +88,8 @@ class UiTViCTSDDataset(datasets.GeneratorBasedBuilder):
                 {
                     "Unnamed: 0": datasets.Value("int64"),  # Column name missing in original dataset
                     "Comment": datasets.Value("string"),
-                    "Constructiveness": datasets.Value("bool"),
-                    "Toxicity": datasets.Value("bool"),
+                    "Constructiveness": datasets.ClassLabel(names=self.CLASS_LABELS),
+                    "Toxicity": datasets.ClassLabel(names=self.CLASS_LABELS),
                     "Title": datasets.Value("string"),
                     "Topic": datasets.Value("string"),
                 }
@@ -124,5 +124,9 @@ class UiTViCTSDDataset(datasets.GeneratorBasedBuilder):
                 example = row
 
             elif self.config.schema == "seacrowd_text":
-                example = {"id": str(index), "text": row["Comment"], "label": row[self.config.subset_id.title()]}
+                if "constructiveness" in self.config.name:
+                    label = row["Constructiveness"]
+                elif "toxicity" in self.config.name:
+                    label = row["Toxicity"]
+                example = {"id": str(index), "text": row["Comment"], "label": label}
             yield index, example
