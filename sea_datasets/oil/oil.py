@@ -47,8 +47,6 @@ _CITATION = """\
 }
 """
 
-# TODO: create a module level variable with your dataset name (should match script name)
-#  E.g. Hallmarks of Cancer: [dataset_name] --> hallmarks_of_cancer
 _DATASETNAME = "oil"
 
 _DESCRIPTION = """\
