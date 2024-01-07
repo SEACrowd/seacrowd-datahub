@@ -31,7 +31,7 @@ called SNScrape and annotated manually by a panel of native Filipino speakers.
 
 _HOMEPAGE = "https://huggingface.co/datasets/mginoben/tagalog-profanity-dataset/"
 _LICENSE = Licenses.UNKNOWN.value
-_SUPPORTED_TASKS = [Tasks.SENTIMENT_ANALYSIS]
+_SUPPORTED_TASKS = [Tasks.ABUSIVE_LANGUAGE_PREDICTION]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 _URLS = {
@@ -98,7 +98,7 @@ class TagalogProfanityDataset(datasets.GeneratorBasedBuilder):
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={"filepath": data_files["val"]},
-            )
+            ),
         ]
 
     def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
