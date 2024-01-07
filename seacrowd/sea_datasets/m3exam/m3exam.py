@@ -112,7 +112,6 @@ class M3Exam(datasets.GeneratorBasedBuilder):
         urls = _URLS[_DATASETNAME]
         lang = self.config.name.split("_")[1]
 
-        dl_manager._download_config = {"pwd": _PASSWORD}
         data_dir = dl_manager.download(urls)
 
         if not os.path.exists(data_dir + ".zip"):
