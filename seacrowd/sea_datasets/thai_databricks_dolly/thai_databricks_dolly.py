@@ -78,7 +78,7 @@ class ThaiDatabricksDollyDataset(datasets.GeneratorBasedBuilder):
         data_file = Path(dl_manager.download_and_extract(_URL))
         return [datasets.SplitGenerator(name=datasets.Split.TRAIN, gen_kwargs={"filepath": data_file})]
 
-    def _generate_examples(self, filepath: Path):
+    def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
         """Yield examples as (key, example) tuples"""
         # pyarrow is an implicit dependency to load the parquet files
         df = pd.read_parquet(filepath, engine="pyarrow")
@@ -88,12 +88,6 @@ class ThaiDatabricksDollyDataset(datasets.GeneratorBasedBuilder):
             elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
                 text_1 = f"Context: {row.get('context')}\n\n{row.get('instruction')}" if row.get("context") else row.get("instruction")
                 text_2 = row.get("response")
-                example = {
-                    "id": str(idx),
-                    "text_1": text_1,
-                    "text_2": text_2,
-                    "text_1_name": "context_and_instruction",
-                    "text_2_name": "response"
-                }
+                example = {"id": str(idx), "text_1": text_1, "text_2": text_2, "text_1_name": "context_and_instruction", "text_2_name": "response"}
 
             yield idx, example
