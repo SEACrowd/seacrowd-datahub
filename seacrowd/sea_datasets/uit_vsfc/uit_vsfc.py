@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -38,8 +37,8 @@ _CITATION = """\
 _DATASETNAME = "uit_vsfc"
 
 _DESCRIPTION = """\
-This corpus consists of student feedback obtained from end-of-semester surveys at a Vietnamese university. 
-Feedback is classified into four possible topics: lecturer, curriculum, facility or others. 
+This corpus consists of student feedback obtained from end-of-semester surveys at a Vietnamese university.
+Feedback is classified into four possible topics: lecturer, curriculum, facility or others.
 Feedback is also labeled as one of three sentiment polarities: positive, negative or neutral.
 """
 
@@ -55,7 +54,7 @@ _LOCAL = False
 _URLS = {
     "train": {
         "sentences": "https://drive.google.com/uc?id=1nzak5OkrheRV1ltOGCXkT671bmjODLhP&export=download",
-        "sentiments": "https://drive.google.com/uc?id=1ye-gOZIBqXdKOoi_YxvpT6FeRNmViPPv&export=down load",
+        "sentiments": "https://drive.google.com/uc?id=1ye-gOZIBqXdKOoi_YxvpT6FeRNmViPPv&export=download",
         "topics": "https://drive.google.com/uc?id=14MuDtwMnNOcr4z_8KdpxprjbwaQ7lJ_C&export=download",
     },
     "validation": {
@@ -77,7 +76,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class UITVSFC(datasets.GeneratorBasedBuilder):
+class UITVSFCDataset(datasets.GeneratorBasedBuilder):
     """This corpus consists of student feedback obtained from end-of-semester surveys at a Vietnamese university.
     Feedback is classified into four possible topics: lecturer, curriculum, facility or others.
     Feedback is also labeled as one of three sentiment polarities: positive, negative or neutral."""
@@ -151,7 +150,6 @@ class UITVSFC(datasets.GeneratorBasedBuilder):
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
-                # Whatever you put in gen_kwargs will be passed to _generate_examples
                 gen_kwargs={
                     "sentences_path": data_dir["train"]["sentences"],
                     "sentiments_path": data_dir["train"]["sentiments"],
@@ -181,11 +179,6 @@ class UITVSFC(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, sentences_path: Path, sentiments_path: Path, topics_path: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
-        # TODO: This method handles input defined in _split_generators to yield (key, example) tuples from the dataset.
-
-        # The `key` is for legacy reasons (tfds) and is not important in itself, but must be unique for each example.
-
-        # NOTE: For local datasets you will have access to self.config.data_dir and self.config.data_files
 
         if self.config.schema == "source":
             with open(sentences_path, encoding="utf-8") as sentences, open(sentiments_path, encoding="utf-8") as sentiments, open(topics_path, encoding="utf-8") as topics:
@@ -210,11 +203,5 @@ class UITVSFC(datasets.GeneratorBasedBuilder):
                     }
 
 
-# This template is based on the following template from the datasets package:
-# https://github.com/huggingface/datasets/blob/master/templates/new_dataset_script.py
-
-
-# This allows you to run your dataloader with `python [dataset_name].py` during development
-# TODO: Remove this before making your PR
 if __name__ == "__main__":
     datasets.load_dataset(__file__)
