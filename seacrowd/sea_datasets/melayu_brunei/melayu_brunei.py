@@ -179,13 +179,12 @@ class MelayuBruneiDataset(datasets.GeneratorBasedBuilder):
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
                     "filepath": data_path[0],
-                    "split": "train",
                     "other_path": data_path[1:]
                 },
             ),
         ]
 
-    def _generate_examples(self, filepath: Path, split: str, other_path: List) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepath: Path, other_path: List) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
         filepaths = [filepath] + other_path
@@ -194,10 +193,7 @@ class MelayuBruneiDataset(datasets.GeneratorBasedBuilder):
             with open(filepath, "r") as f:
                 data.append([line.rstrip() for line in f.readlines()][0])
 
-        if self.config.schema == "source":
-            yield 0, {"id": Path(filepath).stem, "text": " ".join(data)}
+        yield 0, {"id": Path(filepath).stem, "text": " ".join(data)}
 
-        elif self.config.schema == "seacrowd_ssp":
-            yield 0, {"id": Path(filepath).stem, "text": " ".join(data)}
 
 
