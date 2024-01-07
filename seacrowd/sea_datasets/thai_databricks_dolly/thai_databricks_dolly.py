@@ -41,7 +41,13 @@ class ThaiDatabricksDollyDataset(datasets.GeneratorBasedBuilder):
     SEACROWD_SCHEMA_NAME = "t2t"
 
     BUILDER_CONFIGS = [
-        SEACrowdConfig(name=f"{_DATASETNAME}_source", version=SOURCE_VERSION, description=f"{_DATASETNAME} source schema", schema="source", subset_id=_DATASETNAME),
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_source",
+            version=SOURCE_VERSION,
+            description=f"{_DATASETNAME} source schema",
+            schema="source",
+            subset_id=_DATASETNAME,
+        ),
         SEACrowdConfig(
             name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",
             version=SEACROWD_VERSION,
