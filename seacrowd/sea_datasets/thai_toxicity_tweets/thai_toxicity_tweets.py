@@ -44,7 +44,7 @@ _HOMEPAGE = "https://github.com/tmu-nlp/ThaiToxicityTweetCorpus"
 _LICENSE = Licenses.CC_BY_NC_3_0.value
 _URL = "https://huggingface.co/datasets/thai_toxicity_tweet"
 
-_SUPPORTED_TASKS = [Tasks.SENTIMENT_ANALYSIS]
+_SUPPORTED_TASKS = [Tasks.ABUSIVE_LANGUAGE_PREDICTION]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
@@ -84,7 +84,7 @@ class ThaiToxicityTweetsDataset(datasets.GeneratorBasedBuilder):
                     "tweet_text": datasets.Value("string"),
                     "toxic_votes": datasets.Value("int32"),
                     "nontoxic_votes": datasets.Value("int32"),
-                    "is_toxic": datasets.Value("bool"),
+                    "is_toxic": datasets.ClassLabel(names=self.CLASS_LABELS),
                 }
             )
 
@@ -118,16 +118,17 @@ class ThaiToxicityTweetsDataset(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         data = self._load_hf_data_from_remote()
-        for index, row in enumerate(data):
+        index = 0
+        for row in data:
             if row["tweet_text"] in ("TWEET_NOT_FOUND", ""):
                 continue
             if self.config.schema == "source":
                 example = row
-
             elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA}":
                 example = {
                     "id": str(index),
                     "text": row["tweet_text"],
                     "label": row["is_toxic"],
                 }
+            index += 1
             yield index, example
