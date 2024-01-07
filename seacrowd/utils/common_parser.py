@@ -6,7 +6,7 @@ from conllu import parse
 
 def load_conll_data(file_path):
     # Read file
-    data = open(file_path, "r").readlines()
+    data = open(file_path, "r", encoding="utf8").readlines()
 
     # Prepare buffer
     dataset = []
@@ -34,7 +34,7 @@ def load_ud_data(filepath, filter_kwargs=None, assert_fn=None):
     :param assert_fn: assertion to make sure raw data is in the expected format
     :return: generator with schema following CONLLU
     """
-    dataset_raw = parse(open(filepath).read())
+    dataset_raw = parse(open(filepath, encoding="utf8").read())
 
     filter_kwargs = filter_kwargs or dict()
     if callable(assert_fn):
