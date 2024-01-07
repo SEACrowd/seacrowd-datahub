@@ -27,7 +27,7 @@ open QA, and summarization.
 _HOMEPAGE = "https://huggingface.co/datasets/Thaweewat/databricks-dolly-15k-th"
 _LICENSE = Licenses.CC_BY_SA_3_0.value
 _URL = "https://huggingface.co/datasets/Thaweewat/databricks-dolly-15k-th/resolve/main/databricks-dolly-15k-th.parquet"
-_SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
+_SUPPORTED_TASKS = [Tasks.INSTRUCTION_TUNING]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
@@ -86,19 +86,14 @@ class ThaiDatabricksDollyDataset(datasets.GeneratorBasedBuilder):
             if self.config.schema == "source":
                 example = {"instruction": row.get("instruction"), "context": row.get("context"), "response": row.get("response"), "category": row.get("category")}
             elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
+                text_1 = f"Context: {row.get('context')}\n\n{row.get('instruction')}" if row.get("context") else row.get("instruction")
+                text_2 = row.get("response")
                 example = {
                     "id": str(idx),
-                    "question_id": None,
-                    "document_id": None,
-                    "question": row.get("instruction"),
-                    "type": None,
-                    "choices": [],
-                    "context": row.get("context"),
-                    "answer": [],
-                    "meta": {
-                        "category": row.get("category"),
-                        "response": row.get("response"),
-                    },
+                    "text_1": text_1,
+                    "text_2": text_2,
+                    "text_1_name": "context_and_instruction",
+                    "text_2_name": "response"
                 }
 
             yield idx, example
