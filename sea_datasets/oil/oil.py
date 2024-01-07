@@ -33,9 +33,13 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 import datasets
+import pandas as pd
+import numpy as np
 
+from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
+from seacrowd.utils.constants import Tasks, Licenses, TASK_TO_SCHEMA
+
 
 _CITATION = """\
 {@inproceedings{Maxwell-Smith_Foley_2023_Automated,
@@ -69,18 +73,19 @@ _LOCAL = False
 # However, if you need to access different files for each config you can have multiple entries in this dict.
 # This can be an arbitrarily nested dict/list of URLs (see below in `_split_generators` method)
 _URLS = {
-    _DATASETNAME: "url or list of urls or ... ",
+    _DATASETNAME: {
+        "train" : "https://huggingface.co/api/datasets/ZMaxwell-Smith/OIL/parquet/default/train/0.parquet"
+    },
 }
 
 _SUPPORTED_TASKS = [Tasks.SPEECH_RECOGNITION]
+_SUPPORTED_SCHEMA_STRINGS = [f"seacrowd_{TASK_TO_SCHEMA[task]}" for task in _SUPPORTED_TASKS]
 
 _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
-
-# TODO: Name the dataset class to match the script name using CamelCase instead of snake_case
-class OILDataset(datasets.GeneratorBasedBuilder):
+class OIL(datasets.GeneratorBasedBuilder):
     """The Online Indonesian Learning (OIL) dataset or corpus currently contains lessons from three Indonesian teachers who have posted content on YouTube."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
@@ -95,73 +100,50 @@ class OILDataset(datasets.GeneratorBasedBuilder):
     # ds_source = datasets.load_dataset('my_dataset', name='source', data_dir="/path/to/data/files")
     # ds_seacrowd = datasets.load_dataset('my_dataset', name='seacrowd', data_dir="/path/to/data/files")
 
-    # TODO: For each dataset, implement Config for Source and SEACrowd;
-    #  If dataset contains more than one subset (see seacrowd/sea_datasets/smsa.py) implement for EACH of them.
-    #  Each of them should contain:
-    #   - name: should be unique for each dataset config eg. smsa_(source|seacrowd)_[seacrowd_schema_name]
-    #   - version: option = (SOURCE_VERSION|SEACROWD_VERSION)
-    #   - description: one line description for the dataset
-    #   - schema: options = (source|seacrowd_[seacrowd_schema_name])
-    #   - subset_id: subset id is the canonical name for the dataset (eg. smsa)
-    #  where [seacrowd_schema_name] can be checked in seacrowd/utils/constants.py
-    #    under variable `TASK_TO_SCHEMA`, in accordance to values from `_SUPPORTED_TASKS`
-    #    for all config(s) defined
-
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="[dataset_name]_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
-            description="[dataset_name] source schema",
+            description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id="[dataset_name]",
-        ),
-        SEACrowdConfig(
-            name="[dataset_name]_seacrowd_[seacrowd_schema_name]",
-            version=SEACROWD_VERSION,
-            description="[dataset_name] SEACrowd schema",
-            schema="seacrowd_[seacrowd_schema_name]",
-            subset_id="[dataset_name]",
+            subset_id=f"{_DATASETNAME}",
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = "[dataset_name]_source"
+    seacrowd_schema_config: list[SEACrowdConfig] = []
+
+    for seacrowd_schema in _SUPPORTED_SCHEMA_STRINGS:
+
+        seacrowd_schema_config.append(
+            SEACrowdConfig(
+                name=f"{_DATASETNAME}_seacrowd_{seacrowd_schema}",
+                version=SEACROWD_VERSION,
+                description=f"{_DATASETNAME} SEACrowd {seacrowd_schema} schema",
+                schema=f"seacrowd_{seacrowd_schema}",
+                subset_id=f"{_DATASETNAME}",
+            )
+        )
+
+    BUILDER_CONFIGS.extend(seacrowd_schema_config)
+
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
-
-        # Create the source schema; this schema will keep all keys/information/labels as close to the original dataset as possible.
-
-        # You can arbitrarily nest lists and dictionaries.
-        # For iterables, use lists over tuples or `datasets.Sequence`
-
         if self.config.schema == "source":
-            # TODO: Create your source schema here
-            raise NotImplementedError()
+            features = datasets.Features(
+               {
+                   "label": datasets.Value("string"),
+                   "audio": [
+                       {
+                           "bytes": datasets.Value("bytes"),
+                           "path": datasets.Value("string"),
+                       }
+                   ],
+               }
+            )
 
-            # EX: Arbitrary NER type dataset
-            # features = datasets.Features(
-            #    {
-            #        "doc_id": datasets.Value("string"),
-            #        "text": datasets.Value("string"),
-            #        "entities": [
-            #            {
-            #                "offsets": [datasets.Value("int64")],
-            #                "text": datasets.Value("string"),
-            #                "type": datasets.Value("string"),
-            #                "entity_id": datasets.Value("string"),
-            #            }
-            #        ],
-            #    }
-            # )
-
-        # Choose the appropriate seacrowd schema for your task and copy it here. You can find information on the schemas in the CONTRIBUTING guide.
-
-        # In rare cases you may get a dataset that supports multiple tasks requiring multiple schemas. In that case you can define multiple seacrowd configs with a seacrowd_[seacrowd_schema_name] format.
-
-        # For example seacrowd_kb, seacrowd_t2t
-        elif self.config.schema == "seacrowd_[seacrowdschema_name]":
-            # e.g. features = schemas.kb_features
-            # TODO: Choose your seacrowd schema here
-            raise NotImplementedError()
+        elif self.config.schema == f"seacrowd_{TASK_TO_SCHEMA[Tasks.SPEECH_RECOGNITION]}":
+            features = schemas.speech_text_features
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -184,41 +166,16 @@ class OILDataset(datasets.GeneratorBasedBuilder):
         # dl_manager is a datasets.download.DownloadManager that can be used to download and extract URLs; many examples use the download_and_extract method; see the DownloadManager docs here: https://huggingface.co/docs/datasets/package_reference/builder_classes.html#datasets.DownloadManager
 
         # dl_manager can accept any type of nested list/dict and will give back the same structure with the url replaced with the path to local files.
-
-        # TODO: KEEP if your dataset is PUBLIC; remove if not
+            
         urls = _URLS[_DATASETNAME]
-        data_dir = dl_manager.download_and_extract(urls)
-
-        # TODO: KEEP if your dataset is LOCAL; remove if NOT
-        if self.config.data_dir is None:
-            raise ValueError("This is a local dataset. Please pass the data_dir kwarg to load_dataset.")
-        else:
-            data_dir = self.config.data_dir
-
-        # Not all datasets have predefined canonical train/val/test splits.
-        # If your dataset has no predefined splits, use datasets.Split.TRAIN for all of the data.
+        train_path = dl_manager.download_and_extract(urls['train'])
 
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
-                # Whatever you put in gen_kwargs will be passed to _generate_examples
                 gen_kwargs={
-                    "filepath": os.path.join(data_dir, "train.jsonl"),
+                    "filepath": train_path,
                     "split": "train",
-                },
-            ),
-            datasets.SplitGenerator(
-                name=datasets.Split.TEST,
-                gen_kwargs={
-                    "filepath": os.path.join(data_dir, "test.jsonl"),
-                    "split": "test",
-                },
-            ),
-            datasets.SplitGenerator(
-                name=datasets.Split.VALIDATION,
-                gen_kwargs={
-                    "filepath": os.path.join(data_dir, "dev.jsonl"),
-                    "split": "dev",
                 },
             ),
         ]
@@ -235,22 +192,61 @@ class OILDataset(datasets.GeneratorBasedBuilder):
 
         # NOTE: For local datasets you will have access to self.config.data_dir and self.config.data_files
 
+        is_schema_found = False
+
         if self.config.schema == "source":
             # TODO: yield (key, example) tuples in the original dataset schema
-            for key, example in thing:
-                yield key, example
 
-        elif self.config.schema == "seacrowd_[seacrowd_schema_name]":
-            # TODO: yield (key, example) tuples in the seacrowd schema
-            for key, example in thing:
-                yield key, example
+            is_schema_found = True
 
+            df = pd.read_parquet(filepath)
 
-# This template is based on the following template from the datasets package:
-# https://github.com/huggingface/datasets/blob/master/templates/new_dataset_script.py
+            for index, row in df.iterrows():
+                yield index, row
 
+        else:
+            for seacrowd_schema in _SUPPORTED_SCHEMA_STRINGS:
+                if self.config.schema == seacrowd_schema:
+                    is_schema_found = True
+
+                    # TODO: yield (key, example) tuples in the seacrowd schema
+                    df = pd.read_parquet(filepath)
+
+                    base_folder = os.path.dirname(filepath)
+                    base_folder = os.path.join(base_folder, split)
+
+                    if (not os.path.exists(base_folder)):
+                        os.makedirs(base_folder)
+                    
+                    audio_paths = []
+
+                    for _, row in df.iterrows():
+                        audio_dict = row["audio"]
+                        file_name = audio_dict["path"]
+
+                        path = os.path.join(base_folder, file_name)
+
+                        audio_dict["path"] = path
+
+                        with open(path, "wb") as f:
+                            f.write(audio_dict["bytes"])
+                        
+                        audio_paths.append(path)
+
+                    df.rename(columns={"label": "id"}, inplace=True)
+
+                    df["path"] = audio_paths
+                    df = df.assign(text="").astype({'text': 'str'})
+                    df = df.assign(speaker_id="").astype({'speaker_id': 'str'})
+                    df = df.assign(metadata=[{'speaker_age': np.nan, 'speaker_gender': ""}] * len(df)).astype({'metadata': 'object'})
+
+                    for index, row in df.iterrows():
+                        yield index, row
+
+        if not is_schema_found:        
+            raise ValueError(f"Invalid config: {self.config.name}")
 
 # This allows you to run your dataloader with `python [dataset_name].py` during development
 # TODO: Remove this before making your PR
 if __name__ == "__main__":
-    datasets.load_dataset(__file__)
+    datasets.load_dataset(__file__, name="source")
