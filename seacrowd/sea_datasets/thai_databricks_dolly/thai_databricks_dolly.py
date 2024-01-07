@@ -38,7 +38,7 @@ class ThaiDatabricksDollyDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    SEACROWD_SCHEMA_NAME = "qa"
+    SEACROWD_SCHEMA_NAME = "t2t"
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(name=f"{_DATASETNAME}_source", version=SOURCE_VERSION, description=f"{_DATASETNAME} source schema", schema="source", subset_id=_DATASETNAME),
@@ -64,11 +64,7 @@ class ThaiDatabricksDollyDataset(datasets.GeneratorBasedBuilder):
                 }
             )
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
-            features = schemas.qa.features
-            features["meta"] = {
-                "category": datasets.Value("string"),
-                "response": datasets.Value("string"),
-            }
+            features = schemas.text2text_features
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
             features=features,
