@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import List
 
 import datasets
 import pandas as pd
@@ -24,22 +24,22 @@ _LOCAL = False
 _LANGUAGES = ["tha"]
 _DATASETNAME = "thai_hh_rlhf"
 _DESCRIPTION = """\
-This is a Thai-translated dataset based on Anthropic/hh-rlhf using Google Cloud Translation. This repository 
-provides access to 161K Train dataset Anthropic/hh-rlhf (Thai-translated). 
+This is a Thai-translated dataset based on Anthropic/hh-rlhf using Google Cloud Translation. This repository
+provides access to 161K Train dataset Anthropic/hh-rlhf (Thai-translated).
 
 The original repository provides access to two different kinds of data:
 
-1. Human preference data about helpfulness and harmlessness from Training a Helpful and Harmless Assistant with 
-Reinforcement Learning from Human Feedback. These data are meant to train preference (or reward) models for 
-subsequent RLHF training. These data are not meant for supervised training of dialogue agents. Training dialogue 
+1. Human preference data about helpfulness and harmlessness from Training a Helpful and Harmless Assistant with
+Reinforcement Learning from Human Feedback. These data are meant to train preference (or reward) models for
+subsequent RLHF training. These data are not meant for supervised training of dialogue agents. Training dialogue
 agents on these data is likely to lead to harmful models and this shold be avoided.
 
-2. Human-generated and annotated red teaming dialogues from Red Teaming Language Models to Reduce Harms: Methods, 
-Scaling Behaviors, and Lessons Learned. These data are meant to understand how crowdworkers red team models and 
-what types of red team attacks are succesful or not. The data are not meant for fine-tuning or preference modeling 
-(use the data above for preference modeling). These data are entire transcripts of conversations that are derived 
-from the harmlessness preference modeling data described above, where only the chosen response is incorporated into 
-the overall transcript. Furthermore, the transcripts are annotated with human and automated measurements of how 
+2. Human-generated and annotated red teaming dialogues from Red Teaming Language Models to Reduce Harms: Methods,
+Scaling Behaviors, and Lessons Learned. These data are meant to understand how crowdworkers red team models and
+what types of red team attacks are succesful or not. The data are not meant for fine-tuning or preference modeling
+(use the data above for preference modeling). These data are entire transcripts of conversations that are derived
+from the harmlessness preference modeling data described above, where only the chosen response is incorporated into
+the overall transcript. Furthermore, the transcripts are annotated with human and automated measurements of how
 harmful the overall dialogues are.
 
 The translated data corresponds to the first kind of data.
@@ -53,8 +53,8 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class ThaiDatabricksDollyDataset(datasets.GeneratorBasedBuilder):
-    """Thai Alpaca Dataset"""
+class ThaiHhRlhfDataset(datasets.GeneratorBasedBuilder):
+    """Thai_HH_RLHF Dataset"""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
@@ -63,16 +63,16 @@ class ThaiDatabricksDollyDataset(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_source", 
-            version=SOURCE_VERSION, 
-            description=f"Thai-Alpaca source schema", 
-            schema="source", 
+            name=f"{_DATASETNAME}_source",
+            version=SOURCE_VERSION,
+            description="Thai_HH_RLHF source schema",
+            schema="source",
             subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
             name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",
             version=SEACROWD_VERSION,
-            description=f"Thai-Alpaca SEACrowd schema",
+            description="Thai_HH_RLHF SEACrowd schema",
             schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
             subset_id=_DATASETNAME,
         ),
@@ -90,10 +90,7 @@ class ThaiDatabricksDollyDataset(datasets.GeneratorBasedBuilder):
             )
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             features = schemas.qa.features
-            features["meta"] = {
-                "chosen": datasets.Value("string"),
-                "rejected": datasets.Value("string")
-            }
+            features["meta"] = {"chosen": datasets.Value("string"), "rejected": datasets.Value("string")}
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -113,25 +110,9 @@ class ThaiDatabricksDollyDataset(datasets.GeneratorBasedBuilder):
         df = pd.read_parquet(filepath)
         for idx, row in df.iterrows():
             if self.config.schema == "source":
-                example = {
-                    "chosen": row.get("chosen"), 
-                    "rejected": row.get("rejected")
-                }
+                example = {"chosen": row.get("chosen"), "rejected": row.get("rejected")}
 
             elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
-                example = {
-                    "id": str(idx),
-                    "question_id": None,
-                    "document_id": None,
-                    "question": None,
-                    "type": None,
-                    "choices": [],
-                    "context": None,
-                    "answer": [],
-                    "meta": {
-                        "chosen": row.get("chosen"), 
-                        "rejected": row.get("rejected")
-                    }
-                }
+                example = {"id": str(idx), "question_id": None, "document_id": None, "question": None, "type": None, "choices": [], "context": None, "answer": [], "meta": {"chosen": row.get("chosen"), "rejected": row.get("rejected")}}
 
             yield idx, example
