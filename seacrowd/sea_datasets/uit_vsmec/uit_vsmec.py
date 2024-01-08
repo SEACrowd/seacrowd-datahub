@@ -50,7 +50,7 @@ _SEACROWD_VERSION = "1.0.0"
 
 class UITVSMECDataset(datasets.GeneratorBasedBuilder):
     """
-    This dataset consists of Vietnamese Facebook comments that were manually annotated for sentiment. There are seven possible emotion labels: enjoyment, sadness, fear, anger, disgust, surprise or other (for comments with no or neutral emotions). Two rounds of manual annotations were done to train annotators with tagging and editing guidelines. Annotation was performed until inter-annotator agreement reached at least 80%.
+    This is the main class of SEACrowd dataloader for UIT-VSMEC, focusing on emotion/sentiment classification task.
     """
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
@@ -72,7 +72,7 @@ class UITVSMECDataset(datasets.GeneratorBasedBuilder):
             subset_id=f"{_DATASETNAME}",
         ),
     ]
-
+    LABEL_NAMES = ["Other", "Disgust", "Enjoyment", "Anger", "Surprise", "Sadness", "Fear"]
     DEFAULT_CONFIG_NAME = "uit_vsmec_source"
 
     def _info(self) -> datasets.DatasetInfo:
@@ -80,7 +80,7 @@ class UITVSMECDataset(datasets.GeneratorBasedBuilder):
             features = datasets.Features({"Emotion": datasets.Value("string"), "Sentence": datasets.Value("string")})
 
         elif self.config.schema == "seacrowd_text":
-            features = schemas.text_features(["Other", "Disgust", "Enjoyment", "Anger", "Surprise", "Sadness", "Fear"])
+            features = schemas.text_features(self.LABEL_NAMES)
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -124,5 +124,5 @@ class UITVSMECDataset(datasets.GeneratorBasedBuilder):
 
         elif self.config.schema == "seacrowd_text":
             for row in df.itertuples():
-                ex = {"id": str(row.index), "text": row.Sentence, "label": str(row.Emotion)}
+                ex = {"id": str(row.index), "text": row.Sentence, "label": self.LABEL_NAMES.index(row.Emotion)}
                 yield row.index, ex
