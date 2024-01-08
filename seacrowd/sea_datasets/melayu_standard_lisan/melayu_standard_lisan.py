@@ -118,15 +118,14 @@ class MelayuStandardLisan(datasets.GeneratorBasedBuilder):
                     "text": datasets.Value("string"),
                 }
             )
-        elif self.config.schema == "seacrowd_ssp":
+        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             features = schemas.self_supervised_pretraining.features
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
             features=features,
             homepage=_HOMEPAGE,
-            license=_LICENSE,
-            # citation=_CITATION,
+            license=_LICENSE
         )
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
@@ -148,10 +147,10 @@ class MelayuStandardLisan(datasets.GeneratorBasedBuilder):
         data = []
         for filepath in filepaths:
             with open(filepath, "r") as f:
-                data.append([line.rstrip() for line in f.readlines()][0])
+                data.append(" ".join([line.rstrip() for line in f.readlines()]))
 
         if self.config.schema == "source":
             yield 0, {"id": Path(filepath).stem, "text": " ".join(data)}
 
-        elif self.config.schema == "seacrowd_ssp":
+        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             yield 0, {"id": Path(filepath).stem, "text": " ".join(data)}
