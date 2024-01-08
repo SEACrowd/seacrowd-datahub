@@ -115,19 +115,19 @@ class PhoATIS(datasets.GeneratorBasedBuilder):
             SEACrowdConfig(
                 name="phoatis_source",
                 version=SOURCE_VERSION,
-                description="PhoATIS Intent Classification source schema (Syllable version)",
+                description="PhoATIS source schema (Syllable version)",
                 schema="source",
                 subset_id="syllable",
             ),
             SEACrowdConfig(
-                name="phoatis_seacrowd_text",
+                name="phoatis_intent_cls_seacrowd_text",
                 version=SEACROWD_VERSION,
                 description="PhoATIS Intent Classification SEACrowd schema (Syllable version)",
                 schema="seacrowd_text",
                 subset_id="syllable",
             ),
             SEACrowdConfig(
-                name="phoatis_seacrowd_seq_label",
+                name="phoatis_slot_filling_seacrowd_seq_label",
                 version=SEACROWD_VERSION,
                 description="PhoATIS Slot Filling SEACrowd schema (Syllable version)",
                 schema="seacrowd_seq_label",
@@ -151,13 +151,13 @@ class PhoATIS(datasets.GeneratorBasedBuilder):
             )
 
         elif self.config.schema == "seacrowd_text":
-            with open("./seacrowd/sea_datasets/phoatis_intent_cls/intent_label.txt", "r+", encoding="utf8") as fw:
+            with open("./seacrowd/sea_datasets/phoatis/intent_label.txt", "r+", encoding="utf8") as fw:
                 intent_label = fw.read()
                 intent_label = intent_label.split("\n")
             features = schemas.text_features(intent_label)
 
         elif self.config.schema == "seacrowd_seq_label":
-            with open("./seacrowd/sea_datasets/phoatis_slot_filling/slot_label.txt", "r+", encoding="utf8") as fw:
+            with open("./seacrowd/sea_datasets/phoatis/slot_label.txt", "r+", encoding="utf8") as fw:
                 slot_label = fw.read()
                 slot_label = slot_label.split("\n")
             features = schemas.seq_label_features(slot_label)

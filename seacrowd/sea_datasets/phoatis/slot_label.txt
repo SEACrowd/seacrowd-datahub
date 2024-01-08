@@ -2,6 +2,7 @@ PAD
 UNK
 O
 B-aircraft_code
+I-aircraft_code
 B-airline_code
 B-airline_name
 I-airline_name
@@ -76,6 +77,7 @@ I-flight_days
 B-flight_mod
 I-flight_mod
 B-flight_number
+I-flight_number
 B-flight_stop
 I-flight_stop
 B-flight_time
@@ -119,6 +121,7 @@ B-round_trip
 I-round_trip
 B-state_code
 B-state_name
+I-state_name
 B-stoploc.airport_name
 B-stoploc.city_name
 I-stoploc.city_name
@@ -140,3 +143,8 @@ B-toloc.state_name
 I-toloc.state_name
 B-transport_type
 I-transport_type
+B-compartment
+I-compartment
+B-stoploc.airport_code
+B-booking_class
+I-booking_class
