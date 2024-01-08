@@ -59,9 +59,9 @@ _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
-
+# fmt: off
 _SUBSETS = ["en-jv", "es-jv", "fr-jv", "id-jv", "it-jv", "jv-pt", "bg-ceb", "ar-ceb", "ca-ceb", "ceb-cs", "ceb-de", "ceb-en", "ceb-es", "ceb-fi", "ceb-fr", "ceb-hu", "ceb-it", "ceb-ja", "ceb-nl", "ceb-no", "ceb-pl", "ceb-pt", "ceb-ro", "ceb-ru", "ceb-sv", "ceb-uk", "id-is", "id-it", "id-ja", "id-ko", "id-lt", "id-mk", "id-ml", "id-mr", "id-ne", "id-nl", "id-no", "id-pl", "id-pt", "id-ro", "id-ru", "id-sh", "id-si", "id-sk", "id-sl", "id-sq", "id-sr", "id-sv", "id-sw", "id-ta", "id-te", "id-tl", "id-tr", "id-tt", "id-uk", "id-vi", "id-zh", "ar-id", "az-id", "ba-id", "bg-id", "bn-id", "bs-id", "ca-id", "cs-id", "da-id", "de-id", "el-id", "en-id", "eo-id", "es-id", "et-id", "eu-id", "fa-id", "fi-id", "fr-id", "gl-id", "he-id", "hi-id", "hr-id", "hu-id", "ar-tl", "bg-tl", "bs-tl", "ca-tl", "cs-tl", "da-tl", "de-tl", "el-tl", "en-tl", "eo-tl", "es-tl", "et-tl", "fi-tl", "fr-tl", "gl-tl", "he-tl", "hr-tl", "hu-tl", "it-tl", "ja-tl", "lt-tl", "mk-tl", "nl-tl", "no-tl", "pl-tl", "pt-tl", "ro-tl", "ru-tl", "sh-tl", "sk-tl", "sl-tl", "sq-tl", "sr-tl", "sv-tl", "tl-tr", "tl-uk", "tl-vi", "tl-zh", "ar-vi", "az-vi", "bg-vi", "bn-vi", "bs-vi", "ca-vi", "cs-vi", "da-vi", "de-vi", "el-vi", "en-vi", "eo-vi", "es-vi", "et-vi", "eu-vi", "fa-vi", "fi-vi", "fr-vi", "gl-vi", "he-vi", "hi-vi", "hr-vi", "hu-vi", "is-vi", "it-vi", "ja-vi", "ko-vi", "lt-vi", "mk-vi", "ml-vi", "mr-vi", "nl-vi", "no-vi", "pl-vi", "pt-vi", "ro-vi", "ru-vi", "sh-vi", "si-vi", "sk-vi", "sl-vi", "sq-vi", "sr-vi", "sv-vi", "sw-vi", "ta-vi", "te-vi", "tr-vi", "uk-vi", "vi-zh"] 
-
+# fmt: on
 
 class WikiMatrixDataset(datasets.GeneratorBasedBuilder):
     """WikiMatrix is automatically extracted parallel sentences from the content of Wikipedia articles in 96 languages, including several dialects 
