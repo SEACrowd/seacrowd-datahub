@@ -29,7 +29,6 @@ This contains the Indonesian (ind), the Javanese (jav), and the Sundanese (sun) 
 [seacrowd_schema_name] = ssp
 """
 
-from posixpath import split
 from typing import Dict, List, Tuple
 
 import datasets
@@ -37,13 +36,14 @@ import datasets
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import (DEFAULT_SEACROWD_VIEW_NAME,
-                                       DEFAULT_SOURCE_VIEW_NAME, Tasks)
+                                      DEFAULT_SOURCE_VIEW_NAME, Tasks)
 
 _DATASETNAME = "cc100"
 _SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
 _UNIFIED_VIEW_NAME = DEFAULT_SEACROWD_VIEW_NAME
 
-_LANGUAGES = ["ind", "jav", "sun"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
+# We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
+_LANGUAGES = ["ind", "jav", "sun", "mya", "mya_zaw", "lao", "khm", "tgl", "vie", "tha", "zlm"]
 _LOCAL = False
 
 _CITATION = """\
@@ -135,9 +135,17 @@ _HOMEPAGE = "https://data.statmt.org/cc-100/"
 _LICENSE = "MIT"
 
 _LANGUAGES_MAP = {
-    "ind": "id",
-    "jav": "jv",
-    "sun": "su",
+    "ind": "id",  # Indonesian
+    "jav": "jv",  # Javanese
+    "sun": "su",  # Sundanese
+    "mya": "my",  # Burmese
+    "mya_zaw": "my_zaw",  # Burmese (Zawgyi)
+    "lao": "lo",  # Lao
+    "khm": "km",  # Central Khmer, Khmer
+    "tgl": "tl",  # Tagalog
+    "vie": "vi",  # Vietnamese
+    "tha": "th",  # Thai
+    "zlm": "ms",  # Malay
 }
 
 _URLS = {
@@ -150,13 +158,20 @@ _SOURCE_VERSION = "2018.12.01"
 
 _SEACROWD_VERSION = "1.0.0"
 
+
 def seacrowd_config_constructor(lang, schema, version):
     """Construct SEACrowdConfig with cc100_{lang}_{schema} as the name format."""
     if schema != "source" and schema != "seacrowd_ssp":
         raise ValueError(f"Invalid schema: {schema}")
 
     if lang == "":
-        raise ValueError(f"Language is required. Choose one of these languages: {_LANGUAGES}.")
+        return SEACrowdConfig(
+            name=f"cc100_{schema}",
+            version=datasets.Version(version),
+            description=f"CC100 with {schema} schema for all languages",
+            schema=schema,
+            subset_id="cc100",
+        )
     elif lang in _LANGUAGES:
         return SEACrowdConfig(
             name=f"cc100_{lang}_{schema}",
@@ -172,13 +187,14 @@ def seacrowd_config_constructor(lang, schema, version):
 class CC100(datasets.GeneratorBasedBuilder):
     """Monolingual Datasets from Web Crawl Data."""
 
-    DEFAULT_CONFIG_NAME = "cc100_jav_source"
-
-    BUILDER_CONFIGS = [
-        seacrowd_config_constructor(lang, "source", _SOURCE_VERSION) for lang in _LANGUAGES_MAP
-    ] + [
-        seacrowd_config_constructor(lang, "seacrowd_ssp", _SEACROWD_VERSION) for lang in _LANGUAGES_MAP
-    ]
+    BUILDER_CONFIGS = (
+        [seacrowd_config_constructor(lang, "source", _SOURCE_VERSION) for lang in _LANGUAGES_MAP]
+        + [seacrowd_config_constructor(lang, "seacrowd_ssp", _SEACROWD_VERSION) for lang in _LANGUAGES_MAP]
+        + [
+            seacrowd_config_constructor("", "source", _SOURCE_VERSION),
+            seacrowd_config_constructor("", "seacrowd_ssp", _SOURCE_VERSION),
+        ]
+    )
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -201,14 +217,13 @@ class CC100(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-
         split_name = self.config.name.split("_")
-        if split_name[1] == "source" or split_name[1] == "seacrowd":
-            lang = _DEFAULT_LANGUAGE
+        if self.config.name == "cc100_source" or self.config.name == "cc100_seacrowd_ssp":
+            # Load all languages
+            path = dl_manager.download_and_extract([_URLS["train"].format(lang=_LANGUAGES_MAP[lang]) for lang in _LANGUAGES_MAP])
         else:
-            lang = split_name[1]
-        url = _URLS["train"].format(lang=_LANGUAGES_MAP[lang])
-        path = dl_manager.download_and_extract(url)
+            url = _URLS["train"].format(lang=_LANGUAGES_MAP[split_name[1]])
+            path = dl_manager.download_and_extract(url)
 
         return [
             datasets.SplitGenerator(
