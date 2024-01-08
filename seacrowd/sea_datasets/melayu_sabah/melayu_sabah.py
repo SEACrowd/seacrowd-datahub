@@ -29,6 +29,17 @@ _DESCRIPTION = """\
 Korpus Variasi Bahasa Melayu: Sabah is a language corpus sourced from various folklores in Melayu Sabah dialect.
 """
 
+_CITATION = """\
+@misc{melayusabah,
+  author = {Hiroki Nomoto},
+  title = {Melayu_Sabah},
+  year = {2020},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\\url{https://github.com/matbahasa/Melayu_Sabah}},
+  commit = {90a46c8268412ccc1f29cdcbbd47354474f12d50}
+}
+"""
 
 _HOMEPAGE = "https://github.com/matbahasa/Melayu_Sabah"
 
@@ -104,7 +115,7 @@ class MelayuSabah(datasets.GeneratorBasedBuilder):
             features=features,
             homepage=_HOMEPAGE,
             license=_LICENSE,
-            # citation=_CITATION,
+            citation=_CITATION,
         )
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
