@@ -89,11 +89,26 @@ class ThaiDatabricksDollyDataset(datasets.GeneratorBasedBuilder):
         # pyarrow is an implicit dependency to load the parquet files
         df = pd.read_parquet(filepath, engine="pyarrow")
         for idx, row in df.iterrows():
+            instruction = row.get("instruction").strip()
+            context = row.get("context").strip()
+            response = row.get("response").strip()
+            category = row.get("category").strip()
             if self.config.schema == "source":
-                example = {"instruction": row.get("instruction"), "context": row.get("context"), "response": row.get("response"), "category": row.get("category")}
+                example = {
+                    "instruction": instruction,
+                    "context": context,
+                    "response": response,
+                    "category": category,
+                }
             elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
-                text_1 = f"Context: {row.get('context')}\n\n{row.get('instruction')}" if row.get("context") else row.get("instruction")
-                text_2 = row.get("response")
-                example = {"id": str(idx), "text_1": text_1, "text_2": text_2, "text_1_name": "context_and_instruction", "text_2_name": "response"}
+                text_1 = f"Context: {context}\n\n{instruction}" if context else instruction
+                text_2 = response
+                example = {
+                    "id": str(idx),
+                    "text_1": text_1,
+                    "text_2": text_2,
+                    "text_1_name": "context_and_instruction",
+                    "text_2_name": "response",
+                }
 
             yield idx, example
