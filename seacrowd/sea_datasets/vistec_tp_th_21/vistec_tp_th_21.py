@@ -26,12 +26,21 @@ from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
-@inproceedings{limkonchotiwat2021handling,
-  title={Handling Cross-and Out-of-Domain Samples in Thai Word Segmentation},
-  author={Limkonchotiwat, Peerat and Phatthiyaphaibun, Wannaphong and Sarwar, Raheem and Chuangsuwanich, Ekapol and Nutanong, Sarana},
-  booktitle={Findings of the Association for Computational Linguistics: ACL-IJCNLP 2021},
-  pages={1003--1016},
-  year={2021}
+@inproceedings{limkonchotiwat-etal-2021-handling,
+    title = "Handling Cross- and Out-of-Domain Samples in {T}hai Word Segmentation",
+    author = "Limkonchotiwat, Peerat  and
+      Phatthiyaphaibun, Wannaphong  and
+      Sarwar, Raheem  and
+      Chuangsuwanich, Ekapol  and
+      Nutanong, Sarana",
+    booktitle = "Findings of the Association for Computational Linguistics: ACL-IJCNLP 2021",
+    month = aug,
+    year = "2021",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.findings-acl.86",
+    doi = "10.18653/v1/2021.findings-acl.86",
+    pages = "1003--1016",
 }
 """
 
