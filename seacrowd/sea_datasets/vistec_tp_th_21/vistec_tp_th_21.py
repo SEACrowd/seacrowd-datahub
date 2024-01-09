@@ -45,7 +45,7 @@ linguists on four tasks, namely word segmentation, misspelling detection and cor
 and named entity recognition.
 """
 
-_HOMEPAGE = "	https://github.com/mrpeerat/OSKut/tree/main/VISTEC-TP-TH-2021"
+_HOMEPAGE = "https://github.com/mrpeerat/OSKut/tree/main/VISTEC-TP-TH-2021"
 
 
 _LANGUAGES = ["tha"]
@@ -67,7 +67,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class VISTEC21(datasets.GeneratorBasedBuilder):
+class VISTEC21Dataset(datasets.GeneratorBasedBuilder):
     """
     The largest social media domain datasets for Thai text processing (word segmentation,
     misspell correction and detection, and named-entity boundary) called "VISTEC-TP-TH-2021" or VISTEC-2021.
