@@ -63,9 +63,9 @@ Hmong, Indonesian, Khmer, Lao, Malay, Thai, and Vietnamese.
 
 _HOMEPAGE = "https://github.com/MicrosoftTranslator/NTREX"
 
-_LANGUAGES = ["mya", "fil", "ind", "khm", "lao", "zlm", "tha", "vie", "hmv"] 
+_LANGUAGES = ["mya", "fil", "ind", "khm", "lao", "zlm", "tha", "vie", "hmv"]
 
-_LICENSE = Licenses.CC_BY_SA_4_0.value  
+_LICENSE = Licenses.CC_BY_SA_4_0.value
 
 _LOCAL = False
 
@@ -74,7 +74,7 @@ _URLS = {
     _DATASETNAME: "https://raw.githubusercontent.com/MicrosoftTranslator/NTREX/main/NTREX-128/newstest2019-ref.{lang}.txt",
 }
 
-_SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION] 
+_SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 
 _SOURCE_VERSION = "11.24.2022"
 
