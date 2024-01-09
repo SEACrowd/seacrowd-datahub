@@ -63,17 +63,18 @@ Hmong, Indonesian, Khmer, Lao, Malay, Thai, and Vietnamese.
 
 _HOMEPAGE = "https://github.com/MicrosoftTranslator/NTREX"
 
-_LANGUAGES = ["mya", "fil", "ind", "khm", "lao", "zlm", "tha", "vie", "hmv"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
+_LANGUAGES = ["mya", "fil", "ind", "khm", "lao", "zlm", "tha", "vie", "hmv"] 
 
-_LICENSE = Licenses.CC_BY_SA_4_0.value  # example: Licenses.MIT.value, Licenses.CC_BY_NC_SA_4_0.value, Licenses.UNLICENSE.value, Licenses.UNKNOWN.value
+_LICENSE = Licenses.CC_BY_SA_4_0.value  
 
 _LOCAL = False
 
+_MAPPING = {"mya": "mya", "fil": "fil", "ind": "ind", "khm": "khm", "lao": "lao", "zlm": "msa", "tha": "tha", "vie": "vie", "hmv": "hmn"}
 _URLS = {
     _DATASETNAME: "https://raw.githubusercontent.com/MicrosoftTranslator/NTREX/main/NTREX-128/newstest2019-ref.{lang}.txt",
 }
 
-_SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]  # example: [Tasks.TRANSLATION, Tasks.NAMED_ENTITY_RECOGNITION, Tasks.RELATION_EXTRACTION]
+_SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION] 
 
 _SOURCE_VERSION = "11.24.2022"
 
@@ -133,8 +134,8 @@ class Ntrex128Dataset(datasets.GeneratorBasedBuilder):
         """Returns SplitGenerators."""
         lang1 = self.config.name.split("_")[2]
         lang2 = self.config.name.split("_")[3]
-        lang1_txt_path = Path(dl_manager.download_and_extract(_URLS[_DATASETNAME].format(lang=lang1)))
-        lang2_txt_path = Path(dl_manager.download_and_extract(_URLS[_DATASETNAME].format(lang=lang2)))
+        lang1_txt_path = Path(dl_manager.download_and_extract(_URLS[_DATASETNAME].format(lang=_MAPPING[lang1])))
+        lang2_txt_path = Path(dl_manager.download_and_extract(_URLS[_DATASETNAME].format(lang=_MAPPING[lang2])))
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
