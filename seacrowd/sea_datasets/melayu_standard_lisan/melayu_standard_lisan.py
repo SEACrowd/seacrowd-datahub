@@ -22,6 +22,15 @@ from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import TASK_TO_SCHEMA, Licenses, Tasks
 
+_CITATION = """\
+@misc{nomoto2018melayustandardlisan,
+	author = {Hiroki Nomoto},
+	title = {Korpus Variasi Bahasa Melayu: Standard Lisan},
+	year = {2018},
+	url = {https://github.com/matbahasa/Melayu_Standard_Lisan}
+}
+"""
+
 _DATASETNAME = "melayu_standard_lisan"
 
 
