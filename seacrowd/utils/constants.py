@@ -5,6 +5,7 @@ from types import SimpleNamespace
 from seacrowd.utils.schemas import (
     image_text_features,
     kb_features,
+    tree_features,
     pairs_features,
     pairs_features_score,
     pairs_multi_features,
@@ -43,9 +44,17 @@ class Tasks(Enum):
     WORD_SENSE_DISAMBIGUATION = "WSD"
     COREFERENCE_RESOLUTION = "COREF"
 
+
+    # Tree
+    CONSTITUENCY_PARSING = "CONST_PAR"
+
+    # Single Text Classification
+    ASPECT_BASED_SENTIMENT_ANALYSIS = "ABSA"
+
     # Single Text Classification (single-label)
     ABUSIVE_LANGUAGE_PREDICTION = "ABL"
     DOMAIN_KNOWLEDGE_CLASSIFICATION = "DKC" # classification for non NLP-oriented label
+
     EMOTION_CLASSIFICATION = "EC"
     LANGUAGE_IDENTIFICATION = "LI"
     HOAX_NEWS_CLASSIFICATION = "HNC"
@@ -207,6 +216,7 @@ class Licenses(Enum):
 
 TASK_TO_SCHEMA = {
     Tasks.DEPENDENCY_PARSING: "KB",
+    Tasks.CONSTITUENCY_PARSING: "TREE",
     Tasks.WORD_SENSE_DISAMBIGUATION: "T2T",
     Tasks.WORD_ANALOGY: "T2T",
     Tasks.KEYWORD_EXTRACTION: "SEQ_LABEL",
@@ -276,6 +286,7 @@ VALID_SCHEMAS = set(TASK_TO_SCHEMA.values())
 
 SCHEMA_TO_FEATURES = {
     "KB": kb_features,
+    "TREE": tree_features,
     "QA": qa_features,
     "T2T": text2text_features,
     "TEXT": text_features(),
