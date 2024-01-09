@@ -102,26 +102,45 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
     """
 
     BUILDER_CONFIGS = [
-        SEACrowdConfig(name="primary_task_source", description=_PRIMARY_DESP, version=datasets.Version(_SOURCE_VERSION_P), schema="source", subset_id="primary_task"),
-        SEACrowdConfig(name="primary_task_indonesian_source", description=_PRIMARY_DESP, version=datasets.Version(_SOURCE_VERSION_P), schema="source", subset_id="primary_task_indonesian"),
-        SEACrowdConfig(name="primary_task_thai_source", description=_PRIMARY_DESP, version=datasets.Version(_SOURCE_VERSION_P), schema="source", subset_id="primary_task_thai"),
-        SEACrowdConfig(name="secondary_task_source", description=_SECONDARY_DESP, version=datasets.Version(_SOURCE_VERSION_S), schema="source", subset_id="secondary_task"),
-        SEACrowdConfig(name="secondary_task_indonesian_source", description=_SECONDARY_DESP, version=datasets.Version(_SOURCE_VERSION_S), schema="source", subset_id="secondary_task_indonesian"),
+        SEACrowdConfig(name="tydiqa_primary_task_source", description=_PRIMARY_DESP,
+                       version=datasets.Version(_SOURCE_VERSION_P), schema="source",
+                       subset_id="tydiqa_primary_task"),
+        SEACrowdConfig(name="tydiqa_primary_task_indonesian_source", description=_PRIMARY_DESP,
+                       version=datasets.Version(_SOURCE_VERSION_P), schema="source",
+                       subset_id="tydiqa_primary_task_indonesian"),
+        SEACrowdConfig(name="tydiqa_primary_task_thai_source", description=_PRIMARY_DESP,
+                       version=datasets.Version(_SOURCE_VERSION_P), schema="source",
+                       subset_id="tydiqa_primary_task_thai"),
+        SEACrowdConfig(name="tydiqa_secondary_task_source", description=_SECONDARY_DESP,
+                       version=datasets.Version(_SOURCE_VERSION_S), schema="source",
+                       subset_id="tydiqa_secondary_task"),
+        SEACrowdConfig(name="tydiqa_secondary_task_indonesian_source", description=_SECONDARY_DESP,
+                       version=datasets.Version(_SOURCE_VERSION_S), schema="source",
+                       subset_id="tydiqa_secondary_task_indonesian"),
         ##########################
-        SEACrowdConfig(name="primary_task_seacrowd_qa", description=_PRIMARY_DESP, version=datasets.Version(_SEACROWD_VERSION), schema="seacrowd_qa", subset_id="primary_task"),
-        SEACrowdConfig(name="primary_task_indonesian_seacrowd_qa", description=_PRIMARY_DESP, version=datasets.Version(_SEACROWD_VERSION), schema="seacrowd_qa", subset_id="primary_task_indonesian"),
-        SEACrowdConfig(name="primary_task_thai_seacrowd_qa", description=_PRIMARY_DESP, version=datasets.Version(_SEACROWD_VERSION), schema="seacrowd_qa", subset_id="primary_task_thai"),
-        SEACrowdConfig(name="secondary_task_seacrowd_qa", description=_PRIMARY_DESP, version=datasets.Version(_SEACROWD_VERSION), schema="seacrowd_qa", subset_id="secondary_task"),
-        SEACrowdConfig(name="secondary_task_indonesian_seacrowd_qa", description=_PRIMARY_DESP, version=datasets.Version(_SEACROWD_VERSION), schema="seacrowd_qa", subset_id="secondary_task_indonesian"),
+        SEACrowdConfig(name="tydiqa_primary_task_seacrowd_qa", description=_PRIMARY_DESP,
+                       version=datasets.Version(_SEACROWD_VERSION), schema="seacrowd_qa",
+                       subset_id="tydiqa_primary_task"),
+        SEACrowdConfig(name="tydiqa_primary_task_indonesian_seacrowd_qa", description=_PRIMARY_DESP,
+                       version=datasets.Version(_SEACROWD_VERSION), schema="seacrowd_qa",
+                       subset_id="tydiqa_primary_task_indonesian"),
+        SEACrowdConfig(name="tydiqa_primary_task_thai_seacrowd_qa", description=_PRIMARY_DESP,
+                       version=datasets.Version(_SEACROWD_VERSION), schema="seacrowd_qa",
+                       subset_id="tydiqa_primary_task_thai"),
+        SEACrowdConfig(name="tydiqa_secondary_task_seacrowd_qa", description=_PRIMARY_DESP,
+                       version=datasets.Version(_SEACROWD_VERSION), schema="seacrowd_qa",
+                       subset_id="tydiqa_secondary_task"),
+        SEACrowdConfig(name="tydiqa_secondary_task_indonesian_seacrowd_qa", description=_PRIMARY_DESP,
+                       version=datasets.Version(_SEACROWD_VERSION), schema="seacrowd_qa",
+                       subset_id="tydiqa_secondary_task_indonesian"),
     ]
+    DEFAULT_CONFIG_NAME = "tydiqa_primary_task_source"
 
     def _info(self):
         if "primary_task" in self.config.name:
             if "source" in self.config.name:
                 return datasets.DatasetInfo(
-                    # This is the description that will appear on the datasets page.
                     description=_DESCRIPTION,
-                    # datasets.features.FeatureConnectors
                     features=datasets.Features(
                         {
                             "passage_answer_candidates": datasets.features.Sequence(
@@ -135,7 +154,6 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
                             "language": datasets.Value("string"),
                             "annotations": datasets.features.Sequence(
                                 {
-                                    # 'annotation_id': datasets.Value('variant'),
                                     "passage_answer_candidate_index": datasets.Value("int32"),
                                     "minimal_answers_start_byte": datasets.Value("int32"),
                                     "minimal_answers_end_byte": datasets.Value("int32"),
@@ -143,17 +161,9 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
                                 }
                             ),
                             "document_plaintext": datasets.Value("string"),
-                            # 'example_id': datasets.Value('variant'),
                             "document_url": datasets.Value("string")
-                            # These are the features of your dataset like images, labels ...
                         }
                     ),
-                    # If there's a common (input, target) tuple from the features,
-                    # specify them here. They'll be used if as_supervised=True in
-                    # builder.as_dataset.
-                    supervised_keys=None,
-                    # Homepage of the dataset for documentation
-                    homepage="https://github.com/google-research-datasets/tydiqa",
                     citation=_CITATION,
                 )
             elif "seacrowd" in self.config.name:
@@ -179,8 +189,6 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
                 return datasets.DatasetInfo(
                     description=_DESCRIPTION,
                     features=features,
-                    supervised_keys=None,
-                    homepage="https://github.com/google-research-datasets/tydiqa",
                     citation=_CITATION,
                 )
         elif "secondary_task" in self.config.name:
@@ -201,10 +209,6 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
                             ),
                         }
                     ),
-                    # No default supervised_keys (as we have to pass both question
-                    # and context as input).
-                    supervised_keys=None,
-                    homepage="https://github.com/google-research-datasets/tydiqa",
                     citation=_CITATION,
                 )
             elif "seacrowd" in self.config.name:
@@ -215,10 +219,6 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
                 return datasets.DatasetInfo(
                     description=_DESCRIPTION,
                     features=features,
-                    # No default supervised_keys (as we have to pass both question
-                    # and context as input).
-                    supervised_keys=None,
-                    homepage="https://github.com/google-research-datasets/tydiqa",
                     citation=_CITATION,
                 )
 
@@ -231,12 +231,10 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
             return [
                 datasets.SplitGenerator(
                     name=datasets.Split.TRAIN,
-                    # These kwargs will be passed to _generate_examples
                     gen_kwargs={"filepath": primary_downloaded["train"]},
                 ),
                 datasets.SplitGenerator(
                     name=datasets.Split.VALIDATION,
-                    # These kwargs will be passed to _generate_examples
                     gen_kwargs={"filepath": primary_downloaded["dev"]},
                 ),
             ]
@@ -245,12 +243,10 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
             return [
                 datasets.SplitGenerator(
                     name=datasets.Split.TRAIN,
-                    # These kwargs will be passed to _generate_examples
                     gen_kwargs={"filepath": secondary_downloaded["train"]},
                 ),
                 datasets.SplitGenerator(
                     name=datasets.Split.VALIDATION,
-                    # These kwargs will be passed to _generate_examples
                     gen_kwargs={"filepath": secondary_downloaded["dev"]},
                 ),
             ]
@@ -269,154 +265,55 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
                     lang = data["language"]
                     question = data["question_text"]
                     annotations = data["annotations"]
-                    # annot_ids = [annotation["annotation_id"] for annotation in annotations]
                     yes_no_answers = [annotation["yes_no_answer"] for annotation in annotations]
-                    min_answers_end_byte = [annotation["minimal_answer"]["plaintext_end_byte"] for annotation in annotations]
-                    min_answers_start_byte = [annotation["minimal_answer"]["plaintext_start_byte"] for annotation in annotations]
-                    passage_cand_answers = [annotation["passage_answer"]["candidate_index"] for annotation in annotations]
+                    min_answers_end_byte = [annotation["minimal_answer"]["plaintext_end_byte"] for annotation in
+                                            annotations]
+                    min_answers_start_byte = [annotation["minimal_answer"]["plaintext_start_byte"] for annotation in
+                                              annotations]
+                    passage_cand_answers = [annotation["passage_answer"]["candidate_index"] for annotation in
+                                            annotations]
                     doc = data["document_plaintext"]
-                    # example_id = data["example_id"]
                     url = data["document_url"]
-                    if self.config.name == "primary_task_source":
-                        yield id_, {
-                            "passage_answer_candidates": {
-                                "plaintext_start_byte": start_byte,
-                                "plaintext_end_byte": end_byte,
-                            },
-                            "question_text": question,
-                            "document_title": title,
-                            "language": lang,
-                            "annotations": {
-                                # 'annotation_id': annot_ids,
-                                "passage_answer_candidate_index": passage_cand_answers,
-                                "minimal_answers_start_byte": min_answers_start_byte,
-                                "minimal_answers_end_byte": min_answers_end_byte,
-                                "yes_no_answer": yes_no_answers,
-                            },
-                            "document_plaintext": doc,
-                            # 'example_id': example_id,
-                            "document_url": url,
-                        }
-                    elif self.config.name == "primary_task_indonesian_source":
+                    if self.config.name == "tydiqa_primary_task_source":
+                        yield id_, primary_source_helper(id_, start_byte, end_byte, question, title, lang,
+                                                         passage_cand_answers,
+                                                         min_answers_start_byte, min_answers_end_byte, yes_no_answers,
+                                                         doc,
+                                                         url)
+                    elif self.config.name == "tydiqa_primary_task_indonesian_source":
                         if lang == "indonesian":
-                            yield id_, {
-                                "passage_answer_candidates": {
-                                    "plaintext_start_byte": start_byte,
-                                    "plaintext_end_byte": end_byte,
-                                },
-                                "question_text": question,
-                                "document_title": title,
-                                "language": lang,
-                                "annotations": {
-                                    # 'annotation_id': annot_ids,
-                                    "passage_answer_candidate_index": passage_cand_answers,
-                                    "minimal_answers_start_byte": min_answers_start_byte,
-                                    "minimal_answers_end_byte": min_answers_end_byte,
-                                    "yes_no_answer": yes_no_answers,
-                                },
-                                "document_plaintext": doc,
-                                # 'example_id': example_id,
-                                "document_url": url,
-                            }
-                    elif self.config.name == "primary_task_thai_source":
+                            yield id_, primary_source_helper(id_, start_byte, end_byte, question, title, lang,
+                                                             passage_cand_answers,
+                                                             min_answers_start_byte, min_answers_end_byte,
+                                                             yes_no_answers,
+                                                             doc, url)
+                    elif self.config.name == "tydiqa_primary_task_thai_source":
                         if lang == "thai":
-                            yield id_, {
-                                "passage_answer_candidates": {
-                                    "plaintext_start_byte": start_byte,
-                                    "plaintext_end_byte": end_byte,
-                                },
-                                "question_text": question,
-                                "document_title": title,
-                                "language": lang,
-                                "annotations": {
-                                    # 'annotation_id': annot_ids,
-                                    "passage_answer_candidate_index": passage_cand_answers,
-                                    "minimal_answers_start_byte": min_answers_start_byte,
-                                    "minimal_answers_end_byte": min_answers_end_byte,
-                                    "yes_no_answer": yes_no_answers,
-                                },
-                                "document_plaintext": doc,
-                                # 'example_id': example_id,
-                                "document_url": url,
-                            }
+                            yield id_, primary_source_helper(id_, start_byte, end_byte, question, title, lang,
+                                                             passage_cand_answers,
+                                                             min_answers_start_byte, min_answers_end_byte,
+                                                             yes_no_answers,
+                                                             doc, url)
                     # seacrowd
-                    elif self.config.name == "primary_task_seacrowd_qa":
-                        yield id_, {
-                            "id": str(id_),
-                            "question_id": title,
-                            "document_id": title,
-                            "question": question,
-                            "type": "multiple_choice",
-                            "choices": [""],
-                            "context": doc,
-                            "answer": [""],
-                            # the schema of 'meta' aren't specified either to allow some flexibility
-                            "meta": {
-                                "passage_answer_candidates": {
-                                    "plaintext_start_byte": start_byte,
-                                    "plaintext_end_byte": end_byte,
-                                },
-                                "annotations": {
-                                    "passage_answer_candidate_index": passage_cand_answers,
-                                    "minimal_answers_start_byte": min_answers_start_byte,
-                                    "minimal_answers_end_byte": min_answers_end_byte,
-                                    "yes_no_answer": yes_no_answers,
-                                },
-                                "language": lang,
-                            },
-                        }
-                    elif self.config.name == "primary_task_indonesian_seacrowd_qa":
+                    elif self.config.name == "tydiqa_primary_task_seacrowd_qa":
+                        yield id_, primary_seacrowd_helper(id_, title, question, doc, start_byte, end_byte,
+                                                           passage_cand_answers,
+                                                           min_answers_start_byte, min_answers_end_byte, yes_no_answers,
+                                                           lang)
+                    elif self.config.name == "tydiqa_primary_task_indonesian_seacrowd_qa":
                         if lang == "indonesian":
-                            yield id_, {
-                                "id": str(id_),
-                                "question_id": title,
-                                "document_id": title,
-                                "question": question,
-                                "type": "multiple_choice",
-                                "choices": [""],
-                                "context": doc,
-                                "answer": [""],
-                                # the schema of 'meta' aren't specified either to allow some flexibility
-                                "meta": {
-                                    "passage_answer_candidates": {
-                                        "plaintext_start_byte": start_byte,
-                                        "plaintext_end_byte": end_byte,
-                                    },
-                                    "annotations": {
-                                        "passage_answer_candidate_index": passage_cand_answers,
-                                        "minimal_answers_start_byte": min_answers_start_byte,
-                                        "minimal_answers_end_byte": min_answers_end_byte,
-                                        "yes_no_answer": yes_no_answers,
-                                    },
-                                    "language": lang,
-                                },
-                            }
-                    elif self.config.name == "primary_task_thai_seacrowd_qa":
+                            yield id_, primary_seacrowd_helper(id_, title, question, doc, start_byte, end_byte,
+                                                               passage_cand_answers,
+                                                               min_answers_start_byte, min_answers_end_byte,
+                                                               yes_no_answers,
+                                                               lang)
+                    elif self.config.name == "tydiqa_primary_task_thai_seacrowd_qa":
                         if lang == "thai":
-                            yield id_, {
-                                "id": str(id_),
-                                "question_id": title,
-                                "document_id": title,
-                                "question": question,
-                                "type": "multiple_choice",
-                                "choices": [""],
-                                "context": doc,
-                                "answer": [""],
-                                # the schema of 'meta' aren't specified either to allow some flexibility
-                                "meta": {
-                                    "passage_answer_candidates": {
-                                        "plaintext_start_byte": start_byte,
-                                        "plaintext_end_byte": end_byte,
-                                    },
-                                    "annotations": {
-                                        "passage_answer_candidate_index": passage_cand_answers,
-                                        "minimal_answers_start_byte": min_answers_start_byte,
-                                        "minimal_answers_end_byte": min_answers_end_byte,
-                                        "yes_no_answer": yes_no_answers,
-                                    },
-                                    "language": lang,
-                                },
-                            }
+                            yield id_, primary_seacrowd_helper(id_, title, question, doc, start_byte, end_byte,
+                                                               passage_cand_answers,
+                                                               min_answers_start_byte, min_answers_end_byte,
+                                                               yes_no_answers,
+                                                               lang)
                     else:
                         raise ValueError(f"No configs to match {self.config.name} in primary_task")
 
@@ -430,40 +327,96 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
                         for qa in paragraph["qas"]:
                             question = qa["question"].strip()
                             id_ = qa["id"]
-
                             answer_starts = [answer["answer_start"] for answer in qa["answers"]]
                             answers = [answer["text"].strip() for answer in qa["answers"]]
+                            if self.config.name == "tydiqa_secondary_task_source":
+                                yield id_, second_source_helper(id_, title, context, question, answer_starts, answers)
 
-                            # Features currently used are "context", "question", and "answers".
-                            # Others are extracted here for the ease of future expansions.
-                            if self.config.name == "secondary_task_source":
-                                yield id_, {
-                                    "title": title,
-                                    "context": context,
-                                    "question": question,
-                                    "id": id_,
-                                    "answers": {
-                                        "answer_start": answer_starts,
-                                        "text": answers,
-                                    },
-                                }
-
-                            elif self.config.name == "secondary_task_indonesian_source":
+                            elif self.config.name == "tydiqa_secondary_task_indonesian_source":
                                 if id_.startswith("indonesian"):
-                                    yield id_, {
-                                        "title": title,
-                                        "context": context,
-                                        "question": question,
-                                        "id": id_,
-                                        "answers": {
-                                            "answer_start": answer_starts,
-                                            "text": answers,
-                                        },
-                                    }
-                            elif self.config.name == "secondary_task_seacrowd_qa":
-                                yield id_, {"id": id_, "question_id": id_, "document_id": id_, "question": question, "type": "abstractive", "choices": [], "context": context, "answer": answers, "meta": {"answer_start": answer_starts}}
-                            elif self.config.name == "secondary_task_indonesian_seacrowd_qa":
+                                    yield id_, second_source_helper(id_, title, context, question, answer_starts,
+                                                                    answers)
+                            elif self.config.name == "tydiqa_secondary_task_seacrowd_qa":
+                                yield id_, second_seacrowd_helper(id_, question, context, answers, answer_starts)
+                            elif self.config.name == "tydiqa_secondary_task_indonesian_seacrowd_qa":
                                 if id_.startswith("indonesian"):
-                                    yield id_, {"id": id_, "question_id": id_, "document_id": id_, "question": question, "type": "abstractive", "choices": [], "context": context, "answer": answers, "meta": {"answer_start": answer_starts}}
+                                    yield id_, second_seacrowd_helper(id_, question, context, answers, answer_starts)
                             else:
                                 raise ValueError(f"No configs to match {self.config.name} in secondary_task")
+
+
+def primary_source_helper(id_, start_byte, end_byte, question, title, lang, passage_cand_answers,
+                          min_answers_start_byte, min_answers_end_byte, yes_no_answers, doc, url):
+    return {
+        "passage_answer_candidates": {
+            "plaintext_start_byte": start_byte,
+            "plaintext_end_byte": end_byte,
+        },
+        "question_text": question,
+        "document_title": title,
+        "language": lang,
+        "annotations": {
+            "passage_answer_candidate_index": passage_cand_answers,
+            "minimal_answers_start_byte": min_answers_start_byte,
+            "minimal_answers_end_byte": min_answers_end_byte,
+            "yes_no_answer": yes_no_answers,
+        },
+        "document_plaintext": doc,
+        "document_url": url,
+    }
+
+
+def primary_seacrowd_helper(id_, title, question, doc, start_byte, end_byte, passage_cand_answers,
+                            min_answers_start_byte, min_answers_end_byte, yes_no_answers, lang):
+    return {
+        "id": str(id_),
+        "question_id": title,
+        "document_id": title,
+        "question": question,
+        "type": "multiple_choice",
+        "choices": [""],
+        "context": doc,
+        "answer": [""],
+        "meta": {
+            "passage_answer_candidates": {
+                "plaintext_start_byte": start_byte,
+                "plaintext_end_byte": end_byte,
+            },
+            "annotations": {
+                "passage_answer_candidate_index": passage_cand_answers,
+                "minimal_answers_start_byte": min_answers_start_byte,
+                "minimal_answers_end_byte": min_answers_end_byte,
+                "yes_no_answer": yes_no_answers,
+            },
+            "language": lang,
+        },
+    }
+
+
+def second_source_helper(id_, title, context, question, answer_starts, answers):
+    return {
+        "title": title,
+        "context": context,
+        "question": question,
+        "id": id_,
+        "answers": {
+            "answer_start": answer_starts,
+            "text": answers,
+        },
+    }
+
+
+def second_seacrowd_helper(id_, question, context, answers, answer_starts):
+    return {
+        "id": id_,
+        "question_id": id_,
+        "document_id": id_,
+        "question": question,
+        "type": "abstractive",
+        "choices": [],
+        "context": context,
+        "answer": answers,
+        "meta": {
+            "answer_start": answer_starts
+        }
+    }
