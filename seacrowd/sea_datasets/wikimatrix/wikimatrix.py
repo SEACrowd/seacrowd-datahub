@@ -5,7 +5,9 @@ import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Licenses, Tasks, DEFAULT_SOURCE_VIEW_NAME, DEFAULT_SEACROWD_VIEW_NAME
+from seacrowd.utils.constants import (DEFAULT_SEACROWD_VIEW_NAME,
+                                      DEFAULT_SOURCE_VIEW_NAME, Licenses,
+                                      Tasks)
 
 _DATASETNAME = "wikimatrix"
 _SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
@@ -44,8 +46,8 @@ _CITATION = """\
 """
 
 _DESCRIPTION = """\
-WikiMatrix is automatically extracted parallel sentences from the content of Wikipedia articles in 96 languages, including several dialects 
-or low-resource languages. 8 languages among them are spoken in Southeast Asia region. In total, there are 135M parallel sentences from 1620 
+WikiMatrix is automatically extracted parallel sentences from the content of Wikipedia articles in 96 languages, including several dialects
+or low-resource languages. 8 languages among them are spoken in Southeast Asia region. In total, there are 135M parallel sentences from 1620
 different language pairs.
 """
 
@@ -53,28 +55,149 @@ _HOMEPAGE = "https://github.com/facebookresearch/LASER/tree/main/tasks/WikiMatri
 
 _LICENSE = Licenses.CC_BY_SA_4_0.value
 
-_URLs = {_DATASETNAME: "https://dl.fbaipublicfiles.com/laser/WikiMatrix/v1/WikiMatrix.{lang1}-{lang2}.tsv.gz"}
+_URLs = "https://dl.fbaipublicfiles.com/laser/WikiMatrix/v1/WikiMatrix.{lang1}-{lang2}.tsv.gz"
 
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
-# fmt: off
-_SUBSETS = ["en-jv", "es-jv", "fr-jv", "id-jv", "it-jv", "jv-pt", "bg-ceb", "ar-ceb", "ca-ceb", "ceb-cs", "ceb-de", "ceb-en", "ceb-es", "ceb-fi", "ceb-fr", "ceb-hu", "ceb-it", "ceb-ja", "ceb-nl", "ceb-no", "ceb-pl", "ceb-pt", "ceb-ro", "ceb-ru", "ceb-sv", "ceb-uk", "id-is", "id-it", "id-ja", "id-ko", "id-lt", "id-mk", "id-ml", "id-mr", "id-ne", "id-nl", "id-no", "id-pl", "id-pt", "id-ro", "id-ru", "id-sh", "id-si", "id-sk", "id-sl", "id-sq", "id-sr", "id-sv", "id-sw", "id-ta", "id-te", "id-tl", "id-tr", "id-tt", "id-uk", "id-vi", "id-zh", "ar-id", "az-id", "ba-id", "bg-id", "bn-id", "bs-id", "ca-id", "cs-id", "da-id", "de-id", "el-id", "en-id", "eo-id", "es-id", "et-id", "eu-id", "fa-id", "fi-id", "fr-id", "gl-id", "he-id", "hi-id", "hr-id", "hu-id", "ar-tl", "bg-tl", "bs-tl", "ca-tl", "cs-tl", "da-tl", "de-tl", "el-tl", "en-tl", "eo-tl", "es-tl", "et-tl", "fi-tl", "fr-tl", "gl-tl", "he-tl", "hr-tl", "hu-tl", "it-tl", "ja-tl", "lt-tl", "mk-tl", "nl-tl", "no-tl", "pl-tl", "pt-tl", "ro-tl", "ru-tl", "sh-tl", "sk-tl", "sl-tl", "sq-tl", "sr-tl", "sv-tl", "tl-tr", "tl-uk", "tl-vi", "tl-zh", "ar-vi", "az-vi", "bg-vi", "bn-vi", "bs-vi", "ca-vi", "cs-vi", "da-vi", "de-vi", "el-vi", "en-vi", "eo-vi", "es-vi", "et-vi", "eu-vi", "fa-vi", "fi-vi", "fr-vi", "gl-vi", "he-vi", "hi-vi", "hr-vi", "hu-vi", "is-vi", "it-vi", "ja-vi", "ko-vi", "lt-vi", "mk-vi", "ml-vi", "mr-vi", "nl-vi", "no-vi", "pl-vi", "pt-vi", "ro-vi", "ru-vi", "sh-vi", "si-vi", "sk-vi", "sl-vi", "sq-vi", "sr-vi", "sv-vi", "sw-vi", "ta-vi", "te-vi", "tr-vi", "uk-vi", "vi-zh"] 
-# fmt: on
+
+config = {
+    "jv": ["en", "es", "fr", "id", "it", "pt"],
+    "ceb": ["bg", "ar", "ca", "cs", "de", "en", "es", "fi", "fr", "hu", "it", "ja", "nl", "no", "pl", "pt", "ro", "ru", "sv", "uk"],
+    "id": [
+        "jv",
+        "is",
+        "it",
+        "ja",
+        "ko",
+        "lt",
+        "mk",
+        "ml",
+        "mr",
+        "ne",
+        "nl",
+        "no",
+        "pl",
+        "pt",
+        "ro",
+        "ru",
+        "sh",
+        "si",
+        "sk",
+        "sl",
+        "sq",
+        "sr",
+        "sv",
+        "sw",
+        "ta",
+        "te",
+        "tl",
+        "tr",
+        "tt",
+        "uk",
+        "vi",
+        "zh",
+        "ar",
+        "az",
+        "ba",
+        "bg",
+        "bn",
+        "bs",
+        "ca",
+        "cs",
+        "da",
+        "de",
+        "el",
+        "en",
+        "eo",
+        "es",
+        "et",
+        "eu",
+        "fa",
+        "fi",
+        "fr",
+        "gl",
+        "he",
+        "hi",
+        "hr",
+        "hu",
+    ],
+    "tl": ["ar", "bg", "bs", "ca", "cs", "da", "de", "el", "en", "eo", "es", "et", "fi", "fr", "gl", "he", "hr", "hu", "id", "it", "ja", "lt", "mk", "nl", "no", "pl", "pt", "ro", "ru", "sh", "sk", "sl", "sq", "sr", "sv", "tr", "uk", "vi", "zh"],
+    "vi": [
+        "ar",
+        "az",
+        "bg",
+        "bn",
+        "bs",
+        "ca",
+        "cs",
+        "da",
+        "de",
+        "el",
+        "en",
+        "eo",
+        "es",
+        "et",
+        "eu",
+        "fa",
+        "fi",
+        "fr",
+        "gl",
+        "he",
+        "hi",
+        "hr",
+        "hu",
+        "id",
+        "is",
+        "it",
+        "ja",
+        "ko",
+        "lt",
+        "mk",
+        "ml",
+        "mr",
+        "nl",
+        "no",
+        "pl",
+        "pt",
+        "ro",
+        "ru",
+        "sh",
+        "si",
+        "sk",
+        "sl",
+        "sq",
+        "sr",
+        "sv",
+        "sw",
+        "ta",
+        "te",
+        "tl",
+        "tr",
+        "uk",
+        "zh",
+    ],
+}
+_SUBSETS = set()
+for lang, pairs in config.items():
+    for pair in pairs:
+        _SUBSETS.add("{}-{}".format(lang, pair) if lang < pair else "{}-{}".format(pair, lang))
+_SUBSETS = list(_SUBSETS)
+
 
 class WikiMatrixDataset(datasets.GeneratorBasedBuilder):
-    """WikiMatrix is automatically extracted parallel sentences from the content of Wikipedia articles in 96 languages, including several dialects 
+    """WikiMatrix is automatically extracted parallel sentences from the content of Wikipedia articles in 96 languages, including several dialects
     or low-resource languages."""
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
             name=f"wikimatrix_{subset.replace('-', '_')}_source",
             version=datasets.Version(_SOURCE_VERSION),
-            description="Bible En-Id source schema",
+            description="WikiMatrix source schema",
             schema="source",
             subset_id=f"wikimatrix_{subset.replace('-', '_')}",
-        ) 
+        )
         for subset in _SUBSETS
     ] + [
         SEACrowdConfig(
@@ -91,13 +214,15 @@ class WikiMatrixDataset(datasets.GeneratorBasedBuilder):
 
     def _info(self):
         if self.config.schema == "source":
-            features = datasets.Features({
-                "id": datasets.Value("string"), 
-                "text_1": datasets.Value("string"), 
-                "text_2": datasets.Value("string"),
-                "text_1_name": datasets.Value("string"), 
-                "text_2_name": datasets.Value("string"),
-            })
+            features = datasets.Features(
+                {
+                    "id": datasets.Value("string"),
+                    "text_1": datasets.Value("string"),
+                    "text_2": datasets.Value("string"),
+                    "text_1_name": datasets.Value("string"),
+                    "text_2_name": datasets.Value("string"),
+                }
+            )
         elif self.config.schema == "seacrowd_t2t":
             features = schemas.text2text_features
 
@@ -111,7 +236,7 @@ class WikiMatrixDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         lang1, lang2 = self.config.name.split("_")[1], self.config.name.split("_")[2]
-        filepath = Path(dl_manager.download_and_extract(_URLs[_DATASETNAME].replace("{lang1}", lang1).replace("{lang2}", lang2)))
+        filepath = Path(dl_manager.download_and_extract(_URLs.format(lang1=lang1, lang2=lang2)))
 
         return [
             datasets.SplitGenerator(
@@ -122,7 +247,7 @@ class WikiMatrixDataset(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, filepath: Path):
         with open(filepath, "r") as f:
-            data = f.readlines() 
+            data = f.readlines()
 
         lang1, lang2 = self.config.name.split("_")[1], self.config.name.split("_")[2]
         if self.config.schema == "source":
@@ -150,6 +275,3 @@ class WikiMatrixDataset(datasets.GeneratorBasedBuilder):
                 yield _id, ex
         else:
             raise ValueError(f"Invalid config: {self.config.name}")
-
-
-
