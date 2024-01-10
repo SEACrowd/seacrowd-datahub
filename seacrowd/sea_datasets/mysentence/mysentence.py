@@ -55,7 +55,6 @@ _SEACROWD_VERSION = "1.0.0"
 class mysentenceDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-    # print(schemas.seq_label)
     BUILDER_CONFIGS = [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_source",
@@ -122,7 +121,6 @@ class mysentenceDataset(datasets.GeneratorBasedBuilder):
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
-                # Whatever you put in gen_kwargs will be passed to _generate_examples
                 gen_kwargs={"filepath": data_dir["train"]},
             ),
             datasets.SplitGenerator(
