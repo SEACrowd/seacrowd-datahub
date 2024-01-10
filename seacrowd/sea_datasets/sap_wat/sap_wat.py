@@ -95,7 +95,7 @@ class SapWat(datasets.GeneratorBasedBuilder):
             version=datasets.Version(_SEACROWD_VERSION),
             description=f"SAP WAT SEACrowd schema for EN-{lang.upper()}",
             schema="seacrowd_t2t",
-            subset_id=f"sap_wat_en_{lang}",
+            subset_id=f"{_DATASETNAME}_en_{lang}",
         ) 
         for lang in _SUBSET
     ]
