@@ -8,7 +8,7 @@ from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
-_DATASETNAME = "uit-viic"
+_DATASETNAME = "uit_viic"
 _CITATION = """\
             @InProceedings{10.1007/978-3-030-63007-2_57,
             author="Lam, Quan Hoang
@@ -50,11 +50,13 @@ _DESCRIPTION = """
 
 _HOMEPAGE = "https://drive.google.com/file/d/1YexKrE6o0UiJhFWpE8M5LKoe6-k3AiM4"
 _PAPER_URL = "https://arxiv.org/abs/2002.00175"
-_LICENSE = Licenses.UNKNOWN
+_LICENSE = Licenses.UNKNOWN.value
 _HF_URL = ""
+_LANGUAGES = ['vi']
+_LOCAL = False
 _SUPPORTED_TASKS = [Tasks.IMAGE_CAPTIONING]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "0.0.0"
+_SEACROWD_VERSION = "1.0.0"
 
 _UIT_VIIC_URL = "https://drive.google.com/uc?export=download&id=1YexKrE6o0UiJhFWpE8M5LKoe6-k3AiM4"
 _Split_Path = {
@@ -66,47 +68,37 @@ _Split_Path = {
 
 class UITViICDataset(datasets.GeneratorBasedBuilder):
     BUILDER_CONFIGS = [
-        SEACrowdConfig(name="uit-viic_source", version=datasets.Version(_SOURCE_VERSION), description=_DESCRIPTION, subset_id="uit-viicd", schema="source"),
-        SEACrowdConfig(name="uit-viic_seacrowd_imtext", version=datasets.Version(_SOURCE_VERSION), description=_DESCRIPTION, subset_id="uit-viic", schema="seacrowd"),
+        SEACrowdConfig(name=f"{_DATASETNAME}_source", version=datasets.Version(_SOURCE_VERSION),
+                       description=_DESCRIPTION, subset_id=f"{_DATASETNAME}", schema="source"),
+        SEACrowdConfig(name=f"{_DATASETNAME}_seacrowd_imtext", version=datasets.Version(_SEACROWD_VERSION),
+                       description=_DESCRIPTION, subset_id=f"{_DATASETNAME}", schema="seacrowd_imtext"),
     ]
 
     def _info(self):
         if self.config.schema == "source":
-            return datasets.DatasetInfo(
-                # This is the description that will appear on the datasets page.
-                description=_DESCRIPTION,
-                # datasets.features.FeatureConnectors
-                # {"license": 2, "file_name": "000000535668.jpg",
-                #  "coco_url": "http://images.cocodataset.org/train2017/000000535668.jpg", "height": 426, "width": 640,
-                #  "date_captured": "2013-11-19 18:06:56",
-                #  "flickr_url": "http://farm4.staticflickr.com/3061/2442277392_49eb08cb2f_z.jpg", "id": 535668}
-                # {"image_id": 157656, "caption": "Người đàn ông đang đánh tennis ngoài sân.", "id": 4990}
-                features=datasets.Features(
-                    {
-                        "license": datasets.Value("int32"),
-                        "file_name": datasets.Value("string"),
-                        "coco_url": datasets.Value("string"),
-                        "flickr_url": datasets.Value("string"),
-                        "height": datasets.Value("int32"),
-                        "width": datasets.Value("int32"),
-                        "date_captured": datasets.Value("string"),
-                        "image_id": datasets.Value("int32"),
-                        "caption": datasets.Value("string"),
-                        "cap_id": datasets.Value("int32"),
-                    }
-                ),
-                supervised_keys=None,
-                homepage=_HOMEPAGE,
-                citation=_CITATION,
+            features = datasets.Features(
+                        {
+                            "license": datasets.Value("int32"),
+                            "file_name": datasets.Value("string"),
+                            "coco_url": datasets.Value("string"),
+                            "flickr_url": datasets.Value("string"),
+                            "height": datasets.Value("int32"),
+                            "width": datasets.Value("int32"),
+                            "date_captured": datasets.Value("string"),
+                            "image_id": datasets.Value("int32"),
+                            "caption": datasets.Value("string"),
+                            "cap_id": datasets.Value("int32"),
+                        }
             )
-        elif self.config.schema == "seacrowd":
-            return datasets.DatasetInfo(
-                description=_DESCRIPTION,
-                features=schemas.image_text_features(),
-                supervised_keys=None,
-                homepage=_HOMEPAGE,
-                citation=_CITATION,
-            )
+        elif self.config.schema == "seacrowd_imtext":
+            features = schemas.image_text_features()
+        return datasets.DatasetInfo(
+            description=_DESCRIPTION,
+            features=features,
+            license=_LICENSE,
+            homepage=_HOMEPAGE,
+            citation=_CITATION,
+        )
 
     def _split_generators(self, dl_manager):
         file_paths = dl_manager.download_and_extract(_UIT_VIIC_URL)
@@ -135,7 +127,6 @@ class UITViICDataset(datasets.GeneratorBasedBuilder):
 
             for idx, capt in enumerate(captns):
                 image_id = capt["image_id"]
-                # print(images[image_id])
                 if self.config.schema == "source":
                     yield idx, {
                         "license": images[image_id]["license"],
@@ -149,7 +140,7 @@ class UITViICDataset(datasets.GeneratorBasedBuilder):
                         "caption": capt["caption"],
                         "cap_id": capt["id"],
                     }
-                elif self.config.schema == "seacrowd":
+                elif self.config.schema == "seacrowd_imtext":
                     yield idx, {
                         "id": capt["id"],
                         "image_paths": [images[image_id]["coco_url"], images[image_id]["flickr_url"]],
