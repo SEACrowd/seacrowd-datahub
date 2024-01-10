@@ -111,59 +111,44 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
     BUILDER_CONFIGS = [
         # source schema
         config_constructor(subset_id="primary_task", schema="source", desc=_PRIMARY_DESP, version=_SOURCE_VERSION_P),
-        config_constructor(subset_id="primary_task_indonesian", schema="source", desc=_PRIMARY_DESP,
-                           version=_SOURCE_VERSION_P),
-        config_constructor(subset_id="primary_task_thai", schema="source", desc=_PRIMARY_DESP,
-                           version=_SOURCE_VERSION_P),
-        config_constructor(subset_id="secondary_task", schema="source", desc=_SECONDARY_DESP,
-                           version=_SOURCE_VERSION_S),
-        config_constructor(subset_id="secondary_task_indonesian", schema="source", desc=_SECONDARY_DESP,
-                           version=_SOURCE_VERSION_S),
+        config_constructor(subset_id="primary_task_indonesian", schema="source", desc=_PRIMARY_DESP, version=_SOURCE_VERSION_P),
+        config_constructor(subset_id="primary_task_thai", schema="source", desc=_PRIMARY_DESP, version=_SOURCE_VERSION_P),
+        config_constructor(subset_id="secondary_task", schema="source", desc=_SECONDARY_DESP, version=_SOURCE_VERSION_S),
+        config_constructor(subset_id="secondary_task_indonesian", schema="source", desc=_SECONDARY_DESP, version=_SOURCE_VERSION_S),
         # seacrowd schema
-        config_constructor(subset_id="primary_task", schema="seacrowd_qa", desc=_PRIMARY_DESP,
-                           version=_SEACROWD_VERSION),
-        config_constructor(subset_id="primary_task_indonesian", schema="seacrowd_qa", desc=_PRIMARY_DESP,
-                           version=_SEACROWD_VERSION),
-        config_constructor(subset_id="primary_task_thai", schema="seacrowd_qa", desc=_PRIMARY_DESP,
-                           version=_SEACROWD_VERSION),
-        config_constructor(subset_id="secondary_task", schema="seacrowd_qa", desc=_PRIMARY_DESP,
-                           version=_SEACROWD_VERSION),
-        config_constructor(subset_id="secondary_task_indonesian", schema="seacrowd_qa", desc=_PRIMARY_DESP,
-                           version=_SEACROWD_VERSION),
+        config_constructor(subset_id="primary_task", schema="seacrowd_qa", desc=_PRIMARY_DESP, version=_SEACROWD_VERSION),
+        config_constructor(subset_id="primary_task_indonesian", schema="seacrowd_qa", desc=_PRIMARY_DESP, version=_SEACROWD_VERSION),
+        config_constructor(subset_id="primary_task_thai", schema="seacrowd_qa", desc=_PRIMARY_DESP, version=_SEACROWD_VERSION),
+        config_constructor(subset_id="secondary_task", schema="seacrowd_qa", desc=_SECONDARY_DESP, version=_SEACROWD_VERSION),
+        config_constructor(subset_id="secondary_task_indonesian", schema="seacrowd_qa", desc=_SECONDARY_DESP, version=_SEACROWD_VERSION),
     ]
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_primary_task_source"
 
     def _info(self):
         if "primary_task" in self.config.name:
             if "source" in self.config.name:
-                return datasets.DatasetInfo(
-                    description=_DESCRIPTION,
-                    features=datasets.Features(
-                        {
-                            "passage_answer_candidates": datasets.features.Sequence(
-                                {
-                                    "plaintext_start_byte": datasets.Value("int32"),
-                                    "plaintext_end_byte": datasets.Value("int32"),
-                                }
-                            ),
-                            "question_text": datasets.Value("string"),
-                            "document_title": datasets.Value("string"),
-                            "language": datasets.Value("string"),
-                            "annotations": datasets.features.Sequence(
-                                {
-                                    "passage_answer_candidate_index": datasets.Value("int32"),
-                                    "minimal_answers_start_byte": datasets.Value("int32"),
-                                    "minimal_answers_end_byte": datasets.Value("int32"),
-                                    "yes_no_answer": datasets.Value("string"),
-                                }
-                            ),
-                            "document_plaintext": datasets.Value("string"),
-                            "document_url": datasets.Value("string")
-                        }
-                    ),
-                    citation=_CITATION,
-                    homepage=_HOMEPAGE,
-                    license=_LICENSE,
+                features = datasets.Features(
+                    {
+                        "passage_answer_candidates": datasets.features.Sequence(
+                            {
+                                "plaintext_start_byte": datasets.Value("int32"),
+                                "plaintext_end_byte": datasets.Value("int32"),
+                            }
+                        ),
+                        "question_text": datasets.Value("string"),
+                        "document_title": datasets.Value("string"),
+                        "language": datasets.Value("string"),
+                        "annotations": datasets.features.Sequence(
+                            {
+                                "passage_answer_candidate_index": datasets.Value("int32"),
+                                "minimal_answers_start_byte": datasets.Value("int32"),
+                                "minimal_answers_end_byte": datasets.Value("int32"),
+                                "yes_no_answer": datasets.Value("string"),
+                            }
+                        ),
+                        "document_plaintext": datasets.Value("string"),
+                        "document_url": datasets.Value("string")
+                    }
                 )
             elif "seacrowd" in self.config.name:
                 features = schemas.qa_features
@@ -185,19 +170,16 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
                     "language": datasets.Value("string"),
                 }
 
-                return datasets.DatasetInfo(
-                    description=_DESCRIPTION,
-                    features=features,
-                    citation=_CITATION,
-                    homepage=_HOMEPAGE,
-                    license=_LICENSE,
-                )
+            return datasets.DatasetInfo(
+                description=_DESCRIPTION,
+                features=features,
+                citation=_CITATION,
+                homepage=_HOMEPAGE,
+                license=_LICENSE,
+            )
         elif "secondary_task" in self.config.name:
             if "source" in self.config.name:
-                return datasets.DatasetInfo(
-                    description=_DESCRIPTION,
-                    features=datasets.Features(
-                        {
+                features = datasets.Features({
                             "id": datasets.Value("string"),
                             "title": datasets.Value("string"),
                             "context": datasets.Value("string"),
@@ -208,18 +190,13 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
                                     "answer_start": datasets.Value("int32"),
                                 }
                             ),
-                        }
-                    ),
-                    citation=_CITATION,
-                    homepage=_HOMEPAGE,
-                    license=_LICENSE,
-                )
+                        })
             elif "seacrowd" in self.config.name:
                 features = schemas.qa_features
                 features["meta"] = {
                     "answer_start": datasets.Sequence(datasets.Value("int32")),
                 }
-                return datasets.DatasetInfo(
+            return datasets.DatasetInfo(
                     description=_DESCRIPTION,
                     features=features,
                     citation=_CITATION,
