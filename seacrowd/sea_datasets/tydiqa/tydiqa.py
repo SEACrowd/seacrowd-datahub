@@ -52,13 +52,14 @@ _DESCRIPTION = """\
     """
 
 _HOMEPAGE = "https://github.com/google-research-datasets/tydiqa"
-_LICENSE = Licenses.APACHE_2_0
+_LICENSE = Licenses.APACHE_2_0.value
 _HF_URL = "https://huggingface.co/datasets/tydiqa"
 _SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
+_LANGUAGES = ["ind", "tha"]
 
 _SOURCE_VERSION_P = "1.0.0"
 _SOURCE_VERSION_S = "1.1.0"
-_SEACROWD_VERSION = "0.0.0"
+_SEACROWD_VERSION = "1.0.0"
 
 _URL = "https://storage.googleapis.com/tydiqa/"
 _PRIMARY_URLS = {
@@ -90,51 +91,47 @@ _SECONDARY_DESP = """Gold passage task (GoldP): Given a passage that is guarante
           """
 
 
+def config_constructor(subset_id, schema, desc, version):
+    return SEACrowdConfig(
+        name=f"{_DATASETNAME}_{subset_id}_{schema}",
+        description=desc,
+        version=datasets.Version(version),
+        schema=schema,
+        subset_id=subset_id
+    )
+
+
 class TydiqaDataset(datasets.GeneratorBasedBuilder):
     """
-    TyDi QA is a question answering dataset covering 11 typologically diverse languages with 204K question-answer pairs.
-    The languages of TyDi QA are diverse with regard to their typology -- the set of linguistic features that each language
-    expresses -- such that we expect models performing well on this set to generalize across a large number of the languages
-    in the world. It contains language phenomena that would not be found in English-only corpora. To provide a realistic
-    information-seeking task and avoid priming effects, questions are written by people who want to know the answer, but
-    don’t know the answer yet, (unlike SQuAD and its descendents) and the data is collected directly in each language
-    without the use of translation (unlike MLQA and XQuAD).
+    This is a main class of SEACrowd dataloader for TyDi QA, which is a question answering dataset covering 11 typologically
+    diverse languages with 204K question-answer pairs. The languages of TyDi QA are diverse with regard to their typology.
+    Here we also specially provide the split on the primary and secondary task for SEA language like indonesian and thai.
     """
 
     BUILDER_CONFIGS = [
-        SEACrowdConfig(name="tydiqa_primary_task_source", description=_PRIMARY_DESP,
-                       version=datasets.Version(_SOURCE_VERSION_P), schema="source",
-                       subset_id="tydiqa_primary_task"),
-        SEACrowdConfig(name="tydiqa_primary_task_indonesian_source", description=_PRIMARY_DESP,
-                       version=datasets.Version(_SOURCE_VERSION_P), schema="source",
-                       subset_id="tydiqa_primary_task_indonesian"),
-        SEACrowdConfig(name="tydiqa_primary_task_thai_source", description=_PRIMARY_DESP,
-                       version=datasets.Version(_SOURCE_VERSION_P), schema="source",
-                       subset_id="tydiqa_primary_task_thai"),
-        SEACrowdConfig(name="tydiqa_secondary_task_source", description=_SECONDARY_DESP,
-                       version=datasets.Version(_SOURCE_VERSION_S), schema="source",
-                       subset_id="tydiqa_secondary_task"),
-        SEACrowdConfig(name="tydiqa_secondary_task_indonesian_source", description=_SECONDARY_DESP,
-                       version=datasets.Version(_SOURCE_VERSION_S), schema="source",
-                       subset_id="tydiqa_secondary_task_indonesian"),
-        ##########################
-        SEACrowdConfig(name="tydiqa_primary_task_seacrowd_qa", description=_PRIMARY_DESP,
-                       version=datasets.Version(_SEACROWD_VERSION), schema="seacrowd_qa",
-                       subset_id="tydiqa_primary_task"),
-        SEACrowdConfig(name="tydiqa_primary_task_indonesian_seacrowd_qa", description=_PRIMARY_DESP,
-                       version=datasets.Version(_SEACROWD_VERSION), schema="seacrowd_qa",
-                       subset_id="tydiqa_primary_task_indonesian"),
-        SEACrowdConfig(name="tydiqa_primary_task_thai_seacrowd_qa", description=_PRIMARY_DESP,
-                       version=datasets.Version(_SEACROWD_VERSION), schema="seacrowd_qa",
-                       subset_id="tydiqa_primary_task_thai"),
-        SEACrowdConfig(name="tydiqa_secondary_task_seacrowd_qa", description=_PRIMARY_DESP,
-                       version=datasets.Version(_SEACROWD_VERSION), schema="seacrowd_qa",
-                       subset_id="tydiqa_secondary_task"),
-        SEACrowdConfig(name="tydiqa_secondary_task_indonesian_seacrowd_qa", description=_PRIMARY_DESP,
-                       version=datasets.Version(_SEACROWD_VERSION), schema="seacrowd_qa",
-                       subset_id="tydiqa_secondary_task_indonesian"),
+        # source schema
+        config_constructor(subset_id="primary_task", schema="source", desc=_PRIMARY_DESP, version=_SOURCE_VERSION_P),
+        config_constructor(subset_id="primary_task_indonesian", schema="source", desc=_PRIMARY_DESP,
+                           version=_SOURCE_VERSION_P),
+        config_constructor(subset_id="primary_task_thai", schema="source", desc=_PRIMARY_DESP,
+                           version=_SOURCE_VERSION_P),
+        config_constructor(subset_id="secondary_task", schema="source", desc=_SECONDARY_DESP,
+                           version=_SOURCE_VERSION_S),
+        config_constructor(subset_id="secondary_task_indonesian", schema="source", desc=_SECONDARY_DESP,
+                           version=_SOURCE_VERSION_S),
+        # seacrowd schema
+        config_constructor(subset_id="primary_task", schema="seacrowd_qa", desc=_PRIMARY_DESP,
+                           version=_SEACROWD_VERSION),
+        config_constructor(subset_id="primary_task_indonesian", schema="seacrowd_qa", desc=_PRIMARY_DESP,
+                           version=_SEACROWD_VERSION),
+        config_constructor(subset_id="primary_task_thai", schema="seacrowd_qa", desc=_PRIMARY_DESP,
+                           version=_SEACROWD_VERSION),
+        config_constructor(subset_id="secondary_task", schema="seacrowd_qa", desc=_PRIMARY_DESP,
+                           version=_SEACROWD_VERSION),
+        config_constructor(subset_id="secondary_task_indonesian", schema="seacrowd_qa", desc=_PRIMARY_DESP,
+                           version=_SEACROWD_VERSION),
     ]
-    DEFAULT_CONFIG_NAME = "tydiqa_primary_task_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_primary_task_source"
 
     def _info(self):
         if "primary_task" in self.config.name:
@@ -165,6 +162,8 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
                         }
                     ),
                     citation=_CITATION,
+                    homepage=_HOMEPAGE,
+                    license=_LICENSE,
                 )
             elif "seacrowd" in self.config.name:
                 features = schemas.qa_features
@@ -190,6 +189,8 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
                     description=_DESCRIPTION,
                     features=features,
                     citation=_CITATION,
+                    homepage=_HOMEPAGE,
+                    license=_LICENSE,
                 )
         elif "secondary_task" in self.config.name:
             if "source" in self.config.name:
@@ -210,6 +211,8 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
                         }
                     ),
                     citation=_CITATION,
+                    homepage=_HOMEPAGE,
+                    license=_LICENSE,
                 )
             elif "seacrowd" in self.config.name:
                 features = schemas.qa_features
@@ -220,6 +223,8 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
                     description=_DESCRIPTION,
                     features=features,
                     citation=_CITATION,
+                    homepage=_HOMEPAGE,
+                    license=_LICENSE,
                 )
 
     def _split_generators(self, dl_manager):
