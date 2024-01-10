@@ -38,7 +38,7 @@ _LOCAL = False
 _LANGUAGES = ["eng", "fil"]
 _DATASETNAME = "tcope"
 _DESCRIPTION = """
-The TCOPE dataset consists of 1,048,576 public tweets (amounting to about 13.5 million words) collected from 13 major cities from the Philippines.
+The TCOPE dataset consists of public tweets (amounting to about 13.5 million words) collected from 13 major cities from the Philippines.
 Tweets are either purely in English or involve code-switching between English and Filipino.
 Tweets are tagged for part-of-speech and dependency parsing using spaCy. Tweets collected are from 2010 to 2021.
 The publicly available dataset is only a random sample (10%) from the whole TCOPE dataset, which consist of roughly 27 million tweets
@@ -49,7 +49,7 @@ _HOMEPAGE = "https://osf.io/3q5pw/wiki/home/"
 _LICENSE = Licenses.CC0_1_0.value
 _URL = "https://files.osf.io/v1/resources/3q5pw/providers/osfstorage/63737a5b0e715d3616a998f7"
 
-_SUPPORTED_TASKS = [Tasks.POS_TAGGING]
+_SUPPORTED_TASKS = [Tasks.POS_TAGGING, Tasks.DEPENDENCY_PARSING]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
