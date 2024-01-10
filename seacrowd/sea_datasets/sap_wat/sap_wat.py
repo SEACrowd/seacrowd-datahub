@@ -83,7 +83,7 @@ class SapWat(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name=f"sap_wat_en_{lang}_source",
+            name=f"{_DATASETNAME}_en_{lang}_source",
             version=datasets.Version(_SOURCE_VERSION),
             description=f"SAP WAT source schema for EN-{lang.upper()}",
             schema="source",
