@@ -7,7 +7,7 @@ from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
-_DATASETNAME = "iapp_squad"
+_DATASETNAME = "iapp_wiki_qa_squad"
 _CITATION = """\
             @dataset
             {
@@ -31,12 +31,13 @@ _DESCRIPTION = """
             """
 
 _HOMEPAGE = "https://github.com/iapp-technology/iapp-wiki-qa-dataset"
-_LICENSE = Licenses.MIT
+_LICENSE = Licenses.MIT.value
 _HF_URL = " https://huggingface.co/datasets/iapp_wiki_qa_squad"
 _SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
-
+_LOCAL = False
+_LANGUAGES = ['tha']
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "0.0.0"
+_SEACROWD_VERSION = "1.0.0"
 
 _IAPP = {
     "train": "https://raw.githubusercontent.com/iapp-technology/iapp-wiki-qa-dataset/main/squad_format/data/train.jsonl",
@@ -45,19 +46,17 @@ _IAPP = {
 }
 
 
-class IappSquadDataset(datasets.GeneratorBasedBuilder):
+class IappWikiQASquadDataset(datasets.GeneratorBasedBuilder):
     BUILDER_CONFIGS = [
-        SEACrowdConfig(name="iapp_squad_source", version=datasets.Version(_SOURCE_VERSION), description=_DESCRIPTION, subset_id="iapp_squad", schema="source"),
-        SEACrowdConfig(name="iapp_squad_seacrowd_qa", version=datasets.Version(_SOURCE_VERSION), description=_DESCRIPTION, subset_id="iapp_squad", schema="seacrowd"),
+        SEACrowdConfig(name=f"{_DATASETNAME}_source", version=datasets.Version(_SOURCE_VERSION), description=_DESCRIPTION,
+                       subset_id=f"{_DATASETNAME}", schema="source"),
+        SEACrowdConfig(name=f"{_DATASETNAME}_seacrowd_qa", version=datasets.Version(_SOURCE_VERSION), description=_DESCRIPTION,
+                       subset_id=f"{_DATASETNAME}", schema="seacrowd_qa"),
     ]
-
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
     def _info(self):
         if self.config.schema == "source":
-            return datasets.DatasetInfo(
-                # This is the description that will appear on the datasets page.
-                description=_DESCRIPTION,
-                # datasets.features.FeatureConnectors
-                features=datasets.Features(
+            features = datasets.Features(
                     {
                         "question_id": datasets.Value("string"),
                         "article_id": datasets.Value("string"),
@@ -72,28 +71,23 @@ class IappSquadDataset(datasets.GeneratorBasedBuilder):
                             }
                         ),
                     }
-                ),
-                supervised_keys=None,
-                homepage="https://github.com/iapp-technology/iapp-wiki-qa-dataset/",
-                citation=_CITATION,
-            )
-        elif self.config.schema == "seacrowd":
+                )
+        elif self.config.schema == "seacrowd_qa":
             features = schemas.qa_features
             features["meta"] = {
                 "answer_start": datasets.Value("int32"),
                 "answer_end": datasets.Value("int32"),
             }
-            return datasets.DatasetInfo(
-                description=_DESCRIPTION,
-                features=features,
-                supervised_keys=None,
-                homepage="https://github.com/iapp-technology/iapp-wiki-qa-dataset/",
-                citation=_CITATION,
-            )
+        return datasets.DatasetInfo(
+            description=_DESCRIPTION,
+            features=features,
+            homepage=_HOMEPAGE,
+            citation=_CITATION,
+            license=_LICENSE
+        )
 
     def _split_generators(self, dl_manager):
         file_paths = dl_manager.download_and_extract(_IAPP)
-
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
@@ -127,7 +121,7 @@ class IappSquadDataset(datasets.GeneratorBasedBuilder):
                             "answer_end": data["answers"]["answer_end"],
                         },
                     }
-                elif self.config.schema == "seacrowd":
+                elif self.config.schema == "seacrowd_qa":
                     yield id_, {
                         "id": id_,
                         "question_id": data["question_id"],
