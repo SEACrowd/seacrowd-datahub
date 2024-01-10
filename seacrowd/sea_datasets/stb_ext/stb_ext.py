@@ -5,13 +5,13 @@ import datasets
 
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import (DEFAULT_SEACROWD_VIEW_NAME,
-                                      DEFAULT_SOURCE_VIEW_NAME, Tasks)
+                                      DEFAULT_SOURCE_VIEW_NAME, Tasks, Licenses)
 
 _DATASETNAME = "stb_ext"
 _SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
 _UNIFIED_VIEW_NAME = DEFAULT_SEACROWD_VIEW_NAME
 
-_LANGUAGES = ["sg"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
+_LANGUAGES = ["sg"]
 _LOCAL = False
 _CITATION = """\
 @article{10.1145/3321128,
@@ -57,14 +57,16 @@ gold-standard as well as automatically generated POS tags.
 
 _HOMEPAGE = "https://github.com/wanghm92/Sing_Par/tree/master/TALLIP19_dataset/treebank"
 
-_LICENSE = "MIT"
+_LICENSE = Licenses.MIT.value
 
 _PREFIX = "https://raw.githubusercontent.com/wanghm92/Sing_Par/master/TALLIP19_dataset/treebank/"
 _STB_DATASETS = {
     "gold_pos": {
         "train": _PREFIX + "gold_pos/train.ext.conll",
     },
-    "en_ud_autopos": {"train": _PREFIX + "en-ud-autopos/en-ud-train.conllu.autoupos", "validation": _PREFIX + "en-ud-autopos/en-ud-dev.conllu.ann.auto.epoch24.upos", "test": _PREFIX + "en-ud-autopos/en-ud-test.conllu.ann.auto.epoch24.upos"},
+    "en_ud_autopos": {"train": _PREFIX + "en-ud-autopos/en-ud-train.conllu.autoupos",
+                      "validation": _PREFIX + "en-ud-autopos/en-ud-dev.conllu.ann.auto.epoch24.upos",
+                      "test": _PREFIX + "en-ud-autopos/en-ud-test.conllu.ann.auto.epoch24.upos"},
     "auto_pos_multiview": {
         "train": _PREFIX + "auto_pos/multiview/train.autopos.multiview.conll",
         "validation": _PREFIX + "auto_pos/multiview/dev.autopos.multiview.conll",
@@ -76,48 +78,35 @@ _STB_DATASETS = {
         "test": _PREFIX + "auto_pos/stack/test.autopos.stack.conll",
     },
 }
-
+_POSTAGS = ["ADJ", "ADP", "ADV", "AUX", "CONJ", "DET", "INTJ", "NOUN", "NUM", "PART", "PRON",
+                               "PROPN", "PUNCT", "SCONJ", "SYM", "VERB", "X", "root"]
 _SUPPORTED_TASKS = [Tasks.POS_TAGGING, Tasks.DEPENDENCY_PARSING]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class stbextDataset(datasets.GeneratorBasedBuilder):
-    """the STB-EXT dataset offers a 3-times larger training set, while keeping the same dev and test sets from STB-ACL.
-    We provide treebanks with both gold-standard as well as automatically generated POS tags."""
+def config_constructor(subset_id, schema, version):
+    return SEACrowdConfig(
+        name=f"{_DATASETNAME}_{subset_id}_{schema}",
+        version=datasets.Version(version),
+        description=_DESCRIPTION,
+        schema=schema,
+        subset_id=subset_id
+    )
+
+
+class StbExtDataset(datasets.GeneratorBasedBuilder):
+    """This is a seacrowd dataloader for the STB-EXT dataset, which offers a 3-times larger training set, while keeping
+    the same dev and test sets from STB-ACL. It provides treebanks with both gold-standard and automatically generated POS tags."""
 
     BUILDER_CONFIGS = [
-        SEACrowdConfig(
-            name="auto_pos_stack_source",
-            version=datasets.Version(_SOURCE_VERSION),
-            description="STB-EXT for Singapore English dependency and pos-tagging task",
-            schema="source",
-            subset_id="auto_pos_stack",
-        ),
-        SEACrowdConfig(
-            name="auto_pos_multiview_source",
-            version=datasets.Version(_SOURCE_VERSION),
-            description="STB-EXT for Singapore English dependency and pos-tagging task",
-            schema="source",
-            subset_id="auto_pos_multiview",
-        ),
-        SEACrowdConfig(
-            name="en_ud_autopos_source",
-            version=datasets.Version(_SOURCE_VERSION),
-            description="STB-EXT for Singapore English dependency and pos-tagging task",
-            schema="source",
-            subset_id="en_ud_autopos",
-        ),
-        SEACrowdConfig(
-            name="gold_pos_source",
-            version=datasets.Version(_SOURCE_VERSION),
-            description="STB-EXT for Singapore English dependency and pos-tagging task",
-            schema="source",
-            subset_id="gold_pos",
-        ),
+        config_constructor(subset_id="auto_pos_stack", schema="source", version=_SOURCE_VERSION),
+        config_constructor(subset_id="auto_pos_multiview", schema="source", version=_SOURCE_VERSION),
+        config_constructor(subset_id="en_ud_autopos", schema="source", version=_SOURCE_VERSION),
+        config_constructor(subset_id="gold_pos", schema="source", version=_SOURCE_VERSION)
     ]
 
-    DEFAULT_CONFIG_NAME = "gold_pos"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_gold_pos_source"
 
     def _info(self):
         if self.config.schema == "source":
@@ -127,7 +116,7 @@ class stbextDataset(datasets.GeneratorBasedBuilder):
                     "text": datasets.Value("string"),
                     "tokens": datasets.Sequence(datasets.Value("string")),
                     "lemmas": datasets.Sequence(datasets.Value("string")),
-                    "upos": datasets.Sequence(datasets.features.ClassLabel(names=["ADJ", "ADP", "ADV", "AUX", "CONJ", "DET", "INTJ", "NOUN", "NUM", "PART", "PRON", "PROPN", "PUNCT", "SCONJ", "SYM", "VERB", "X", "root"])),
+                    "upos": datasets.Sequence(datasets.features.ClassLabel(names=_POSTAGS)),
                     "xpos": datasets.Sequence(datasets.Value("string")),
                     "feats": datasets.Sequence(datasets.Value("string")),
                     "head": datasets.Sequence(datasets.Value("string")),
@@ -136,8 +125,12 @@ class stbextDataset(datasets.GeneratorBasedBuilder):
                     "misc": datasets.Sequence(datasets.Value("string")),
                 }
             )
+        elif self.config.schema == "seacrowd_seq_label":
+            pass
+        elif self.config.schema == "seacrowd_kb":
+            pass
         else:
-            raise ValueError(f"Invalid config: {self.config.name}")
+            raise ValueError(f"Invalid config: {self.config.schema}")
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -149,60 +142,51 @@ class stbextDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager):
         """ "return splitGenerators"""
-        print(_STB_DATASETS.keys())
-        urls = _STB_DATASETS[self.config.name.replace("_source", "")]
+        urls = _STB_DATASETS[self.config.name.subset_id]
         downloaded_files = dl_manager.download_and_extract(urls)
-        print(f"This split is {self.config.name.replace('_source', '')} and it has {[itm for itm in downloaded_files.keys()]}")
         splits = []
         if "train" in downloaded_files:
-            splits.append(datasets.SplitGenerator(name=datasets.Split.TRAIN, gen_kwargs={"filepath": downloaded_files["train"]}))
+            splits.append(
+                datasets.SplitGenerator(name=datasets.Split.TRAIN, gen_kwargs={"filepath": downloaded_files["train"]}))
         if "validation" in downloaded_files:
-            splits.append(datasets.SplitGenerator(name=datasets.Split.VALIDATION, gen_kwargs={"filepath": downloaded_files["validation"]}))
+            splits.append(datasets.SplitGenerator(name=datasets.Split.VALIDATION,
+                                                  gen_kwargs={"filepath": downloaded_files["validation"]}))
         if "test" in downloaded_files:
-            splits.append(datasets.SplitGenerator(name=datasets.Split.TEST, gen_kwargs={"filepath": downloaded_files["test"]}))
+            splits.append(
+                datasets.SplitGenerator(name=datasets.Split.TEST, gen_kwargs={"filepath": downloaded_files["test"]}))
         return splits
 
     def _generate_examples(self, filepath):
         def process_buffer(TextIO):
-            # Define BOM character
             BOM = "\ufeff"
-            # Create a StringIO object to store processed lines
             buffer = io.StringIO()
             for line in TextIO:
-                # Apply the lambda function to the line and write to the StringIO object
                 line = line.replace(BOM, "") if BOM in line else line
                 buffer.write(line)
-            # Rewind the buffer to the beginning so it can be read from
             buffer.seek(0)
             return buffer
 
-        id = -1
         with open(filepath, "r", encoding="utf-8") as data_file:
-            # some line in the dataset have BOM before the digit
             tokenlist = list(conllu.parse_incr(process_buffer(data_file)))
-            for sent in tokenlist:
-                id += 1
-                if "sent_id" in sent.metadata:
-                    idx = sent.metadata["sent_id"]
-                else:
-                    idx = id
+            for idx, sent in enumerate(tokenlist):
+                idx = sent.metadata["sent_id"] if "sent_id" in sent.metadata else idx
                 tokens = [token["form"] for token in sent]
-
-                if "text" in sent.metadata:
-                    txt = sent.metadata["text"]
-                else:
-                    txt = " ".join(tokens)
-
-                yield id, {
-                    "idx": str(idx),
-                    "text": txt,
-                    "tokens": [token["form"] for token in sent],
-                    "lemmas": [token["lemma"] for token in sent],
-                    "upos": [token["upos"] for token in sent],
-                    "xpos": [token["xpos"] for token in sent],
-                    "feats": [str(token["feats"]) for token in sent],
-                    "head": [str(token["head"]) for token in sent],
-                    "deprel": [str(token["deprel"]) for token in sent],
-                    "deps": [str(token["deps"]) for token in sent],
-                    "misc": [str(token["misc"]) for token in sent],
-                }
+                txt = sent.metadata["text"] if "text" in sent.metadata else " ".join(tokens)
+                if self.config.schema == "source":
+                    yield idx, {
+                        "idx": str(idx),
+                        "text": txt,
+                        "tokens": [token["form"] for token in sent],
+                        "lemmas": [token["lemma"] for token in sent],
+                        "upos": [token["upos"] for token in sent],
+                        "xpos": [token["xpos"] for token in sent],
+                        "feats": [str(token["feats"]) for token in sent],
+                        "head": [str(token["head"]) for token in sent],
+                        "deprel": [str(token["deprel"]) for token in sent],
+                        "deps": [str(token["deps"]) for token in sent],
+                        "misc": [str(token["misc"]) for token in sent],
+                    }
+                if self.config.schema == "seacrowd_seq_label":
+                    pass
+                if self.config.schema == "seacrowd_kb":
+                    pass
