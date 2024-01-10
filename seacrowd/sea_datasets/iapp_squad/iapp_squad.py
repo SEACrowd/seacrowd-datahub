@@ -50,7 +50,7 @@ class IappWikiQASquadDataset(datasets.GeneratorBasedBuilder):
     BUILDER_CONFIGS = [
         SEACrowdConfig(name=f"{_DATASETNAME}_source", version=datasets.Version(_SOURCE_VERSION), description=_DESCRIPTION,
                        subset_id=f"{_DATASETNAME}", schema="source"),
-        SEACrowdConfig(name=f"{_DATASETNAME}_seacrowd_qa", version=datasets.Version(_SOURCE_VERSION), description=_DESCRIPTION,
+        SEACrowdConfig(name=f"{_DATASETNAME}_seacrowd_qa", version=datasets.Version(_SEACROWD_VERSION), description=_DESCRIPTION,
                        subset_id=f"{_DATASETNAME}", schema="seacrowd_qa"),
     ]
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
