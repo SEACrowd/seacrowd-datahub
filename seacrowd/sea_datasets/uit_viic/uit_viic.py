@@ -10,43 +10,43 @@ from seacrowd.utils.constants import Licenses, Tasks
 
 _DATASETNAME = "uit_viic"
 _CITATION = """\
-            @InProceedings{10.1007/978-3-030-63007-2_57,
-            author="Lam, Quan Hoang
-            and Le, Quang Duy
-            and Nguyen, Van Kiet
-            and Nguyen, Ngan Luu-Thuy",
-            editor="Nguyen, Ngoc Thanh
-            and Hoang, Bao Hung
-            and Huynh, Cong Phap
-            and Hwang, Dosam
-            and Trawi{\'{n}}ski, Bogdan
-            and Vossen, Gottfried",
-            title="UIT-ViIC: A Dataset for the First Evaluation on Vietnamese Image Captioning",
-            booktitle="Computational Collective Intelligence",
-            year="2020",
-            publisher="Springer International Publishing",
-            address="Cham",
-            pages="730--742",
-            abstract="Image Captioning (IC), the task of automatic generation of image captions, has attracted
-            attentions from researchers in many fields of computer science, being computer vision, natural language
-            processing and machine learning in recent years. This paper contributes to research on Image Captioning
-            task in terms of extending dataset to a different language - Vietnamese. So far, there has been no existed
-            Image Captioning dataset for Vietnamese language, so this is the foremost fundamental step for developing
-            Vietnamese Image Captioning. In this scope, we first built a dataset which contains manually written
-            captions for images from Microsoft COCO dataset relating to sports played with balls, we called this dataset
-            UIT-ViIC (University Of Information Technology - Vietnamese Image Captions). UIT-ViIC consists of 19,250
-            Vietnamese captions for 3,850 images. Following that, we evaluated our dataset on deep neural network models
-            and did comparisons with English dataset and two Vietnamese datasets built by different methods. UIT-ViIC
-            is published on our lab website (https://sites.google.com/uit.edu.vn/uit-nlp/) for research purposes.",
-            isbn="978-3-030-63007-2"
-            }
-            """
+@InProceedings{10.1007/978-3-030-63007-2_57,
+author="Lam, Quan Hoang
+and Le, Quang Duy
+and Nguyen, Van Kiet
+and Nguyen, Ngan Luu-Thuy",
+editor="Nguyen, Ngoc Thanh
+and Hoang, Bao Hung
+and Huynh, Cong Phap
+and Hwang, Dosam
+and Trawi{\'{n}}ski, Bogdan
+and Vossen, Gottfried",
+title="UIT-ViIC: A Dataset for the First Evaluation on Vietnamese Image Captioning",
+booktitle="Computational Collective Intelligence",
+year="2020",
+publisher="Springer International Publishing",
+address="Cham",
+pages="730--742",
+abstract="Image Captioning (IC), the task of automatic generation of image captions, has attracted
+attentions from researchers in many fields of computer science, being computer vision, natural language
+processing and machine learning in recent years. This paper contributes to research on Image Captioning
+task in terms of extending dataset to a different language - Vietnamese. So far, there has been no existed
+Image Captioning dataset for Vietnamese language, so this is the foremost fundamental step for developing
+Vietnamese Image Captioning. In this scope, we first built a dataset which contains manually written
+captions for images from Microsoft COCO dataset relating to sports played with balls, we called this dataset
+UIT-ViIC (University Of Information Technology - Vietnamese Image Captions). UIT-ViIC consists of 19,250
+Vietnamese captions for 3,850 images. Following that, we evaluated our dataset on deep neural network models
+and did comparisons with English dataset and two Vietnamese datasets built by different methods. UIT-ViIC
+is published on our lab website (https://sites.google.com/uit.edu.vn/uit-nlp/) for research purposes.",
+isbn="978-3-030-63007-2"
+}
+"""
 
 _DESCRIPTION = """
-            UIT-ViIC contains manually written captions for images from Microsoft COCO dataset relating to sports
-            played with ball. UIT-ViIC consists of 19,250 Vietnamese captions for 3,850 images. For each image,
-            UIT-ViIC provides five Vietnamese captions annotated by five annotators.
-            """
+UIT-ViIC contains manually written captions for images from Microsoft COCO dataset relating to sports
+played with ball. UIT-ViIC consists of 19,250 Vietnamese captions for 3,850 images. For each image,
+UIT-ViIC provides five Vietnamese captions annotated by five annotators.
+"""
 
 _HOMEPAGE = "https://drive.google.com/file/d/1YexKrE6o0UiJhFWpE8M5LKoe6-k3AiM4"
 _PAPER_URL = "https://arxiv.org/abs/2002.00175"
@@ -58,7 +58,7 @@ _SUPPORTED_TASKS = [Tasks.IMAGE_CAPTIONING]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
-_UIT_VIIC_URL = "https://drive.google.com/uc?export=download&id=1YexKrE6o0UiJhFWpE8M5LKoe6-k3AiM4"
+_URLS = "https://drive.google.com/uc?export=download&id=1YexKrE6o0UiJhFWpE8M5LKoe6-k3AiM4"
 _Split_Path = {
     "train": "UIT-ViIC/uitviic_captions_train2017.json",
     "validation": "UIT-ViIC/uitviic_captions_val2017.json",
@@ -101,7 +101,7 @@ class UITViICDataset(datasets.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl_manager):
-        file_paths = dl_manager.download_and_extract(_UIT_VIIC_URL)
+        file_paths = dl_manager.download_and_extract(_URLS)
 
         return [
             datasets.SplitGenerator(
