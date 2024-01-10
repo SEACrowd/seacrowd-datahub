@@ -158,8 +158,5 @@ class MelayuStandardLisan(datasets.GeneratorBasedBuilder):
             with open(filepath, "r") as f:
                 data.append(" ".join([line.rstrip() for line in f.readlines()]))
 
-        if self.config.schema == "source":
-            yield 0, {"id": Path(filepath).stem, "text": " ".join(data)}
-
-        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
-            yield 0, {"id": Path(filepath).stem, "text": " ".join(data)}
+        for id, text in enumerate(data):
+            yield id, {"id": id, "text": text}
