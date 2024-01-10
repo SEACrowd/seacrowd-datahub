@@ -91,7 +91,7 @@ class SapWat(datasets.GeneratorBasedBuilder):
         ) 
         for lang in _SUBSET] + [
         SEACrowdConfig(
-            name=f"sap_wat_en_{lang}_seacrowd_t2t",
+            name=f"{_DATASETNAME}_en_{lang}_seacrowd_t2t",
             version=datasets.Version(_SEACROWD_VERSION),
             description=f"SAP WAT Nusantara schema for EN-{lang.upper()}",
             schema="seacrowd_t2t",
