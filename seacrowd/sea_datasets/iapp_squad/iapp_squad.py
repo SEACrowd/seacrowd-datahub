@@ -9,26 +9,26 @@ from seacrowd.utils.constants import Licenses, Tasks
 
 _DATASETNAME = "iapp_wiki_qa_squad"
 _CITATION = """\
-            @dataset
-            {
-              kobkrit_viriyayudhakorn_2021_4539916,
-              author       = {Kobkrit Viriyayudhakorn and Charin Polpanumas},
-              title        = {iapp_wiki_qa_squad},
-              month        = feb,
-              year         = 2021,
-              publisher    = {Zenodo},
-              version      = 1,
-              doi          = {10.5281/zenodo.4539916},
-              url          = {https://doi.org/10.5281/zenodo.4539916}
-            }
-            """
+@dataset
+{
+  kobkrit_viriyayudhakorn_2021_4539916,
+  author       = {Kobkrit Viriyayudhakorn and Charin Polpanumas},
+  title        = {iapp_wiki_qa_squad},
+  month        = feb,
+  year         = 2021,
+  publisher    = {Zenodo},
+  version      = 1,
+  doi          = {10.5281/zenodo.4539916},
+  url          = {https://doi.org/10.5281/zenodo.4539916}
+}
+"""
 
 _DESCRIPTION = """
-            `iapp_wiki_qa_squad` is an extractive question answering dataset from Thai Wikipedia articles.
-            It is adapted from [the original iapp-wiki-qa-dataset](https://github.com/iapp-technology/iapp-wiki-qa-dataset)
-            to [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/) format, resulting in
-            5761/742/739 questions from 1529/191/192 articles.
-            """
+`iapp_wiki_qa_squad` is an extractive question answering dataset from Thai Wikipedia articles.
+It is adapted from [the original iapp-wiki-qa-dataset](https://github.com/iapp-technology/iapp-wiki-qa-dataset)
+to [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/) format, resulting in
+5761/742/739 questions from 1529/191/192 articles.
+"""
 
 _HOMEPAGE = "https://github.com/iapp-technology/iapp-wiki-qa-dataset"
 _LICENSE = Licenses.MIT.value
@@ -39,7 +39,7 @@ _LANGUAGES = ['tha']
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
-_IAPP = {
+_URLS = {
     "train": "https://raw.githubusercontent.com/iapp-technology/iapp-wiki-qa-dataset/main/squad_format/data/train.jsonl",
     "validation": "https://raw.githubusercontent.com/iapp-technology/iapp-wiki-qa-dataset/main/squad_format/data/valid.jsonl",
     "test": "https://raw.githubusercontent.com/iapp-technology/iapp-wiki-qa-dataset/main/squad_format/data/test.jsonl",
@@ -87,7 +87,7 @@ class IappWikiQASquadDataset(datasets.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl_manager):
-        file_paths = dl_manager.download_and_extract(_IAPP)
+        file_paths = dl_manager.download_and_extract(_URLS)
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
