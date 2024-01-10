@@ -170,13 +170,6 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
                     "language": datasets.Value("string"),
                 }
 
-            return datasets.DatasetInfo(
-                description=_DESCRIPTION,
-                features=features,
-                citation=_CITATION,
-                homepage=_HOMEPAGE,
-                license=_LICENSE,
-            )
         elif "secondary_task" in self.config.name:
             if "source" in self.config.name:
                 features = datasets.Features({
@@ -196,13 +189,13 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
                 features["meta"] = {
                     "answer_start": datasets.Sequence(datasets.Value("int32")),
                 }
-            return datasets.DatasetInfo(
-                    description=_DESCRIPTION,
-                    features=features,
-                    citation=_CITATION,
-                    homepage=_HOMEPAGE,
-                    license=_LICENSE,
-                )
+        return datasets.DatasetInfo(
+                description=_DESCRIPTION,
+                features=features,
+                citation=_CITATION,
+                homepage=_HOMEPAGE,
+                license=_LICENSE,
+            )
 
     def _split_generators(self, dl_manager):
         """Returns SplitGenerators."""
