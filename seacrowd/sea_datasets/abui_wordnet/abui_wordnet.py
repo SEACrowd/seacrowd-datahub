@@ -1,17 +1,5 @@
 # coding=utf-8
-# Copyright 2022 The HuggingFace Datasets Authors and the current dataset script contributor.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+
 
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -24,36 +12,36 @@ from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @inproceedings{kratochvil-morgado-da-costa-2022-abui,
-    title = "{A}bui {W}ordnet: Using a Toolbox Dictionary to develop a wordnet for a low-resource language",
-    author = "Kratochvil, Frantisek  and
-      Morgado da Costa, Lu{\'}s",
-    editor = "Serikov, Oleg  and
-      Voloshina, Ekaterina  and
-      Postnikova, Anna  and
-      Klyachko, Elena  and
-      Neminova, Ekaterina  and
-      Vylomova, Ekaterina  and
-      Shavrina, Tatiana  and
-      Ferrand, Eric Le  and
-      Malykh, Valentin  and
-      Tyers, Francis  and
-      Arkhangelskiy, Timofey  and
-      Mikhailov, Vladislav  and
-      Fenogenova, Alena",
-    booktitle = "Proceedings of the first workshop on NLP applications to field linguistics",
-    month = oct,
-    year = "2022",
-    address = "Gyeongju, Republic of Korea",
-    publisher = "International Conference on Computational Linguistics",
-    url = "https://aclanthology.org/2022.fieldmatters-1.7",
-    pages = "54--63",
-    abstract = "This paper describes a procedure to link a Toolbox dictionary of a low-resource language to correct
-    synsets, generating a new wordnet. We introduce a bootstrapping technique utilising the information in the gloss
-    fields (English, national, and regional) to generate sense candidates using a naive algorithm based on
-    multilingual sense intersection. We show that this technique is quite effective when glosses are available in
-    more than one language. Our technique complements the previous work by Rosman et al. (2014) which linked the
-    SIL Semantic Domains to wordnet senses. Through this work we have created a small, fully hand-checked wordnet
-    for Abui, containing over 1,400 concepts and 3,600 senses.",
+title = "{A}bui {W}ordnet: Using a Toolbox Dictionary to develop a wordnet for a low-resource language",
+author = "Kratochvil, Frantisek  and
+  Morgado da Costa, Lu{\'}s",
+editor = "Serikov, Oleg  and
+  Voloshina, Ekaterina  and
+  Postnikova, Anna  and
+  Klyachko, Elena  and
+  Neminova, Ekaterina  and
+  Vylomova, Ekaterina  and
+  Shavrina, Tatiana  and
+  Ferrand, Eric Le  and
+  Malykh, Valentin  and
+  Tyers, Francis  and
+  Arkhangelskiy, Timofey  and
+  Mikhailov, Vladislav  and
+  Fenogenova, Alena",
+booktitle = "Proceedings of the first workshop on NLP applications to field linguistics",
+month = oct,
+year = "2022",
+address = "Gyeongju, Republic of Korea",
+publisher = "International Conference on Computational Linguistics",
+url = "https://aclanthology.org/2022.fieldmatters-1.7",
+pages = "54--63",
+abstract = "This paper describes a procedure to link a Toolbox dictionary of a low-resource language to correct
+synsets, generating a new wordnet. We introduce a bootstrapping technique utilising the information in the gloss
+fields (English, national, and regional) to generate sense candidates using a naive algorithm based on
+multilingual sense intersection. We show that this technique is quite effective when glosses are available in
+more than one language. Our technique complements the previous work by Rosman et al. (2014) which linked the
+SIL Semantic Domains to wordnet senses. Through this work we have created a small, fully hand-checked wordnet
+for Abui, containing over 1,400 concepts and 3,600 senses.",
 }
 """
 _DATASETNAME = "abui_wordnet"
@@ -71,26 +59,22 @@ _URLS = {
     _DATASETNAME: "https://raw.githubusercontent.com/fanacek/abuiwn/main/abwn_lmf.tsv",
 }
 
-# TODO: add supported task by dataset. One dataset may support multiple tasks
-_SUPPORTED_TASKS = [Tasks.WORD_SENSE_DISAMBIGUATION]
+_SUPPORTED_TASKS = [Tasks.WORD_ANALOGY]
 
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
 class abuiwordnetDataset(datasets.GeneratorBasedBuilder):
-    """A small fully hand-checked wordnet for Abui, containing over 1,400 concepts and 3,600 senses, is created. A
-    bootstrapping technique is introduced to utilise the information in the gloss fields (English, national, and
-     regional) to generate sense candidates using a naive algorithm based on multilingual sense intersection."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="abui_wordnet_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
-            description="abuiw source schema",
+            description=_DESCRIPTION,
             schema="source",
             subset_id="abui_wordnet",
         ),
@@ -103,7 +87,7 @@ class abuiwordnetDataset(datasets.GeneratorBasedBuilder):
         # ),
     ]
 
-    DEFAULT_CONFIG_NAME = "abuiwd_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}"
 
     def _info(self) -> datasets.DatasetInfo:
         features = None
@@ -117,8 +101,8 @@ class abuiwordnetDataset(datasets.GeneratorBasedBuilder):
                     "form": datasets.Value("string"),
                 }
             )
-        elif self.config.schema == "seacrowd_unk":
-            features = schemas.pairs
+        elif self.config.schema == "seacrowd_pair":
+            features = schemas.pairs_features
             raise NotImplementedError()
 
         return datasets.DatasetInfo(
@@ -158,6 +142,5 @@ class abuiwordnetDataset(datasets.GeneratorBasedBuilder):
                     "lemma": lemma,
                     "form": form,
                 }
-        # elif self.config.schema == "seacrowd_[seacrowd_schema_name]":
-        #     for key, example in enumerate(data_instances):
-        #         yield key, example
+        # elif self.config.schema == "seacrowd_pair":
+        #
