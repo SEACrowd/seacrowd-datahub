@@ -1,18 +1,4 @@
 # coding=utf-8
-# Copyright 2022 The HuggingFace Datasets Authors and the current dataset script contributor.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -22,7 +8,6 @@ from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
-# TODO: Add BibTeX citation
 _CITATION = """\
 @article{Aung_Kyaw Thu_Hlaing_2023, place={Nonthaburi, Thailand}, title={mySentence: Sentence Segmentation for Myanmar Language
 using Neural Machine Translation Approach}, volume={9}, url={https://ph05.tci-thaijo.org/index.php/JIIST/article/view/87}, abstractNote=
@@ -46,13 +31,9 @@ rules for ending sentences, making it challenging for machines to identify sente
 """
 
 _HOMEPAGE = "https://github.com/ye-kyaw-thu/mySentence"
-
-_LANGUAGES = ["mya"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
-
-_LICENSE = Licenses.CC_BY_NC_SA_4_0.value  # example: Licenses.MIT.value, Licenses.CC_BY_NC_SA_4_0.value, Licenses.UNLICENSE.value, Licenses.UNKNOWN.value
-
+_LANGUAGES = ["mya"]
+_LICENSE = Licenses.CC_BY_NC_SA_4_0.value
 _LOCAL = False
-
 _URLS = {
     "sent": {
         "train": "https://raw.githubusercontent.com/ye-kyaw-thu/mySentence/main/ver1.0/data/data-sent/sent_tagged/train.tagged",
@@ -72,45 +53,41 @@ _SEACROWD_VERSION = "1.0.0"
 
 
 class mysentenceDataset(datasets.GeneratorBasedBuilder):
-    """mySentence is a corpus with a total size of around 55K for Myanmar sentence segmentation. In formal Burmese (Myanmar language), sentences are grammatically
-    structured and typically end with the "။" pote-ma symbol. However, informal language, more commonly used in daily conversations due to its natural flow, does not
-    always follow predefined rules for ending sentences, making it challenging for machines to identify sentence boundaries. In this corpus, each token of the sentences and paragraphs is tagged from start to finish."""
-
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
     # print(schemas.seq_label)
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="mysentence_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
-            description="sentences source schema",
+            description=_DESCRIPTION,
             schema="source",
-            subset_id="mysentence",
+            subset_id=f"{_DATASETNAME}",
         ),
         SEACrowdConfig(
-            name="mysentence_seacrowd_seq_label",
+            name=f"{_DATASETNAME}_seacrowd_seq_label",
             version=SEACROWD_VERSION,
             description="sentences SEACrowd schema",
             schema="seacrowd_seq_label",
-            subset_id="mysentence",
+            subset_id=f"{_DATASETNAME}",
         ),
         SEACrowdConfig(
-            name="mysentence+paragraphs_source",
+            name=f"{_DATASETNAME}+paragraphs_source",
             version=SOURCE_VERSION,
             description="sentences para source schema",
             schema="source",
-            subset_id="mysentence+paragraphs",
+            subset_id=f"{_DATASETNAME}+paragraphs",
         ),
         SEACrowdConfig(
-            name="mysentence+paragraphs_seacrowd_seq_label",
+            name=f"{_DATASETNAME}+paragraphs_seacrowd_seq_label",
             version=SEACROWD_VERSION,
             description="sentence para SEACrowd schema",
             schema="seacrowd_seq_label",
-            subset_id="mysentence+paragraphs",
+            subset_id=f"{_DATASETNAME}+paragraphs",
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = "mysentence_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -133,9 +110,9 @@ class mysentenceDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        if self.config.subset_id == "mysentence":
+        if self.config.subset_id == f"{_DATASETNAME}":
             DATA_URL_ = _URLS["sent"]
-        elif self.config.subset_id == "mysentence+paragraphs":
+        elif self.config.subset_id == f"{_DATASETNAME}+paragraphs":
             DATA_URL_ = _URLS["sent+para"]
         else:
             raise ValueError(f"No related dataset id for {self.config.subset_id}")
