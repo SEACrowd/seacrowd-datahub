@@ -35,7 +35,7 @@ _LICENSE = Licenses.MIT.value
 _HF_URL = " https://huggingface.co/datasets/iapp_wiki_qa_squad"
 _SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
 _LOCAL = False
-_LANGUAGES = ['tha']
+_LANGUAGES = ["tha"]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
@@ -48,43 +48,36 @@ _URLS = {
 
 class IappWikiQASquadDataset(datasets.GeneratorBasedBuilder):
     BUILDER_CONFIGS = [
-        SEACrowdConfig(name=f"{_DATASETNAME}_source", version=datasets.Version(_SOURCE_VERSION), description=_DESCRIPTION,
-                       subset_id=f"{_DATASETNAME}", schema="source"),
-        SEACrowdConfig(name=f"{_DATASETNAME}_seacrowd_qa", version=datasets.Version(_SEACROWD_VERSION), description=_DESCRIPTION,
-                       subset_id=f"{_DATASETNAME}", schema="seacrowd_qa"),
+        SEACrowdConfig(name=f"{_DATASETNAME}_source", version=datasets.Version(_SOURCE_VERSION), description=_DESCRIPTION, subset_id=f"{_DATASETNAME}", schema="source"),
+        SEACrowdConfig(name=f"{_DATASETNAME}_seacrowd_qa", version=datasets.Version(_SEACROWD_VERSION), description=_DESCRIPTION, subset_id=f"{_DATASETNAME}", schema="seacrowd_qa"),
     ]
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
+
     def _info(self):
         if self.config.schema == "source":
             features = datasets.Features(
-                    {
-                        "question_id": datasets.Value("string"),
-                        "article_id": datasets.Value("string"),
-                        "title": datasets.Value("string"),
-                        "context": datasets.Value("string"),
-                        "question": datasets.Value("string"),
-                        "answers": datasets.features.Sequence(
-                            {
-                                "text": datasets.Value("string"),
-                                "answer_start": datasets.Value("int32"),
-                                "answer_end": datasets.Value("int32"),
-                            }
-                        ),
-                    }
-                )
+                {
+                    "question_id": datasets.Value("string"),
+                    "article_id": datasets.Value("string"),
+                    "title": datasets.Value("string"),
+                    "context": datasets.Value("string"),
+                    "question": datasets.Value("string"),
+                    "answers": datasets.features.Sequence(
+                        {
+                            "text": datasets.Value("string"),
+                            "answer_start": datasets.Value("int32"),
+                            "answer_end": datasets.Value("int32"),
+                        }
+                    ),
+                }
+            )
         elif self.config.schema == "seacrowd_qa":
             features = schemas.qa_features
             features["meta"] = {
                 "answer_start": datasets.Value("int32"),
                 "answer_end": datasets.Value("int32"),
             }
-        return datasets.DatasetInfo(
-            description=_DESCRIPTION,
-            features=features,
-            homepage=_HOMEPAGE,
-            citation=_CITATION,
-            license=_LICENSE
-        )
+        return datasets.DatasetInfo(description=_DESCRIPTION, features=features, homepage=_HOMEPAGE, citation=_CITATION, license=_LICENSE)
 
     def _split_generators(self, dl_manager):
         file_paths = dl_manager.download_and_extract(_URLS)
