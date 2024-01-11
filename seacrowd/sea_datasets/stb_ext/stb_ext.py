@@ -3,12 +3,10 @@ import io
 import conllu
 import datasets
 
-from seacrowd.utils.common_parser import (load_ud_data,
-                                          load_ud_data_as_seacrowd_kb)
+from seacrowd.utils.common_parser import load_ud_data_as_seacrowd_kb
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import (DEFAULT_SEACROWD_VIEW_NAME,
-                                      DEFAULT_SOURCE_VIEW_NAME, Licenses,
-                                      Tasks)
+from seacrowd.utils import schemas
+from seacrowd.utils.constants import DEFAULT_SEACROWD_VIEW_NAME, DEFAULT_SOURCE_VIEW_NAME, Licenses, Tasks
 
 _DATASETNAME = "stb_ext"
 _SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
@@ -86,7 +84,9 @@ _SEACROWD_VERSION = "1.0.0"
 
 
 def config_constructor(subset_id, schema, version):
-    return SEACrowdConfig(name=f"{_DATASETNAME}_{subset_id}_{schema}", version=datasets.Version(version), description=_DESCRIPTION, schema=schema, subset_id=subset_id)
+    return SEACrowdConfig(name=f"{_DATASETNAME}_{subset_id}_{schema}",
+                          version=datasets.Version(version), description=_DESCRIPTION,
+                          schema=schema, subset_id=subset_id)
 
 
 class StbExtDataset(datasets.GeneratorBasedBuilder):
@@ -94,10 +94,21 @@ class StbExtDataset(datasets.GeneratorBasedBuilder):
     the same dev and test sets from STB-ACL. It provides treebanks with both gold-standard and automatically generated POS tags."""
 
     BUILDER_CONFIGS = [
+        # source
         config_constructor(subset_id="auto_pos_stack", schema="source", version=_SOURCE_VERSION),
         config_constructor(subset_id="auto_pos_multiview", schema="source", version=_SOURCE_VERSION),
         config_constructor(subset_id="en_ud_autopos", schema="source", version=_SOURCE_VERSION),
         config_constructor(subset_id="gold_pos", schema="source", version=_SOURCE_VERSION),
+        # seq_label
+        config_constructor(subset_id="auto_pos_stack", schema="seacrowd_seq_label", version=_SEACROWD_VERSION),
+        config_constructor(subset_id="auto_pos_multiview", schema="seacrowd_seq_label", version=_SEACROWD_VERSION),
+        config_constructor(subset_id="en_ud_autopos", schema="seacrowd_seq_label", version=_SEACROWD_VERSION),
+        config_constructor(subset_id="gold_pos", schema="seacrowd_seq_label", version=_SEACROWD_VERSION),
+        # dependency parsing
+        config_constructor(subset_id="auto_pos_stack", schema="seacrowd_kb", version=_SEACROWD_VERSION),
+        config_constructor(subset_id="auto_pos_multiview", schema="seacrowd_kb", version=_SEACROWD_VERSION),
+        config_constructor(subset_id="en_ud_autopos", schema="seacrowd_kb", version=_SEACROWD_VERSION),
+        config_constructor(subset_id="gold_pos", schema="seacrowd_kb", version=_SEACROWD_VERSION),
     ]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_gold_pos_source"
@@ -106,23 +117,27 @@ class StbExtDataset(datasets.GeneratorBasedBuilder):
         if self.config.schema == "source":
             features = datasets.Features(
                 {
-                    "idx": datasets.Value("string"),
+                    # metadata
+                    "sent_id": datasets.Value("string"),
                     "text": datasets.Value("string"),
-                    "tokens": datasets.Sequence(datasets.Value("string")),
-                    "lemmas": datasets.Sequence(datasets.Value("string")),
-                    "upos": datasets.Sequence(datasets.features.ClassLabel(names=_POSTAGS)),
-                    "xpos": datasets.Sequence(datasets.Value("string")),
-                    "feats": datasets.Sequence(datasets.Value("string")),
-                    "head": datasets.Sequence(datasets.Value("string")),
-                    "deprel": datasets.Sequence(datasets.Value("string")),
-                    "deps": datasets.Sequence(datasets.Value("string")),
-                    "misc": datasets.Sequence(datasets.Value("string")),
+                    "text_en": datasets.Value("string"),
+                    # tokens
+                    "id": [datasets.Value("string")],
+                    "form": [datasets.Value("string")],
+                    "lemma": [datasets.Value("string")],
+                    "upos": [datasets.Value("string")],
+                    "xpos": [datasets.Value("string")],
+                    "feats": [datasets.Value("string")],
+                    "head": [datasets.Value("string")],
+                    "deprel": [datasets.Value("string")],
+                    "deps": [datasets.Value("string")],
+                    "misc": [datasets.Value("string")],
                 }
             )
         elif self.config.schema == "seacrowd_seq_label":
-            pass
+            features = schemas.seq_label_features(label_names=_POSTAGS)
         elif self.config.schema == "seacrowd_kb":
-            pass
+            features = schemas.kb_features
         else:
             raise ValueError(f"Invalid config: {self.config.schema}")
 
@@ -158,35 +173,46 @@ class StbExtDataset(datasets.GeneratorBasedBuilder):
             return buffer
 
         with open(filepath, "r", encoding="utf-8") as data_file:
-            # tokenlist1 = list(load_ud_data(filepath))
             tokenlist = list(conllu.parse_incr(process_buffer(data_file)))
-            ataset = load_ud_data_as_seacrowd_kb(filepath, tokenlist)
-
-            # print(tokenlist1[0])
-            print(tokenlist[0])
-            # print(ataset[0])
-            for idx, itm in enumerate(ataset):
-                print(itm)
-                exit(0)
+            # ataset = load_ud_data_as_seacrowd_kb(filepath, tokenlist)
+            data_instances = []
             for idx, sent in enumerate(tokenlist):
                 idx = sent.metadata["sent_id"] if "sent_id" in sent.metadata else idx
                 tokens = [token["form"] for token in sent]
                 txt = sent.metadata["text"] if "text" in sent.metadata else " ".join(tokens)
-                if self.config.schema == "source":
-                    yield idx, {
-                        "idx": str(idx),
-                        "text": txt,
-                        "tokens": [token["form"] for token in sent],
-                        "lemmas": [token["lemma"] for token in sent],
-                        "upos": [token["upos"] for token in sent],
-                        "xpos": [token["xpos"] for token in sent],
-                        "feats": [str(token["feats"]) for token in sent],
-                        "head": [str(token["head"]) for token in sent],
-                        "deprel": [str(token["deprel"]) for token in sent],
-                        "deps": [str(token["deps"]) for token in sent],
-                        "misc": [str(token["misc"]) for token in sent],
-                    }
-                if self.config.schema == "seacrowd_seq_label":
-                    pass
-                if self.config.schema == "seacrowd_kb":
-                    pass
+                example = {
+                    # meta
+                    "sent_id": str(idx),
+                    "text": txt,
+                    "text_en": txt,
+                    # tokens
+                    "id": [token["id"] for token in sent],
+                    "form": [token["form"] for token in sent],
+                    "lemma": [token["lemma"] for token in sent],
+                    "upos": [token["upos"] for token in sent],
+                    "xpos": [token["xpos"] for token in sent],
+                    "feats": [str(token["feats"]) for token in sent],
+                    "head": [str(token["head"]) for token in sent],
+                    "deprel": [str(token["deprel"]) for token in sent],
+                    "deps": [str(token["deps"]) for token in sent],
+                    "misc": [str(token["misc"]) for token in sent]
+                }
+                data_instances.append(example)
+
+            if self.config.schema == "source":
+                pass
+            if self.config.schema == "seacrowd_seq_label":
+                data_instances = list(
+                    map(
+                        lambda d: {
+                            "id": d["sent_id"],
+                            "tokens": d["form"],
+                            "labels": d["upos"],
+                        },
+                        data_instances,
+                    )
+                )
+            if self.config.schema == "seacrowd_kb":
+                data_instances = load_ud_data_as_seacrowd_kb(filepath, data_instances)
+            for key, exam in enumerate(data_instances):
+                yield key, exam
