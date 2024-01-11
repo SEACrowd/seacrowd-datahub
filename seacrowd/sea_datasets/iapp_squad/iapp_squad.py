@@ -7,7 +7,7 @@ from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
-_DATASETNAME = "iapp_wiki_qa_squad"
+_DATASETNAME = "iapp_squad"
 _CITATION = """\
 @dataset
 {
