@@ -52,7 +52,7 @@ _HOMEPAGE = "https://drive.google.com/file/d/1YexKrE6o0UiJhFWpE8M5LKoe6-k3AiM4"
 _PAPER_URL = "https://arxiv.org/abs/2002.00175"
 _LICENSE = Licenses.UNKNOWN.value
 _HF_URL = ""
-_LANGUAGES = ['vi']
+_LANGUAGES = ["vi"]
 _LOCAL = False
 _SUPPORTED_TASKS = [Tasks.IMAGE_CAPTIONING]
 _SOURCE_VERSION = "1.0.0"
@@ -68,27 +68,25 @@ _Split_Path = {
 
 class UITViICDataset(datasets.GeneratorBasedBuilder):
     BUILDER_CONFIGS = [
-        SEACrowdConfig(name=f"{_DATASETNAME}_source", version=datasets.Version(_SOURCE_VERSION),
-                       description=_DESCRIPTION, subset_id=f"{_DATASETNAME}", schema="source"),
-        SEACrowdConfig(name=f"{_DATASETNAME}_seacrowd_imtext", version=datasets.Version(_SEACROWD_VERSION),
-                       description=_DESCRIPTION, subset_id=f"{_DATASETNAME}", schema="seacrowd_imtext"),
+        SEACrowdConfig(name=f"{_DATASETNAME}_source", version=datasets.Version(_SOURCE_VERSION), description=_DESCRIPTION, subset_id=f"{_DATASETNAME}", schema="source"),
+        SEACrowdConfig(name=f"{_DATASETNAME}_seacrowd_imtext", version=datasets.Version(_SEACROWD_VERSION), description=_DESCRIPTION, subset_id=f"{_DATASETNAME}", schema="seacrowd_imtext"),
     ]
 
     def _info(self):
         if self.config.schema == "source":
             features = datasets.Features(
-                        {
-                            "license": datasets.Value("int32"),
-                            "file_name": datasets.Value("string"),
-                            "coco_url": datasets.Value("string"),
-                            "flickr_url": datasets.Value("string"),
-                            "height": datasets.Value("int32"),
-                            "width": datasets.Value("int32"),
-                            "date_captured": datasets.Value("string"),
-                            "image_id": datasets.Value("int32"),
-                            "caption": datasets.Value("string"),
-                            "cap_id": datasets.Value("int32"),
-                        }
+                {
+                    "license": datasets.Value("int32"),
+                    "file_name": datasets.Value("string"),
+                    "coco_url": datasets.Value("string"),
+                    "flickr_url": datasets.Value("string"),
+                    "height": datasets.Value("int32"),
+                    "width": datasets.Value("int32"),
+                    "date_captured": datasets.Value("string"),
+                    "image_id": datasets.Value("int32"),
+                    "caption": datasets.Value("string"),
+                    "cap_id": datasets.Value("int32"),
+                }
             )
         elif self.config.schema == "seacrowd_imtext":
             features = schemas.image_text_features()
