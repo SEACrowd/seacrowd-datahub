@@ -15,37 +15,15 @@ _UNIFIED_VIEW_NAME = DEFAULT_SEACROWD_VIEW_NAME
 _LANGUAGES = ["eng"]
 _LOCAL = False
 _CITATION = """\
-@article{10.1145/3321128,
-author = {Wang, Hongmin and Yang, Jie and Zhang, Yue},
-title = {From Genesis to Creole Language: Transfer Learning for Singlish Universal Dependencies Parsing and POS Tagging},
-year = {2019},
-issue_date = {January 2020},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-volume = {19},
-number = {1},
-issn = {2375-4699},
-url = {https://doi.org/10.1145/3321128},
-doi = {10.1145/3321128},
-abstract = {Singlish can be interesting to the computational linguistics community both linguistically, as a major
-low-resource creole based on English, and computationally, for information extraction and sentiment analysis of
-regional social media. In our conference paper, Wang et al. (2017), we investigated part-of-speech (POS) tagging and
-dependency parsing for Singlish by constructing a treebank under the Universal Dependencies scheme and successfully
-used neural stacking models to integrate English syntactic knowledge for boosting Singlish POS tagging and dependency
-parsing, achieving the state-of-the-art accuracies of 89.50% and 84.47% for Singlish POS tagging and dependency,
-respectively. In this work, we substantially extend Wang et al. (2017) by enlarging the Singlish treebank to more
-than triple the size and with much more diversity in topics, as well as further exploring neural multi-task models
-for integrating English syntactic knowledge. Results show that the enlarged treebank has achieved significant
-relative error reduction of 45.8% and 15.5% on the base model, 27% and 10% on the neural multi-task model, and
-21% and 15% on the neural stacking model for POS tagging and dependency parsing, respectively. Moreover, the
-state-of-the-art Singlish POS tagging and dependency parsing accuracies have been improved to 91.16% and 85.57%,
-respectively. We make our treebanks and models available for further research.},
-journal = {ACM Trans. Asian Low-Resour. Lang. Inf. Process.},
-month = {may},
-articleno = {1},
-numpages = {29},
-keywords = {part-of-speech tagging, creole language, transfer learning, Singlish, neural stacking, Dependency parsing,
-universal dependencies, multi-task network}
+@article{wang2019genesis,
+title={From genesis to creole language: Transfer learning for singlish universal dependencies parsing and POS tagging},
+author={Wang, Hongmin and Yang, Jie and Zhang, Yue},
+journal={ACM Transactions on Asian and Low-Resource Language Information Processing (TALLIP)},
+volume={19},
+number={1},
+pages={1--29},
+year={2019},
+publisher={ACM New York, NY, USA}
 }
 """
 
@@ -174,7 +152,6 @@ class StbExtDataset(datasets.GeneratorBasedBuilder):
 
         with open(filepath, "r", encoding="utf-8") as data_file:
             tokenlist = list(conllu.parse_incr(process_buffer(data_file)))
-            # ataset = load_ud_data_as_seacrowd_kb(filepath, tokenlist)
             data_instances = []
             for idx, sent in enumerate(tokenlist):
                 idx = sent.metadata["sent_id"] if "sent_id" in sent.metadata else idx
