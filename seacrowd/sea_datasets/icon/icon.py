@@ -53,10 +53,8 @@ _SEACROWD_VERSION = "1.0.0"
 class ICONDataset(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
-        SEACrowdConfig(name=f"{_DATASETNAME}_source", version=datasets.Version(_SOURCE_VERSION), description=_DESCRIPTION,
-                       schema="source", subset_id=f"{_DATASETNAME}"),
-        SEACrowdConfig(name=f"{_DATASETNAME}_seacrowd_tree", version=datasets.Version(_SEACROWD_VERSION), description=_DESCRIPTION,
-                       schema="seacrowd_tree", subset_id=f"{_DATASETNAME}"),
+        SEACrowdConfig(name=f"{_DATASETNAME}_source", version=datasets.Version(_SOURCE_VERSION), description=_DESCRIPTION, schema="source", subset_id=f"{_DATASETNAME}"),
+        SEACrowdConfig(name=f"{_DATASETNAME}_seacrowd_tree", version=datasets.Version(_SEACROWD_VERSION), description=_DESCRIPTION, schema="seacrowd_tree", subset_id=f"{_DATASETNAME}"),
     ]
 
     DEFAULT_CONFIG_NAME = "icon_source"
@@ -195,7 +193,7 @@ def get_node_char_indices_with_ids(tree, sent_id):
 
         # Record the current node
         node_data = {
-            "id": current_id,
+            "id": f"{sent_id}_{current_id}",
             "type": subtree.label(),
             "text": node_text,
             "offsets": [start_index, end_index],
@@ -208,7 +206,7 @@ def get_node_char_indices_with_ids(tree, sent_id):
                 child_id = traverse_tree(child, start_index)
                 node_data["subnodes"].append(child_id)
                 start_index += len(" ".join(child.leaves())) + 1
-        return current_id
+        return f"{sent_id}_{current_id}"
 
     node_indices = []
     node_id = 0
