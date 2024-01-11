@@ -36,7 +36,7 @@ _HOMEPAGE = "https://github.com/PyThaiNLP/Thai-constitution-corpus/tree/master"
 _LICENSE = Licenses.CC0_1_0.value
 
 _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
-_SUPPORTED_LANGS = ['tha']
+_LANGUAGES = ['tha']
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
