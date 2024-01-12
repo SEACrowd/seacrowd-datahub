@@ -191,9 +191,7 @@ class MelayuBruneiDataset(datasets.GeneratorBasedBuilder):
         data = []
         for filepath in filepaths:
             with open(filepath, "r") as f:
-                data.append([line.rstrip() for line in f.readlines()][0])
+                data.append(" ".join([line.rstrip() for line in f.readlines()]))
 
-        yield 0, {"id": Path(filepath).stem, "text": " ".join(data)}
-
-
-
+        for id, text in enumerate(data):
+            yield id, {"id": id, "text": text}
