@@ -32,7 +32,7 @@ _CITATION = """\
 
 _LOCAL = False
 _LANGUAGES = ["tha"]
-_DATASETNAME = "thai_toxicity_tweets"
+_DATASETNAME = "thai_toxicity_tweet"
 _DESCRIPTION = """\
 The Thai Toxicity Tweet Corpus contains 3,300 tweets (506 tweets with texts missing) annotated by humans with guidelines
 including a 44-word dictionary. The author acquired 2,027 toxic and 1,273 non-toxic tweets, which were
