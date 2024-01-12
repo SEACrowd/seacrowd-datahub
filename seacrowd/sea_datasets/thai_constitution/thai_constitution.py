@@ -115,7 +115,7 @@ class ThaiConstitutionDataset(datasets.GeneratorBasedBuilder):
             ),
         ]
 
-    def _generate_examples(self, filepaths: list[Path]) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepaths: List[Path]) -> Tuple[int, Dict]:
         counter = 0
         for path in filepaths:
             with open(path, encoding="utf-8") as f:
