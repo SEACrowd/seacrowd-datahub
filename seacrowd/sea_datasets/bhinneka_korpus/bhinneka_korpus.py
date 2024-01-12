@@ -9,16 +9,14 @@ from seacrowd.utils.constants import Licenses, Tasks
 from seacrowd.utils import schemas
 
 _CITATION = """\
-@article{,
-  author    = {},
-  title     = {},
-  journal   = {},
-  volume    = {},
-  year      = {},
-  url       = {},
-  doi       = {},
-  biburl    = {},
-  bibsource = {}
+@misc{beayelexicon2024,
+  author    = {Lopo, Joanito Agili and Moeljadi, David and Cahyawijaya, Samuel and Aji, Alham Fikri and Sommerlot, 
+  Carly J. and Jacob, June},
+  title     = {Penyusunan Korpus Paralel Bahasa Indonesia–Bahasa Melayu Ambon, Melayu Kupang, Beaye, dan Uab Meto},
+  year      = {2024},
+  howpublished = {Online},
+  url       = {https://github.com/joanitolopo/makalah-kongresxii},
+  note      = {Manuscript in preparation},
 }
 """
 
@@ -37,27 +35,17 @@ _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
-_LANGUAGES = ["abs", "day", "mkn", "aoz", "mak"]
-LANGUAGES_MAP = {
+_LANGUAGES = ["abs", "aoz", "day", "mak", "mkn"]
+LANGUAGES_TO_FILENAME_MAP = {
     "abs": "ambonese-malay",
-    "day": "beaye",
-    "mkn": "kupang-malay",
     "aoz": "uab-meto",
-    "mak": "makassarese"
+    "day": "beaye",
+    "mak": "makassarese",
+    "mkn": "kupang-malay",
 }
 
 
-def process_list(data):
-    if isinstance(data, list):
-        if len(data) == 1 and isinstance(data[0], str):
-            return data[0]  # Return the single string if it's a list containing only one string
-        else:
-            return data  # Return the list as is if it contains multiple strings or other elements
-    else:
-        return data
-
-
-class BhinnekaKorpus(datasets.GeneratorBasedBuilder):
+class BhinnekaKorpusDataset(datasets.GeneratorBasedBuilder):
     """A Collection of Multilingual Parallel Datasets for 5 Indonesian Local Languages."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
@@ -84,26 +72,7 @@ class BhinnekaKorpus(datasets.GeneratorBasedBuilder):
         )
         BUILDER_CONFIGS.append(seacrowd_config)
 
-    BUILDER_CONFIGS.extend(
-        [
-            SEACrowdConfig(
-                name=f"{_DATASETNAME}_source",
-                version=SOURCE_VERSION,
-                description=f"{_DATASETNAME} source schema (all)",
-                schema="source",
-                subset_id=_DATASETNAME
-            ),
-            SEACrowdConfig(
-                name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",
-                version=SEACROWD_VERSION,
-                description=f"{_DATASETNAME} SEACrowd schema (all)",
-                schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
-                subset_id=_DATASETNAME
-            )
-        ]
-    )
-
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_day_source"
 
     def _info(self) -> datasets.DatasetInfo:
         schema = self.config.schema
@@ -130,22 +99,19 @@ class BhinnekaKorpus(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
         languages = []
-        bhinneka_source_data = []
+        data_dir = []
 
         lang = self.config.name.split("_")[2]
         if lang in _LANGUAGES:
-            bhinneka_source_data.append(Path(dl_manager.download(_URLS + f"{LANGUAGES_MAP[lang]}/{lang}.xlsx")))
+            data_dir.append(Path(dl_manager.download(_URLS + f"{LANGUAGES_TO_FILENAME_MAP[lang]}/{lang}.xlsx")))
             languages.append(lang)
         else:
-            for i in _LANGUAGES:
-                bhinneka_source_data.append(Path(dl_manager.download(_URLS + f"{LANGUAGES_MAP[i]}/{i}.xlsx")))
-                languages.append(i)
-
+            raise ValueError("Invalid language name")
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
-                    "filepath": bhinneka_source_data,
+                    "filepath": data_dir[0],
                     "split": "train",
                     "languages": languages
                 }
@@ -154,28 +120,24 @@ class BhinnekaKorpus(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, filepath: Path, split: str, languages: List[str]) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
-        dfs = pd.read_excel(filepath[0], index_col=0, engine="openpyxl")
-        if len(filepath) > 2:
-            for path2file in filepath[1:]:
-                dfs = pd.merge(dfs, pd.read_excel(path2file, index_col=0, engine="openpyxl"))
-
-        source_sents = dfs.drop(columns=["ind"])
-        target_sents = dfs["ind"]
+        dfs = pd.read_excel(filepath, index_col=0, engine="openpyxl")
+        source_sents = dfs["ind"]
+        target_sents = dfs[languages]
 
         for idx, (source, target) in enumerate(zip(source_sents.values, target_sents.values)):
             if self.config.schema == "source":
                 example = {
-                    "source_sentence": process_list(list(source)),
-                    "target_sentence": process_list(target),
-                    "source_lang": process_list(languages),
-                    "target_lang": "ind"
+                    "source_sentence": source,
+                    "target_sentence": target,
+                    "source_lang": "ind",
+                    "target_lang": languages
                 }
             elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
                 example = {
                     "id": str(idx),
-                    "text_1": process_list(list(source)),
-                    "text_2": process_list(target),
-                    "text_1_name": process_list(languages),
-                    "text_2_name": "ind",
+                    "text_1": source,
+                    "text_2": target,
+                    "text_1_name": "ind",
+                    "text_2_name": languages,
                 }
             yield idx, example
