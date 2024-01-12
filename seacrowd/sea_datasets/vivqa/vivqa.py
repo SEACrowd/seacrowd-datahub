@@ -44,20 +44,20 @@ class vivqaDataset(datasets.GeneratorBasedBuilder):
         SEACrowdConfig(
             name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
-            description="vivqa source schema",
+            description=f"{_DATASETNAME} source schema",
             schema="source",
             subset_id=f"{_DATASETNAME}",
         ),
         SEACrowdConfig(
             name=f"{_DATASETNAME}_seacrowd_qa",
             version=SEACROWD_VERSION,
-            description="vivqa SEACrowd schema",
+            description=f"{_DATASETNAME} SEACrowd schema",
             schema="seacrowd_qa",
             subset_id=f"{_DATASETNAME}",
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = "vivqa_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
 
