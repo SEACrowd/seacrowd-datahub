@@ -3,12 +3,11 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 import datasets
+import pandas as pd
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
-
-import pandas as pd
+from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @inproceedings{ho2020emotion,
@@ -24,7 +23,10 @@ _CITATION = """\
 _DATASETNAME = "uit_vsmec"
 
 _DESCRIPTION = """\
-This dataset consists of Vietnamese Facebook comments that were manually annotated for sentiment. There are seven possible emotion labels: enjoyment, sadness, fear, anger, disgust, surprise or other (for comments with no or neutral emotions). Two rounds of manual annotations were done to train annotators with tagging and editing guidelines. Annotation was performed until inter-annotator agreement reached at least 80%.
+This dataset consists of Vietnamese Facebook comments that were manually annotated for sentiment.
+There are seven possible emotion labels: enjoyment, sadness, fear, anger, disgust, surprise or other (for comments with no or neutral emotions).
+Two rounds of manual annotations were done to train annotators with tagging and editing guidelines.
+Annotation was performed until inter-annotator agreement reached at least 80%.
 """
 
 _HOMEPAGE = "https://drive.google.com/drive/folders/1HooABJyrddVGzll7fgkJ6VzkG_XuWfRu"
