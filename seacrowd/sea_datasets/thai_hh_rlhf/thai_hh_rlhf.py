@@ -48,7 +48,7 @@ The translated data corresponds to the first kind of data.
 _HOMEPAGE = "	https://huggingface.co/datasets/Thaweewat/hh-rlhf-th"
 _LICENSE = Licenses.MIT.value
 _URL = "https://huggingface.co/datasets/Thaweewat/hh-rlhf-th/resolve/main/hh-rlhf-train-161k-th.parquet"
-_SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
+_SUPPORTED_TASKS = [Tasks.REINFORCEMENT_LEARNING_WITH_HUMAN_FEEDBACK]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
@@ -59,7 +59,7 @@ class ThaiHhRlhfDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    SEACROWD_SCHEMA_NAME = "qa"
+    SEACROWD_SCHEMA_NAME = "text"
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
@@ -112,7 +112,12 @@ class ThaiHhRlhfDataset(datasets.GeneratorBasedBuilder):
             if self.config.schema == "source":
                 example = {"chosen": row.get("chosen"), "rejected": row.get("rejected")}
 
-            elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
-                example = {"id": str(idx), "question_id": None, "document_id": None, "question": None, "type": None, "choices": [], "context": None, "answer": [], "meta": {"chosen": row.get("chosen"), "rejected": row.get("rejected")}}
+                yield idx, example
 
-            yield idx, example
+            elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
+                for label in ["chosen", "rejected"]:
+                    text = row.get(label)
+
+                    example = {"id": str(idx), "text": text, "label": 1 if label == "chosen" else 0}
+
+                    yield idx, example
