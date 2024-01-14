@@ -114,9 +114,9 @@ class ThaiHhRlhfDataset(datasets.GeneratorBasedBuilder):
                 yield idx, example
 
             elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
-                for label in ["chosen", "rejected"]:
+                for i, label in enumerate(["chosen", "rejected"]):
                     text = row.get(label)
 
                     example = {"id": str(idx), "text": text, "label": label}
 
-                    yield idx, example
+                    yield (idx * 2) + i, example
