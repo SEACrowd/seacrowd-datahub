@@ -129,10 +129,7 @@ class MelayuSarawakDataset(datasets.GeneratorBasedBuilder):
         data = []
         for filepath in filepaths:
             with open(filepath, "r") as f:
-                data.append([line.rstrip() for line in f.readlines()][0])
+                data.append([line.rstrip() for line in f.readlines()])
 
-        if self.config.schema == "source":
-            yield 0, {"id": Path(filepath).stem, "text": " ".join(data)}
-
-        elif self.config.schema == "seacrowd_ssp":
-            yield 0, {"id": Path(filepath).stem, "text": " ".join(data)}
+        for id, text in enumerate(data):
+            yield id, {"id": id, "text": text}
