@@ -89,8 +89,7 @@ class ThaiHhRlhfDataset(datasets.GeneratorBasedBuilder):
                 }
             )
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
-            features = schemas.qa.features
-            features["meta"] = {"chosen": datasets.Value("string"), "rejected": datasets.Value("string")}
+            features = schemas.text.features(label_names=["rejected", "chosen"])
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -118,6 +117,6 @@ class ThaiHhRlhfDataset(datasets.GeneratorBasedBuilder):
                 for label in ["chosen", "rejected"]:
                     text = row.get(label)
 
-                    example = {"id": str(idx), "text": text, "label": 1 if label == "chosen" else 0}
+                    example = {"id": str(idx), "text": text, "label": label}
 
                     yield idx, example
