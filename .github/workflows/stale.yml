@@ -21,7 +21,8 @@ jobs:
     - uses: actions/stale@v8
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        stale-issue-message: 'Hi, may I know if you are still working on this issue? Please let @holylovenia @SamuelCahyawijaya @sabilmakbar know if you need any help.'
+        stale-issue-message: 'Hi @${assignee}, may I know if you are still working on this issue? Please let @holylovenia @SamuelCahyawijaya @sabilmakbar know if you need any help.'
+        stale-pr-message: 'Hi @${assignee} & @${author}, may I know if you are still working on this PR?'
         stale-issue-label: 'staled-issue'
         days-before-stale: 14
         days-before-close: -1
