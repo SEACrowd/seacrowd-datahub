@@ -49,11 +49,28 @@ Universal Dependencies (UD) is a project that is developing cross-linguistically
 
 _HOMEPAGE = "https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-5287"
 
-_LICENSE = "Apache license 2.0 (apache-2.0)"
+_LICENSE = ["Apache license 2.0 (apache-2.0)"]
 
 _URLS = {
     "ud-v2.12": "https://lindat.mff.cuni.cz/repository/xmlui/bitstream/handle/11234/1-5150/ud-treebanks-v2.12.tgz?sequence=1&isAllowed=y",
-    "ud-v2.13": "https://lindat.mff.cuni.cz/repository/xmlui/bitstream/handle/11234/1-5287/ud-treebanks-v2.13.tgz?sequence=1&isAllowed=y"
+    "ud-v2.13": "https://lindat.mff.cuni.cz/repository/xmlui/bitstream/handle/11234/1-5287/ud-treebanks-v2.13.tgz?sequence=1&isAllowed=y",
+    "id_csui": {
+        "train": "https://raw.githubusercontent.com/UniversalDependencies/UD_Indonesian-CSUI/master/id_csui-ud-train.conllu",
+        "test": "https://raw.githubusercontent.com/UniversalDependencies/UD_Indonesian-CSUI/master/id_csui-ud-test.conllu",
+    },
+    "id_gsd": {
+        "train": "https://raw.githubusercontent.com/UniversalDependencies/UD_Indonesian-GSD/master/id_gsd-ud-train.conllu",
+        "test": "https://raw.githubusercontent.com/UniversalDependencies/UD_Indonesian-GSD/master/id_gsd-ud-test.conllu",
+        "dev": "https://raw.githubusercontent.com/UniversalDependencies/UD_Indonesian-GSD/master/id_gsd-ud-dev.conllu",
+    },
+    "id_pud": {
+        "test": "https://raw.githubusercontent.com/UniversalDependencies/UD_Indonesian-PUD/master/id_pud-ud-test.conllu"
+    },
+    "vi_vtb": {
+        "train": "https://raw.githubusercontent.com/UniversalDependencies/UD_Vietnamese-VTB/master/vi_vtb-ud-train.conllu",
+        "test": "https://raw.githubusercontent.com/UniversalDependencies/UD_Vietnamese-VTB/master/vi_vtb-ud-test.conllu",
+        "dev": "https://raw.githubusercontent.com/UniversalDependencies/UD_Vietnamese-VTB/master/vi_vtb-ud-dev.conllu",
+    },
 }
 
 _SUPPORTED_TASKS = [Tasks.POS_TAGGING]
@@ -98,20 +115,20 @@ class UDDataset(datasets.GeneratorBasedBuilder):
             features = datasets.Features(
                 {
                     # metadata
-                    "sent_id": datasets.Value("string"),
-                    "text": datasets.Value("string"),
-                    "text_en": datasets.Value("string"),
+                    "sent_id": datasets.Sequence(datasets.Value("string")),
+                    "text": datasets.Sequence(datasets.Value("string")),
+                    "text_en": datasets.Sequence(datasets.Value("string")),
                     # tokens
-                    "id": [datasets.Value("string")],
-                    "form": [datasets.Value("string")],
-                    "lemma": [datasets.Value("string")],
-                    "upos": [datasets.Value("string")],
-                    "xpos": [datasets.Value("string")],
-                    "feats": [datasets.Value("string")],
-                    "head": [datasets.Value("string")],
-                    "deprel": [datasets.Value("string")],
-                    "deps": [datasets.Value("string")],
-                    "misc": [datasets.Value("string")],
+                    "id": [datasets.Sequence(datasets.Value("string"))],
+                    "form": [datasets.Sequence(datasets.Value("string"))],
+                    "lemma": [datasets.Sequence(datasets.Value("string"))],
+                    "upos": [datasets.Sequence(datasets.Value("string"))],
+                    "xpos": [datasets.Sequence(datasets.Value("string"))],
+                    "feats": [datasets.Sequence(datasets.Value("string"))],
+                    "head": [datasets.Sequence(datasets.Value("string"))],
+                    "deprel": [datasets.Sequence(datasets.Value("string"))],
+                    "deps": [datasets.Sequence(datasets.Value("string"))],
+                    "misc": [datasets.Sequence(datasets.Value("string"))],
                 }
             )
 
@@ -171,6 +188,207 @@ class UDDataset(datasets.GeneratorBasedBuilder):
             yield key, example
 
 
+class UdIdCSUIDataset(UDDataset):
+
+    # def __init__(self, subset):
+
+    SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
+    SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
+    _SUBSET = "id_csui"
+    BUILDER_CONFIGS = [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{_SUBSET}_source",
+            version=SOURCE_VERSION,
+            description=f"{_DATASETNAME}_{_SUBSET} source schema",
+            schema="source",
+            subset_id=f"{_DATASETNAME}_{_SUBSET}",
+        ),
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{_SUBSET}_seacrowd_seq_label",
+            version=SEACROWD_VERSION,
+            description=f"{_DATASETNAME}_{_SUBSET} SEACrowd Seq Label schema",
+            schema="seacrowd_seq_label",
+            subset_id=f"{_DATASETNAME}_{_SUBSET}",
+        ),
+    ]
+
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{_SUBSET}_source"
+
+    def _split_generators(
+            self, dl_manager: datasets.DownloadManager
+    ) -> List[datasets.SplitGenerator]:
+        """Returns SplitGenerators."""
+        urls = _URLS[self._SUBSET]
+        data_path = dl_manager.download(urls)
+
+
+        return [
+            datasets.SplitGenerator(
+                name=datasets.Split.TRAIN,
+                gen_kwargs={
+                    "filepath": data_path["train"]
+                },
+            ),
+            datasets.SplitGenerator(
+                name=datasets.Split.TEST,
+                gen_kwargs={
+                    "filepath": data_path["test"],
+                },
+            )
+        ]
+
+
+class UdIdGSDDataset(UDDataset):
+
+    # def __init__(self, subset):
+
+    SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
+    SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
+    _SUBSET = "id_gsd"
+    BUILDER_CONFIGS = [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{_SUBSET}_source",
+            version=SOURCE_VERSION,
+            description=f"{_DATASETNAME}_{_SUBSET} source schema",
+            schema="source",
+            subset_id=f"{_DATASETNAME}_{_SUBSET}",
+        ),
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{_SUBSET}_seacrowd_seq_label",
+            version=SEACROWD_VERSION,
+            description=f"{_DATASETNAME}_{_SUBSET} SEACrowd Seq Label schema",
+            schema="seacrowd_seq_label",
+            subset_id=f"{_DATASETNAME}_{_SUBSET}",
+        ),
+    ]
+
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{_SUBSET}_source"
+
+    def _split_generators(
+            self, dl_manager: datasets.DownloadManager
+    ) -> List[datasets.SplitGenerator]:
+        """Returns SplitGenerators."""
+        urls = _URLS[self._SUBSET]
+        data_path = dl_manager.download(urls)
+
+        return [
+            datasets.SplitGenerator(
+                name=datasets.Split.TRAIN,
+                gen_kwargs={
+                    "filepath": data_path["train"]
+                },
+            ),
+            datasets.SplitGenerator(
+                name=datasets.Split.TEST,
+                gen_kwargs={
+                    "filepath": data_path["test"],
+                },
+            ),
+            datasets.SplitGenerator(
+                name=datasets.Split.VALIDATION,
+                gen_kwargs={
+                    "filepath": data_path["dev"],
+                },
+            ),
+        ]
+
+class UdViVTBDataset(UDDataset):
+
+    # def __init__(self, subset):
+
+    SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
+    SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
+    _SUBSET = "vi_vtb"
+    BUILDER_CONFIGS = [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{_SUBSET}_source",
+            version=SOURCE_VERSION,
+            description=f"{_DATASETNAME}_{_SUBSET} source schema",
+            schema="source",
+            subset_id=f"{_DATASETNAME}_{_SUBSET}",
+        ),
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{_SUBSET}_seacrowd_seq_label",
+            version=SEACROWD_VERSION,
+            description=f"{_DATASETNAME}_{_SUBSET} SEACrowd Seq Label schema",
+            schema="seacrowd_seq_label",
+            subset_id=f"{_DATASETNAME}_{_SUBSET}",
+        ),
+    ]
+
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{_SUBSET}_source"
+
+    def _split_generators(
+            self, dl_manager: datasets.DownloadManager
+    ) -> List[datasets.SplitGenerator]:
+        """Returns SplitGenerators."""
+        urls = _URLS[self._SUBSET]
+        data_path = dl_manager.download(urls)
+
+        return [
+            datasets.SplitGenerator(
+                name=datasets.Split.TRAIN,
+                gen_kwargs={
+                    "filepath": data_path["train"]
+                },
+            ),
+            datasets.SplitGenerator(
+                name=datasets.Split.TEST,
+                gen_kwargs={
+                    "filepath": data_path["test"],
+                },
+            ),
+            datasets.SplitGenerator(
+                name=datasets.Split.VALIDATION,
+                gen_kwargs={
+                    "filepath": data_path["dev"],
+                },
+            ),
+        ]
+
+class UdIdPUDDataset(UDDataset):
+
+    # def __init__(self, subset):
+
+    SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
+    SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
+    _SUBSET = "id_pud"
+    BUILDER_CONFIGS = [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{_SUBSET}_source",
+            version=SOURCE_VERSION,
+            description=f"{_DATASETNAME}_{_SUBSET} source schema",
+            schema="source",
+            subset_id=f"{_DATASETNAME}_{_SUBSET}",
+        ),
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{_SUBSET}_seacrowd_seq_label",
+            version=SEACROWD_VERSION,
+            description=f"{_DATASETNAME}_{_SUBSET} SEACrowd Seq Label schema",
+            schema="seacrowd_seq_label",
+            subset_id=f"{_DATASETNAME}_{_SUBSET}",
+        ),
+    ]
+
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{_SUBSET}_source"
+
+    def _split_generators(
+            self, dl_manager: datasets.DownloadManager
+    ) -> List[datasets.SplitGenerator]:
+        """Returns SplitGenerators."""
+        urls = _URLS[self._SUBSET]
+        data_path = dl_manager.download(urls)
+
+        return [
+            datasets.SplitGenerator(
+                name=datasets.Split.TEST,
+                gen_kwargs={
+                    "filepath": data_path["test"],
+                },
+            )
+        ]
+
+
 if __name__ == "__main__":
     data = datasets.load_dataset(__file__)
-    print("xx")
+
