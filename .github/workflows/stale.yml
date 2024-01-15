@@ -6,7 +6,9 @@
 name: Mark stale issues and pull requests
 
 on:
-  workflow_dispatch:
+  push:
+    # Sequence of patterns matched against refs/heads
+    branches: workflow_test_mention_assignee
   schedule:
   - cron: '20 1 * * *'
 
