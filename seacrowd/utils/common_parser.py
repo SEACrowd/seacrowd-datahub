@@ -6,7 +6,7 @@ from conllu import parse
 
 def load_conll_data(file_path):
     # Read file
-    data = open(file_path, "r", encoding="utf8").readlines()
+    data = open(file_path, "r").readlines()
 
     # Prepare buffer
     dataset = []
