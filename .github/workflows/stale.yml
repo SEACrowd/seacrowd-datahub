@@ -26,6 +26,7 @@ jobs:
         stale-issue-label: 'staled-issue'
         days-before-stale: 14
         days-before-close: -1
+        debug-only: true
         include-only-assigned: true
         exempt-issue-labels: 'in-progress,pr-ready'
         operations-per-run: 100
