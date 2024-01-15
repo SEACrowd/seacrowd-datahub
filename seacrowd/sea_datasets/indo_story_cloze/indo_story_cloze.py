@@ -49,7 +49,7 @@ _HOMEPAGE = "https://huggingface.co/datasets/indolem/indo_story_cloze"
 
 _LANGUAGES = ["ind"]
 
-_LICENSE = Licenses.CC_BY_NC_SA_4_0.value
+_LICENSE = Licenses.CC_BY_SA_4_0.value
 
 _LOCAL = False
 
