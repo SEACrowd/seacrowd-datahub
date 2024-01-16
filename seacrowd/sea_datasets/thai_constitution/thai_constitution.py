@@ -7,7 +7,7 @@ import pandas as pd
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import (DEFAULT_SEACROWD_VIEW_NAME,
-                                       DEFAULT_SOURCE_VIEW_NAME, Tasks, Licenses)
+                                       DEFAULT_SOURCE_VIEW_NAME, Tasks, Licenses, TASK_TO_SCHEMA)
 
 _DATASETNAME = "thai_constitution"
 _SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
@@ -36,6 +36,7 @@ _HOMEPAGE = "https://github.com/PyThaiNLP/Thai-constitution-corpus/tree/master"
 _LICENSE = Licenses.CC0_1_0.value
 
 _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
+_SEACROWD_SCHEMA_NAME = TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]].lower()
 _LANGUAGES = ['tha']
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
@@ -76,10 +77,10 @@ class ThaiConstitutionDataset(datasets.GeneratorBasedBuilder):
             subset_id="thai_constitution",
         ),
         SEACrowdConfig(
-            name="thai_constitution_seacrowd_ssp",
+            name=f"thai_constitution_seacrowd_{_SEACROWD_SCHEMA_NAME}",
             version=datasets.Version(_SEACROWD_VERSION),
             description="Thai constitution SEACrowd schema",
-            schema="seacrowd_ssp",
+            schema=f"seacrowd_{_SEACROWD_SCHEMA_NAME}",
             subset_id="thai_constitution",
         ),
     ]
@@ -92,7 +93,7 @@ class ThaiConstitutionDataset(datasets.GeneratorBasedBuilder):
                     "text": datasets.Value("string"),
                 }
             )
-        elif self.config.schema == "seacrowd_ssp":
+        elif self.config.schema == f"seacrowd_{_SEACROWD_SCHEMA_NAME}":
             features = schemas.self_supervised_pretraining.features
         else:
             raise ValueError(f"Invalid config schema: {self.config.schema}")
@@ -131,7 +132,7 @@ class ThaiConstitutionDataset(datasets.GeneratorBasedBuilder):
                                 "text": line.strip(),
                             },
                         )
-                    elif self.config.schema == "seacrowd_ssp":
+                    elif self.config.schema == f"seacrowd_{_SEACROWD_SCHEMA_NAME}":
                         yield (
                             counter,
                             {
