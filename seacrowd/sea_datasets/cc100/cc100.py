@@ -36,7 +36,7 @@ import datasets
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import (DEFAULT_SEACROWD_VIEW_NAME,
-                                      DEFAULT_SOURCE_VIEW_NAME, Tasks)
+                                      DEFAULT_SOURCE_VIEW_NAME, Tasks, TASK_TO_SCHEMA)
 
 _DATASETNAME = "cc100"
 _SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
@@ -154,6 +154,8 @@ _URLS = {
 
 _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
 
+_SEACROWD_SCHEMA_NAME = TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]].lower()
+
 _SOURCE_VERSION = "2018.12.01"
 
 _SEACROWD_VERSION = "1.0.0"
@@ -161,7 +163,7 @@ _SEACROWD_VERSION = "1.0.0"
 
 def seacrowd_config_constructor(lang, schema, version):
     """Construct SEACrowdConfig with cc100_{lang}_{schema} as the name format."""
-    if schema != "source" and schema != "seacrowd_ssp":
+    if schema != "source" and schema != f"seacrowd_{_SEACROWD_SCHEMA_NAME}":
         raise ValueError(f"Invalid schema: {schema}")
 
     if lang == "":
@@ -186,13 +188,13 @@ def seacrowd_config_constructor(lang, schema, version):
 
 class CC100(datasets.GeneratorBasedBuilder):
     """Monolingual Datasets from Web Crawl Data."""
-
+  
     BUILDER_CONFIGS = (
         [seacrowd_config_constructor(lang, "source", _SOURCE_VERSION) for lang in _LANGUAGES_MAP]
-        + [seacrowd_config_constructor(lang, "seacrowd_ssp", _SEACROWD_VERSION) for lang in _LANGUAGES_MAP]
+        + [seacrowd_config_constructor(lang, f"seacrowd_{_SEACROWD_SCHEMA_NAME}", _SEACROWD_VERSION) for lang in _LANGUAGES_MAP]
         + [
             seacrowd_config_constructor("", "source", _SOURCE_VERSION),
-            seacrowd_config_constructor("", "seacrowd_ssp", _SOURCE_VERSION),
+            seacrowd_config_constructor("", f"seacrowd_{_SEACROWD_SCHEMA_NAME}", _SOURCE_VERSION),
         ]
     )
 
@@ -204,7 +206,7 @@ class CC100(datasets.GeneratorBasedBuilder):
                     "text": datasets.Value("string"),
                 }
             )
-        elif self.config.schema == "seacrowd_ssp":
+        elif self.config.schema == f"seacrowd_{_SEACROWD_SCHEMA_NAME}":
             features = schemas.self_supervised_pretraining.features
 
         return datasets.DatasetInfo(
@@ -218,7 +220,7 @@ class CC100(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
         split_name = self.config.name.split("_")
-        if self.config.name == "cc100_source" or self.config.name == "cc100_seacrowd_ssp":
+        if self.config.name == "cc100_source" or self.config.name == f"cc100_seacrowd_{_SEACROWD_SCHEMA_NAME}":
             # Load all languages
             path = dl_manager.download_and_extract([_URLS["train"].format(lang=_LANGUAGES_MAP[lang]) for lang in _LANGUAGES_MAP])
         else:
@@ -249,7 +251,7 @@ class CC100(datasets.GeneratorBasedBuilder):
                                 "text": row.strip(),
                             },
                         )
-            elif self.config.schema == "seacrowd_ssp":
+            elif self.config.schema == f"seacrowd_{_SEACROWD_SCHEMA_NAME}":
                 for counter, row in enumerate(f):
                     if row.strip() != "":
                         yield (
