@@ -7,7 +7,6 @@ from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Tasks, Licenses
 
-# TODO: Add BibTeX citation
 _CITATION = """\
 @article{dao2021intent,
       title={Intent Detection and Slot Filling for Vietnamese},
@@ -105,9 +104,10 @@ class PhoATIS(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    BUILDER_CONFIGS = [config_constructor_intent_cls("source", _SOURCE_VERSION, subset) for subset in ["syllable", "word"]]
+    # BUILDER_CONFIGS = [config_constructor_intent_cls("source", _SOURCE_VERSION, subset) for subset in ["syllable", "word"]]
+    BUILDER_CONFIGS = []
     BUILDER_CONFIGS.extend([config_constructor_intent_cls("seacrowd_text", _SEACROWD_VERSION, subset) for subset in ["syllable", "word"]])
-    BUILDER_CONFIGS.extend([config_constructor_slot_filling("source", _SOURCE_VERSION, subset) for subset in ["syllable", "word"]])
+    # BUILDER_CONFIGS.extend([config_constructor_slot_filling("source", _SOURCE_VERSION, subset) for subset in ["syllable", "word"]])
     BUILDER_CONFIGS.extend([config_constructor_slot_filling("seacrowd_seq_label", _SEACROWD_VERSION, subset) for subset in ["syllable", "word"]])
 
     BUILDER_CONFIGS.extend(
