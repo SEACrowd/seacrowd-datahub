@@ -1,6 +1,6 @@
 # Contribution point guideline
 
-To be considered as a co-author, 20 contribution points are required.
+To be considered as a co-author, 20 contribution points are required. To monitor how many points that you have obtained, the contribution point tracking is now live at [this sheet](https://docs.google.com/spreadsheets/d/e/2PACX-1vQDZtJjA6i7JsxS5IlMtVuwOYjr2Pbl_b47yMSH4aAdHDBIpf-CiJQjNQAzcJPEu_aE7kwH4ZvKvPm0/pubhtml?gid=225616890&single=true) and will be updated regularly (although not automatically, yet)!
 
 > **Note**: The purpose of the point system is not to barrier collaboration, but to reward rare and high-quality dataset entries.
 We might adjust the point requirement lower to accommodate more co-authorship if needed.
