@@ -134,7 +134,13 @@ class MelayuSabah(datasets.GeneratorBasedBuilder):
         """Yields examples as (key, example) tuples."""
         filepaths = [filepath] + other_path
         data = []
-        for filepath in filepaths:
+        for filepath in filepaths[:2]:
+            with open(filepath, "r") as f:
+                sentences = [line.rstrip() for line in f.readlines()]
+                sentences = [sentence.split('\t')[-1] for sentence in sentences]
+                data.append('\n'.join(sentences))
+
+        for filepath in filepaths[2:]:
             with open(filepath, "r") as f:
                 data.append([line.rstrip() for line in f.readlines()])
 
