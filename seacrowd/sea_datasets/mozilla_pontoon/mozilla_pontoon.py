@@ -64,20 +64,20 @@ class MozillaPontoonDataset(datasets.GeneratorBasedBuilder):
     # Config to load individual datasets per language
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_{lang}_source",
+            name=f"{_DATASETNAME}_eng_{lang}_source",
             version=datasets.Version(_SOURCE_VERSION),
             description=f"{_DATASETNAME} source schema for {lang} language",
             schema="source",
-            subset_id=lang,
+            subset_id=f"{_DATASETNAME}_eng_{lang}",
         )
         for lang in _LANGUAGES
     ] + [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_{lang}_seacrowd_t2t",
+            name=f"{_DATASETNAME}_eng_{lang}_seacrowd_t2t",
             version=datasets.Version(_SEACROWD_VERSION),
             description=f"{_DATASETNAME} SEACrowd schema for {lang} language",
             schema="seacrowd_t2t",
-            subset_id=lang,
+            subset_id=f"{_DATASETNAME}_eng_{lang}",
         )
         for lang in _LANGUAGES
     ]
@@ -108,8 +108,8 @@ class MozillaPontoonDataset(datasets.GeneratorBasedBuilder):
         if self.config.schema == "source":
             features = datasets.Features(
                 {
-                    "source_sentence": datasets.Value("string"),
-                    "target_sentence": datasets.Value("string"),
+                    "source_string": datasets.Value("string"),
+                    "target_string": datasets.Value("string"),
                 }
             )
         elif self.config.schema == "seacrowd_t2t":
@@ -137,14 +137,14 @@ class MozillaPontoonDataset(datasets.GeneratorBasedBuilder):
         """Load dataset from HuggingFace."""
         hf_lang_code = self.LANG_CODE_MAPPER[language]
         hf_remote_ref = "/".join(_URL.split("/")[-2:])
-        return datasets.load_dataset(hf_remote_ref, f"{hf_lang_code}-en", split="train")
+        return datasets.load_dataset(hf_remote_ref, f"en-{hf_lang_code}", split="train")
 
     def _generate_examples(self, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         languages = []
         pontoon_datasets = []
 
-        lang = self.config.name.split("_")[2]
+        lang = self.config.subset_id.split("_")[-1]
         if lang in _LANGUAGES:
             languages.append(lang)
             pontoon_datasets.append(self._load_hf_data_from_remote(lang))
@@ -162,8 +162,8 @@ class MozillaPontoonDataset(datasets.GeneratorBasedBuilder):
                 elif self.config.schema == "seacrowd_t2t":
                     example = {
                         "id": str(index),
-                        "text_1": row["source_sentence"],
-                        "text_2": row["target_sentence"],
+                        "text_1": row["source_string"],
+                        "text_2": row["target_string"],
                         "text_1_name": "eng",
                         "text_2_name": lang,
                     }
