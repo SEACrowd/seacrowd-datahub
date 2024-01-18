@@ -18,6 +18,17 @@ Korpus Variasi Bahasa Melayu: Sarawak is a language corpus sourced from various 
 
 _HOMEPAGE = "https://github.com/matbahasa/Melayu_Sarawak"
 
+_CITATION = """\
+@misc{melayusarawak,
+  author = {Hiroki Nomoto},
+  title = {Melayu_Sabah},
+  year = {2020},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\\url{https://github.com/matbahasa/Melayu_Sarawak}},
+  commit = {a175f691f9db94d7b4f971e7a93b7cc001c0ed47}
+}
+"""
 
 _LANGUAGES = ["zlm"]
 
@@ -107,7 +118,7 @@ class MelayuSarawakDataset(datasets.GeneratorBasedBuilder):
             features=features,
             homepage=_HOMEPAGE,
             license=_LICENSE,
-            # citation=_CITATION,
+            citation=_CITATION,
         )
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
