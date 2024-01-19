@@ -58,7 +58,7 @@ Check the following before approving:
 The objective of datasheet review is to ensure that all dataloaders in SEACrowd has correctness to the HF Dataloader Structure & SEACrowd defined schema and config and follow similar code format and/or style.
 
 ### Dataloader Check
-1. Metadata correctness. (ensure Tasks, Languages, HOME_URL, DATA_URL is used).
+1. Metadata correctness. (ensure Tasks, Languages, HOME_URL, DATA_URL is used). Make sure the dataloader also has `__init__.py`.
 2. All subsets are implemented correctly to respective dataloader issue and according to SEACrowd Schema definition (has both `source` and `seacrowd` schema -- if a given task has its SEACrowd Schema, else can raise it to reviewers/mods).
 3. Pass the test scripts defined in `tests` folder.
 4. Pass manual check.
