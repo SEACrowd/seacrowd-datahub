@@ -53,7 +53,7 @@ _SUPPORTED_TASKS = [Tasks.FACT_CHECKING]
 _SOURCE_VERSION = "1.0.0"
 
 
-class NewDataset(datasets.GeneratorBasedBuilder):
+class PhilippineFakeNewsDataset(datasets.GeneratorBasedBuilder):
     """
     Dataset of English news articles from the Philippines manually annotated as "credible" or
     "non-credible" based on source.
