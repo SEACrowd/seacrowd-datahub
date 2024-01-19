@@ -52,7 +52,7 @@ _LICENSE = Licenses.CC_BY_NC_SA_4_0.value
 _LOCAL = False
 _PASSWORD = "12317".encode("utf-8")  # password to unzip dataset after downloading
 _URLS = {
-    _DATASETNAME: "https://drive.google.com/uc?id=1eREETRklmXJLXrNPTyHxQ3RFdPhq_Nes",
+    _DATASETNAME: "https://drive.usercontent.google.com/download?id=1eREETRklmXJLXrNPTyHxQ3RFdPhq_Nes&authuser=0&confirm=t",
 }
 
 _SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
@@ -78,7 +78,7 @@ class M3Exam(datasets.GeneratorBasedBuilder):
         for lang in _LANGUAGES
     ]
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_jav_source"
 
     def _info(self) -> datasets.DatasetInfo:
 
@@ -114,24 +114,26 @@ class M3Exam(datasets.GeneratorBasedBuilder):
 
         data_dir = dl_manager.download(urls)
 
-        if not os.path.exists(data_dir + ".zip"):
-            os.rename(data_dir, data_dir + ".zip")
-
-        with zipfile.ZipFile(data_dir + ".zip", "r") as zip_ref:
-            zip_ref.extractall(data_dir, pwd=_PASSWORD)  # unzipping with password
+        if not os.path.exists(data_dir + "_extracted"):
+            if not os.path.exists(data_dir + ".zip"):
+                os.rename(data_dir, data_dir + ".zip")
+            with zipfile.ZipFile(data_dir + ".zip", "r") as zip_ref:
+                zip_ref.extractall(data_dir + "_extracted", pwd=_PASSWORD)  # unzipping with password
+        if not os.path.exists(data_dir):
+            os.rename(data_dir + ".zip", data_dir)
 
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
                 gen_kwargs={
-                    "filepath": os.path.join(data_dir, f"data/text-question/{_LANG_MAPPER[lang]}-questions-test.json"),
+                    "filepath": os.path.join(data_dir + "_extracted", f"data/text-question/{_LANG_MAPPER[lang]}-questions-test.json"),
                     "split": "test",
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
-                    "filepath": os.path.join(data_dir, f"data/text-question/{_LANG_MAPPER[lang]}-questions-dev.json"),
+                    "filepath": os.path.join(data_dir + "_extracted", f"data/text-question/{_LANG_MAPPER[lang]}-questions-dev.json"),
                     "split": "dev",
                 },
             ),
