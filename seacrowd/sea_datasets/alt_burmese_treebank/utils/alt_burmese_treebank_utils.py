@@ -37,17 +37,16 @@ def extract_data(sentence):
     nodes = []
     sub_nodes = {}
     sub_node_ids = []
-    id_pattern = re.compile(r"SNT\.\d+\.\d+")
 
     # Extract id, sub_nodes and text of ROOT
-    sentence_id = id_pattern.search(sentence).group()
+    sentence_id = sentence.split("\t")[0]
     root_sent = sentence[sentence.find("ROOT") : -1]
     root_subnodes = extract_parts(root_sent)
     sub_nodes.update({i + 1: root_subnodes[i] for i in range(len(root_subnodes))})
     sub_node_ids.extend([i + 1 for i in range(len(root_subnodes))])
     root_text = extract_sentence(root_sent)
 
-    nodes.append({"id": "0", "type": "ROOT", "text": root_text, "offsets": [0, len(root_text) - 1], "subnodes": [f"{len(nodes)+i+1}" for i in range(len(sub_nodes))]})
+    nodes.append({"id": f"{sentence_id+'.'+str(0)}", "type": "ROOT", "text": root_text, "offsets": [0, len(root_text) - 1], "subnodes": [f"{len(nodes)+i+1}" for i in range(len(sub_nodes))]})
 
     while sub_node_ids:
         sub_node_id = sub_node_ids.pop(0)
@@ -67,5 +66,5 @@ def extract_data(sentence):
         start = root_text.find(text)
         end = start + len(text) - 1
 
-        nodes.append({"id": f"{sub_node_id}", "type": node_type, "text": text, "offsets": [start, end], "subnodes": [f"{i}" for i in cur_subnode_ids]})
-    return {"id": sentence_id, "passage": {"id": sentence_id, "type": None, "text": [nodes[0]["text"]], "offsets": nodes[0]["offsets"]}, "nodes": nodes}
+        nodes.append({"id": f"{sentence_id+'.'+str(sub_node_id)}", "type": node_type, "text": text, "offsets": [start, end], "subnodes": [f"{sentence_id+'.'+str(i)}" for i in cur_subnode_ids]})
+    return {"id": sentence_id, "passage": {"id": sentence_id + "_0", "type": None, "text": [nodes[0]["text"]], "offsets": nodes[0]["offsets"]}, "nodes": nodes}
