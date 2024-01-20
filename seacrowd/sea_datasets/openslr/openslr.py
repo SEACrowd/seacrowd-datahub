@@ -14,13 +14,15 @@
 # limitations under the License.
 
 import os
+import re
 from pathlib import Path
 from typing import Dict, List, Tuple
-import re
+
 import datasets
+
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
+from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @inproceedings{kjartansson18_sltu,
