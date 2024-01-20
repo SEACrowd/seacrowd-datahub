@@ -133,9 +133,11 @@ class MalindoMorph(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         rows = []
-        with open(filepath) as file:
+        with open(filepath, encoding="utf8") as file:
             for line in file:
-                rows.append(line.split("\t"))
+                row = line.split("\t")
+                row[-1] = row[-1].split("\n")[0] # remove newlines from lemma feature
+                rows.append(row)
 
         if self.config.schema == "source":
             for key, row in enumerate(rows):
