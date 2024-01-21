@@ -15,11 +15,12 @@
 
 from pathlib import Path
 from typing import Dict, List, Tuple
-from seacrowd.utils import schemas
+
 import datasets
 
+from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
+from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @inproceedings{elkishky_ccaligned_2020,
@@ -63,7 +64,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class CCAlignedDoc(datasets.GeneratorBasedBuilder):
+class CCAlignedDocDataset(datasets.GeneratorBasedBuilder):
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
