@@ -44,6 +44,7 @@ _HOMEPAGE = "https://github.com/vistec-AI/thai2nmt"
 
 _LICENSE = Licenses.CC_BY_SA_4_0.value
 
+_LANGUAGES = ["tha", "eng"]
 _LOCAL = False
 
 _URLS = {
@@ -109,7 +110,7 @@ class ScbMtEnThDataset(datasets.GeneratorBasedBuilder):
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
-            language_pair = [SEACROWD_TO_SOURCE_LANGCODE_DICT[lang] for lang in self.config.name.split("_")[1:3]]
+            language_pair = [SEACROWD_TO_SOURCE_LANGCODE_DICT[lang] for lang in self.config.name.split("_")[4:6]]
             features = datasets.Features(
                 {
                     "translation": datasets.features.Translation(language_pair),
@@ -141,7 +142,7 @@ class ScbMtEnThDataset(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
         with open(filepath, encoding="utf-8") as f:
             if self.config.schema == "source":
-                language_pair = [SEACROWD_TO_SOURCE_LANGCODE_DICT[lang] for lang in self.config.name.split("_")[1:3]]
+                language_pair = [SEACROWD_TO_SOURCE_LANGCODE_DICT[lang] for lang in self.config.name.split("_")[4:6]]
                 source, target = language_pair
                 for id_, row in enumerate(f):
                     data = json.loads(row)
@@ -151,7 +152,7 @@ class ScbMtEnThDataset(datasets.GeneratorBasedBuilder):
                     }
 
             elif self.config.schema == "seacrowd_t2t":
-                source, target = self.config.name.split("_")[1:3]
+                source, target = self.config.name.split("_")[4:6]
                 for id_, row in enumerate(f):
                     data = json.loads(row)
                     ex = {
