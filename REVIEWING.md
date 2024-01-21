@@ -58,7 +58,7 @@ Check the following before approving:
 The objective of datasheet review is to ensure that all dataloaders in SEACrowd has correctness to the HF Dataloader Structure & SEACrowd defined schema and config and follow similar code format and/or style.
 
 ### Dataloader Check
-1. Metadata correctness. (ensure Tasks, Languages, HOME_URL, DATA_URL is used).
+1. Metadata correctness. (ensure Tasks, Languages, HOME_URL, DATA_URL is used). Make sure the dataloader also has `__init__.py`.
 2. All subsets are implemented correctly to respective dataloader issue and according to SEACrowd Schema definition (has both `source` and `seacrowd` schema -- if a given task has its SEACrowd Schema, else can raise it to reviewers/mods).
 3. Pass the test scripts defined in `tests` folder.
 4. Pass manual check.
@@ -86,4 +86,4 @@ For a multilingual dataset of Lang Identification (or Linguistic Features/Unit I
 ## Approval process
 1. For every dataloader, it requires 2 reviewers per issue (the assignee must not review their own dataloader).
 2. Once the second reviewer approved, the PR should be merged to the `master` branch using `squash and merge` strategy for cleaner commit history.
-3. Reviewers will be assigned from the reviewer pool once/twice a week (by holy@aisingapore.org) or any reviewers can take any unassigned review process as long as it can be done in timely manner.
+3. Reviewers will be assigned from the reviewer pool once/twice a week (by @holylovenia) or any reviewers can take any unassigned review process as long as it can be done in timely manner.
