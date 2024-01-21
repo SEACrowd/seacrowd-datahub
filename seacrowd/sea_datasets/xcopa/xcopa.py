@@ -30,7 +30,7 @@ _CITATION = """\
 }
 """
 
-_LANGUAGES = ["ind"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
+_LANGUAGES = ["ind","th", "vie"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 _LOCAL = False
 
 _DATASETNAME = "xcopa"
@@ -48,9 +48,17 @@ _HOMEPAGE = "https://github.com/cambridgeltl/xcopa"
 _LICENSE = "Unknown"
 
 _URLS = {
-    _DATASETNAME: [
+    "ind": [
         "https://raw.githubusercontent.com/cambridgeltl/xcopa/master/data/id/val.id.jsonl",
         "https://raw.githubusercontent.com/cambridgeltl/xcopa/master/data/id/test.id.jsonl",
+    ],
+    "th": [
+        "https://raw.githubusercontent.com/cambridgeltl/xcopa/master/data/th/val.th.jsonl",
+        "https://raw.githubusercontent.com/cambridgeltl/xcopa/master/data/th/test.th.jsonl",
+    ],
+    "vie": [
+        "https://raw.githubusercontent.com/cambridgeltl/xcopa/master/data/vi/val.vi.jsonl",
+        "https://raw.githubusercontent.com/cambridgeltl/xcopa/master/data/vi/test.vi.jsonl",
     ]
 }
 
@@ -60,6 +68,14 @@ _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
+def _xcopa_config_constructor(lang: str,schema: str, version: str) -> SEACrowdConfig :
+    return SEACrowdConfig(
+            name="xcopa_{}_{}".format(lang,schema),
+            version=version,
+            description="XCOPA {} schema".format(schema),
+            schema=schema,
+            subset_id="xcopa",
+    )
 
 
 class Xcopa(datasets.GeneratorBasedBuilder):
@@ -70,24 +86,9 @@ class Xcopa(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
     
-    BUILDER_CONFIGS = [
-        SEACrowdConfig(
-            name="xcopa_source",
-            version=SOURCE_VERSION,
-            description="XCOPA source schema",
-            schema="source",
-            subset_id="xcopa",
-        ),
-        SEACrowdConfig(
-            name="xcopa_seacrowd_qa",
-            version=SEACROWD_VERSION,
-            description="XCOPA Nusantara schema",
-            schema="seacrowd_qa",
-            subset_id="xcopa",
-        ),
-    ]
+    BUILDER_CONFIGS = [_xcopa_config_constructor(l, "source", _SOURCE_VERSION) for l in _LANGUAGES] + [_xcopa_config_constructor(l, "seacrowd_qa", _SEACROWD_VERSION) for l in _LANGUAGES]
 
-    DEFAULT_CONFIG_NAME = "xcopa_source"
+    DEFAULT_CONFIG_NAME = "xcopa_ind_source"
     
     def _info(self):
         if self.config.schema == "source":
@@ -113,10 +114,18 @@ class Xcopa(datasets.GeneratorBasedBuilder):
             license=_LICENSE,
             citation=_CITATION,
         )
-
+    
+    def get_lang(self, name: str):
+        # xcopa_ind|
+        # [xcopa, ind]
+        names_splitted = name.split("_")
+        if len(names_splitted) == 0 :
+            return "ind"
+        return names_splitted[1]
+    
     def _split_generators(self, dl_manager):
         """Returns SplitGenerators."""
-        urls = _URLS[_DATASETNAME]
+        urls = _URLS[self.get_lang(self.config.name)]
         data_dir = dl_manager.download_and_extract(urls)
         return [
             datasets.SplitGenerator(
