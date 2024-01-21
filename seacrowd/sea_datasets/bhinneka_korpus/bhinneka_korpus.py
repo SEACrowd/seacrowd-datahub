@@ -52,7 +52,7 @@ class BhinnekaKorpusDataset(datasets.GeneratorBasedBuilder):
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
     SEACROWD_SCHEMA_NAME = "t2t"
 
-    dataset_names = sorted([f"bhinneka_korpus_{lang}" for lang in _LANGUAGES])
+    dataset_names = sorted([f"{_DATASETNAME}_{lang}" for lang in _LANGUAGES])
     BUILDER_CONFIGS = []
     for name in dataset_names:
         source_config = SEACrowdConfig(
@@ -98,13 +98,10 @@ class BhinnekaKorpusDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        languages = []
         data_dir = []
-
         lang = self.config.name.split("_")[2]
         if lang in _LANGUAGES:
             data_dir.append(Path(dl_manager.download(_URLS + f"{LANGUAGES_TO_FILENAME_MAP[lang]}/{lang}.xlsx")))
-            languages.append(lang)
         else:
             raise ValueError("Invalid language name")
         return [
@@ -113,16 +110,16 @@ class BhinnekaKorpusDataset(datasets.GeneratorBasedBuilder):
                 gen_kwargs={
                     "filepath": data_dir[0],
                     "split": "train",
-                    "languages": languages
+                    "language": lang
                 }
             )
         ]
 
-    def _generate_examples(self, filepath: Path, split: str, languages: List[str]) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepath: Path, split: str, language: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         dfs = pd.read_excel(filepath, index_col=0, engine="openpyxl")
         source_sents = dfs["ind"]
-        target_sents = dfs[languages]
+        target_sents = dfs[language]
 
         for idx, (source, target) in enumerate(zip(source_sents.values, target_sents.values)):
             if self.config.schema == "source":
@@ -130,7 +127,7 @@ class BhinnekaKorpusDataset(datasets.GeneratorBasedBuilder):
                     "source_sentence": source,
                     "target_sentence": target,
                     "source_lang": "ind",
-                    "target_lang": languages
+                    "target_lang": language
                 }
             elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
                 example = {
@@ -138,6 +135,6 @@ class BhinnekaKorpusDataset(datasets.GeneratorBasedBuilder):
                     "text_1": source,
                     "text_2": target,
                     "text_1_name": "ind",
-                    "text_2_name": languages,
+                    "text_2_name": language,
                 }
             yield idx, example
