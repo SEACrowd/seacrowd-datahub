@@ -70,7 +70,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class SpamidPair(datasets.GeneratorBasedBuilder):
+class SpamidPairDataset(datasets.GeneratorBasedBuilder):
     """SPAMID-PAIR is data post-comment pairs collected from 13 selected Indonesian public figures (artists) / public accounts with more than 15 million followers and categorized as famous artists."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
