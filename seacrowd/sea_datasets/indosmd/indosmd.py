@@ -23,7 +23,9 @@ _LOCAL = False
 _DATASETNAME = "indosmd"
 
 _DESCRIPTION = """\
-IndoSMD is a synthetic task-oriented dialogue system dataset that was translated from the In-Car Assistant (SMD) dataset (Eric et al., 2017) into the new Indonesian dataset using the translation pipeline method including delexicalization, translation, and delexicalization. The dataset consists of 323 dialogues in the POI Navigation, Calendar Scheduling, and Weather Information Retrieval domain, with a user and an agent talking to each other. It also consists of slots and dialogue acts from the user and the agent.
+IndoSMD is a synthetic task-oriented dialogue system dataset that was translated from the In-Car Assistant (SMD) dataset (Eric et al., 2017) into the new Indonesian dataset using the translation pipeline method 
+including delexicalization, translation, and delexicalization. The dataset consists of 323 dialogues in the POI Navigation, Calendar Scheduling, and Weather Information Retrieval domain, with a user and an agent talking to each other. 
+It also consists of slots and dialogue acts from the user and the agent.
 """
 
 _HOMEPAGE = "https://github.com/dehanalkautsar/IndoToD/tree/main/IndoSMD"
@@ -45,7 +47,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class IndoSMD(datasets.GeneratorBasedBuilder):
+class IndoSMDDataset(datasets.GeneratorBasedBuilder):
     """IndoToD: A Multi-Domain Indonesian Benchmark For End-to-End Task-Oriented Dialogue Systems"""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
@@ -53,18 +55,18 @@ class IndoSMD(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="indosmd_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
             description="IndoToD: IndoSMD source schema",
             schema="source",
-            subset_id="indosmd",
+            subset_id=f"{_DATASETNAME}",
         ),
         SEACrowdConfig(
-            name="indosmd_seacrowd_tod",
+            name=f"{_DATASETNAME}_seacrowd_tod",
             version=SEACROWD_VERSION,
             description="IndoToD: IndoSMD SEACrowd End-to-end Task Oriented Dialogue schema",
             schema="seacrowd_tod",
-            subset_id="indosmd",
+            subset_id=f"{_DATASETNAME}",
         ),
     ]
 
@@ -108,7 +110,6 @@ class IndoSMD(datasets.GeneratorBasedBuilder):
                                     "time": datasets.Value("string"),
                                     "date": datasets.Value("string"),
                                     "party": datasets.Value("string"),
-                                    "event": datasets.Value("string"),
                                     "event": datasets.Value("string"),
                                     "weather_attribute": datasets.Value("string"),
                                     "location": datasets.Value("string"),
@@ -172,9 +173,7 @@ class IndoSMD(datasets.GeneratorBasedBuilder):
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
-                # Whatever you put in gen_kwargs will be passed to _generate_examples
                 gen_kwargs={
-                    # "filepath": os.path.join(data_dir, "train.jsonl"),
                     "filepath": data_dir["train"],
                     "split": "train",
                 },
@@ -221,7 +220,7 @@ class IndoSMD(datasets.GeneratorBasedBuilder):
                             if key not in example["dialogue"][i]["data"]["slots"]:
                                 example["dialogue"][i]["data"]["slots"][key] = ""
 
-                if type(example["scenario"]["kb"]["items"]) == type(None):
+                if isinstance(example["scenario"]["kb"]["items"], None):
                     example["scenario"]["kb"]["items"] = []
 
                 for i in range(len(example["scenario"]["kb"]["items"])):
