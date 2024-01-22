@@ -13,15 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import os
+import zipfile
 from pathlib import Path
 from typing import Dict, List, Tuple
-import json
+
 import datasets
+
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
-import zipfile
+from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @article{zhang2023m3exam,
@@ -98,6 +100,12 @@ class M3Exam(datasets.GeneratorBasedBuilder):
             )
         elif self.config.schema == "seacrowd_qa":
             features = schemas.qa_features
+            features["meta"] = {
+                "level": datasets.Value("string"),
+                "subject": datasets.Value("string"),
+                "subject_category": datasets.Value("string"),
+                "year": datasets.Value("string"),
+            }
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -173,7 +181,12 @@ class M3Exam(datasets.GeneratorBasedBuilder):
                     "choices": json_obj["options"],
                     "context": "",
                     "answer": [answer for answer in json_obj["options"] if json_obj["answer_text"] == answer[0]],
-                    "meta": {},
+                    "meta": {
+                        "level": json_obj["level"] if "level" in json_obj.keys() else None,
+                        "subject": json_obj["subject"] if "subject" in json_obj.keys() else None,
+                        "subject_category": json_obj["subject_category"] if "subject_category" in json_obj.keys() else None,
+                        "year": json_obj["year"] if "year" in json_obj.keys() else None,
+                    },
                 }
                 yield idx, example
                 idx += 1
