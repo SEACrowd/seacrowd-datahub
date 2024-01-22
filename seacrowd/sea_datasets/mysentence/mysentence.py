@@ -52,7 +52,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class mysentenceDataset(datasets.GeneratorBasedBuilder):
+class MysentenceDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
     BUILDER_CONFIGS = [
