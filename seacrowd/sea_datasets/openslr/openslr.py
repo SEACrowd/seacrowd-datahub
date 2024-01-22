@@ -52,7 +52,7 @@ _LOCAL = False
 
 _RESOURCES = {
     "SLR35": {
-        "Language": "Javanese",
+        "language": "jav",
         "files": [
             "asr_javanese_0.zip",
             "asr_javanese_1.zip",
@@ -75,7 +75,7 @@ _RESOURCES = {
         "data_dirs": ["asr_javanese/data"] * 16,
     },
     "SLR36": {
-        "Language": "Sundanese",
+        "language": "sun",
         "files": [
             "asr_sundanese_0.zip",
             "asr_sundanese_1.zip",
@@ -98,25 +98,25 @@ _RESOURCES = {
         "data_dirs": ["asr_sundanese/data"] * 16,
     },
     "SLR41": {
-        "Language": "Javanese",
+        "language": "jav",
         "files": ["jv_id_female.zip", "jv_id_male.zip"],
         "index_files": ["jv_id_female/line_index.tsv", "jv_id_male/line_index.tsv"],
         "data_dirs": ["jv_id_female/wavs", "jv_id_male/wavs"],
     },
     "SLR42": {
-        "Language": "Khmer",
+        "language": "khm",
         "files": ["km_kh_male.zip"],
         "index_files": ["km_kh_male/line_index.tsv"],
         "data_dirs": ["km_kh_male/wavs"],
     },
     "SLR44": {
-        "Language": "Sundanese",
+        "language": "sun",
         "files": ["su_id_female.zip", "su_id_male.zip"],
         "index_files": ["su_id_female/line_index.tsv", "su_id_male/line_index.tsv"],
         "data_dirs": ["su_id_female/wavs", "su_id_male/wavs"],
     },
     "SLR80": {
-        "Language": "Burmese",
+        "language": "mya",
         "files": ["my_mm_female.zip"],
         "index_files": ["line_index.tsv"],
         "data_dirs": [""],
@@ -131,16 +131,22 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class OpenSLR(datasets.GeneratorBasedBuilder):
+class OpenSLRDataset(datasets.GeneratorBasedBuilder):
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    BUILDER_CONFIGS = [SEACrowdConfig(name=f"{_DATASETNAME}_{subset}_source", version=datasets.Version(_SOURCE_VERSION), description=f"{_DATASETNAME} source schema", schema="source", subset_id=f"{_DATASETNAME}") for subset in _RESOURCES.keys()] + [
-        SEACrowdConfig(name=f"{_DATASETNAME}_{subset}_seacrowd_sptext", version=datasets.Version(_SEACROWD_VERSION), description=f"{_DATASETNAME} SEACrowd schema", schema="seacrowd_sptext", subset_id=f"{_DATASETNAME}") for subset in _RESOURCES.keys()
+    BUILDER_CONFIGS = [
+        SEACrowdConfig(name=f"{_DATASETNAME}_{subset}_{_RESOURCES[subset]['language']}_source", version=datasets.Version(_SOURCE_VERSION), description=f"{_DATASETNAME} source schema", schema="source", subset_id=f"{_DATASETNAME}")
+        for subset in _RESOURCES.keys()
+    ] + [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{subset}_{_RESOURCES[subset]['language']}_seacrowd_sptext", version=datasets.Version(_SEACROWD_VERSION), description=f"{_DATASETNAME} SEACrowd schema", schema="seacrowd_sptext", subset_id=f"{_DATASETNAME}"
+        )
+        for subset in _RESOURCES.keys()
     ]
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_SLR41_jav_source"
 
     def _info(self) -> datasets.DatasetInfo:
 
@@ -231,7 +237,6 @@ class OpenSLR(datasets.GeneratorBasedBuilder):
                         if len(field_values) != 2:
                             continue
                         filename, sentence = field_values
-                        # set absolute path for audio file
                         path = os.path.join(path_to_datas[i], f"{filename}.wav")
                         counter += 1
                         if self.config.schema == "source":
