@@ -29,7 +29,7 @@ _CITATION = """
   booktitle = {Proceedings of the 9th International Conference on Web Intelligence, Mining and Semantics},
   publisher = {Association for Computing Machinery},
   year      = {2019},
-  url       = {https://dl.acm.org/doi/abs/10.1145/3326467.3326490,
+  url       = {https://dl.acm.org/doi/abs/10.1145/3326467.3326490},
   doi       = {10.1145/3326467.3326490},
   pages     = {1-9},
 }
