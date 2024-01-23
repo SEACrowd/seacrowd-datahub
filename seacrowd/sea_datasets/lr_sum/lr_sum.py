@@ -53,7 +53,7 @@ _SEACROWD_VERSION = "1.0.0"
 
 
 class LRSumDataset(datasets.GeneratorBasedBuilder):
-    """Dataset of translations from Mozilla's Pontoon platform."""
+    """Dataset of article-summary pairs for different low-resource languages."""
 
     # Config to load individual datasets per language
     BUILDER_CONFIGS = [
