@@ -132,6 +132,8 @@ _SEACROWD_VERSION = "1.0.0"
 
 
 class OpenSLRDataset(datasets.GeneratorBasedBuilder):
+    """This data set contains transcribed high-quality audio of Javanese, Sundanese, Burmese, Khmer. This data set
+    come from 3 different projects under OpenSLR initiative"""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
