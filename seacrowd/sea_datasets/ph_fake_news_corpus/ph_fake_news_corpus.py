@@ -76,13 +76,13 @@ class PhilippineFakeNewsDataset(datasets.GeneratorBasedBuilder):
     def _info(self) -> datasets.DatasetInfo:
         features = datasets.Features(
             {
-                "headline": datasets.Value("string"),
-                "content": datasets.Value("string"),
-                "authors": datasets.Value("string"),
-                "date": datasets.Value("string"),
-                "url": datasets.Value("string"),
-                "brand": datasets.Value("string"),
-                "label": datasets.Value("string"),
+                "Headline": datasets.Value("string"),
+                "Content": datasets.Value("string"),
+                "Authors": datasets.Value("string"),
+                "Date": datasets.Value("string"),
+                "URL": datasets.Value("string"),
+                "Brand": datasets.Value("string"),
+                "Label": datasets.Value("string"),
             }
         )
 
@@ -111,14 +111,5 @@ class PhilippineFakeNewsDataset(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         df = pd.read_csv(filepath, index_col=None, header="infer", encoding="utf-8")
-        for index, row in df.iterrows():
-            example = {
-                "headline": row["Headline"],
-                "content": row["Content"],
-                "authors": row["Authors"],
-                "date": row["Date"],
-                "url": row["URL"],
-                "brand": row["Brand"],
-                "label": row["Label"],
-            }
-            yield index, example
+        for index, example in df.iterrows():
+            yield index, example.to_dict()
