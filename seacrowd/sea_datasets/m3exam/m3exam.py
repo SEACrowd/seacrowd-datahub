@@ -15,6 +15,7 @@
 
 import json
 import os
+import re
 import zipfile
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -57,7 +58,7 @@ _URLS = {
     _DATASETNAME: "https://drive.usercontent.google.com/download?id=1eREETRklmXJLXrNPTyHxQ3RFdPhq_Nes&authuser=0&confirm=t",
 }
 
-_SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
+_SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING, Tasks.VISUAL_QUESTION_ANSWERING]
 
 _SOURCE_VERSION = "1.0.0"
 
@@ -69,16 +70,30 @@ class M3ExamDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    BUILDER_CONFIGS = [SEACrowdConfig(name=f"{_DATASETNAME}_{lang}_source", version=datasets.Version(_SOURCE_VERSION), description=f"{_DATASETNAME} source schema", schema="source", subset_id=f"{_DATASETNAME}") for lang in _LANGUAGES] + [
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_{lang}_seacrowd_qa",
-            version=datasets.Version(_SEACROWD_VERSION),
-            description=f"{_DATASETNAME} SEACrowd schema",
-            schema="seacrowd_qa",
-            subset_id=f"{_DATASETNAME}",
-        )
-        for lang in _LANGUAGES
-    ]
+    BUILDER_CONFIGS = (
+        [SEACrowdConfig(name=f"{_DATASETNAME}_{lang}_source", version=datasets.Version(_SOURCE_VERSION), description=f"{_DATASETNAME} source schema", schema="source", subset_id=f"{_DATASETNAME}") for lang in _LANGUAGES]
+        + [
+            SEACrowdConfig(
+                name=f"{_DATASETNAME}_{lang}_seacrowd_qa",
+                version=datasets.Version(_SEACROWD_VERSION),
+                description=f"{_DATASETNAME} SEACrowd schema",
+                schema="seacrowd_qa",
+                subset_id=f"{_DATASETNAME}",
+            )
+            for lang in _LANGUAGES
+        ]
+        + [SEACrowdConfig(name=f"{_DATASETNAME}_{lang}_imqa_source", version=datasets.Version(_SOURCE_VERSION), description=f"{_DATASETNAME} source schema", schema="source", subset_id=f"{_DATASETNAME}") for lang in _LANGUAGES]
+        + [
+            SEACrowdConfig(
+                name=f"{_DATASETNAME}_{lang}_seacrowd_imqa",
+                version=datasets.Version(_SEACROWD_VERSION),
+                description=f"{_DATASETNAME} SEACrowd schema",
+                schema="seacrowd_imqa",
+                subset_id=f"{_DATASETNAME}",
+            )
+            for lang in _LANGUAGES
+        ]
+    )
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_jav_source"
 
@@ -96,11 +111,22 @@ class M3ExamDataset(datasets.GeneratorBasedBuilder):
                     "subject": datasets.Value("string"),
                     "subject_category": datasets.Value("string"),
                     "year": datasets.Value("string"),
+                    "image_paths": datasets.Sequence(datasets.Value("string")),
                 }
             )
         elif self.config.schema == "seacrowd_qa":
             features = schemas.qa_features
             features["meta"] = {
+                "background_description": datasets.Sequence(datasets.Value("string")),
+                "level": datasets.Value("string"),
+                "subject": datasets.Value("string"),
+                "subject_category": datasets.Value("string"),
+                "year": datasets.Value("string"),
+            }
+        elif self.config.schema == "seacrowd_imqa":
+            features = schemas.imqa_features
+            features["meta"] = {
+                "background_description": datasets.Sequence(datasets.Value("string")),
                 "level": datasets.Value("string"),
                 "subject": datasets.Value("string"),
                 "subject_category": datasets.Value("string"),
@@ -129,64 +155,136 @@ class M3ExamDataset(datasets.GeneratorBasedBuilder):
                 zip_ref.extractall(data_dir + "_extracted", pwd=_PASSWORD)  # unzipping with password
         if not os.path.exists(data_dir):
             os.rename(data_dir + ".zip", data_dir)
-
-        return [
-            datasets.SplitGenerator(
-                name=datasets.Split.TEST,
-                gen_kwargs={
-                    "filepath": os.path.join(data_dir + "_extracted", f"data/text-question/{_LANG_MAPPER[lang]}-questions-test.json"),
-                    "split": "test",
-                },
-            ),
-            datasets.SplitGenerator(
-                name=datasets.Split.VALIDATION,
-                gen_kwargs={
-                    "filepath": os.path.join(data_dir + "_extracted", f"data/text-question/{_LANG_MAPPER[lang]}-questions-dev.json"),
-                    "split": "dev",
-                },
-            ),
-        ]
+        if "imqa" in self.config.name:
+            return [
+                datasets.SplitGenerator(
+                    name=datasets.Split.TRAIN,
+                    gen_kwargs={
+                        "filepath": os.path.join(data_dir + "_extracted", "data/multimodal-question"),
+                        "split": "test",
+                    },
+                ),
+            ]
+        else:
+            return [
+                datasets.SplitGenerator(
+                    name=datasets.Split.TEST,
+                    gen_kwargs={
+                        "filepath": os.path.join(data_dir + "_extracted", f"data/text-question/{_LANG_MAPPER[lang]}-questions-test.json"),
+                        "split": "test",
+                    },
+                ),
+                datasets.SplitGenerator(
+                    name=datasets.Split.VALIDATION,
+                    gen_kwargs={
+                        "filepath": os.path.join(data_dir + "_extracted", f"data/text-question/{_LANG_MAPPER[lang]}-questions-dev.json"),
+                        "split": "dev",
+                    },
+                ),
+            ]
 
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
-        with open(filepath, "r") as file:
-            data = json.load(file)
+        lang = self.config.name.split("_")[1]
+        if "imqa" not in self.config.name:
+            with open(filepath, "r") as file:
+                data = json.load(file)
 
-        if self.config.schema == "source":
-            idx = 0
-            for json_obj in data:
-                example = {
-                    "question_text": json_obj["question_text"],
-                    "background_description": json_obj["background_description"] if "background_description" in json_obj.keys() else None,
-                    "answer_text": json_obj["answer_text"],
-                    "options": json_obj["options"],
-                    "language": json_obj["language"] if "language" in json_obj.keys() else None,
-                    "level": json_obj["level"] if "level" in json_obj.keys() else None,
-                    "subject": json_obj["subject"] if "subject" in json_obj.keys() else None,
-                    "subject_category": json_obj["subject_category"] if "subject_category" in json_obj.keys() else None,
-                    "year": json_obj["year"] if "year" in json_obj.keys() else None,
-                }
-                yield idx, example
-                idx += 1
-
-        elif self.config.schema == "seacrowd_qa":
-            idx = 0
-            for json_obj in data:
-                example = {
-                    "id": idx,
-                    "question_id": idx,
-                    "document_id": idx,
-                    "question": json_obj["question_text"],
-                    "type": "multiple_choice",
-                    "choices": json_obj["options"],
-                    "context": "",
-                    "answer": [answer for answer in json_obj["options"] if json_obj["answer_text"] == answer[0]],
-                    "meta": {
+            if self.config.schema == "source":
+                idx = 0
+                for json_obj in data:
+                    example = {
+                        "question_text": json_obj["question_text"],
+                        "background_description": json_obj["background_description"] if "background_description" in json_obj.keys() else None,
+                        "answer_text": json_obj["answer_text"],
+                        "options": json_obj["options"],
+                        "language": json_obj["language"] if "language" in json_obj.keys() else None,
                         "level": json_obj["level"] if "level" in json_obj.keys() else None,
                         "subject": json_obj["subject"] if "subject" in json_obj.keys() else None,
                         "subject_category": json_obj["subject_category"] if "subject_category" in json_obj.keys() else None,
                         "year": json_obj["year"] if "year" in json_obj.keys() else None,
-                    },
-                }
-                yield idx, example
-                idx += 1
+                        "image_paths": None,
+                    }
+                    yield idx, example
+                    idx += 1
+
+            elif self.config.schema == "seacrowd_qa":
+                idx = 0
+                for json_obj in data:
+                    example = {
+                        "id": idx,
+                        "question_id": idx,
+                        "document_id": idx,
+                        "question": json_obj["question_text"],
+                        "type": "multiple_choice",
+                        "choices": json_obj["options"],
+                        "context": "",
+                        "answer": [answer for answer in json_obj["options"] if json_obj["answer_text"] == answer[0]],
+                        "meta": {
+                            "background_description": json_obj["background_description"] if "background_description" in json_obj.keys() else None,
+                            "level": json_obj["level"] if "level" in json_obj.keys() else None,
+                            "subject": json_obj["subject"] if "subject" in json_obj.keys() else None,
+                            "subject_category": json_obj["subject_category"] if "subject_category" in json_obj.keys() else None,
+                            "year": json_obj["year"] if "year" in json_obj.keys() else None,
+                        },
+                    }
+                    yield idx, example
+                    idx += 1
+        else:
+
+            filepath_json = os.path.join(filepath, f"{_LANG_MAPPER[lang]}-questions-image.json")
+            with open(filepath_json, "r") as file:
+                data = json.load(file)
+            if self.config.schema == "source":
+                idx = 0
+                for json_obj in data:
+                    image_paths = []
+                    for text in [json_obj["question_text"]] + json_obj["background_description"]:
+                        matches = re.findall(r"\[image-(\d+)\.(jpg|png)\]", text)
+                        if matches:
+                            image_path = [os.path.join(filepath, f"images-{_LANG_MAPPER[lang]}/image-{image_number}.png") for image_number in matches]
+                            image_paths.extend(image_path)
+                    example = {
+                        "question_text": json_obj["question_text"],
+                        "background_description": json_obj["background_description"] if "background_description" in json_obj.keys() else None,
+                        "answer_text": json_obj["answer_text"],
+                        "options": json_obj["options"],
+                        "language": json_obj["language"] if "language" in json_obj.keys() else None,
+                        "level": json_obj["level"] if "level" in json_obj.keys() else None,
+                        "subject": json_obj["subject"] if "subject" in json_obj.keys() else None,
+                        "subject_category": json_obj["subject_category"] if "subject_category" in json_obj.keys() else None,
+                        "year": json_obj["year"] if "year" in json_obj.keys() else None,
+                        "image_paths": image_paths,
+                    }
+                    yield idx, example
+                    idx += 1
+            elif self.config.schema == "seacrowd_imqa":
+                idx = 0
+                for json_obj in data:
+                    image_paths = []
+                    for text in [json_obj["question_text"]] + json_obj["options"] + json_obj["background_description"]:
+                        matches = re.findall(r"\[image-(\d+)\.(jpg|png)\]", text)
+                        if matches:
+                            image_path = [os.path.join(filepath, f"images-{_LANG_MAPPER[lang]}/image-{image_number}.png") for image_number in matches]
+                            image_paths.extend(image_path)
+
+                    example = {
+                        "id": idx,
+                        "question_id": idx,
+                        "document_id": idx,
+                        "questions": [json_obj["question_text"]],
+                        "type": "multiple_choice",
+                        "choices": json_obj["options"],
+                        "context": "",
+                        "answer": [answer for answer in json_obj["options"] if json_obj["answer_text"] == answer[0]],
+                        "image_paths": image_paths,
+                        "meta": {
+                            "background_description": json_obj["background_description"] if "background_description" in json_obj.keys() else None,
+                            "level": json_obj["level"] if "level" in json_obj.keys() else None,
+                            "subject": json_obj["subject"] if "subject" in json_obj.keys() else None,
+                            "subject_category": json_obj["subject_category"] if "subject_category" in json_obj.keys() else None,
+                            "year": json_obj["year"] if "year" in json_obj.keys() else None,
+                        },
+                    }
+                    yield idx, example
+                    idx += 1
