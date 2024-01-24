@@ -65,7 +65,7 @@ _SEACROWD_VERSION = "1.0.0"
 logger = datasets.logging.get_logger(__name__)
 
 
-class WITDataset(datasets.GeneratorBasedBuilder):
+class ETOSDataset(datasets.GeneratorBasedBuilder):
     """
     ETOS is an Indonesian error spelling correction dataset from https://github.com/ir-nlp-csui/etos.
     """
