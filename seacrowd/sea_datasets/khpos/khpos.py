@@ -57,7 +57,7 @@ _HOMEPAGE = "https://github.com/ye-kyaw-thu/khPOS/tree/master"
 
 _LANGUAGES = ['khm']  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 
-_LICENSE = Licenses.CC_BY_NC_SA_4_0.value # example: Licenses.MIT.value, Licenses.CC_BY_NC_SA_4_0.value, Licenses.UNLICENSE.value, Licenses.UNKNOWN.value
+_LICENSE = Licenses.CC_BY_NC_SA_4_0.value 
 
 _LOCAL = False
 
@@ -144,7 +144,6 @@ The used Khmer Tokenizer can be found in the above github repository as well.
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
-                # Whatever you put in gen_kwargs will be passed to _generate_examples
                 gen_kwargs={
                     "filepath": path,
                     "split": "train",
