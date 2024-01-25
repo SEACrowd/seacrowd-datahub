@@ -29,9 +29,9 @@ Benchmark dataset for low-resource multi-label classification, with 4,015 traini
 
 _HOMEPAGE = "https://github.com/jcblaisecruz02/Filipino-Text-Benchmarks"
 
-_LICENSE = Licenses.GPL_3_0.value
+_LICENSE = Licenses.UNKNOWN.value
 
-_SUPPORTED_TASKS = []  # TODO: What's the appropriate task?
+_SUPPORTED_TASKS = [Tasks.DOMAIN_KNOWLEDGE_MULTICLASSIFICATION]
 
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
