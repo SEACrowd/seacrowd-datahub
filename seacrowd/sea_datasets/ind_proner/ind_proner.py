@@ -54,10 +54,13 @@ _LICENSE = Licenses.CC_BY_4_0.value
 
 _LOCAL = False
 
-_URLS = [
-    "https://raw.githubusercontent.com/dziem/proner-labeled-text/master/automatically_labeled.tsv",
-    "https://raw.githubusercontent.com/dziem/proner-labeled-text/master/manually_labeled.tsv",
-]
+_URLS = {
+    "automatic": "https://raw.githubusercontent.com/dziem/proner-labeled-text/master/automatically_labeled.tsv",
+    "manual": "https://raw.githubusercontent.com/dziem/proner-labeled-text/master/manually_labeled.tsv",
+}
+
+_ANNOTATION_TYPES = list(_URLS.keys())
+_ANNOTATION_IDXS = {"l1": 0, "l2": 1}
 
 _SUPPORTED_TASKS = [Tasks.NAMED_ENTITY_RECOGNITION]
 
@@ -76,54 +79,40 @@ class IndPRONERDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    BUILDER_CONFIGS = [
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_source",
-            version=datasets.Version(_SOURCE_VERSION),
-            description=f"{_DATASETNAME} source schema",
-            schema="source",
-            subset_id=f"{_DATASETNAME}",
-        ),
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_seq_label",
-            version=datasets.Version(_SEACROWD_VERSION),
-            description=f"{_DATASETNAME} SEACrowd schema",
-            schema="seacrowd_seq_label",
-            subset_id=f"{_DATASETNAME}",
-        ),
-    ]
+    BUILDER_CONFIGS = (
+        [
+            SEACrowdConfig(
+                name=f"{_DATASETNAME}_{annotation_type}_source",
+                version=datasets.Version(_SOURCE_VERSION),
+                description=f"{_DATASETNAME}_{annotation_type} source schema",
+                schema="source",
+                subset_id=f"{_DATASETNAME}_{annotation_type}",
+            )
+            for annotation_type in _ANNOTATION_TYPES
+        ]
+        + [
+            SEACrowdConfig(
+                name=f"{_DATASETNAME}_{annotation_type}_l1_seacrowd_seq_label",
+                version=datasets.Version(_SEACROWD_VERSION),
+                description=f"{_DATASETNAME}_{annotation_type}_l1 SEACrowd schema",
+                schema="seacrowd_seq_label",
+                subset_id=f"{_DATASETNAME}_{annotation_type}_l1",
+            )
+            for annotation_type in _ANNOTATION_TYPES
+        ]
+        + [
+            SEACrowdConfig(
+                name=f"{_DATASETNAME}_{annotation_type}_l2_seacrowd_seq_label",
+                version=datasets.Version(_SEACROWD_VERSION),
+                description=f"{_DATASETNAME}_{annotation_type}_l2 SEACrowd schema",
+                schema="seacrowd_seq_label",
+                subset_id=f"{_DATASETNAME}_{annotation_type}_l2",
+            )
+            for annotation_type in _ANNOTATION_TYPES
+        ]
+    )
 
     label_classes = [
-        "B-PRO|B-BRA",
-        "B-PRO|B-TYP",
-        "B-PRO|I-PRO",
-        "B-PRO|I-BRA",
-        "B-PRO|I-TYP",
-        "B-BRA|B-PRO",
-        "B-BRA|B-TYP",
-        "B-BRA|I-PRO",
-        "B-BRA|I-BRA",
-        "B-BRA|I-TYP",
-        "B-TYP|B-PRO",
-        "B-TYP|B-BRA",
-        "B-TYP|I-PRO",
-        "B-TYP|I-BRA",
-        "B-TYP|I-TYP",
-        "I-PRO|B-PRO",
-        "I-PRO|B-BRA",
-        "I-PRO|B-TYP",
-        "I-PRO|I-BRA",
-        "I-PRO|I-TYP",
-        "I-BRA|B-PRO",
-        "I-BRA|B-BRA",
-        "I-BRA|B-TYP",
-        "I-BRA|I-PRO",
-        "I-BRA|I-TYP",
-        "I-TYP|B-PRO",
-        "I-TYP|B-BRA",
-        "I-TYP|B-TYP",
-        "I-TYP|I-PRO",
-        "I-TYP|I-BRA",
         "B-PRO",
         "B-BRA",
         "B-TYP",
@@ -132,6 +121,13 @@ class IndPRONERDataset(datasets.GeneratorBasedBuilder):
         "I-TYP",
         "O",
     ]
+
+    def _extract_label(self, text: str, idx: int) -> str:
+        split = text.split("|")
+        if len(split) > 1 and idx != -1:
+            return split[idx]
+        else:
+            return text
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -158,32 +154,38 @@ class IndPRONERDataset(datasets.GeneratorBasedBuilder):
         Returns SplitGenerators.
         """
 
-        train_paths = dl_manager.download_and_extract(_URLS)
+        annotation_type = self.config.subset_id.split("_")[2]
+        path = dl_manager.download_and_extract(_URLS[annotation_type])
 
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
-                    "filepaths": train_paths,
+                    "filepath": path,
                     "split": "train",
                 },
             )
         ]
 
-    def _generate_examples(self, filepaths: Path, split: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """
         Yields examples as (key, example) tuples.
         """
+        label_idx = -1
+        subset_id = self.config.subset_id.split("_")
+        if len(subset_id) > 3:
+            if subset_id[3] in _ANNOTATION_IDXS:
+                label_idx = _ANNOTATION_IDXS[subset_id[3]]
+
         idx = 0
-        for filepath in filepaths:
-            conll_dataset = load_conll_data(filepath)
-            if self.config.schema == "source":
-                for _, row in enumerate(conll_dataset):
-                    x = {"id": str(idx), "tokens": row["sentence"], "ner_tags": row["label"]}
-                    yield idx, x
-                    idx += 1
-            elif self.config.schema == "seacrowd_seq_label":
-                for _, row in enumerate(conll_dataset):
-                    x = {"id": str(idx), "tokens": row["sentence"], "labels": row["label"]}
-                    yield idx, x
-                    idx += 1
+        conll_dataset = load_conll_data(filepath)
+        if self.config.schema == "source":
+            for _, row in enumerate(conll_dataset):
+                x = {"id": str(idx), "tokens": row["sentence"], "ner_tags": list(map(self._extract_label, row["label"], [label_idx] * len(row["label"])))}
+                yield idx, x
+                idx += 1
+        elif self.config.schema == "seacrowd_seq_label":
+            for _, row in enumerate(conll_dataset):
+                x = {"id": str(idx), "tokens": row["sentence"], "labels": list(map(self._extract_label, row["label"], [label_idx] * len(row["label"])))}
+                yield idx, x
+                idx += 1
