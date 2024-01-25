@@ -19,7 +19,6 @@ from typing import Dict, List, Tuple
 import conllu
 import datasets
 
-from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
@@ -80,28 +79,49 @@ class ETOSDataset(datasets.GeneratorBasedBuilder):
             description=f"{_DATASETNAME} source schema",
             schema="source",
             subset_id=f"{_DATASETNAME}",
-        ),
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_seq_label",
-            version=datasets.Version(_SEACROWD_VERSION),
-            description=f"{_DATASETNAME} SEACrowd schema",
-            schema="seacrowd_seq_label",
-            subset_id=f"{_DATASETNAME}",
-        ),
+        )
     ]
 
     def _info(self) -> datasets.DatasetInfo:
-        labels = []
         if self.config.schema == "source":
             features = datasets.Features(
                 {
                     "sent_id": datasets.Value("string"),
                     "text": datasets.Value("string"),
                     "tokens": datasets.Sequence(datasets.Value("string")),
+                    "lemmas": datasets.Sequence(datasets.Value("string")),
+                    "upos": datasets.Sequence(
+                        datasets.features.ClassLabel(
+                            names=[
+                                "NOUN",
+                                "PUNCT",
+                                "ADP",
+                                "NUM",
+                                "SYM",
+                                "SCONJ",
+                                "ADJ",
+                                "PART",
+                                "DET",
+                                "CCONJ",
+                                "PROPN",
+                                "PRON",
+                                "X",
+                                "_",
+                                "ADV",
+                                "INTJ",
+                                "VERB",
+                                "AUX",
+                            ]
+                        )
+                    ),
+                    "xpos": datasets.Sequence(datasets.Value("string")),
+                    "feats": datasets.Sequence(datasets.Value("string")),
+                    "head": datasets.Sequence(datasets.Value("string")),
+                    "deprel": datasets.Sequence(datasets.Value("string")),
+                    "deps": datasets.Sequence(datasets.Value("string")),
+                    "misc": datasets.Sequence(datasets.Value("string")),
                 }
             )
-        elif self.config.schema == "seacrowd_seq_label":
-            features = schemas.seq_label_features(label_names=labels)
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -154,12 +174,14 @@ class ETOSDataset(datasets.GeneratorBasedBuilder):
                         "sent_id": str(sent_id),
                         "text": txt,
                         "tokens": [token["form"] for token in sent],
+                        "lemmas": [token["lemma"] for token in sent],
+                        "upos": [token["upos"] for token in sent],
+                        "xpos": [token["xpos"] for token in sent],
+                        "feats": [str(token["feats"]) for token in sent],
+                        "head": [str(token["head"]) for token in sent],
+                        "deprel": [str(token["deprel"]) for token in sent],
+                        "deps": [str(token["deps"]) for token in sent],
+                        "misc": [str(token["misc"]) for token in sent],
                     }
 
-                elif self.config.schema == "seacrowd_seq_label":
-                    yield idx, {
-                        "id": str(sent_id),
-                        "tokens": [token["form"] for token in sent],
-                        "labels": [None for token in sent],
-                    }
                 idx += 1
