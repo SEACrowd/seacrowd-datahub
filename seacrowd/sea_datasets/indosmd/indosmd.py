@@ -23,8 +23,8 @@ _LOCAL = False
 _DATASETNAME = "indosmd"
 
 _DESCRIPTION = """\
-IndoSMD is a synthetic task-oriented dialogue system dataset that was translated from the In-Car Assistant (SMD) dataset (Eric et al., 2017) into the new Indonesian dataset using the translation pipeline method 
-including delexicalization, translation, and delexicalization. The dataset consists of 323 dialogues in the POI Navigation, Calendar Scheduling, and Weather Information Retrieval domain, with a user and an agent talking to each other. 
+IndoSMD is a synthetic task-oriented dialogue system dataset that was translated from the In-Car Assistant (SMD) dataset (Eric et al., 2017) into the new Indonesian dataset using the translation pipeline method
+including delexicalization, translation, and delexicalization. The dataset consists of 323 dialogues in the POI Navigation, Calendar Scheduling, and Weather Information Retrieval domain, with a user and an agent talking to each other.
 It also consists of slots and dialogue acts from the user and the agent.
 """
 
@@ -220,7 +220,7 @@ class IndoSMDDataset(datasets.GeneratorBasedBuilder):
                             if key not in example["dialogue"][i]["data"]["slots"]:
                                 example["dialogue"][i]["data"]["slots"][key] = ""
 
-                if isinstance(example["scenario"]["kb"]["items"], None):
+                if not example["scenario"]["kb"].get("items"):
                     example["scenario"]["kb"]["items"] = []
 
                 for i in range(len(example["scenario"]["kb"]["items"])):
