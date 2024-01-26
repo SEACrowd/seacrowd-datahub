@@ -77,7 +77,7 @@ _HOMEPAGE = "https://github.com/PyThaiNLP/wisesight-sentiment"
 _LANGUAGES = ["tha"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 
 
-_LICENSE = "Creative Commons Zero v1.0 Universal license"
+_LICENSE = Licenses.CC0_1_0
 
 
 _LOCAL = False
@@ -98,10 +98,10 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class WisesightSentiment(datasets.GeneratorBasedBuilder):
+class WisesightSentimentDataset(datasets.GeneratorBasedBuilder):
     """Wisesight Sentiment Corpus: Social media messages in Thai language with sentiment category (positive, neutral, negative, question)"""
 
-    _DOWNLOAD_URL = "https://github.com/PyThaiNLP/wisesight-sentiment/raw/master/huggingface/data.zip"
+    _DOWNLOAD_URL = _URLS["_DATASETNAME"]
     _TRAIN_FILE = "train.jsonl"
     _VAL_FILE = "valid.jsonl"
     _TEST_FILE = "test.jsonl"
@@ -139,7 +139,8 @@ class WisesightSentiment(datasets.GeneratorBasedBuilder):
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
             features=features,
-            homepage="https://github.com/PyThaiNLP/wisesight-sentiment",
+            homepage=_HOMEPAGE,
+            license=_LICENSE,
             citation=_CITATION,
         )
 
