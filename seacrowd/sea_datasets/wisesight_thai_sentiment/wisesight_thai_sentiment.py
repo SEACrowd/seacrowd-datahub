@@ -77,7 +77,7 @@ _HOMEPAGE = "https://github.com/PyThaiNLP/wisesight-sentiment"
 _LANGUAGES = ["tha"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 
 
-_LICENSE = Licenses.CC0_1_0
+_LICENSE = Licenses.CC0_1_0.value
 
 
 _LOCAL = False
