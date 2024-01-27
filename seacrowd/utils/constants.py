@@ -10,6 +10,7 @@ from seacrowd.utils.schemas import (
     pairs_features_score,
     pairs_multi_features,
     qa_features,
+    imqa_features,
     seq_label_features,
     speech2speech_features,
     speech_features,
@@ -117,6 +118,7 @@ class Tasks(Enum):
 
     # ImageText
     IMAGE_CAPTIONING = "IC"
+    VISUAL_QUESTION_ANSWERING = "VQA"
     SIGN_LANGUAGE_RECOGNITION = "SLR"
     STYLIZED_IMAGE_CAPTIONING = "SIC"
     VISUALLY_GROUNDED_REASONING = "VGR"
@@ -266,6 +268,7 @@ TASK_TO_SCHEMA = {
     Tasks.SPEECH_LANGUAGE_IDENTIFICATION: "SPEECH",
     Tasks.SPEECH_EMOTION_RECOGNITION: "SPEECH",
     Tasks.SPEECH_EMOTION_RECOGNITION_MULTILABEL: "SPEECH_MULTI",
+    Tasks.VISUAL_QUESTION_ANSWERING: "IMQA",
     Tasks.IMAGE_CAPTIONING: "IMTEXT",
     Tasks.SIGN_LANGUAGE_RECOGNITION: "IMTEXT",
     Tasks.STYLIZED_IMAGE_CAPTIONING: "IMTEXT",
@@ -300,6 +303,7 @@ SCHEMA_TO_FEATURES = {
     "SPEECH": speech_features(),
     "SPEECH_MULTI": speech_multi_features(),
     "IMTEXT": image_text_features(),
+    "IMQA": imqa_features,
     "VIDTEXT": video_features,
     "TOD": tod_features,
 }
