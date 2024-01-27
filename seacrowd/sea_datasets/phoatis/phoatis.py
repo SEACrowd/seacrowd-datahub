@@ -136,7 +136,7 @@ class PhoATIS(datasets.GeneratorBasedBuilder):
         ]
     )
 
-    DEFAULT_CONFIG_NAME = "phoatis_intent_cls_syllable_source"
+    DEFAULT_CONFIG_NAME = "phoatis_source"
 
     def _info(self) -> datasets.DatasetInfo:
 
