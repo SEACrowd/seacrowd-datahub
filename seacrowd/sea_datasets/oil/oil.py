@@ -19,12 +19,10 @@ from typing import Dict, List, Tuple
 
 import datasets
 import pandas as pd
-import numpy as np
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses, TASK_TO_SCHEMA
-
+from seacrowd.utils.constants import TASK_TO_SCHEMA, Licenses, Tasks
 
 _CITATION = """\
 {@inproceedings{Maxwell-Smith_Foley_2023_Automated,
@@ -44,16 +42,14 @@ The Online Indonesian Learning (OIL) dataset or corpus currently contains lesson
 
 _HOMEPAGE = "https://huggingface.co/datasets/ZMaxwell-Smith/OIL"
 
-_LANGUAGES = ['eng', 'ind']  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
+_LANGUAGES = ["eng", "ind"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 
 _LICENSE = Licenses.CC_BY_NC_ND_4_0.value
 
 _LOCAL = False
 
 _URLS = {
-    _DATASETNAME: {
-        "train" : "https://huggingface.co/api/datasets/ZMaxwell-Smith/OIL/parquet/default/train/0.parquet"
-    },
+    _DATASETNAME: {"train": "https://huggingface.co/api/datasets/ZMaxwell-Smith/OIL/parquet/default/train/0.parquet"},
 }
 
 _SUPPORTED_TASKS = [Tasks.SPEECH_RECOGNITION]
@@ -62,6 +58,7 @@ _SUPPORTED_SCHEMA_STRINGS = [f"seacrowd_{str(TASK_TO_SCHEMA[task]).lower()}" for
 _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
+
 
 class OIL(datasets.GeneratorBasedBuilder):
     """The Online Indonesian Learning (OIL) dataset or corpus currently contains lessons from three Indonesian teachers who have posted content on YouTube."""
@@ -101,10 +98,10 @@ class OIL(datasets.GeneratorBasedBuilder):
 
         if self.config.schema == "source":
             features = datasets.Features(
-               {
-                   "audio": datasets.Audio(decode=False),
-                   "label": datasets.ClassLabel(num_classes=98),
-               }
+                {
+                    "audio": datasets.Audio(decode=False),
+                    "label": datasets.ClassLabel(num_classes=98),
+                }
             )
 
         elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SPEECH_RECOGNITION]).lower()}":
@@ -120,9 +117,9 @@ class OIL(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-            
+
         urls = _URLS[_DATASETNAME]
-        train_path = dl_manager.download_and_extract(urls['train'])
+        train_path = dl_manager.download_and_extract(urls["train"])
 
         return [
             datasets.SplitGenerator(
@@ -158,9 +155,9 @@ class OIL(datasets.GeneratorBasedBuilder):
                     base_folder = os.path.dirname(filepath)
                     base_folder = os.path.join(base_folder, split)
 
-                    if (not os.path.exists(base_folder)):
+                    if not os.path.exists(base_folder):
                         os.makedirs(base_folder)
-                    
+
                     audio_paths = []
 
                     for _, row in df.iterrows():
@@ -173,7 +170,7 @@ class OIL(datasets.GeneratorBasedBuilder):
 
                         with open(path, "wb") as f:
                             f.write(audio_dict["bytes"])
-                        
+
                         audio_paths.append(path)
 
                     df.rename(columns={"label": "text"}, inplace=True)
@@ -181,11 +178,11 @@ class OIL(datasets.GeneratorBasedBuilder):
                     df["path"] = audio_paths
 
                     df["id"] = df.index
-                    df = df.assign(speaker_id="").astype({'speaker_id': 'str'})
-                    df = df.assign(metadata=[{'speaker_age': 0, 'speaker_gender': ""}] * len(df)).astype({'metadata': 'object'})
-                    
+                    df = df.assign(speaker_id="").astype({"speaker_id": "str"})
+                    df = df.assign(metadata=[{"speaker_age": 0, "speaker_gender": ""}] * len(df)).astype({"metadata": "object"})
+
                     for index, row in df.iterrows():
                         yield index, row.to_dict()
 
-        if not is_schema_found:        
+        if not is_schema_found:
             raise ValueError(f"Invalid config: {self.config.name}")
