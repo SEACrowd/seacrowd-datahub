@@ -45,7 +45,7 @@ _LOCAL = False
 _URLS = {
     _DATASETNAME: {
         "train": "https://data.mendeley.com/public-files/datasets/k4tjhzs2gd/files/ee45b2bb-e2ea-47b7-bec4-b6653c467d27/file_downloaded",
-        "val": "https://data.mendeley.com/public-files/datasets/k4tjhzs2gd/files/23aff85c-ff72-48b6-aba1-c1dd5dac216b/file_downloaded",
+        "val": "https://data.mendeley.com/public-files/datasets/k4tjhzs2gd/files/5e47db3c-ea84-4c73-9a2f-bfd57b4e2c05/file_downloaded",
         "test": "https://data.mendeley.com/public-files/datasets/k4tjhzs2gd/files/23aff85c-ff72-48b6-aba1-c1dd5dac216b/file_downloaded",
     }
 }
@@ -67,26 +67,21 @@ class SNLIDataset(datasets.GeneratorBasedBuilder):
         SEACrowdConfig(
             name="snli_source",
             version=SOURCE_VERSION,
-            description="snli source schema",
+            description="SNLI source schema",
             schema="source",
             subset_id="snli",
         ),
         SEACrowdConfig(
             name="snli_seacrowd_pairs",
             version=SEACROWD_VERSION,
-            description="snli SEACrowd schema",
+            description="SNLI SEACrowd schema",
             schema="seacrowd_pairs",
             subset_id="snli",
         ),
     ]
 
     DEFAULT_CONFIG_NAME = "snli_source"
-    labels = ["contradiction", "entailment", "neutral"]
-    in_to_eng_labelmap = {
-        "kontradiksi": "contradiction",
-        "keterlibatan": "entailment",
-        "netral": "neutral",
-    }
+    labels = ["kontradiksi", "keterlibatan", "netral"]
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -147,7 +142,7 @@ class SNLIDataset(datasets.GeneratorBasedBuilder):
                     yield str(i), {
                         "premise": example["kalimat1"],
                         "hypothesis": example["kalimat2"],
-                        "label": self.in_to_eng_labelmap[example["label emas"]],
+                        "label": example["label emas"],
                     }
 
         elif self.config.schema == "seacrowd_pairs":
@@ -159,5 +154,5 @@ class SNLIDataset(datasets.GeneratorBasedBuilder):
                         "id": str(i),
                         "text_1": example["kalimat1"],
                         "text_2": example["kalimat2"],
-                        "label": self.in_to_eng_labelmap[example["label emas"]],
+                        "label": example["label emas"],
                     }
