@@ -14,8 +14,6 @@
 # limitations under the License.
 
 import os
-from pathlib import Path
-from typing import Dict, List, Tuple
 
 import datasets
 import json
@@ -87,12 +85,10 @@ _URLS = {
     _DATASETNAME: "https://github.com/PyThaiNLP/wisesight-sentiment/raw/master/huggingface/data.zip",
 }
 
-# TODO: add supported task by dataset. One dataset may support multiple tasks
+
 _SUPPORTED_TASKS = [Tasks.SENTIMENT_ANALYSIS]  # example: [Tasks.TRANSLATION, Tasks.NAMED_ENTITY_RECOGNITION, Tasks.RELATION_EXTRACTION]
 
-# TODO: set this to a version that is associated with the dataset. if none exists use "1.0.0"
-#  This version doesn't have to be consistent with semantic versioning. Anything that is
-#  provided by the original dataset as a version goes.
+
 _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
@@ -101,7 +97,7 @@ _SEACROWD_VERSION = "1.0.0"
 class WisesightSentimentDataset(datasets.GeneratorBasedBuilder):
     """Wisesight Sentiment Corpus: Social media messages in Thai language with sentiment category (positive, neutral, negative, question)"""
 
-    _DOWNLOAD_URL = _URLS["_DATASETNAME"]
+    _DOWNLOAD_URL = _URLS[_DATASETNAME]
     _TRAIN_FILE = "train.jsonl"
     _VAL_FILE = "valid.jsonl"
     _TEST_FILE = "test.jsonl"
