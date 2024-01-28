@@ -184,7 +184,3 @@ class OIL(datasets.GeneratorBasedBuilder):
 
         if not is_schema_found:
             raise ValueError(f"Invalid config: {self.config.name}")
-
-
-if __name__ == "__main__":
-    datasets.load_dataset(__file__, "xl_jailbreak_seacrowd_ssp")
