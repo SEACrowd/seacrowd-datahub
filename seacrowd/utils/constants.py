@@ -129,6 +129,7 @@ class Tasks(Enum):
 
     # No seacrowd schema
     FACT_CHECKING = "FCT"
+    NON_WORD_ERROR_SPELLING_CORRECTION = "NWESC"
 
 
 class Licenses(Enum):
@@ -276,6 +277,7 @@ TASK_TO_SCHEMA = {
     Tasks.VIDEO_CAPTIONING: "VIDTEXT",
     Tasks.VIDEO_TO_TEXT_RETRIEVAL: "VIDTEXT",
     Tasks.FACT_CHECKING: None,
+    Tasks.NON_WORD_ERROR_SPELLING_CORRECTION: None,
 }
 
 SCHEMA_TO_TASKS = defaultdict(set)
