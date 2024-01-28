@@ -87,7 +87,7 @@ class AbuiwordnetDataset(datasets.GeneratorBasedBuilder):
         # ),
     ]
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
         features = None
