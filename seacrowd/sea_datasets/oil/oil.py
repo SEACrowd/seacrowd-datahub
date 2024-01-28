@@ -149,7 +149,6 @@ class OIL(datasets.GeneratorBasedBuilder):
                 if self.config.schema == seacrowd_schema:
                     is_schema_found = True
 
-                    # TODO: yield (key, example) tuples in the seacrowd schema
                     df = pd.read_parquet(filepath)
 
                     base_folder = os.path.dirname(filepath)
