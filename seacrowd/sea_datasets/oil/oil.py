@@ -107,6 +107,9 @@ class OIL(datasets.GeneratorBasedBuilder):
         elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SPEECH_RECOGNITION]).lower()}":
             features = schemas.speech_text_features
 
+        else:
+            raise ValueError(f"Invalid config: {self.config.name}")
+
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
             features=features,
