@@ -164,7 +164,7 @@ class NewDataset(datasets.GeneratorBasedBuilder):
             i = 0
             with jsonlines.open(filepath) as f:
                 for each_data in f.iter():
-                    ex = {"id": each_data["id"], "text_1": each_data["src"], "text_2": each_data["tgt"], "text_1_name": "input_language", "text_2_name": "output_language"}
+                    ex = {"id": each_data["id"], "text_1": each_data["src"], "text_2": each_data["tgt"], "text_1_name": "ind", "text_2_name": "cmn"}
                     yield i, ex
                     i += 1
 
