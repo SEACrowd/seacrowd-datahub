@@ -31,6 +31,9 @@ training. For data cleaning validation, CulturaX employs a SentencePiece tokeniz
 KenLM language models, utilizing recent Wikipedia dumps for perplexity scoring.
 """
 
+_LOCAL=False
+_LANGUAGES = ["ind", "jav", "khm", "lao", "tgl", "min", "mya", "sun", "tha", "vie", "zlm", "ceb", "war", "cbk", "bcl"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
+
 _HOMEPAGE = "https://huggingface.co/datasets/uonlp/CulturaX"
 _LICENSE = f"""{Licenses.OTHERS.value} | \
     The licence terms for CulturaX strictly follows those of mC4 and OSCAR. \
