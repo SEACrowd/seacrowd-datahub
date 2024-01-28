@@ -57,7 +57,7 @@ _URLS = {
 }
 
 _SUPPORTED_TASKS = [Tasks.SPEECH_RECOGNITION]
-_SUPPORTED_SCHEMA_STRINGS = [f"seacrowd_{TASK_TO_SCHEMA[task]}" for task in _SUPPORTED_TASKS]
+_SUPPORTED_SCHEMA_STRINGS = [f"seacrowd_{str(TASK_TO_SCHEMA[task]).lower()}" for task in _SUPPORTED_TASKS]
 
 _SOURCE_VERSION = "1.0.0"
 
@@ -107,7 +107,7 @@ class OIL(datasets.GeneratorBasedBuilder):
                }
             )
 
-        elif self.config.schema == f"seacrowd_{TASK_TO_SCHEMA[Tasks.SPEECH_RECOGNITION]}":
+        elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SPEECH_RECOGNITION]).lower()}":
             features = schemas.speech_text_features
 
         return datasets.DatasetInfo(
@@ -176,11 +176,11 @@ class OIL(datasets.GeneratorBasedBuilder):
                         
                         audio_paths.append(path)
 
-                    df.rename(columns={"label": "id"}, inplace=True)
+                    df.rename(columns={"label": "text"}, inplace=True)
 
                     df["path"] = audio_paths
 
-                    df = df.assign(text="").astype({'text': 'str'})
+                    df["id"] = df.index
                     df = df.assign(speaker_id="").astype({'speaker_id': 'str'})
                     df = df.assign(metadata=[{'speaker_age': 0, 'speaker_gender': ""}] * len(df)).astype({'metadata': 'object'})
                     
