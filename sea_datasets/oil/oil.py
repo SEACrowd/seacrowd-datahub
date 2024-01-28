@@ -13,21 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-This template serves as a starting point for contributing a dataset to the SEACrowd Datahub repo.
-
-When modifying it for your dataset, look for TODO items that offer specific instructions.
-
-Full documentation on writing dataset loading scripts can be found here:
-https://huggingface.co/docs/datasets/add_dataset.html
-
-To create a dataset loading script you will create a class and implement 3 methods:
-  * `_info`: Establishes the schema for the dataset, and returns a datasets.DatasetInfo object.
-  * `_split_generators`: Downloads and extracts data for each split (e.g. train/val/test) or associate local data with each split.
-  * `_generate_examples`: Creates examples from data on disk that conform to each schema defined in `_info`.
-
-TODO: Before submitting your script, delete this doc string and replace it with a description of your dataset.
-"""
 import os
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -65,13 +50,6 @@ _LICENSE = Licenses.CC_BY_NC_ND_4_0.value
 
 _LOCAL = False
 
-# TODO: Add links to the urls needed to download your dataset files.
-#  For local datasets, this variable can be an empty dictionary.
-
-# For publicly available datasets you will most likely end up passing these URLs to dl_manager in _split_generators.
-# In most cases the URLs will be the same for the source and seacrowd config.
-# However, if you need to access different files for each config you can have multiple entries in this dict.
-# This can be an arbitrarily nested dict/list of URLs (see below in `_split_generators` method)
 _URLS = {
     _DATASETNAME: {
         "train" : "https://huggingface.co/api/datasets/ZMaxwell-Smith/OIL/parquet/default/train/0.parquet"
@@ -91,15 +69,6 @@ class OIL(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    # You will be able to load the "source" or "seacrowd" configurations with
-    # ds_source = datasets.load_dataset('my_dataset', name='source')
-    # ds_seacrowd = datasets.load_dataset('my_dataset', name='seacrowd')
-
-    # For local datasets you can make use of the `data_dir` and `data_files` kwargs
-    # https://huggingface.co/docs/datasets/add_dataset.html#downloading-data-files-and-organizing-splits
-    # ds_source = datasets.load_dataset('my_dataset', name='source', data_dir="/path/to/data/files")
-    # ds_seacrowd = datasets.load_dataset('my_dataset', name='seacrowd', data_dir="/path/to/data/files")
-
     BUILDER_CONFIGS = [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_source",
@@ -116,10 +85,10 @@ class OIL(datasets.GeneratorBasedBuilder):
 
         seacrowd_schema_config.append(
             SEACrowdConfig(
-                name=f"{_DATASETNAME}_seacrowd_{seacrowd_schema}",
+                name=f"{_DATASETNAME}_{seacrowd_schema}",
                 version=SEACROWD_VERSION,
-                description=f"{_DATASETNAME} SEACrowd {seacrowd_schema} schema",
-                schema=f"seacrowd_{seacrowd_schema}",
+                description=f"{_DATASETNAME} {seacrowd_schema} schema",
+                schema=f"{seacrowd_schema}",
                 subset_id=f"{_DATASETNAME}",
             )
         )
@@ -129,16 +98,12 @@ class OIL(datasets.GeneratorBasedBuilder):
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
+
         if self.config.schema == "source":
             features = datasets.Features(
                {
-                   "label": datasets.Value("string"),
-                   "audio": [
-                       {
-                           "bytes": datasets.Value("bytes"),
-                           "path": datasets.Value("string"),
-                       }
-                   ],
+                   "audio": datasets.Audio(decode=False),
+                   "label": datasets.ClassLabel(num_classes=98),
                }
             )
 
@@ -155,17 +120,6 @@ class OIL(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        # TODO: This method is tasked with downloading/extracting the data and defining the splits depending on the configuration
-
-        # If you need to access the "source" or "seacrowd" config choice, that will be in self.config.name
-
-        # LOCAL DATASETS: You do not need the dl_manager; you can ignore this argument. Make sure `gen_kwargs` in the return gets passed the right filepath
-
-        # PUBLIC DATASETS: Assign your data-dir based on the dl_manager.
-
-        # dl_manager is a datasets.download.DownloadManager that can be used to download and extract URLs; many examples use the download_and_extract method; see the DownloadManager docs here: https://huggingface.co/docs/datasets/package_reference/builder_classes.html#datasets.DownloadManager
-
-        # dl_manager can accept any type of nested list/dict and will give back the same structure with the url replaced with the path to local files.
             
         urls = _URLS[_DATASETNAME]
         train_path = dl_manager.download_and_extract(urls['train'])
@@ -180,29 +134,18 @@ class OIL(datasets.GeneratorBasedBuilder):
             ),
         ]
 
-    # method parameters are unpacked from `gen_kwargs` as given in `_split_generators`
-
-    # TODO: change the args of this function to match the keys in `gen_kwargs`. You may add any necessary kwargs.
-
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
-        # TODO: This method handles input defined in _split_generators to yield (key, example) tuples from the dataset.
-
-        # The `key` is for legacy reasons (tfds) and is not important in itself, but must be unique for each example.
-
-        # NOTE: For local datasets you will have access to self.config.data_dir and self.config.data_files
 
         is_schema_found = False
 
         if self.config.schema == "source":
-            # TODO: yield (key, example) tuples in the original dataset schema
-
             is_schema_found = True
 
             df = pd.read_parquet(filepath)
 
             for index, row in df.iterrows():
-                yield index, row
+                yield index, row.to_dict()
 
         else:
             for seacrowd_schema in _SUPPORTED_SCHEMA_STRINGS:
@@ -236,17 +179,13 @@ class OIL(datasets.GeneratorBasedBuilder):
                     df.rename(columns={"label": "id"}, inplace=True)
 
                     df["path"] = audio_paths
+
                     df = df.assign(text="").astype({'text': 'str'})
                     df = df.assign(speaker_id="").astype({'speaker_id': 'str'})
-                    df = df.assign(metadata=[{'speaker_age': np.nan, 'speaker_gender': ""}] * len(df)).astype({'metadata': 'object'})
-
+                    df = df.assign(metadata=[{'speaker_age': 0, 'speaker_gender': ""}] * len(df)).astype({'metadata': 'object'})
+                    
                     for index, row in df.iterrows():
-                        yield index, row
+                        yield index, row.to_dict()
 
         if not is_schema_found:        
             raise ValueError(f"Invalid config: {self.config.name}")
-
-# This allows you to run your dataloader with `python [dataset_name].py` during development
-# TODO: Remove this before making your PR
-if __name__ == "__main__":
-    datasets.load_dataset(__file__, name="source")
