@@ -29,6 +29,7 @@ which spans 16TB in parquet format and 27TB when unpacked, is a combination of t
 mC4 and OSCAR corpora, emphasizing non-English languages to support multilingual model
 training. For data cleaning validation, CulturaX employs a SentencePiece tokenizer and
 KenLM language models, utilizing recent Wikipedia dumps for perplexity scoring.
+Before using this dataloader, please accept the acknowledgement at https://huggingface.co/datasets/uonlp/CulturaX and use huggingface-cli login for authentication.
 """
 
 _LOCAL=False
