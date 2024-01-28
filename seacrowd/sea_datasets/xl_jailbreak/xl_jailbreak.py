@@ -173,10 +173,10 @@ class OIL(datasets.GeneratorBasedBuilder):
                         return json.dumps(row_dict)
 
                     # Apply the function to each row and create a new column with the JSON string
-                    df['text'] = df.apply(row_to_json, axis=1)
-                    
+                    df["text"] = df.apply(row_to_json, axis=1)
+
                     df = df[["id", "text"]]
-                    
+
                     print(df)
 
                     for index, row in df.iterrows():
@@ -184,6 +184,7 @@ class OIL(datasets.GeneratorBasedBuilder):
 
         if not is_schema_found:
             raise ValueError(f"Invalid config: {self.config.name}")
-        
+
+
 if __name__ == "__main__":
     datasets.load_dataset(__file__, "xl_jailbreak_seacrowd_ssp")
