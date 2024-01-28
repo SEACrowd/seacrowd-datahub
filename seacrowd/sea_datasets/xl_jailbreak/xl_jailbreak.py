@@ -103,21 +103,24 @@ class OIL(datasets.GeneratorBasedBuilder):
                     "id": datasets.Value(dtype="int64"),
                     "source": datasets.Value(dtype="string"),
                     "tags": datasets.Value(dtype="string"),
-                    "en": datasets.Value(dtype="strings"),
-                    "zh": datasets.Value(dtype="strings"),
-                    "it": datasets.Value(dtype="strings"),
-                    "vi": datasets.Value(dtype="strings"),
-                    "ar": datasets.Value(dtype="strings"),
-                    "ko": datasets.Value(dtype="strings"),
-                    "th": datasets.Value(dtype="strings"),
-                    "bn": datasets.Value(dtype="strings"),
-                    "sw": datasets.Value(dtype="strings"),
-                    "jv": datasets.Value(dtype="strings"),
+                    "en": datasets.Value(dtype="string"),
+                    "zh": datasets.Value(dtype="string"),
+                    "it": datasets.Value(dtype="string"),
+                    "vi": datasets.Value(dtype="string"),
+                    "ar": datasets.Value(dtype="string"),
+                    "ko": datasets.Value(dtype="string"),
+                    "th": datasets.Value(dtype="string"),
+                    "bn": datasets.Value(dtype="string"),
+                    "sw": datasets.Value(dtype="string"),
+                    "jv": datasets.Value(dtype="string"),
                 }
             )
 
-        elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SPEECH_RECOGNITION]).lower()}":
+        elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.PROMPTING]).lower()}":
             features = schemas.ssp_features
+
+        else:
+            raise ValueError(f"Invalid config: {self.config.name}")
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -162,7 +165,6 @@ class OIL(datasets.GeneratorBasedBuilder):
                     is_schema_found = True
 
                     df = pd.read_parquet(filepath)
-                    df_copy = df.copy().drop(columns=["id"])
 
                     def row_to_json(row):
                         # Create a dictionary excluding the id column
@@ -175,7 +177,8 @@ class OIL(datasets.GeneratorBasedBuilder):
                     
                     df = df[["id", "text"]]
                     
-                    
+                    print(df)
+
                     for index, row in df.iterrows():
                         yield index, row.to_dict()
 
@@ -183,4 +186,4 @@ class OIL(datasets.GeneratorBasedBuilder):
             raise ValueError(f"Invalid config: {self.config.name}")
         
 if __name__ == "__main__":
-    datasets.load_dataset(__file__, "xl_jailbreak_source")
+    datasets.load_dataset(__file__, "xl_jailbreak_seacrowd_ssp")
