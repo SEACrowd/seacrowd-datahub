@@ -42,7 +42,7 @@ _DESCRIPTION = """\
 20M Vietnamese PubMed biomedical abstracts translated by the state-of-the-art English-Vietnamese Translation project. The data has been used as unlabeled dataset for pretraining a Vietnamese Biomedical-domain Transformer model.
 """
 
-_HOMEPAGE = "https://huggingface.co/datasets/ZMaxwell-Smith/OIL"
+_HOMEPAGE = "https://huggingface.co/datasets/VietAI/vi_pubmed"
 
 _LANGUAGES = ["eng", "vie"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 
