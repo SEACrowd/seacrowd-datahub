@@ -7,7 +7,7 @@ from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
-# no BibTeX citation
+
 _CITATION = ""
 
 _DATASETNAME = "thai_gpteacher"
@@ -42,7 +42,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class ThaiGPTeacher(datasets.GeneratorBasedBuilder):
+class ThaiGPTeacherDataset(datasets.GeneratorBasedBuilder):
     """Thai-instructed dataset translated using Google Cloud Translation from GPTeacher."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
@@ -50,25 +50,24 @@ class ThaiGPTeacher(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="thai_gpteacher_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
-            description="thai_gpteacher source schema",
+            description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id="thai_gpteacher",
+            subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
-            name="thai_gpteacher_seacrowd_t2t",
+            name=f"{_DATASETNAME}_seacrowd_t2t",
             version=SEACROWD_VERSION,
-            description="thai_gpteacher SEACrowd schema",
+            description=f"{_DATASETNAME} SEACrowd schema",
             schema="seacrowd_t2t",
-            subset_id="thai_gpteacher",
+            subset_id=_DATASETNAME,
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = "thai_gpteacher_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
-
         if self.config.schema == "source":
             features = datasets.Features(
                 {
@@ -90,7 +89,6 @@ class ThaiGPTeacher(datasets.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> list[datasets.SplitGenerator]:
-
         urls = _URLS[_DATASETNAME]
         data_dir = dl_manager.download_and_extract(urls)
 
