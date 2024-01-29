@@ -19,7 +19,7 @@ This template serves as a starting point for contributing a dataset to the SEACr
 When modifying it for your dataset, look for TODO items that offer specific instructions.
 
 Full documentation on writing dataset loading scripts can be found here:
-https://huggingface.co/docs/datasets/add_dataset.html
+https://huggingface.co/docs/hub/datasets-adding
 
 To create a dataset loading script you will create a class and implement 3 methods:
   * `_info`: Establishes the schema for the dataset, and returns a datasets.DatasetInfo object.
@@ -203,7 +203,7 @@ class NewDataset(datasets.GeneratorBasedBuilder):
 
         # PUBLIC DATASETS: Assign your data-dir based on the dl_manager.
 
-        # dl_manager is a datasets.download.DownloadManager that can be used to download and extract URLs; many examples use the download_and_extract method; see the DownloadManager docs here: https://huggingface.co/docs/datasets/package_reference/builder_classes.html#datasets.DownloadManager
+        # dl_manager is a datasets.download.DownloadManager that can be used to download and extract URLs; many examples use the download_and_extract method; see the DownloadManager docs here: https://huggingface.co/docs/datasets/v1.1.1/_modules/datasets/utils/download_manager.html
 
         # dl_manager can accept any type of nested list/dict and will give back the same structure with the url replaced with the path to local files.
 
