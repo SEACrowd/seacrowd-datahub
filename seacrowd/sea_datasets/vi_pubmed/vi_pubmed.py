@@ -216,7 +216,7 @@ class OIL(datasets.GeneratorBasedBuilder):
         """Returns SplitGenerators."""
 
         split_name = "pubmed22"
-        paths = dl_manager.download_and_extract(_URLS[_DATASETNAME][split_name][:1])
+        paths = dl_manager.download_and_extract(_URLS[_DATASETNAME][split_name])
 
         return [
             datasets.SplitGenerator(
@@ -232,14 +232,17 @@ class OIL(datasets.GeneratorBasedBuilder):
         """Yields examples as (key, example) tuples."""
 
         is_schema_found = False
+        idx = 0
 
         if self.config.schema == "source":
             is_schema_found = True
 
-            df = pd.read_parquet(paths[0])
+            for path in paths:
+                df = pd.read_parquet(path)
 
-            for index, row in df.iterrows():
-                yield index, row.to_dict()
+                for _, row in df.iterrows():
+                    yield idx, row.to_dict()
+                    idx += 1
 
         else:
             for seacrowd_schema in _SUPPORTED_SCHEMA_STRINGS:
@@ -248,15 +251,16 @@ class OIL(datasets.GeneratorBasedBuilder):
 
                     for path in paths:
                         df = pd.read_parquet(path)
-
-                        df["id"] = df.index
+                        
+                        df["id"] = df.index + idx
                         df.rename(columns={"en": "text_1"}, inplace=True)
                         df.rename(columns={"vi": "text_2"}, inplace=True)
                         df = df.assign(text_1_name="en").astype({"text_1_name": "str"})
                         df = df.assign(text_2_name="vi").astype({"text_2_name": "str"})
 
-                        for index, row in df.iterrows():
-                            yield index, row.to_dict()
+                        for _, row in df.iterrows():
+                            yield idx, row.to_dict()
+                            idx += 1
 
         if not is_schema_found:
             raise ValueError(f"Invalid config: {self.config.name}")
