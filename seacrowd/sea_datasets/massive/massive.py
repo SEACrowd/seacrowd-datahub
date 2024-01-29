@@ -51,6 +51,8 @@ and 2 other languages mostly spoken in Southeast Asia.
 _HOMEPAGE = "https://github.com/alexa/massive"
 _LICENSE = Licenses.CC_BY_4_0.value
 _LOCAL = False
+_LANGUAGES = ["ind", "jav", "khm", "zlm", "mya", "tha", "tgl", "vie"]
+
 _URLS = {
     _DATASETNAME: "https://amazon-massive-nlu-dataset.s3.amazonaws.com/amazon-massive-dataset-1.1.tar.gz",
 }
