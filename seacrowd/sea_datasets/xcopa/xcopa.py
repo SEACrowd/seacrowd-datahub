@@ -30,7 +30,7 @@ _CITATION = """\
 }
 """
 
-_LANGUAGES = ["ind","th", "vie"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
+_LANGUAGES = ["ind", "tha", "vie"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 _LOCAL = False
 
 _DATASETNAME = "xcopa"
@@ -45,14 +45,14 @@ creation of XCOPA and the implementation of the baselines are available in the p
 
 _HOMEPAGE = "https://github.com/cambridgeltl/xcopa"
 
-_LICENSE = "Unknown"
+_LICENSE = "Licenses.CC_BY_4_0.value"
 
 _URLS = {
     "ind": [
         "https://raw.githubusercontent.com/cambridgeltl/xcopa/master/data/id/val.id.jsonl",
         "https://raw.githubusercontent.com/cambridgeltl/xcopa/master/data/id/test.id.jsonl",
     ],
-    "th": [
+    "tha": [
         "https://raw.githubusercontent.com/cambridgeltl/xcopa/master/data/th/val.th.jsonl",
         "https://raw.githubusercontent.com/cambridgeltl/xcopa/master/data/th/test.th.jsonl",
     ],
@@ -161,12 +161,15 @@ class Xcopa(datasets.GeneratorBasedBuilder):
                         "id": str(idx),
                         "question_id": str(idx),
                         "document_id": str(idx),
-                        "question": data["question"],
+                        "question": '',
                         "type": "multiple_choice",
                         "choices": [data["choice1"], data["choice2"]],
                         "context": data["premise"],
                         "answer": [data["choice1"] if data["label"] == 0 else data["choice2"]],
-                        "meta": {}
+                        "meta": {
+                            "reasoning_type": data["question"],
+                            "is_changed": data["changed"]
+                        }
                     }
                     yield idx, sample
             
