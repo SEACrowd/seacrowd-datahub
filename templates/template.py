@@ -203,7 +203,7 @@ class NewDataset(datasets.GeneratorBasedBuilder):
 
         # PUBLIC DATASETS: Assign your data-dir based on the dl_manager.
 
-        # dl_manager is a datasets.download.DownloadManager that can be used to download and extract URLs; many examples use the download_and_extract method; see the DownloadManager docs here: https://huggingface.co/docs/datasets/package_reference/builder_classes.html#datasets.DownloadManager
+        # dl_manager is a datasets.download.DownloadManager that can be used to download and extract URLs; many examples use the download_and_extract method; see the DownloadManager docs here: https://huggingface.co/docs/datasets/v1.1.1/_modules/datasets/utils/download_manager.html
 
         # dl_manager can accept any type of nested list/dict and will give back the same structure with the url replaced with the path to local files.
 
