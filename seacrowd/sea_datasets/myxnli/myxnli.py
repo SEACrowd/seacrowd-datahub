@@ -7,8 +7,15 @@ from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
-# no BibTeX citation
-_CITATION = ""
+
+_CITATION = """
+@misc{myXNLI2023,
+    title = "myXNLI",
+    author = "akhtet",
+    year = "202",
+    url = "https://github.com/akhtet/myXNLI",
+}
+"""
 
 _DATASETNAME = "myxnli"
 
@@ -43,7 +50,7 @@ _SOURCE_VERSION = "1.1.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class MyXNLI(datasets.GeneratorBasedBuilder):
+class MyXNLIDataset(datasets.GeneratorBasedBuilder):
     """The myXNLI corpus is a collection of Myanmar language data designed for the Natural Language Inference task."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
@@ -51,25 +58,24 @@ class MyXNLI(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="myxnli_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
-            description="myxnli source schema",
+            description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id="myxnli",
+            subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
-            name="myxnli_seacrowd_pairs",
+            name=f"{_DATASETNAME}_seacrowd_pairs",
             version=SEACROWD_VERSION,
-            description="myxnli SEACrowd schema",
+            description=f"{_DATASETNAME} SEACrowd schema",
             schema="seacrowd_pairs",
-            subset_id="myxnli",
+            subset_id=_DATASETNAME,
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = "myxnli_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
-
         if self.config.schema == "source":
             features = datasets.Features(
                 {
@@ -84,13 +90,6 @@ class MyXNLI(datasets.GeneratorBasedBuilder):
 
         elif self.config.schema == "seacrowd_pairs":
             features = schemas.pairs_features(["contradiction", "entailment", "neutral"])
-            # The original data also provide English sentences that we can put under "meta", but unfortunately the pairs
-            # schema does not accept meta.
-            # features["meta"] = {
-            #     "genre": datasets.Value("string"),
-            #     "sentence1_en": datasets.Value("string"),
-            #     "sentence2_en": datasets.Value("string"),
-            # }
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -141,7 +140,4 @@ class MyXNLI(datasets.GeneratorBasedBuilder):
                     "text_1": row["sentence1_my"],
                     "text_2": row["sentence2_my"],
                     "label": row["label"],
-                    # "meta": {'genre': row['genre'],
-                    #          "sentence1_en": row['sentence1_en'],
-                    #          "sentence2_en": row['sentence2_en']}
                 }
