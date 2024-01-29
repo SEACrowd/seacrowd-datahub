@@ -280,7 +280,7 @@ _CLASSES = [
 ]
 
 
-class Wili2018(datasets.GeneratorBasedBuilder):
+class Wili2018Dataset(datasets.GeneratorBasedBuilder):
     """A benchmark dataset for language identification and contains 235000 paragraphs of 235 languages."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
@@ -288,22 +288,22 @@ class Wili2018(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="wili_2018_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
-            description="wili_2018 source schema",
+            description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id="wili_2018",
+            subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
-            name="wili_2018_seacrowd_text",
+            name=f"{_DATASETNAME}_seacrowd_text",
             version=SEACROWD_VERSION,
-            description="wili_2018 SEACrowd schema",
+            description=f"{_DATASETNAME} SEACrowd schema",
             schema="seacrowd_text",
-            subset_id="wili_2018",
+            subset_id=_DATASETNAME,
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = "wili_2018_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
