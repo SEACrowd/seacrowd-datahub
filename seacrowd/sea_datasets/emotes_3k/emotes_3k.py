@@ -63,7 +63,7 @@ _URLS = {
 }
 
 _SUPPORTED_TASKS = [
-    Tasks.SENTIMENT_ANALYSIS, # Roberta moral or immoral classification
+    Tasks.MORALITY_CLASSIFICATION, # Roberta moral or immoral classification
     Tasks.INSTRUCTION_TUNING # FLAN-T5 Training
 ] 
 
