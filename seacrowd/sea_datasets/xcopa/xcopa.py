@@ -105,6 +105,12 @@ class Xcopa(datasets.GeneratorBasedBuilder):
             )
         elif self.config.schema == "seacrowd_qa":
             features = schemas.qa_features
+            features_in_dict = features.to_dict()
+            features_in_dict["meta"] = {
+                'is_changed': {'dtype': 'bool', '_type': 'Value'}, 
+                'reasoning_type': {'dtype': 'string', '_type': 'Value'}
+            }
+            features = datasets.Features.from_dict(features_in_dict)
             
             
         return datasets.DatasetInfo(
@@ -156,7 +162,6 @@ class Xcopa(datasets.GeneratorBasedBuilder):
                 for row in f:
                     data = json.loads(row)
                     idx = data["idx"]
-                    
                     sample = {
                         "id": str(idx),
                         "question_id": str(idx),
@@ -167,8 +172,8 @@ class Xcopa(datasets.GeneratorBasedBuilder):
                         "context": data["premise"],
                         "answer": [data["choice1"] if data["label"] == 0 else data["choice2"]],
                         "meta": {
-                            "reasoning_type": data["question"],
-                            "is_changed": data["changed"]
+                            "is_changed": data["changed"],
+                            "reasoning_type": data["question"]
                         }
                     }
                     yield idx, sample
