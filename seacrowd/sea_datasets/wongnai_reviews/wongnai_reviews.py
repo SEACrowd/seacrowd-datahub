@@ -39,7 +39,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class WongnaiReviews(datasets.GeneratorBasedBuilder):
+class WongnaiReviewsDataset(datasets.GeneratorBasedBuilder):
     """WongnaiReviews consists reviews for over 200,000 restaurants, beauty salons, and spas across Thailand."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
@@ -47,25 +47,24 @@ class WongnaiReviews(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="wongnai_reviews_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
-            description="wongnai_reviews source schema",
+            description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id="wongnai_reviews",
+            subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
-            name="wongnai_reviews_seacrowd_text_multi",
+            name=f"{_DATASETNAME}_seacrowd_text_multi",
             version=SEACROWD_VERSION,
-            description="wongnai_reviews SEACrowd schema",
+            description=f"{_DATASETNAME} SEACrowd schema",
             schema="seacrowd_text_multi",
-            subset_id="wongnai_reviews",
+            subset_id=_DATASETNAME,
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = "wongnai_reviews_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
-
         if self.config.schema == "source":
             features = datasets.Features(
                 {
@@ -90,9 +89,6 @@ class WongnaiReviews(datasets.GeneratorBasedBuilder):
         urls = _URLS[_DATASETNAME]
         data_dir = dl_manager.download_and_extract(urls)
 
-        # import ipdb
-        # ipdb.set_trace()
-
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
@@ -106,7 +102,6 @@ class WongnaiReviews(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         if self.config.schema == "source":
-
             with open(filepath, encoding="utf-8") as f:
                 spamreader = csv.reader(f, delimiter=";", quotechar='"')
                 for i, row in enumerate(spamreader):
