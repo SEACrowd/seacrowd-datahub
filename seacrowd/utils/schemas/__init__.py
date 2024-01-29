@@ -5,6 +5,7 @@ from .pairs import features as pairs_features
 from .pairs import features_with_continuous_label as pairs_features_score
 from .pairs_multilabel import features as pairs_multi_features
 from .qa import features as qa_features
+from .imqa import features as imqa_features
 from .self_supervised_pretraining import features as ssp_features
 from .seq_label import features as seq_label_features
 from .speech import features as speech_features
@@ -25,6 +26,7 @@ __all__ = [
     "pairs_features_score",
     "pairs_multi_features",
     "qa_features",
+    "imqa_features",
     "ssp_features",
     "seq_label_features",
     "speech_features",
