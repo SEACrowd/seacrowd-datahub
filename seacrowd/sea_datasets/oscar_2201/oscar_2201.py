@@ -216,6 +216,9 @@ _HOMEPAGE = "https://huggingface.co/datasets/oscar-corpus/OSCAR-2201"
 _LICENSE = Licenses.CC0_1_0.value
 _BASE_URL = "https://huggingface.co/datasets/oscar-corpus/OSCAR-2201/resolve/main/compressed/{lang}_meta/"
 
+_LOCAL = False
+_LANGUAGES = ["war", "ceb", "min", "vie", "ilo", "tgl", "lao", "khm", "mya", "jav", "ind", "tha", "sun", "zlm"]
+
 _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
 _SOURCE_VERSION = "2022.1.0"
 _SEACROWD_VERSION = "1.0.0"
