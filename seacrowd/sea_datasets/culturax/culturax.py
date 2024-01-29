@@ -29,7 +29,11 @@ which spans 16TB in parquet format and 27TB when unpacked, is a combination of t
 mC4 and OSCAR corpora, emphasizing non-English languages to support multilingual model
 training. For data cleaning validation, CulturaX employs a SentencePiece tokenizer and
 KenLM language models, utilizing recent Wikipedia dumps for perplexity scoring.
+Before using this dataloader, please accept the acknowledgement at https://huggingface.co/datasets/uonlp/CulturaX and use huggingface-cli login for authentication.
 """
+
+_LOCAL=False
+_LANGUAGES = ["ind", "jav", "khm", "lao", "tgl", "min", "mya", "sun", "tha", "vie", "zlm", "ceb", "war", "cbk", "bcl"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 
 _HOMEPAGE = "https://huggingface.co/datasets/uonlp/CulturaX"
 _LICENSE = f"""{Licenses.OTHERS.value} | \
