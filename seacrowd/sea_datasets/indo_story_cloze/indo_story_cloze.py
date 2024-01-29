@@ -68,7 +68,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class IndoStoryCloze(datasets.GeneratorBasedBuilder):
+class IndoStoryClozeDataset(datasets.GeneratorBasedBuilder):
     """IndoStoryCloze is a Story Cloze dataset in Indonesian."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
@@ -76,22 +76,22 @@ class IndoStoryCloze(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="indo_story_cloze_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
-            description="indo_story_cloze source schema",
+            description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id="indo_story_cloze",
+            subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
-            name="indo_story_cloze_seacrowd_qa",
+            name=f"{_DATASETNAME}_seacrowd_qa",
             version=SEACROWD_VERSION,
-            description="indo_story_cloze SEACrowd schema",
+            description=f"{_DATASETNAME} SEACrowd schema",
             schema="seacrowd_qa",
-            subset_id="indo_story_cloze",
+            subset_id=_DATASETNAME,
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = "indo_story_cloze_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
