@@ -81,7 +81,7 @@ class SNLIDataset(datasets.GeneratorBasedBuilder):
     ]
 
     DEFAULT_CONFIG_NAME = "snli_source"
-    labels = ["kontradiksi", "keterlibatan", "netral"]
+    labels = ["kontradiksi", "keterlibatan", "netral"] # ["contradiction", "entailment", "neutral" ]
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
