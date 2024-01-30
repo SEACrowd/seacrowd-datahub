@@ -6,9 +6,6 @@
 name: Mark stale issues and pull requests
 
 on:
-  push:
-    # Sequence of patterns matched against refs/heads
-    branches: workflow_test_mention_assignee
   schedule:
   - cron: '20 1 * * *'
 
@@ -27,9 +24,9 @@ jobs:
         stale-issue-message: 'Hi @${assignee}, may I know if you are still working on this issue? Please let @holylovenia @SamuelCahyawijaya @sabilmakbar know if you need any help.'
         stale-pr-message: 'Hi @${assignee} & @${author}, may I know if you are still working on this PR?'
         stale-issue-label: 'staled-issue'
-        days-before-stale: 1
+        stale-pr-label: 'need-fu-pr'
+        days-before-stale: 14
         days-before-close: -1
-        debug-only: true
         include-only-assigned: true
         exempt-issue-labels: 'in-progress,pr-ready'
-        operations-per-run: 100
+        operations-per-run: 200
