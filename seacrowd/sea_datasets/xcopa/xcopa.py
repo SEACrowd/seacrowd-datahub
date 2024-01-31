@@ -8,7 +8,7 @@ import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks
+from seacrowd.utils.constants import Tasks, Licenses
 
 
 _HOMEPAGE = "https://github.com/cambridgeltl/xcopa"
@@ -45,7 +45,7 @@ creation of XCOPA and the implementation of the baselines are available in the p
 
 _HOMEPAGE = "https://github.com/cambridgeltl/xcopa"
 
-_LICENSE = "Licenses.CC_BY_4_0.value"
+_LICENSE = Licenses.CC_BY_4_0.value
 
 _URLS = {
     "ind": [
