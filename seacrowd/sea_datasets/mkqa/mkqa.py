@@ -230,7 +230,7 @@ class MKQADataset(datasets.GeneratorBasedBuilder):
 
         elif self.config.schema == "seacrowd_qa":
             for cur in datas:
-                for cur_lang in [lang] if lang else self._SOURCE_LANGUAGES:
+                for cur_lang in [lang] if lang else map(lambda k: self._LANG_3TO2.get(k, k), _LANGUAGES):
                     ret = {
                         "id": f'{cur["example_id"]}_{cur_lang}',
                         "question_id": cur["example_id"],
