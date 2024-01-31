@@ -110,7 +110,7 @@ class PrdectIDDataset(datasets.GeneratorBasedBuilder):
                     "Overall Rating": datasets.Value("float32"),	
                     "Number Sold": datasets.Value("int32"),	
                     "Total Review": datasets.Value("int32"),	
-                    "Customer Rating": datasets.Value("string"),
+                    "Customer Rating": datasets.Value("int32"),
                     "Customer Review": datasets.Value("string"),
                     "Sentiment": datasets.ClassLabel(names=self.CLASS_LABELS_SENTIMENT),
                     "Emotion": datasets.ClassLabel(names=self.CLASS_LABELS_EMOTION),
