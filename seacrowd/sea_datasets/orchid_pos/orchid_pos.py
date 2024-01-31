@@ -13,14 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
+import re
 from pathlib import Path
 from typing import Dict, List, Tuple
-import re
 
 import datasets
+
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
+from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @article{sornlertlamvanich1999building,
@@ -92,74 +93,75 @@ class OrchidPOSDataset(datasets.GeneratorBasedBuilder):
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
-
+        label_names = [
+            "NPRP",
+            "NCNM",
+            "NONM",
+            "NLBL",
+            "NCMN",
+            "NTTL",
+            "PPRS",
+            "PDMN",
+            "PNTR",
+            "PREL",
+            "VACT",
+            "VSTA",
+            "VATT",
+            "XVBM",
+            "XVAM",
+            "XVMM",
+            "XVBB",
+            "XVAE",
+            "DDAN",
+            "DDAC",
+            "DDBQ",
+            "DDAQ",
+            "DIAC",
+            "DIBQ",
+            "DIAQ",
+            "DCNM",
+            "DONM",
+            "ADVN",
+            "ADVI",
+            "ADVP",
+            "ADVS",
+            "CNIT",
+            "CLTV",
+            "CMTR",
+            "CFQC",
+            "CVBL",
+            "JCRG",
+            "JCMP",
+            "JSBR",
+            "RPRE",
+            "INT",
+            "FIXN",
+            "FIXV",
+            "EAFF",
+            "EITT",
+            "NEG",
+            "PUNC",
+            "CMTR@PUNC",
+        ]
         if self.config.schema == "source":
             features = datasets.Features(
                 {
-                    "TTitle": datasets.Value("string"),
-                    "ETitle": datasets.Value("string"),
-                    "TAuthor": datasets.Value("string"),
-                    "EAuthor": datasets.Value("string"),
-                    "TInbook": datasets.Value("string"),
-                    "EInbook": datasets.Value("string"),
-                    "TPublisher": datasets.Value("string"),
-                    "EPublisher": datasets.Value("string"),
-                    "Page": datasets.Value("string"),
-                    "Year": datasets.Value("string"),
-                    "File": datasets.Value("string"),
+                    "ttitle": datasets.Value("string"),
+                    "etitle": datasets.Value("string"),
+                    "tauthor": datasets.Value("string"),
+                    "eauthor": datasets.Value("string"),
+                    "tinbook": datasets.Value("string"),
+                    "einbook": datasets.Value("string"),
+                    "tpublisher": datasets.Value("string"),
+                    "epublisher": datasets.Value("string"),
+                    "year": datasets.Value("string"),
+                    "file": datasets.Value("string"),
+                    "tokens": datasets.Sequence(datasets.Value("string")),
+                    "labels": datasets.Sequence(datasets.ClassLabel(names=label_names)),
                 }
             )
 
         elif self.config.schema == "seacrowd_seq_label":
-            label_names = [
-                "NPRP",
-                "NCNM",
-                "NONM",
-                "NLBL",
-                "NCMN",
-                "NTTL",
-                "PPRS",
-                "PDMN",
-                "PNTR",
-                "PREL",
-                "VACT",
-                "VSTA",
-                "VATT",
-                "XVBM",
-                "XVAM",
-                "XVMM",
-                "XVBB",
-                "XVAE",
-                "DDAN",
-                "DDAC",
-                "DDBQ",
-                "DDAQ",
-                "DIAC",
-                "DIBQ",
-                "DIAQ",
-                "DCNM",
-                "DONM",
-                "ADVN",
-                "ADVI",
-                "ADVP",
-                "ADVS",
-                "CNIT",
-                "CLTV",
-                "CMTR",
-                "CFQC",
-                "CVBL",
-                "JCRG",
-                "JCMP",
-                "JSBR",
-                "RPRE",
-                "INT",
-                "FIXN",
-                "FIXV",
-                "EAFF",
-                "EITT",
-                "NEG",
-                "PUNC",
-            ]
             features = schemas.seq_label_features(label_names)
 
         return datasets.DatasetInfo(
@@ -193,9 +195,12 @@ class OrchidPOSDataset(datasets.GeneratorBasedBuilder):
             for sentence in sentences[1:]:
                 token_pos_pairs = sentence.split("//")[1]
                 for token_pos_pair in token_pos_pairs.split("\n")[1:-1]:
-                    tokens.append(token_pos_pair.split("/")[0])
-                    labels.append(token_pos_pair.split("/")[1])
-
+                    if "/" in token_pos_pair:
+                        tokens.append(token_pos_pair.split("/")[0])
+                        labels.append(token_pos_pair.split("/")[1])
+                    else:
+                        tokens.append(token_pos_pair.split("@")[0])
+                        labels.append(token_pos_pair.split("@")[1])
         return tokens, labels
 
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
@@ -203,36 +208,31 @@ class OrchidPOSDataset(datasets.GeneratorBasedBuilder):
         file_content = open(filepath, "r").read()
         texts = file_content.split("%TTitle:")
 
-        if self.config.schema == "source":
-            idx = 0
-            for text in texts[1:]:
+        idx = 0
+        for text in texts[1:]:
+            file_part = text.split("%File")[-1]
+            tokens, labels = self._get_tokens_labels(re.split(r"#P\d+\n", file_part)[1:])
+            if self.config.schema == "source":
                 parts = text.split("%")
                 example = {
-                    "TTitle": parts[0],
-                    "ETitle": ":".join(parts[1].split(":")[1:]),
-                    "TAuthor": ":".join(parts[2].split(":")[1:]),
-                    "EAuthor": ":".join(parts[3].split(":")[1:]),
-                    "TInbook": ":".join(parts[4].split(":")[1:]),
-                    "EInbook": ":".join(parts[5].split(":")[1:]),
-                    "TPublisher": ":".join(parts[6].split(":")[1:]),
-                    "EPublisher": ":".join(parts[7].split(":")[1:]),
-                    "Page": ":".join(parts[8].split(":")[1:]),
-                    "Year": ":".join(parts[9].split(":")[1:]),
-                    "File": ":".join(parts[10].split(":")[1:]),
+                    "ttitle": parts[0],
+                    "etitle": ":".join(parts[1].split(":")[1:]),
+                    "tauthor": ":".join(parts[2].split(":")[1:]),
+                    "eauthor": ":".join(parts[3].split(":")[1:]),
+                    "tinbook": ":".join(parts[4].split(":")[1:]),
+                    "einbook": ":".join(parts[5].split(":")[1:]),
+                    "tpublisher": ":".join(parts[6].split(":")[1:]),
+                    "epublisher": ":".join(parts[7].split(":")[1:]),
+                    "year": ":".join(parts[9].split(":")[1:]),
+                    "file": file_part,
+                    "tokens": tokens,
+                    "labels": labels,
                 }
-                yield idx, example
-                idx += 1
-
-        elif self.config.schema == "seacrowd_seq_label":
-            idx = 0
-            for text in texts[1:]:
-                parts = text.split("%")
-                last_part = parts[-1]
-                tokens, labels = self._get_tokens_labels(re.split(r"#P\d+\n", last_part)[1:])
+            elif self.config.schema == "seacrowd_seq_label":
                 example = {
                     "id": idx,
                     "tokens": tokens,
                     "labels": labels,
                 }
-                yield idx, example
-                idx += 1
+            yield idx, example
+            idx += 1
