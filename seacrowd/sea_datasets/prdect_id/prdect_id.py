@@ -62,6 +62,7 @@ _SUPPORTED_TASKS = [Tasks.SENTIMENT_ANALYSIS, Tasks.EMOTION_CLASSIFICATION]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
+
 class PrdectIDDataset(datasets.GeneratorBasedBuilder):
     """PRDECT-ID Dataset"""
 
@@ -91,7 +92,7 @@ class PrdectIDDataset(datasets.GeneratorBasedBuilder):
             description=f"{_DATASETNAME} SEACrowd schema for sentiment analysis",
             schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
             subset_id=f"{_DATASETNAME}_sentiment",
-        )
+        ),
     ]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
@@ -99,27 +100,29 @@ class PrdectIDDataset(datasets.GeneratorBasedBuilder):
     CLASS_LABELS_SENTIMENT = ["Positive", "Negative"]
 
     def _info(self) -> datasets.DatasetInfo:
-        task = self.config.subset_id.split("_")[-1]
         if self.config.schema == "source":
             features = datasets.Features(
                 {
-                    "Category": datasets.Value("string"),	
-                    "Product Name": datasets.Value("string"),	
-                    "Location": datasets.Value("string"),	
+                    "Category": datasets.Value("string"),
+                    "Product Name": datasets.Value("string"),
+                    "Location": datasets.Value("string"),
                     "Price": datasets.Value("int32"),
-                    "Overall Rating": datasets.Value("float32"),	
-                    "Number Sold": datasets.Value("int32"),	
-                    "Total Review": datasets.Value("int32"),	
+                    "Overall Rating": datasets.Value("float32"),
+                    "Number Sold": datasets.Value("int32"),
+                    "Total Review": datasets.Value("int32"),
                     "Customer Rating": datasets.Value("int32"),
                     "Customer Review": datasets.Value("string"),
                     "Sentiment": datasets.ClassLabel(names=self.CLASS_LABELS_SENTIMENT),
                     "Emotion": datasets.ClassLabel(names=self.CLASS_LABELS_EMOTION),
                 }
             )
-        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}" and task.lower() == "emotion":
-            features = schemas.text_features(label_names=self.CLASS_LABELS_EMOTION)
-        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}" and task.lower() == "sentiment":
-            features = schemas.text_features(label_names=self.CLASS_LABELS_SENTIMENT)
+        elif self.config.schema == "seacrowd_text":
+            if self.config.subset_id == f"{_DATASETNAME}_emotion":
+                features = schemas.text_features(label_names=self.CLASS_LABELS_EMOTION)
+            elif self.config.subset_id == f"{_DATASETNAME}_sentiment":
+                features = schemas.text_features(label_names=self.CLASS_LABELS_SENTIMENT)
+            else:
+                raise ValueError(f"Invalid subset: {self.config.subset_id}")
         else:
             raise ValueError(f"Schema '{self.config.schema}' is not defined.")
 
@@ -134,21 +137,18 @@ class PrdectIDDataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
         data_file = Path(dl_manager.download(_URL))
-        return [
-            datasets.SplitGenerator(
-                name=datasets.Split.TRAIN,
-                gen_kwargs={"filepath": data_file}
-            )
-        ]
+        return [datasets.SplitGenerator(name=datasets.Split.TRAIN, gen_kwargs={"filepath": data_file})]
 
     def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
         """Yield examples as (key, example) tuples"""
         df = pd.read_csv(filepath, encoding="utf-8")
-        task = self.config.subset_id.split("_")[-1]
         for idx, row in df.iterrows():
             if self.config.schema == "source":
                 yield idx, dict(row)
-            elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}" and task.lower() == "sentiment":
-                yield idx, {"id": idx, "text": row["Customer Review"], "label": row["Sentiment"]}
-            elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}" and task.lower() == "emotion":
-                yield idx, {"id": idx, "text": row["Customer Review"], "label": row["Emotion"]}
+            elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
+                if self.config.subset_id == f"{_DATASETNAME}_emotion":
+                    yield idx, {"id": idx, "text": row["Customer Review"], "label": row["Emotion"]}
+                elif self.config.subset_id == f"{_DATASETNAME}_sentiment":
+                    yield idx, {"id": idx, "text": row["Customer Review"], "label": row["Sentiment"]}
+                else:
+                    raise ValueError(f"Invalid subset: {self.config.subset_id}")
