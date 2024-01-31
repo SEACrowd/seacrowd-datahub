@@ -108,21 +108,18 @@ class UITVIOCDDataset(datasets.GeneratorBasedBuilder):
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
                     "filepath": data_dir["train"],
-                    "split": "train",
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
                 gen_kwargs={
                     "filepath": data_dir["test"],
-                    "split": "test",
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
                     "filepath": data_dir["val"],
-                    "split": "dev",
                 },
             ),
         ]
