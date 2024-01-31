@@ -64,6 +64,13 @@ _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
+_LANGUAGES = [
+    "khm",
+    "msa",
+    "tha",
+    "vie",
+]  # follows the convention of 3-letter code as suggested since NusaCrowd.
+
 
 class MKQADataset(datasets.GeneratorBasedBuilder):
     """
@@ -75,14 +82,6 @@ class MKQADataset(datasets.GeneratorBasedBuilder):
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-
-    LANGUAGES = [
-        "",
-        "khm",
-        "msa",
-        "tha",
-        "vie",
-    ]  # follows the convention of 3-letter code as suggested since NusaCrowd.
 
     _SOURCE_LANGUAGES = [
         "ar",
@@ -129,7 +128,7 @@ class MKQADataset(datasets.GeneratorBasedBuilder):
                 schema="source",
                 subset_id=f"{_DATASETNAME}_{subset_lang}",
             )
-            for subset_lang in LANGUAGES
+            for subset_lang in ["", *_LANGUAGES]
         ],
         *[
             SEACrowdConfig(
@@ -139,7 +138,7 @@ class MKQADataset(datasets.GeneratorBasedBuilder):
                 schema="seacrowd_qa",
                 subset_id=f"{_DATASETNAME}_{subset_lang}",
             )
-            for subset_lang in LANGUAGES
+            for subset_lang in ["", *_LANGUAGES]
         ],
     ]
 
