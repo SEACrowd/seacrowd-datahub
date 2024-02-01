@@ -32,11 +32,13 @@ _LOCAL = False
 
 _URLS = {_DATASETNAME: "https://archive.org/download/wongnai_reviews/wongnai_reviews_withtest.zip"}
 
-_SUPPORTED_TASKS = [Tasks.ASPECT_BASED_SENTIMENT_ANALYSIS]
+_SUPPORTED_TASKS = [Tasks.SENTIMENT_ANALYSIS]
 
 _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
+
+_CLASSES = ["1", "2", "3", "4", "5"]
 
 
 class WongnaiReviewsDataset(datasets.GeneratorBasedBuilder):
@@ -54,10 +56,10 @@ class WongnaiReviewsDataset(datasets.GeneratorBasedBuilder):
             subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_text_multi",
+            name=f"{_DATASETNAME}_seacrowd_text",
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd schema",
-            schema="seacrowd_text_multi",
+            schema="seacrowd_text",
             subset_id=_DATASETNAME,
         ),
     ]
@@ -69,12 +71,12 @@ class WongnaiReviewsDataset(datasets.GeneratorBasedBuilder):
             features = datasets.Features(
                 {
                     "review_body": datasets.Value("string"),
-                    "star_rating": datasets.ClassLabel(names=["1", "2", "3", "4", "5"]),
+                    "star_rating": datasets.ClassLabel(names=_CLASSES),
                 }
             )
 
-        elif self.config.schema == "seacrowd_text_multi":
-            features = schemas.text_multi_features(["1", "2", "3", "4", "5"])
+        elif self.config.schema == "seacrowd_text":
+            features = schemas.text_features(label_names=_CLASSES)
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -107,8 +109,10 @@ class WongnaiReviewsDataset(datasets.GeneratorBasedBuilder):
                 for i, row in enumerate(spamreader):
                     yield i, {"review_body": row[0], "star_rating": row[1]}
 
-        elif self.config.schema == "seacrowd_text_multi":
+        elif self.config.schema == "seacrowd_text":
             with open(filepath, encoding="utf-8") as f:
                 spamreader = csv.reader(f, delimiter=";", quotechar='"')
                 for i, row in enumerate(spamreader):
-                    yield i, {"id": str(i), "text": row[0], "labels": [row[1]]}
+                    #                     label = int(label.strip())
+                    # yield i, {"id": str(i), "text": text, "label": _CLASSES[label - 1]}
+                    yield i, {"id": str(i), "text": row[0], "label": _CLASSES[int(row[1].strip()) - 1]}
