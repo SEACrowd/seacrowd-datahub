@@ -72,6 +72,9 @@ _LANGS = {
     "zlm": "Malay",  # default mly_latn
 }
 
+_LOCAL=False
+_LANGUAGES=["ace", "ban", "bcl", "blt", "bug", "ceb", "cfm", "cnh", "ctd", "duu", "hil", "hlt", "hni", "hnj", "ilo", "ind", "jav", "khm", "kkh", "lao", "lus", "mad", "min", "mnw", "mya", "pam", "shn", "sun", "tdt", "tet", "tgl", "tha", "vie", "war", "zlm"]
+
 def seacrowd_config_constructor(src_lang, schema, version):
     if src_lang == "":
         raise ValueError(f"Invalid src_lang {src_lang}")
