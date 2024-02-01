@@ -190,16 +190,50 @@ class OrchidPOSDataset(datasets.GeneratorBasedBuilder):
     def _get_tokens_labels(self, paragraphs):
         tokens = []
         labels = []
+        token_mapping = {
+            "<space>": " ",
+            "<exclamation>": "!",
+            "<quotation>": '"',
+            "<number>": "#",
+            "<dollar>": "$",
+            "<percent>": "%",
+            "<ampersand>": "&",
+            "<apostrophe>": "'",
+            "<slash>": "/",
+            "<colon>": ":",
+            "<semi_colon>": ";",
+            "<less_than>": "<",
+            "<equal>": "=",
+            "<greater than>": ">",
+            "<question_mark>": "?",
+            "<at_mark>": "@",
+            "<left_parenthesis>": "(",
+            "<left_square_bracket>": "[",
+            "<right_parenthesis>": ")",
+            "<right_square_bracket>": "]",
+            "<asterisk>": "*",
+            "<circumflex_accent>": "^",
+            "<plus>": "+",
+            "<low_line>": "_",
+            "<comma>": ",",
+            "left_curly_bracket": "{",
+            "<minus>": "-",
+            "<right_curly_bracket>": "}",
+            "<full_stop>": ".",
+            "<tilde>": "~",
+        }
         for paragraph in paragraphs:
             sentences = re.split(r"#\d+\n", paragraph)
             for sentence in sentences[1:]:
                 token_pos_pairs = sentence.split("//")[1]
                 for token_pos_pair in token_pos_pairs.split("\n")[1:-1]:
                     if "/" in token_pos_pair:
-                        tokens.append(token_pos_pair.split("/")[0])
+                        token = token_pos_pair.split("/")[0]
+                        tokens.append(token_mapping[token] if token in token_mapping.keys() else token)
                         labels.append(token_pos_pair.split("/")[1])
                     else:
-                        tokens.append(token_pos_pair.split("@")[0])
+                        token = token_pos_pair.split("@")[0]
+                        tokens.append(token_mapping[token] if token in token_mapping.keys() else token)
                         labels.append(token_pos_pair.split("@")[1])
         return tokens, labels
 
