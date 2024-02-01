@@ -71,18 +71,18 @@ class MysentenceDataset(datasets.GeneratorBasedBuilder):
             subset_id=f"{_DATASETNAME}",
         ),
         SEACrowdConfig(
-            name=f"{_DATASETNAME}+paragraphs_source",
+            name=f"{_DATASETNAME}_and_paragraphs_source",
             version=SOURCE_VERSION,
             description="sentences para source schema",
             schema="source",
-            subset_id=f"{_DATASETNAME}+paragraphs",
+            subset_id=f"{_DATASETNAME}_and_paragraphs",
         ),
         SEACrowdConfig(
-            name=f"{_DATASETNAME}+paragraphs_seacrowd_seq_label",
+            name=f"{_DATASETNAME}_and_paragraphs_seacrowd_seq_label",
             version=SEACROWD_VERSION,
             description="sentence para SEACrowd schema",
             schema="seacrowd_seq_label",
-            subset_id=f"{_DATASETNAME}+paragraphs",
+            subset_id=f"{_DATASETNAME}_and_paragraphs",
         ),
     ]
 
