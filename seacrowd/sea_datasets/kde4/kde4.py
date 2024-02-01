@@ -240,23 +240,6 @@ class KDE4Dataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    BUILDER_CONFIGS = [
-        SEACrowdConfig(
-            name="kde4_source",
-            version=SOURCE_VERSION,
-            description="kde4 source schema",
-            schema="source",
-            subset_id="af_ms",
-        ),
-        SEACrowdConfig(
-            name="kde4_seacrowd_t2t",
-            version=SEACROWD_VERSION,
-            description="KDE4 SEACrowd schema",
-            schema="seacrowd_t2t",
-            subset_id="af_ms",
-        ),
-    ]
-
     BUILDER_CONFIGS = (
         [
             SEACrowdConfig(name="kde4_source", version=datasets.Version(_SOURCE_VERSION), description="kde4 source schema for af to ms", schema="source", subset_id="af_ms"),
