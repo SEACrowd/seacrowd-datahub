@@ -40,7 +40,7 @@ proficiency in the Indonesian language and knowledge of nine local languages and
 
 _HOMEPAGE = "https://huggingface.co/datasets/indolem/IndoMMLU"
 
-_LANGUAGES = ["ind"]
+_LANGUAGES = ["ind", "ban", "mad", "day", "sun", "jav"]
 
 _LICENSE = Licenses.MIT.value
 
@@ -53,6 +53,9 @@ _SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
 _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
+
+
+lang2subject = {"ind": "Bahasa Indonesia", "ban": "Bahasa Bali", "mad": "Bahasa Madura", "day": "Bahasa Dayak Ngaju", "sun": "Bahasa Sunda", "jav": "Bahasa Jawa"}
 
 subject2english = {
     "Sejarah": "History",
@@ -166,25 +169,33 @@ class IndoMMLU(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="indommlu_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
-            description="indommlu source schema",
+            description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id="indommlu",
+            subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
-            name="indommlu_seacrowd_qa",
+            name=f"{_DATASETNAME}_seacrowd_qa",
             version=SEACROWD_VERSION,
-            description="indommlu SEACrowd schema",
+            description=f"{_DATASETNAME} SEACrowd schema",
             schema="seacrowd_qa",
-            subset_id="indommlu",
+            subset_id=_DATASETNAME,
         ),
     ]
+    for lang in _LANGUAGES:
+        lang_config = SEACrowdConfig(
+            name=f"{_DATASETNAME}_{lang}_seacrowd_qa",
+            version=SEACROWD_VERSION,
+            description=f"{_DATASETNAME} {lang} SEACrowd schema",
+            schema=f"seacrowd_{lang}_qa",
+            subset_id=_DATASETNAME,
+        )
+        BUILDER_CONFIGS.append(lang_config)
 
-    DEFAULT_CONFIG_NAME = "indommlu_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
-
         if self.config.schema == "source":
             features = datasets.Features(
                 {
@@ -199,7 +210,7 @@ class IndoMMLU(datasets.GeneratorBasedBuilder):
                 }
             )
 
-        elif self.config.schema == "seacrowd_qa":
+        else:
             features = schemas.qa_features
             features["meta"] = {
                 "subject": datasets.Value("string"),
@@ -230,10 +241,15 @@ class IndoMMLU(datasets.GeneratorBasedBuilder):
         ]
 
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
-        if self.config.schema == "source":
-            data = csv.DictReader(open(filepath[split], newline=""))
-            for i, row in enumerate(data):
+        data = csv.DictReader(open(filepath[split], newline=""))
+        print(self.config.schema)
+        for i, row in enumerate(data):
+            # filter language specific schema
+            if (not self.config.schema == "source") and (self.config.schema.split("_")[1] in _LANGUAGES) and (not lang2subject[self.config.schema.split("_")[1]] == row["subject"]):
+                continue
+            else:
                 fixed_level, fixed_kelas = fix_level(row["level"], row["kelas"])
+                # The choices are in the format of ["A. xxx", "B. xxx", ...], but answer is only with ["A"], replacing both with only the answer content
                 choices = row["jawaban"].split("\n")
                 answer_choice = row["kunci"]
                 # Find the corresponding choice in the choices.
@@ -242,44 +258,26 @@ class IndoMMLU(datasets.GeneratorBasedBuilder):
                 if corresponding_choice is None:
                     continue
                 else:
-
-                    yield i, {
-                        "subject": subject2english[row["subject"]],
-                        "group": subject2group[row["subject"]],
-                        "level": fixed_level,
-                        "class": fixed_kelas,
-                        "question": row["soal"],
-                        "options": choices,
-                        "answer": answer_choice,
-                        "is_for_fewshot": row["is_for_fewshot"],
-                    }
-
-        elif self.config.schema == "seacrowd_qa":
-            data = csv.DictReader(open(filepath[split], newline=""))
-
-            for i, row in enumerate(data):
-                fixed_level, fixed_kelas = fix_level(row["level"], row["kelas"])
-
-                # The choices are in the format of ["A. xxx", "B. xxx", ...], but answer is only with ["A"]. The unit
-                # test requires answer to be present in choices, therefore we need to add the xxx part to the answer.
-                choices = row["jawaban"].split("\n")
-                answer_choice = row["kunci"]
-                # Find the corresponding choice in the choices.
-                # Skip the 2 datapoint (i = 4223, 14150) with invalid answer_choice.
-                corresponding_choice = next((choice for choice in choices if choice.startswith(answer_choice)), None)
-                if corresponding_choice is None:
-                    continue
-                else:
-                    updated_answer = [corresponding_choice]
-
-                    yield i, {
-                        "id": str(i),
-                        "question_id": str(i),
-                        "document_id": str(i),
-                        "question": row["soal"],
-                        "type": "multiple_choice",
-                        "choices": choices,
-                        "context": "",
-                        "answer": updated_answer,
-                        "meta": {"subject": subject2english[row["subject"]], "group": subject2group[row["subject"]], "level": fixed_level, "class": fixed_kelas, "is_for_fewshot": row["is_for_fewshot"]},
-                    }
+                    if self.config.schema == "source":
+                        yield i, {
+                            "subject": subject2english[row["subject"]],
+                            "group": subject2group[row["subject"]],
+                            "level": fixed_level,
+                            "class": fixed_kelas,
+                            "question": row["soal"],
+                            "options": [opt[2:].strip() for opt in choices],  # remove A., B., ... in the options,
+                            "answer": corresponding_choice[2:].strip(),  # remove A., B., ... in the answer
+                            "is_for_fewshot": row["is_for_fewshot"],
+                        }
+                    else:
+                        yield i, {
+                            "id": str(i),
+                            "question_id": str(i),
+                            "document_id": str(i),
+                            "question": row["soal"],
+                            "type": "multiple_choice",
+                            "choices": [opt[2:].strip() for opt in choices],  # remove A., B., ... in the options
+                            "context": "",
+                            "answer": [corresponding_choice[2:].strip()],  # remove A., B., ... in the answer,
+                            "meta": {"subject": subject2english[row["subject"]], "group": subject2group[row["subject"]], "level": fixed_level, "class": fixed_kelas, "is_for_fewshot": row["is_for_fewshot"]},
+                        }
