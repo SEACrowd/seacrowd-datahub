@@ -1,15 +1,12 @@
 """This code is partially taken from https://github.com/huggingface/datasets/blob/main/datasets/xcopa/xcopa.py."""
 
 import json
-from pathlib import Path
-from typing import Dict, List, Tuple
 
 import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
-
+from seacrowd.utils.constants import Licenses, Tasks
 
 _HOMEPAGE = "https://github.com/cambridgeltl/xcopa"
 
@@ -59,7 +56,7 @@ _URLS = {
     "vie": [
         "https://raw.githubusercontent.com/cambridgeltl/xcopa/master/data/vi/val.vi.jsonl",
         "https://raw.githubusercontent.com/cambridgeltl/xcopa/master/data/vi/test.vi.jsonl",
-    ]
+    ],
 }
 
 _SUPPORTED_TASKS = [Tasks.COMMONSENSE_REASONING]
@@ -68,13 +65,14 @@ _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
-def _xcopa_config_constructor(lang: str,schema: str, version: str) -> SEACrowdConfig :
+
+def _xcopa_config_constructor(lang: str, schema: str, version: str) -> SEACrowdConfig:
     return SEACrowdConfig(
-            name="xcopa_{}_{}".format(lang,schema),
-            version=version,
-            description="XCOPA {} schema".format(schema),
-            schema=schema,
-            subset_id="xcopa",
+        name="xcopa_{}_{}".format(lang, schema),
+        version=version,
+        description="XCOPA {} schema".format(schema),
+        schema=schema,
+        subset_id="xcopa",
     )
 
 
@@ -82,14 +80,14 @@ class Xcopa(datasets.GeneratorBasedBuilder):
     """The Cross-lingual Choice of Plausible Alternatives dataset is a benchmark to evaluate the ability of machine learning models to transfer commonsense reasoning across
     languages. The dataset is the translation and reannotation of the English COPA (Roemmele et al. 2011) and covers 11 languages from 11 families and several areas around
     the globe."""
-    
+
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-    
-    BUILDER_CONFIGS = [_xcopa_config_constructor(l, "source", _SOURCE_VERSION) for l in _LANGUAGES] + [_xcopa_config_constructor(l, "seacrowd_qa", _SEACROWD_VERSION) for l in _LANGUAGES]
+
+    BUILDER_CONFIGS = [_xcopa_config_constructor(lang, "source", _SOURCE_VERSION) for lang in _LANGUAGES] + [_xcopa_config_constructor(lang, "seacrowd_qa", _SEACROWD_VERSION) for lang in _LANGUAGES]
 
     DEFAULT_CONFIG_NAME = "xcopa_ind_source"
-    
+
     def _info(self):
         if self.config.schema == "source":
             features = datasets.Features(
@@ -106,13 +104,9 @@ class Xcopa(datasets.GeneratorBasedBuilder):
         elif self.config.schema == "seacrowd_qa":
             features = schemas.qa_features
             features_in_dict = features.to_dict()
-            features_in_dict["meta"] = {
-                'is_changed': {'dtype': 'bool', '_type': 'Value'}, 
-                'reasoning_type': {'dtype': 'string', '_type': 'Value'}
-            }
+            features_in_dict["meta"] = {"is_changed": {"dtype": "bool", "_type": "Value"}, "reasoning_type": {"dtype": "string", "_type": "Value"}}
             features = datasets.Features.from_dict(features_in_dict)
-            
-            
+
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
             features=features,
@@ -120,15 +114,15 @@ class Xcopa(datasets.GeneratorBasedBuilder):
             license=_LICENSE,
             citation=_CITATION,
         )
-    
+
     def get_lang(self, name: str):
         # xcopa_ind|
         # [xcopa, ind]
         names_splitted = name.split("_")
-        if len(names_splitted) == 0 :
+        if len(names_splitted) == 0:
             return "ind"
         return names_splitted[1]
-    
+
     def _split_generators(self, dl_manager):
         """Returns SplitGenerators."""
         urls = _URLS[self.get_lang(self.config.name)]
@@ -156,7 +150,7 @@ class Xcopa(datasets.GeneratorBasedBuilder):
                     data = json.loads(row)
                     idx = data["idx"]
                     yield idx, data
-                    
+
         elif self.config.schema == "seacrowd_qa":
             with open(filepath, encoding="utf-8") as f:
                 for row in f:
@@ -166,17 +160,14 @@ class Xcopa(datasets.GeneratorBasedBuilder):
                         "id": str(idx),
                         "question_id": str(idx),
                         "document_id": str(idx),
-                        "question": '',
+                        "question": "",
                         "type": "multiple_choice",
                         "choices": [data["choice1"], data["choice2"]],
                         "context": data["premise"],
                         "answer": [data["choice1"] if data["label"] == 0 else data["choice2"]],
-                        "meta": {
-                            "is_changed": data["changed"],
-                            "reasoning_type": data["question"]
-                        }
+                        "meta": {"is_changed": data["changed"], "reasoning_type": data["question"]},
                     }
                     yield idx, sample
-            
+
         else:
             raise ValueError(f"Invalid config: {self.config.name}")
