@@ -1,4 +1,3 @@
-import concurrent.futures
 import os
 from typing import Dict, List, Tuple
 
@@ -171,36 +170,27 @@ class CC3M35L(datasets.GeneratorBasedBuilder):
 
         # filter validation data
         with jl.open(os.path.join(dev_path), mode="r") as j:
-            with concurrent.futures.ProcessPoolExecutor() as fill_target_cap:
-                fut = [fill_target_cap.submit(self.is_target, line, current_lang) for line in j]
-
-                for r in concurrent.futures.as_completed(fut):
-                    if r.result() is not None:
-                        val_caption_targets.append(r.result())
-        # fill val data
-        with concurrent.futures.ThreadPoolExecutor() as upd_df:
-            results = [upd_df.submit(self.fill_img_path, gcc_val_df, line) for line in val_caption_targets]
-            for res in concurrent.futures.as_completed(results):
-                val_exceptions.extend(res.result()[1])
-                gcc_val_df.update(res.result()[0])
-
+            val_caption_targets = [line for line in j if line["trg_lang"] == current_lang]
+            
+            #for line in val_caption_targets[:100]: # this was for debugging only
+            for line in val_caption_targets:
+                res = self.fill_img_path(gcc_train_df, line)
+                val_exceptions.extend(res[1])
+                gcc_val_df.update(res[0])
+            
         # clean the memory
         val_caption_targets = []
 
         # filter train data
         with jl.open(os.path.join(train_path), mode="r") as j:
-            with concurrent.futures.ProcessPoolExecutor() as fill_target_cap:
-                fut = [fill_target_cap.submit(self.is_target, line, current_lang) for line in j]
-
-                for r in concurrent.futures.as_completed(fut):
-                    if r.result() is not None:
-                        train_caption_targets.append(r.result())
-        # fill train data
-        with concurrent.futures.ThreadPoolExecutor() as upd_df:
-            results = [upd_df.submit(self.fill_img_path, gcc_val_df, line) for line in train_caption_targets]
-            for res in concurrent.futures.as_completed(results):
-                train_exceptions.extend(res.result()[1])
-                gcc_train_df.update(res.result()[0])
+            train_caption_targets = [line for line in j if line["trg_lang"] == current_lang]
+            
+                
+            #for line in train_caption_targets[:100]: # this was for debugging only
+            for line in train_caption_targets:
+                res = self.fill_img_path(gcc_val_df, line)
+                train_exceptions.extend(res[1])
+                gcc_train_df.update(res[0])
 
         # clean the memory
         train_caption_targets = []
