@@ -19,7 +19,7 @@ _CITATION = """\
     }
 """
 
-_LANGUAGES = ["fil", "tgl"]
+_LANGUAGES = ["fil"]
 
 _DATASETNAME = "dengue_filipino"
 
