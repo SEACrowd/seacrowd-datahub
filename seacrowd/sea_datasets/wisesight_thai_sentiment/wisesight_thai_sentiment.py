@@ -13,15 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import os
 
 import datasets
-import json
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses, DEFAULT_SOURCE_VIEW_NAME, DEFAULT_SEACROWD_VIEW_NAME
-
+from seacrowd.utils.constants import (DEFAULT_SEACROWD_VIEW_NAME,
+                                      DEFAULT_SOURCE_VIEW_NAME, Licenses,
+                                      Tasks)
 
 _CITATION = """\
 @software{bact_2019_3457447,
@@ -41,7 +42,6 @@ _CITATION = """\
 
 
 _DATASETNAME = "wisesight_thai_sentiment"
-
 
 
 _DESCRIPTION = """\
@@ -173,9 +173,5 @@ class WisesightSentimentDataset(datasets.GeneratorBasedBuilder):
                     data = json.loads(row)
                     texts = data["texts"]
                     category = data["category"]
-                    ex = {
-                        "id": str(id_),
-                        "text": texts,
-                        "label": category
-                    }
+                    ex = {"id": str(id_), "text": texts, "label": category}
                     yield id_, ex
