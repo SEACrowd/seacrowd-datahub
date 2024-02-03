@@ -9,7 +9,7 @@ on:
   schedule:
   - cron: '20 1 * * *'
   push:
-  - branches: workflow_test_assignee_mention
+    branches: workflow_test_assignee_mention
 
 jobs:
   stale:
