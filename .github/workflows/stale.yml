@@ -8,8 +8,6 @@ name: Mark stale issues and pull requests
 on:
   schedule:
   - cron: '20 1 * * *'
-  push:
-    branches: workflow_test_assignee_mention
 
 jobs:
   stale:
@@ -31,6 +29,5 @@ jobs:
         days-before-stale: 14
         days-before-close: -1
         include-only-assigned: true
-        debug-only: true
         exempt-issue-labels: 'in-progress,pr-ready'
         operations-per-run: 200
