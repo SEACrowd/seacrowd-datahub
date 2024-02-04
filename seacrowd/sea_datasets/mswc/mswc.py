@@ -143,7 +143,7 @@ _SEACROWD_VERSION = "1.0.0"
 @dataclass
 class SMSASeacrowdConfig(SEACrowdConfig):
     """BuilderConfig for Nusantara."""
-    
+
     language: str = None
     audio_format: str = None
 
