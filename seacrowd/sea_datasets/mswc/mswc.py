@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import os
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -42,6 +43,7 @@ Multilingual Spoken Words Corpus is a large and growing audio dataset of spoken 
 _HOMEPAGE = "https://huggingface.co/datasets/MLCommons/ml_spoken_words"
 
 _LANGUAGES = ["cnh", "ind", "vie"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
+_FORMATS = ["wav", "opus"]
 
 _LICENSE = Licenses.CC_BY_4_0.value
 
@@ -49,30 +51,84 @@ _LOCAL = False
 
 _URLS = {
     _DATASETNAME: {
-        "train": [
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_wav/train/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_opus/train/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_wav/train/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_opus/train/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_wav/train/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_opus/train/0000.parquet?download=true",
-        ],
-        "validation": [
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_wav/validation/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_opus/validation/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_wav/validation/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_opus/validation/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_wav/validation/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_opus/validation/0000.parquet?download=true",
-        ],
-        "test": [
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_wav/test/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_opus/test/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_wav/test/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_opus/test/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_wav/test/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_opus/test/0000.parquet?download=true",
-        ],
+        "train": {
+            "cnh": {
+                "wav": [
+                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_wav/train/0000.parquet?download=true",
+                ],
+                "opus": [
+                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_opus/train/0000.parquet?download=true",
+                ],
+            },
+            "ind": {
+                "wav": [
+                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_wav/train/0000.parquet?download=true",
+                ],
+                "opus": [
+                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_opus/train/0000.parquet?download=true",
+                ],
+            },
+            "vie": {
+                "wav": [
+                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_wav/train/0000.parquet?download=true",
+                ],
+                "opus": [
+                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_opus/train/0000.parquet?download=true",
+                ],
+            },
+        },
+        "validation": {
+            "cnh": {
+                "wav": [
+                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_wav/validation/0000.parquet?download=true",
+                ],
+                "opus": [
+                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_opus/validation/0000.parquet?download=true",
+                ],
+            },
+            "ind": {
+                "wav": [
+                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_wav/validation/0000.parquet?download=true",
+                ],
+                "opus": [
+                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_opus/validation/0000.parquet?download=true",
+                ],
+            },
+            "vie": {
+                "wav": [
+                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_wav/validation/0000.parquet?download=true",
+                ],
+                "opus": [
+                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_opus/validation/0000.parquet?download=true",
+                ],
+            },
+        },
+        "test": {
+            "cnh": {
+                "wav": [
+                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_wav/test/0000.parquet?download=true",
+                ],
+                "opus": [
+                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_opus/test/0000.parquet?download=true",
+                ],
+            },
+            "ind": {
+                "wav": [
+                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_wav/test/0000.parquet?download=true",
+                ],
+                "opus": [
+                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_opus/test/0000.parquet?download=true",
+                ],
+            },
+            "vie": {
+                "wav": [
+                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_wav/test/0000.parquet?download=true",
+                ],
+                "opus": [
+                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_opus/test/0000.parquet?download=true",
+                ],
+            },
+        },
     },
 }
 
@@ -84,6 +140,14 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
+@dataclass
+class SMSASeacrowdConfig(SEACrowdConfig):
+    """BuilderConfig for Nusantara."""
+    
+    language: str = None
+    audio_format: str = None
+
+
 class MSWC(datasets.GeneratorBasedBuilder):
     """
     Multilingual Spoken Words Corpus is a large and growing audio dataset of spoken words in 50 languages collectively spoken by over 5 billion people, for academic research and commercial applications in keyword spotting and spoken term search.
@@ -92,29 +156,40 @@ class MSWC(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    BUILDER_CONFIGS = [
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_source",
-            version=SOURCE_VERSION,
-            description=f"{_DATASETNAME} source schema",
-            schema="source",
-            subset_id=f"{_DATASETNAME}",
-        ),
-    ]
+    BUILDER_CONFIGS = []
+
+    for language in _LANGUAGES:
+        for format in _FORMATS:
+            subset_id = f"{language}_{format}"
+            BUILDER_CONFIGS.append(
+                SMSASeacrowdConfig(
+                    name=f"{subset_id}_source",
+                    version=SOURCE_VERSION,
+                    description=f"{_DATASETNAME} source schema",
+                    schema="source",
+                    subset_id=subset_id,
+                    language=language,
+                    audio_format=format,
+                ),
+            )
 
     seacrowd_schema_config: list[SEACrowdConfig] = []
 
     for seacrowd_schema in _SUPPORTED_SCHEMA_STRINGS:
-
-        seacrowd_schema_config.append(
-            SEACrowdConfig(
-                name=f"{_DATASETNAME}_{seacrowd_schema}",
-                version=SEACROWD_VERSION,
-                description=f"{_DATASETNAME} {seacrowd_schema} schema",
-                schema=f"{seacrowd_schema}",
-                subset_id=f"{_DATASETNAME}",
-            )
-        )
+        for language in _LANGUAGES:
+            for format in _FORMATS:
+                subset_id = f"{language}_{format}"
+                seacrowd_schema_config.append(
+                    SMSASeacrowdConfig(
+                        name=f"{subset_id}_{seacrowd_schema}",
+                        version=SEACROWD_VERSION,
+                        description=f"{_DATASETNAME} {seacrowd_schema} schema",
+                        schema=f"{seacrowd_schema}",
+                        subset_id=subset_id,
+                        language=language,
+                        audio_format=format,
+                    )
+                )
 
     BUILDER_CONFIGS.extend(seacrowd_schema_config)
 
@@ -131,7 +206,7 @@ class MSWC(datasets.GeneratorBasedBuilder):
                     "speaker_id": datasets.Value("string"),
                     "gender": datasets.ClassLabel(num_classes=4),
                     "keyword": datasets.Value("string"),
-                    "audio": datasets.Audio(decode=False),
+                    "audio": datasets.Audio(decode=False, sampling_rate=16000 if self.config.audio_format == "wav" else 48000),
                 }
             )
 
@@ -157,7 +232,7 @@ class MSWC(datasets.GeneratorBasedBuilder):
         result = []
 
         for split_name in split_names:
-            paths = dl_manager.download_and_extract(_URLS[_DATASETNAME][split_name])
+            paths = dl_manager.download_and_extract(_URLS[_DATASETNAME][split_name][self.config.language][self.config.audio_format])
 
             result.append(
                 datasets.SplitGenerator(
@@ -165,13 +240,15 @@ class MSWC(datasets.GeneratorBasedBuilder):
                     gen_kwargs={
                         "paths": paths,
                         "split": split_name,
+                        "language": self.config.language,
+                        "format": self.config.audio_format,
                     },
                 ),
             )
 
         return result
 
-    def _generate_examples(self, paths: list[Path], split: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, paths: list[Path], split: str, language: str, format: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
         is_schema_found = False
@@ -196,7 +273,7 @@ class MSWC(datasets.GeneratorBasedBuilder):
                         df = pd.read_parquet(path)
 
                         base_folder = os.path.dirname(path)
-                        base_folder = os.path.join(base_folder, split)
+                        base_folder = os.path.join(base_folder, _DATASETNAME, language, format, split)
 
                         if not os.path.exists(base_folder):
                             os.makedirs(base_folder)
