@@ -154,7 +154,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class OIL(datasets.GeneratorBasedBuilder):
+class ViPubmed(datasets.GeneratorBasedBuilder):
     """20M Vietnamese PubMed biomedical abstracts translated by the state-of-the-art English-Vietnamese Translation project. The data has been used as unlabeled dataset for pretraining a Vietnamese Biomedical-domain Transformer model."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
