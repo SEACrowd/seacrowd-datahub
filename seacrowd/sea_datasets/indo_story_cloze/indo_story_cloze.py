@@ -139,7 +139,7 @@ class IndoStoryClozeDataset(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         if self.config.schema == "source":
-            data = csv.DictReader(open(filepath[split], newline=""))
+            data = csv.DictReader(open(filepath[split], newline="", encoding="utf-8"))
             for i, row in enumerate(data):
                 yield i, {
                     "sentence-1": row["Kalimat-1"],
@@ -151,7 +151,7 @@ class IndoStoryClozeDataset(datasets.GeneratorBasedBuilder):
                 }
 
         elif self.config.schema == "seacrowd_qa":
-            data = csv.DictReader(open(filepath[split], newline=""))
+            data = csv.DictReader(open(filepath[split], newline="", encoding="utf-8"))
 
             def build_question(line):
                 # Concatenate the 4 sentences, this can either be the question of the context. Set is as question for
