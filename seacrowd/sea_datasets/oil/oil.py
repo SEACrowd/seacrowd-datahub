@@ -155,7 +155,7 @@ class OIL(datasets.GeneratorBasedBuilder):
                     df = pd.read_parquet(filepath)
 
                     base_folder = os.path.dirname(filepath)
-                    base_folder = os.path.join(base_folder, split)
+                    base_folder = os.path.join(base_folder, _DATASETNAME, split)
 
                     if not os.path.exists(base_folder):
                         os.makedirs(base_folder)
