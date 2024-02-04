@@ -21,6 +21,8 @@ _CITATION = """\
 
 _LANGUAGES = ["fil"]
 
+# copied from https://huggingface.co/datasets/dengue_filipino/blob/main/dengue_filipino.py
+_URL = "https://s3.us-east-2.amazonaws.com/blaisecruz.com/datasets/dengue/dengue_raw.zip"
 _DATASETNAME = "dengue_filipino"
 
 _DESCRIPTION = """\
