@@ -14,7 +14,7 @@
 # limitations under the License.
 
 """
-MALINDO Morph is a morphological dictionary for Malay (bahasa Melayu) and Indosian (bahasa Indonesia) language.
+MALINDO Morph is a morphological dictionary for Malay (bahasa Melayu) and Indonesian (bahasa Indonesia) language.
 It contains over 200,000 lines, with each containing an analysis for one (case-sensitive) token.
 Each line is made up of the following six items, separated by tabs: root, surface form, prefix, suffix, circumfix, reduplication.
 """
