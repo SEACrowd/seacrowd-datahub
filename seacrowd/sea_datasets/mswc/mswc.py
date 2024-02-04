@@ -23,6 +23,8 @@ from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import TASK_TO_SCHEMA, Licenses, Tasks
 
+import os
+
 _CITATION = """\
 @inproceedings{mazumder2021multilingual,
   title={Multilingual Spoken Words Corpus},
@@ -51,28 +53,28 @@ _URLS = {
         "train": [
             "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_wav/train/0000.parquet?download=true",
             "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_opus/train/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/ind_wav/train/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/ind_opus/train/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vie_wav/train/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vie_opus/train/0000.parquet?download=true"
+            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_wav/train/0000.parquet?download=true",
+            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_opus/train/0000.parquet?download=true",
+            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_wav/train/0000.parquet?download=true",
+            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_opus/train/0000.parquet?download=true"
         ],
 
         "validation": [
             "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_wav/validation/0000.parquet?download=true",
             "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_opus/validation/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/ind_wav/validation/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/ind_opus/validation/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vie_wav/validation/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vie_opus/validation/0000.parquet?download=true",
+            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_wav/validation/0000.parquet?download=true",
+            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_opus/validation/0000.parquet?download=true",
+            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_wav/validation/0000.parquet?download=true",
+            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_opus/validation/0000.parquet?download=true",
         ],
 
         "test": [
             "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_wav/test/0000.parquet?download=true",
             "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_opus/test/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/ind_wav/test/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/ind_opus/test/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vie_wav/test/0000.parquet?download=true",
-            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vie_opus/test/0000.parquet?download=true",
+            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_wav/test/0000.parquet?download=true",
+            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_opus/test/0000.parquet?download=true",
+            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_wav/test/0000.parquet?download=true",
+            "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_opus/test/0000.parquet?download=true",
         ],
     },
 }
@@ -128,9 +130,9 @@ class MSWC(datasets.GeneratorBasedBuilder):
                     "is_valid": datasets.Value("bool"),
                     "language": datasets.ClassLabel(num_classes=3),
                     "speaker_id": datasets.Value("string"),
-                    "gender": datasets.ClassLabel(num_classes=3),
+                    "gender": datasets.ClassLabel(num_classes=4),
                     "keyword": datasets.Value("string"),
-                    "audio": datasets.Audio()
+                    "audio": datasets.Audio(decode=False),
                 }
             )
 
@@ -158,18 +160,19 @@ class MSWC(datasets.GeneratorBasedBuilder):
         for split_name in split_names:
             paths = dl_manager.download_and_extract(_URLS[_DATASETNAME][split_name])
 
-            result.append([
+            result.append(
                 datasets.SplitGenerator(
                     name=split_name,
                     gen_kwargs={
                         "paths": paths,
+                        "split": split_name,
                     },
                 ),
-            ])
+            )
 
         return result
 
-    def _generate_examples(self, paths: list[Path]) -> Tuple[int, Dict]:
+    def _generate_examples(self, paths: list[Path], split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
         is_schema_found = False
@@ -193,7 +196,36 @@ class MSWC(datasets.GeneratorBasedBuilder):
                     for path in paths:
                         df = pd.read_parquet(path)
                         
-                        # TODO: modify df
+                        base_folder = os.path.dirname(path)
+                        base_folder = os.path.join(base_folder, split)
+
+                        if not os.path.exists(base_folder):
+                            os.makedirs(base_folder)
+
+                        audio_paths = []
+
+                        for _, row in df.iterrows():
+                            audio_dict = row["audio"]
+                            file_name = audio_dict["path"]
+
+                            path = os.path.join(base_folder, file_name)
+
+                            audio_dict["path"] = path
+
+                            with open(path, "wb") as f:
+                                f.write(audio_dict["bytes"])
+
+                            audio_paths.append(path)
+
+                        df.rename(columns={"label": "text"}, inplace=True)
+
+                        df["path"] = audio_paths
+
+                        df["id"] = df.index + idx
+                        df = df.assign(text="").astype({"text": "str"})
+                        df = df.assign(metadata=[{"speaker_age": 0, "speaker_gender": gender} for gender in df['gender']]).astype({"metadata": "object"})
+
+                        df.drop(columns=['file', 'is_valid', 'language', 'gender', 'keyword'], inplace=True)
 
                         for _, row in df.iterrows():
                             yield idx, row.to_dict()
@@ -205,4 +237,4 @@ class MSWC(datasets.GeneratorBasedBuilder):
 # This allows you to run your dataloader with `python [dataset_name].py` during development
 # TODO: Remove this before making your PR
 if __name__ == "__main__":
-    datasets.load_dataset(__file__, "mswc_source")
+    datasets.load_dataset(__file__, "mswc_seacrowd_sptext")
