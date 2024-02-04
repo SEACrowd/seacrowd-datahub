@@ -61,7 +61,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class OIL(datasets.GeneratorBasedBuilder):
+class XlJailbreak(datasets.GeneratorBasedBuilder):
     """This dataset contains the data for the paper "Multilingual Jailbreak Challenges in Large Language Models"."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
