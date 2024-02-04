@@ -63,13 +63,12 @@ class EmoSentIndMobile(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_{subset}_source",
+            name=f"{_DATASETNAME}_source",
             version=datasets.Version(_SOURCE_VERSION),
-            description=f"{_DATASETNAME} source schema for {subset} subset",
+            description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id=f"{_DATASETNAME}_{subset}",
+            subset_id=_DATASETNAME
         )
-        for subset in SUBSETS
     ] + [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_{subset}_seacrowd_text",
@@ -81,7 +80,7 @@ class EmoSentIndMobile(datasets.GeneratorBasedBuilder):
         for subset in SUBSETS
     ]
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_emotion_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
