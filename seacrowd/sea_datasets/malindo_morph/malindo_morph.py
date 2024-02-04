@@ -48,7 +48,7 @@ _CITATION = """\
 _DATASETNAME = "malindo_morph"
 
 _DESCRIPTION = """\
-MALINDO Morph is a morphological dictionary for Malay (bahasa Melayu) and Indosian (bahasa Indonesia) language.
+MALINDO Morph is a morphological dictionary for Malay (bahasa Melayu) and Indonesian (bahasa Indonesia) language.
 It contains over 200,000 lines, with each containing an analysis for one (case-sensitive) token.
 Each line is made up of the following six items, separated by tabs: root, surface form, prefix, suffix, circumfix, reduplication.
 """
@@ -73,7 +73,7 @@ _SEACROWD_VERSION = "1.0.0"
 
 
 class MalindoMorph(datasets.GeneratorBasedBuilder):
-    """MALINDO Morph is a morphological dictionary for Malay (bahasa Melayu) and Indosian (bahasa Indonesia) language. It provides morphological information (root, prefix, suffix, circumfix, reduplication) for over 200,000 surface forms."""
+    """MALINDO Morph is a morphological dictionary for Malay (bahasa Melayu) and Indonesian (bahasa Indonesia) language. It provides morphological information (root, prefix, suffix, circumfix, reduplication) for over 200,000 surface forms."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
