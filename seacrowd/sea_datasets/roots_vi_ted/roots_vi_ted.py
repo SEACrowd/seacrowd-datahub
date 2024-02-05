@@ -33,7 +33,8 @@ _DATASETNAME = "roots_vi_ted"
 _DESCRIPTION = """
 ROOTS_vi_ted is a subset of Vietnamese in ted_talks_iwslt datasets. ted_talks_iwslt is a collection of the original Ted
 talks and their translated version. The translations are available in more than 109+ languages, though the distribution
-is not uniform.
+is not uniform. Before using this dataloader, please accept the acknowledgement at 
+https://huggingface.co/datasets/bigscience-data/roots_vi_ted_talks_iwslt and use huggingface-cli login for authentication.
 """
 
 _HOMEPAGE = "https://huggingface.co/datasets/bigscience-data/roots_vi_ted_talks_iwslt"
@@ -42,8 +43,9 @@ _LANGUAGES = ["vie"]
 
 _LICENSE = Licenses.CC_BY_NC_ND_4_0.value
 
-# The data is available at https://huggingface.co/datasets/bigscience-data/roots_vi_ted_talks_iwslt/blob/main/data/train-00000-of-00001.parquet, however it requires signing a specific term of use
-_LOCAL = True
+_LOCAL = False
+
+_URLS = {_DATASETNAME: {"train": "https://huggingface.co/datasets/bigscience-data/roots_vi_ted_talks_iwslt/resolve/main/data/train-00000-of-00001.parquet?download=true"}}
 
 _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
 
@@ -52,7 +54,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class RootsViTed(datasets.GeneratorBasedBuilder):
+class RootsViTedDataset(datasets.GeneratorBasedBuilder):
     """RootsViTed is a subset of Vietnamese in ted_talks_iwslt datasets."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
@@ -78,7 +80,6 @@ class RootsViTed(datasets.GeneratorBasedBuilder):
     DEFAULT_CONFIG_NAME = "roots_vi_ted_source"
 
     def _info(self) -> datasets.DatasetInfo:
-
         if self.config.schema == "source":
             features = datasets.Features(
                 {
@@ -89,9 +90,6 @@ class RootsViTed(datasets.GeneratorBasedBuilder):
 
         elif self.config.schema == "seacrowd_ssp":
             features = schemas.self_supervised_pretraining.features
-            features["meta"] = {
-                "meta": datasets.Value("string"),
-            }
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -103,21 +101,19 @@ class RootsViTed(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        if self.config.data_dir is None:
-            raise ValueError("This is a local dataset. Please pass the data_dir kwarg to load_dataset.")
-        else:
-            data_dir = self.config.data_dir
+        urls = _URLS[_DATASETNAME]
+        data_dir = dl_manager.download_and_extract(urls)
 
         return [
             datasets.SplitGenerator(
-                name=datasets.Split.TRAIN,
-                gen_kwargs={"filepath": os.path.join(data_dir, "train-00000-of-00001.parquet"), "split": "train"},
+                name=datasets.Split.TEST,
+                gen_kwargs={"filepath": data_dir, "split": "train"},
             ),
         ]
 
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         if self.config.schema == "source":
-            df = pd.read_parquet(filepath)
+            df = pd.read_parquet(filepath[split])
             for i, row in df.iterrows():
                 yield i, {
                     "text": row["text"],
@@ -125,10 +121,9 @@ class RootsViTed(datasets.GeneratorBasedBuilder):
                 }
 
         elif self.config.schema == "seacrowd_ssp":
-            df = pd.read_parquet(filepath)
+            df = pd.read_parquet(filepath[split])
             for i, row in df.iterrows():
                 yield i, {
                     "id": str(i),
                     "text": row["text"],
-                    "meta": {"meta": row["meta"]},
                 }
