@@ -34,7 +34,7 @@ from seacrowd.utils.constants import Licenses, Tasks
 _CITATION = """\
 @article{,
   author    = {PyThaiNLP},
-  title     = {},
+  title     = {thaigov-v2-corpus},
   journal   = {},
   volume    = {},
   year      = {2023},
@@ -72,7 +72,7 @@ _SEACROWD_VERSION = "1.0.0"
 
 
 class NewDataset(datasets.GeneratorBasedBuilder):
-    """This dataset is a corpus from ThaiGov, can be use for summarization tasks."""
+    """This dataset is a corpus from ThaiGov, can be used for summarization tasks."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
