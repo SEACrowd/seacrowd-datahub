@@ -20,11 +20,12 @@ jobs:
     steps:
     - uses: actions/stale@v8
       with:
+      
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        stale-issue-message: 'Hi @${assignee}, may I know if you are still working on this issue? Please let @holylovenia @SamuelCahyawijaya @sabilmakbar know if you need any help.'
-        stale-pr-message: 'Hi @${assignee} & @${author}, may I know if you are still working on this PR?'
-        stale-issue-label: 'staled-issue'
-        stale-pr-label: 'need-fu-pr'
+        stale-issue-message: "Hi @${{github.event.issue.assignee.login}}, may I know if you are still working on this issue? Please let @holylovenia @SamuelCahyawijaya @sabilmakbar know if you need any help."
+        stale-pr-message: "Hi @${{join(github.event.issue.assignees.*.login, ', @')}} & @${{github.event.issue.user.login}}, may I know if you are still working on this PR?"
+        stale-issue-label: "staled-issue"
+        stale-pr-label: "need-fu-pr"
         days-before-stale: 14
         days-before-close: -1
         include-only-assigned: true
