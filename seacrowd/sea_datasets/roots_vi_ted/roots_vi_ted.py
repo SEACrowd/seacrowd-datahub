@@ -106,7 +106,7 @@ class RootsViTedDataset(datasets.GeneratorBasedBuilder):
 
         return [
             datasets.SplitGenerator(
-                name=datasets.Split.TEST,
+                name=datasets.Split.TRAIN,
                 gen_kwargs={"filepath": data_dir, "split": "train"},
             ),
         ]
