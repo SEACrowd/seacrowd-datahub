@@ -40,9 +40,9 @@ proficiency in the Indonesian language and knowledge of nine local languages and
 
 _HOMEPAGE = "https://huggingface.co/datasets/indolem/IndoMMLU"
 
-_LANGUAGES = ["ind", "ban", "mad", "day", "sun", "jav"]
+_LANGUAGES = ["ind", "ban", "mad", "nij", "sun", "jav", "mak", "bjn", "abl"]
 
-_LICENSE = Licenses.MIT.value
+_LICENSE = Licenses.CC_BY_NC_SA_4_0.value
 
 _LOCAL = False
 
@@ -55,7 +55,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-lang2subject = {"ind": "Bahasa Indonesia", "ban": "Bahasa Bali", "mad": "Bahasa Madura", "day": "Bahasa Dayak Ngaju", "sun": "Bahasa Sunda", "jav": "Bahasa Jawa"}
+lang2subject = {"ind": "Bahasa Indonesia", "ban": "Bahasa Bali", "mad": "Bahasa Madura", "nij": "Bahasa Dayak Ngaju", "sun": "Bahasa Sunda", "jav": "Bahasa Jawa", "mak": "Bahasa Makassar", "bjn": "Bahasa Banjar", "abl": "Bahasa Lampung"}
 
 subject2english = {
     "Sejarah": "History",
@@ -115,10 +115,10 @@ subject2group = {
 
 special_case = ["SD-SMP-SMA", "SD-SMP"]
 level_mapper = {
-    "SMA": "SMA",
+    "SMA": "SMA",  # SMA --> high school level"
     "Seleksi PTN": "University entrance test",
-    "SD": "SD",
-    "SMP": "SMP",
+    "SD": "SD",  # SD --> elementary school level
+    "SMP": "SMP",  # SMP --> junior high school level
     "Kelas I SD": "SD",
     "Kelas X SMA": "SMA",
     "Kelas XI SMA": "SMA",
@@ -161,7 +161,18 @@ def fix_level(level, kelas):
     return fixed_level, fixed_kelas
 
 
-class IndoMMLU(datasets.GeneratorBasedBuilder):
+def pass_schema_filter(schema, row):
+    if schema == "source":
+        return True
+    lang = schema.split("_")[1]
+    if lang not in _LANGUAGES:  # seacrowd_qa
+        return True
+    if lang == "ind":  # contains "Bahasa Indonesia" and all other non-language subjects
+        return (lang2subject[lang] == row["subject"]) or (row["subject"] not in lang2subject.values())
+    return lang2subject[lang] == row["subject"]
+
+
+class IndoMMLUDataset(datasets.GeneratorBasedBuilder):
     """IndoMMLU is the first multitask language understanding benchmark for Indonesian culture and languages."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
@@ -244,10 +255,7 @@ class IndoMMLU(datasets.GeneratorBasedBuilder):
         data = csv.DictReader(open(filepath[split], newline=""))
         print(self.config.schema)
         for i, row in enumerate(data):
-            # filter language specific schema
-            if (not self.config.schema == "source") and (self.config.schema.split("_")[1] in _LANGUAGES) and (not lang2subject[self.config.schema.split("_")[1]] == row["subject"]):
-                continue
-            else:
+            if pass_schema_filter(self.config.schema, row):
                 fixed_level, fixed_kelas = fix_level(row["level"], row["kelas"])
                 # The choices are in the format of ["A. xxx", "B. xxx", ...], but answer is only with ["A"], replacing both with only the answer content
                 choices = row["jawaban"].split("\n")
