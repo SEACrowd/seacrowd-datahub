@@ -4,7 +4,7 @@ import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Licenses, Tasks
+from seacrowd.utils.constants import Licenses, TASK_TO_SCHEMA, Tasks
 
 _CITATION = """\
 @inproceedings{sirihattasak2018annotation,
@@ -40,7 +40,7 @@ class ThaiToxicityTweetsDataset(datasets.GeneratorBasedBuilder):
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-    SEACROWD_SCHEMA = "text"
+    SEACROWD_SCHEMA = TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]].lower()
     CLASS_LABELS = [0, 1]
 
     BUILDER_CONFIGS = [
