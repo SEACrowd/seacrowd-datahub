@@ -8,7 +8,7 @@ from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import SCHEMA_TO_FEATURES, TASK_TO_SCHEMA, Tasks
 
 # TODO: Add BibTeX citation
-_CITATION = """\
+_CITATION = r"""\
 @article{oco2015witchebelles,
   author    = {Oco, Nathaniel and Fajutagana, Raymart and Lim, Christine Mae and Mi{\~n}on, Judi Diane and Morano, Julie-Ann and Tinoco, Ryan Christian},
   title     = {Witchebelles Anata Magcharot kay Mudra na Nagsusuba si Akech: Developing a Rule-based Unidirectional Beki Lingo to Filipino Translator},
