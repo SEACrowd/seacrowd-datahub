@@ -46,7 +46,7 @@ def extract_data(sentence):
     sub_node_ids.extend([i + 1 for i in range(len(root_subnodes))])
     root_text = extract_sentence(root_sent)
 
-    nodes.append({"id": f"{sentence_id+'.'+str(0)}", "type": "ROOT", "text": root_text, "offsets": [0, len(root_text) - 1], "subnodes": [f"{len(nodes)+i+1}" for i in range(len(sub_nodes))]})
+    nodes.append({"id": f"{sentence_id+'.'+str(0)}", "type": "ROOT", "text": root_text, "offsets": [0, len(root_text) - 1], "subnodes": [f"{sentence_id+'.'+str(i)}" for i in sub_node_ids]})
 
     while sub_node_ids:
         sub_node_id = sub_node_ids.pop(0)
