@@ -31,32 +31,38 @@ _URLS = "https://raw.githubusercontent.com/joanitolopo/bhinneka-korpus/main/lexi
 _SUPPORTED_TASKS = []
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
+_LOCAL = False
 
-_LANGUAGES = ["ind", "day"]
-
-
-def seacrowd_config_constructor(lang, schema, version):
-    if lang == "":
-        raise ValueError(f"Invalid lang {lang}")
-
-    if schema != "source":
-        raise ValueError(f"Invalid schema: {schema}")
-
-    return SEACrowdConfig(
-        name=f"{_DATASETNAME}_{lang}_{schema}",
-        version=datasets.Version(version),
-        description=f"beaye lexicon with {schema} schema for {lang} language",
-        schema=schema,
-        subset_id="beaye_lexicon",
-    )
-
+_LANGUAGES = ["ind", "day", "eng"]
 
 class BeayeLexicon(datasets.GeneratorBasedBuilder):
     """Beaye Lexicon is a lexicon resource encompassing translations between Indonesian, English, and Beaye words"""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-    BUILDER_CONFIGS = [seacrowd_config_constructor(lang, "source", _SOURCE_VERSION) for lang in _LANGUAGES]
+
+    BUILDER_CONFIGS = (
+        [
+            SEACrowdConfig(
+                name=f"{_DATASETNAME}_{lang}_source",
+                version=datasets.Version(_SOURCE_VERSION),
+                description=f"beaye lexicon with source schema for {lang} language",
+                schema="source",
+                subset_id="beaye_lexicon",
+            )
+            for lang in _LANGUAGES if lang != "eng"
+        ]
+        + [
+            SEACrowdConfig(
+                name=f"{_DATASETNAME}_ext_{lang}_source",
+                version=datasets.Version(_SOURCE_VERSION),
+                description=f"beaye lexicon with source schema for extensive definiton of beaye language",
+                schema="source",
+                subset_id="beaye_lexicon",
+            )
+            for lang in _LANGUAGES if lang != "ind"
+        ]
+    )
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_ind_source"
 
@@ -77,7 +83,11 @@ class BeayeLexicon(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        data_dir = Path(dl_manager.download(_URLS + "/lexicon.xlsx"))
+        if "ext" in self.config.name.split("_"):
+            data_dir = Path(dl_manager.download(_URLS + "/english.xlsx"))
+        else:
+            data_dir = Path(dl_manager.download(_URLS + "/lexicon.xlsx"))
+
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
@@ -91,7 +101,11 @@ class BeayeLexicon(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         dfs = pd.read_excel(filepath, engine="openpyxl")
-        lang = self.config.name.split("_")[2]
+        if "ext" in self.config.name.split("_"):
+            lang = self.config.name.split("_")[3]
+        else:
+            lang = self.config.name.split("_")[2]
+
         text = dfs[lang]
 
         if self.config.schema == "source":
