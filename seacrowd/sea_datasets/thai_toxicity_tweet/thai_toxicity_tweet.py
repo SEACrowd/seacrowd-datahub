@@ -116,5 +116,5 @@ class ThaiToxicityTweetsDataset(datasets.GeneratorBasedBuilder):
                     "text": row["tweet_text"],
                     "label": row["is_toxic"],
                 }
-            index += 1
             yield index, example
+            index += 1
