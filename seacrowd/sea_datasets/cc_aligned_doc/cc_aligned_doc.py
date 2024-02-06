@@ -68,19 +68,20 @@ class CCAlignedDocDataset(datasets.GeneratorBasedBuilder):
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
+    SEACROWD_SCHEMA_NAME = "t2t"
 
     BUILDER_CONFIGS = [SEACrowdConfig(name=f"{_DATASETNAME}_{subset}_source", version=datasets.Version(_SOURCE_VERSION), description=f"{_DATASETNAME} source schema", schema="source", subset_id=f"{_DATASETNAME}",) for subset in _SUBSETS.keys()] + [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_{subset}_seacrowd_t2t",
+            name=f"{_DATASETNAME}_{subset}_seacrowd_{schema_name}",
             version=datasets.Version(_SEACROWD_VERSION),
             description=f"{_DATASETNAME} SEACrowd schema",
-            schema="seacrowd_t2t",
+            schema=f"seacrowd_{schema_name}",
             subset_id=f"{_DATASETNAME}",
         )
-        for subset in _SUBSETS.keys()
+        for subset, schema_name in zip(_SUBSETS.keys(), len(_SUBSETS.keys()) * [SEACROWD_SCHEMA_NAME])
     ]
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_id_ID_source"
 
     def _info(self) -> datasets.DatasetInfo:
 
@@ -94,7 +95,7 @@ class CCAlignedDocDataset(datasets.GeneratorBasedBuilder):
                     "Target_Content": datasets.Value("string"),
                 }
             )
-        elif self.config.schema == "seacrowd_t2t":
+        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             features = schemas.text2text_features
 
         return datasets.DatasetInfo(
@@ -138,7 +139,7 @@ class CCAlignedDocDataset(datasets.GeneratorBasedBuilder):
                 }
                 yield idx, example
                 idx += 1
-        elif self.config.schema == "seacrowd_t2t":
+        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             idx = 0
             for line in lines:
                 content = line.split("\t")
