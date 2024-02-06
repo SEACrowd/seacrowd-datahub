@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -33,7 +32,7 @@ _DATASETNAME = "roots_vi_ted"
 _DESCRIPTION = """
 ROOTS_vi_ted is a subset of Vietnamese in ted_talks_iwslt datasets. ted_talks_iwslt is a collection of the original Ted
 talks and their translated version. The translations are available in more than 109+ languages, though the distribution
-is not uniform. Before using this dataloader, please accept the acknowledgement at 
+is not uniform. Before using this dataloader, please accept the acknowledgement at
 https://huggingface.co/datasets/bigscience-data/roots_vi_ted_talks_iwslt and use huggingface-cli login for authentication.
 """
 
