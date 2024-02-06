@@ -1,5 +1,5 @@
-import os
 import csv
+import os
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -113,6 +113,4 @@ class WongnaiReviewsDataset(datasets.GeneratorBasedBuilder):
             with open(filepath, encoding="utf-8") as f:
                 spamreader = csv.reader(f, delimiter=";", quotechar='"')
                 for i, row in enumerate(spamreader):
-                    #                     label = int(label.strip())
-                    # yield i, {"id": str(i), "text": text, "label": _CLASSES[label - 1]}
                     yield i, {"id": str(i), "text": row[0], "label": _CLASSES[int(row[1].strip()) - 1]}
