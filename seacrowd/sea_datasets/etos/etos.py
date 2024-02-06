@@ -19,6 +19,7 @@ from typing import Dict, List, Tuple
 import conllu
 import datasets
 
+from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
@@ -38,9 +39,9 @@ _CITATION = """\
 _DATASETNAME = "etos"
 
 _DESCRIPTION = """\
-ETOS (Ejaan oTOmatiS) is a dataset for automatic spelling correction for formal Indonesian text.
-It consists of 200 sentences with each sentence contains at least one typo. It has 4,323
-tokens with 288 of them are non-word errors.
+ETOS (Ejaan oTOmatiS) is a dataset for parts-of-speech (POS) tagging for formal Indonesian
+text. It consists of 200 sentences, with 4,323 tokens in total, annotated following the
+CoNLL format.
 """
 
 _HOMEPAGE = "https://github.com/ir-nlp-csui/etos"
@@ -55,7 +56,7 @@ _LOCAL = False
 
 _URLS = "https://raw.githubusercontent.com/ir-nlp-csui/etos/main/gold_standard.conllu"
 
-_SUPPORTED_TASKS = [Tasks.ERROR_SPELLING_CORRECTION]
+_SUPPORTED_TASKS = [Tasks.POS_TAGGING]
 
 _SOURCE_VERSION = "1.0.0"
 
@@ -66,11 +67,32 @@ logger = datasets.logging.get_logger(__name__)
 
 class ETOSDataset(datasets.GeneratorBasedBuilder):
     """
-    ETOS is an Indonesian error spelling correction dataset from https://github.com/ir-nlp-csui/etos.
+    ETOS is an Indonesian parts-of-speech (POS) tagging dataset from https://github.com/ir-nlp-csui/etos.
     """
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
+
+    UPOS_TAGS = [
+        "NOUN",
+        "PUNCT",
+        "ADP",
+        "NUM",
+        "SYM",
+        "SCONJ",
+        "ADJ",
+        "PART",
+        "DET",
+        "CCONJ",
+        "PROPN",
+        "PRON",
+        "X",
+        "_",
+        "ADV",
+        "INTJ",
+        "VERB",
+        "AUX",
+    ]
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
@@ -79,7 +101,14 @@ class ETOSDataset(datasets.GeneratorBasedBuilder):
             description=f"{_DATASETNAME} source schema",
             schema="source",
             subset_id=f"{_DATASETNAME}",
-        )
+        ),
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_seacrowd_seq_label",
+            version=datasets.Version(_SOURCE_VERSION),
+            description=f"{_DATASETNAME} sequence labeling schema",
+            schema="seacrowd_seq_label",
+            subset_id=f"{_DATASETNAME}",
+        ),
     ]
 
     def _info(self) -> datasets.DatasetInfo:
@@ -90,30 +119,7 @@ class ETOSDataset(datasets.GeneratorBasedBuilder):
                     "text": datasets.Value("string"),
                     "tokens": datasets.Sequence(datasets.Value("string")),
                     "lemmas": datasets.Sequence(datasets.Value("string")),
-                    "upos": datasets.Sequence(
-                        datasets.features.ClassLabel(
-                            names=[
-                                "NOUN",
-                                "PUNCT",
-                                "ADP",
-                                "NUM",
-                                "SYM",
-                                "SCONJ",
-                                "ADJ",
-                                "PART",
-                                "DET",
-                                "CCONJ",
-                                "PROPN",
-                                "PRON",
-                                "X",
-                                "_",
-                                "ADV",
-                                "INTJ",
-                                "VERB",
-                                "AUX",
-                            ]
-                        )
-                    ),
+                    "upos": datasets.Sequence(datasets.features.ClassLabel(names=self.UPOS_TAGS)),
                     "xpos": datasets.Sequence(datasets.Value("string")),
                     "feats": datasets.Sequence(datasets.Value("string")),
                     "head": datasets.Sequence(datasets.Value("string")),
@@ -122,6 +128,12 @@ class ETOSDataset(datasets.GeneratorBasedBuilder):
                     "misc": datasets.Sequence(datasets.Value("string")),
                 }
             )
+
+        elif self.config.schema == "seacrowd_seq_label":
+            features = schemas.seq_label_features(self.UPOS_TAGS)
+
+        else:
+            raise NotImplementedError(f"Schema '{self.config.schema}' is not defined.")
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -182,6 +194,13 @@ class ETOSDataset(datasets.GeneratorBasedBuilder):
                         "deprel": [str(token["deprel"]) for token in sent],
                         "deps": [str(token["deps"]) for token in sent],
                         "misc": [str(token["misc"]) for token in sent],
+                    }
+
+                elif self.config.schema == "seacrowd_seq_label":
+                    yield idx, {
+                        "id": str(sent_id),
+                        "tokens": [token["form"] for token in sent],
+                        "labels": [token["upos"] for token in sent],
                     }
 
                 idx += 1
