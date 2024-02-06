@@ -134,7 +134,3 @@ class IdentifikasiBahasa(datasets.GeneratorBasedBuilder):
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             for i, row in dataset.iterrows():
                 yield i, {"id": i, "text": row["cleanText"], "label": row["label"]}
-
-
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)
