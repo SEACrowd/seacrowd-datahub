@@ -61,7 +61,7 @@ _SEACROWD_VERSION = "1.0.0"
 
 
 # TODO: Name the dataset class to match the script name using CamelCase instead of snake_case
-class NewDataset(datasets.GeneratorBasedBuilder):
+class QasinaDataset(datasets.GeneratorBasedBuilder):
     """Question Answering Sirah Nabawiyah Dataset (QASiNa) is \
     Extractive QA Dataset which build to perform QA task in Sirah Nabawiyah domain."""
 
