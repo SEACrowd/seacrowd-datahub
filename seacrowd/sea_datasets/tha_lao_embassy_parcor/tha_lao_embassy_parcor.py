@@ -26,18 +26,9 @@ from seacrowd.utils import schemas
 import pandas as pd
 
 # TODO: Add BibTeX citation
-_CITATION = """\
-@article{,
-  author    = {},
-  title     = {},
-  journal   = {},
-  volume    = {},
-  year      = {},
-  url       = {},
-  doi       = {},
-  biburl    = {},
-  bibsource = {}
-}
+_CITATION = """
+Wannaphong Phatthiyaphaibun. (2021). PyThaiNLP/Thai-Lao-Parallel-Corpus: 
+Thai Lao Parallel corpus v0.7 (v0.7). Zenodo. https://doi.org/10.5281/zenodo.5807093
 """
 
 _DATASETNAME = "tha_lao_embassy_parcor"
@@ -62,7 +53,7 @@ _SEACROWD_VERSION = "1.0.0"
 
 
 
-class ThaLaoEmbassyParcor(datasets.GeneratorBasedBuilder):
+class ThaLaoEmbassyParcorDataset(datasets.GeneratorBasedBuilder):
     """Thai-Lao Parallel Corpus contains equivalent Thai and Lao sentence pairs \
     derived from the website of the Royal Thai Embassy in Vientiane, Laos."""
 
@@ -144,5 +135,3 @@ class ThaLaoEmbassyParcor(datasets.GeneratorBasedBuilder):
                     "text_2_name": "tha",
                 }
 
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)
