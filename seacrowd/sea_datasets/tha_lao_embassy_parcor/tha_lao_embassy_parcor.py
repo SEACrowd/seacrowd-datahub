@@ -18,18 +18,17 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 import datasets
-
-from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
-from seacrowd.utils import schemas
-
 import pandas as pd
+
+from seacrowd.utils import schemas
+from seacrowd.utils.configs import SEACrowdConfig
+from seacrowd.utils.constants import Licenses, Tasks
 
 # TODO: Add BibTeX citation
 _CITATION = """
-Wannaphong Phatthiyaphaibun. (2021). PyThaiNLP/Thai-Lao-Parallel-Corpus: 
-Thai Lao Parallel corpus v0.7 (v0.7). Zenodo. https://doi.org/10.5281/zenodo.5807093
-"""
+Wannaphong Phatthiyaphaibun. (2021). PyThaiNLP/Thai-Lao-Parallel-Corpus: \
+Thai Lao Parallel corpus v0.7 (v0.7). Zenodo \
+https://doi.org/10.5281/zenodo.5807093"""
 
 _DATASETNAME = "tha_lao_embassy_parcor"
 
@@ -43,14 +42,11 @@ _LANGUAGES = ["tha", "lao"]
 _LICENSE = Licenses.CC0_1_0.value
 
 _LOCAL = False
-_URLS = {
-    _DATASETNAME: "https://github.com/PyThaiNLP/Thai-Lao-Parallel-Corpus/raw/master/vientiane-thaiembassy-sent.csv"
-}
+_URLS = {_DATASETNAME: "https://github.com/PyThaiNLP/Thai-Lao-Parallel-Corpus/raw/master/vientiane-thaiembassy-sent.csv"}
 
-_SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION] 
+_SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 _SOURCE_VERSION = "0.7.0"
 _SEACROWD_VERSION = "1.0.0"
-
 
 
 class ThaLaoEmbassyParcorDataset(datasets.GeneratorBasedBuilder):
@@ -60,7 +56,6 @@ class ThaLaoEmbassyParcorDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
     SEACROWD_SCHEMA_NAME = "t2t"
-
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
@@ -82,13 +77,12 @@ class ThaLaoEmbassyParcorDataset(datasets.GeneratorBasedBuilder):
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
-
         if self.config.schema == "source":
             features = datasets.Features(
-               {
-                   "lao_sent": datasets.Value("string"),
-                   "thai_sent": datasets.Value("string"),
-               }
+                {
+                    "lao_sent": datasets.Value("string"),
+                    "thai_sent": datasets.Value("string"),
+                }
             )
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             features = schemas.text2text_features
@@ -120,10 +114,7 @@ class ThaLaoEmbassyParcorDataset(datasets.GeneratorBasedBuilder):
 
         if self.config.schema == "source":
             for i, row in dataset.iterrows():
-                yield i, {
-                    "lao_sent": row["lao_sent"],
-                    "thai_sent": row["thai_sent"]
-                }
+                yield i, {"lao_sent": row["lao_sent"], "thai_sent": row["thai_sent"]}
 
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             for i, row in dataset.iterrows():
@@ -134,4 +125,3 @@ class ThaLaoEmbassyParcorDataset(datasets.GeneratorBasedBuilder):
                     "text_1_name": "lao",
                     "text_2_name": "tha",
                 }
-
