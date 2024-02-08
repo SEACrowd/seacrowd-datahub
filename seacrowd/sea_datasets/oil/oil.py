@@ -145,7 +145,6 @@ class OIL(datasets.GeneratorBasedBuilder):
                 yield index, row.to_dict()
 
         elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SPEECH_RECOGNITION]).lower()}":
-            is_schema_found = True
 
             df = pd.read_parquet(filepath)
 
