@@ -220,10 +220,7 @@ class Flores200(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, sentence_paths: list[str], metadata_path: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
-        is_schema_found = False
-
         if self.config.schema == "source":
-            is_schema_found = True
 
             sentences = {}
             langs = _LANGUAGE_NAMES
@@ -251,16 +248,11 @@ class Flores200(datasets.GeneratorBasedBuilder):
                     }
                 }
 
+        elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.MACHINE_TRANSLATION]).lower()}":
+            # TODO: Implement the logic to generate examples for each schema
+            pass
+
         else:
-            for seacrowd_schema in _SUPPORTED_SCHEMA_STRINGS:
-                if self.config.schema == seacrowd_schema:
-                    is_schema_found = True
-
-                    # TODO: Implement the logic to generate examples for each schema
-                    
-
-
-        if not is_schema_found:
             raise ValueError(f"Invalid config: {self.config.name}")
 
 
