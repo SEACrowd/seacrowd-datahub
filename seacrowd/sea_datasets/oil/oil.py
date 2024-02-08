@@ -137,54 +137,49 @@ class OIL(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
-        is_schema_found = False
-
         if self.config.schema == "source":
-            is_schema_found = True
 
             df = pd.read_parquet(filepath)
 
             for index, row in df.iterrows():
                 yield index, row.to_dict()
 
+        elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SPEECH_RECOGNITION]).lower()}":
+            is_schema_found = True
+
+            df = pd.read_parquet(filepath)
+
+            base_folder = os.path.dirname(filepath)
+            base_folder = os.path.join(base_folder, _DATASETNAME, split)
+
+            if not os.path.exists(base_folder):
+                os.makedirs(base_folder)
+
+            audio_paths = []
+
+            for _, row in df.iterrows():
+                audio_dict = row["audio"]
+                file_name = audio_dict["path"]
+
+                path = os.path.join(base_folder, file_name)
+
+                audio_dict["path"] = path
+
+                with open(path, "wb") as f:
+                    f.write(audio_dict["bytes"])
+
+                audio_paths.append(path)
+
+            df.rename(columns={"label": "text"}, inplace=True)
+
+            df["path"] = audio_paths
+
+            df["id"] = df.index
+            df = df.assign(speaker_id="").astype({"speaker_id": "str"})
+            df = df.assign(metadata=[{"speaker_age": 0, "speaker_gender": ""}] * len(df)).astype({"metadata": "object"})
+
+            for index, row in df.iterrows():
+                yield index, row.to_dict()
+
         else:
-            for seacrowd_schema in _SUPPORTED_SCHEMA_STRINGS:
-                if self.config.schema == seacrowd_schema:
-                    is_schema_found = True
-
-                    df = pd.read_parquet(filepath)
-
-                    base_folder = os.path.dirname(filepath)
-                    base_folder = os.path.join(base_folder, _DATASETNAME, split)
-
-                    if not os.path.exists(base_folder):
-                        os.makedirs(base_folder)
-
-                    audio_paths = []
-
-                    for _, row in df.iterrows():
-                        audio_dict = row["audio"]
-                        file_name = audio_dict["path"]
-
-                        path = os.path.join(base_folder, file_name)
-
-                        audio_dict["path"] = path
-
-                        with open(path, "wb") as f:
-                            f.write(audio_dict["bytes"])
-
-                        audio_paths.append(path)
-
-                    df.rename(columns={"label": "text"}, inplace=True)
-
-                    df["path"] = audio_paths
-
-                    df["id"] = df.index
-                    df = df.assign(speaker_id="").astype({"speaker_id": "str"})
-                    df = df.assign(metadata=[{"speaker_age": 0, "speaker_gender": ""}] * len(df)).astype({"metadata": "object"})
-
-                    for index, row in df.iterrows():
-                        yield index, row.to_dict()
-
-        if not is_schema_found:
             raise ValueError(f"Invalid config: {self.config.name}")
