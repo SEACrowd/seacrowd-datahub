@@ -231,11 +231,9 @@ class ViPubmed(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, paths: list[Path], split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
-        is_schema_found = False
         idx = 0
 
         if self.config.schema == "source":
-            is_schema_found = True
 
             for path in paths:
                 df = pd.read_parquet(path)
@@ -244,23 +242,19 @@ class ViPubmed(datasets.GeneratorBasedBuilder):
                     yield idx, row.to_dict()
                     idx += 1
 
+        elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.MACHINE_TRANSLATION]).lower()}":
+            for path in paths:
+                df = pd.read_parquet(path)
+
+                df["id"] = df.index + idx
+                df.rename(columns={"en": "text_1"}, inplace=True)
+                df.rename(columns={"vi": "text_2"}, inplace=True)
+                df = df.assign(text_1_name="en").astype({"text_1_name": "str"})
+                df = df.assign(text_2_name="vi").astype({"text_2_name": "str"})
+
+                for _, row in df.iterrows():
+                    yield idx, row.to_dict()
+                    idx += 1
+
         else:
-            for seacrowd_schema in _SUPPORTED_SCHEMA_STRINGS:
-                if self.config.schema == seacrowd_schema:
-                    is_schema_found = True
-
-                    for path in paths:
-                        df = pd.read_parquet(path)
-                        
-                        df["id"] = df.index + idx
-                        df.rename(columns={"en": "text_1"}, inplace=True)
-                        df.rename(columns={"vi": "text_2"}, inplace=True)
-                        df = df.assign(text_1_name="en").astype({"text_1_name": "str"})
-                        df = df.assign(text_2_name="vi").astype({"text_2_name": "str"})
-
-                        for _, row in df.iterrows():
-                            yield idx, row.to_dict()
-                            idx += 1
-
-        if not is_schema_found:
             raise ValueError(f"Invalid config: {self.config.name}")
