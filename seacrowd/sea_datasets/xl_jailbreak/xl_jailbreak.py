@@ -149,38 +149,31 @@ class XlJailbreak(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
-        is_schema_found = False
-
         if self.config.schema == "source":
-            is_schema_found = True
 
             df = pd.read_parquet(filepath)
 
             for index, row in df.iterrows():
                 yield index, row.to_dict()
 
+        elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.PROMPTING]).lower()}":
+            df = pd.read_parquet(filepath)
+
+            def row_to_json(row):
+                # Create a dictionary excluding the id column
+                row_dict = {col: row[col] for col in df.columns if col != "id"}
+                # Convert the dictionary to a JSON string
+                return json.dumps(row_dict)
+
+            # Apply the function to each row and create a new column with the JSON string
+            df["text"] = df.apply(row_to_json, axis=1)
+
+            df = df[["id", "text"]]
+
+            print(df)
+
+            for index, row in df.iterrows():
+                yield index, row.to_dict()
+
         else:
-            for seacrowd_schema in _SUPPORTED_SCHEMA_STRINGS:
-                if self.config.schema == seacrowd_schema:
-                    is_schema_found = True
-
-                    df = pd.read_parquet(filepath)
-
-                    def row_to_json(row):
-                        # Create a dictionary excluding the id column
-                        row_dict = {col: row[col] for col in df.columns if col != "id"}
-                        # Convert the dictionary to a JSON string
-                        return json.dumps(row_dict)
-
-                    # Apply the function to each row and create a new column with the JSON string
-                    df["text"] = df.apply(row_to_json, axis=1)
-
-                    df = df[["id", "text"]]
-
-                    print(df)
-
-                    for index, row in df.iterrows():
-                        yield index, row.to_dict()
-
-        if not is_schema_found:
             raise ValueError(f"Invalid config: {self.config.name}")
