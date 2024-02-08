@@ -251,11 +251,9 @@ class MSWC(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, paths: list[Path], split: str, language: str, format: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
-        is_schema_found = False
         idx = 0
 
         if self.config.schema == "source":
-            is_schema_found = True
 
             for path in paths:
                 df = pd.read_parquet(path)
@@ -264,50 +262,47 @@ class MSWC(datasets.GeneratorBasedBuilder):
                     yield idx, row.to_dict()
                     idx += 1
 
+        elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SPEECH_RECOGNITION]).lower()}":
+
+            for path in paths:
+                df = pd.read_parquet(path)
+
+                base_folder = os.path.dirname(path)
+                base_folder = os.path.join(base_folder, _DATASETNAME, language, format, split)
+
+                if not os.path.exists(base_folder):
+                    os.makedirs(base_folder)
+
+                audio_paths = []
+
+                for _, row in df.iterrows():
+                    audio_dict = row["audio"]
+                    file_name = audio_dict["path"]
+
+                    path = os.path.join(base_folder, file_name)
+
+                    audio_dict["path"] = path
+
+                    with open(path, "wb") as f:
+                        f.write(audio_dict["bytes"])
+
+                    audio_paths.append(path)
+
+                df.rename(columns={"label": "text"}, inplace=True)
+
+                df["path"] = audio_paths
+
+                df["id"] = df.index + idx
+                df = df.assign(text="").astype({"text": "str"})
+                df = df.assign(metadata=[{"speaker_age": 0, "speaker_gender": gender} for gender in df["gender"]]).astype({"metadata": "object"})
+
+                df.drop(columns=["file", "is_valid", "language", "gender", "keyword"], inplace=True)
+
+                for _, row in df.iterrows():
+                    yield idx, row.to_dict()
+                    idx += 1
+
         else:
-            for seacrowd_schema in _SUPPORTED_SCHEMA_STRINGS:
-                if self.config.schema == seacrowd_schema:
-                    is_schema_found = True
-
-                    for path in paths:
-                        df = pd.read_parquet(path)
-
-                        base_folder = os.path.dirname(path)
-                        base_folder = os.path.join(base_folder, _DATASETNAME, language, format, split)
-
-                        if not os.path.exists(base_folder):
-                            os.makedirs(base_folder)
-
-                        audio_paths = []
-
-                        for _, row in df.iterrows():
-                            audio_dict = row["audio"]
-                            file_name = audio_dict["path"]
-
-                            path = os.path.join(base_folder, file_name)
-
-                            audio_dict["path"] = path
-
-                            with open(path, "wb") as f:
-                                f.write(audio_dict["bytes"])
-
-                            audio_paths.append(path)
-
-                        df.rename(columns={"label": "text"}, inplace=True)
-
-                        df["path"] = audio_paths
-
-                        df["id"] = df.index + idx
-                        df = df.assign(text="").astype({"text": "str"})
-                        df = df.assign(metadata=[{"speaker_age": 0, "speaker_gender": gender} for gender in df["gender"]]).astype({"metadata": "object"})
-
-                        df.drop(columns=["file", "is_valid", "language", "gender", "keyword"], inplace=True)
-
-                        for _, row in df.iterrows():
-                            yield idx, row.to_dict()
-                            idx += 1
-
-        if not is_schema_found:
             raise ValueError(f"Invalid config: {self.config.name}")
 
 
