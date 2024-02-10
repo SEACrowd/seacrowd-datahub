@@ -73,11 +73,18 @@ class PrdectIDDataset(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_source",
+            name=f"{_DATASETNAME}_emotion_source",
             version=SOURCE_VERSION,
             description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id=_DATASETNAME,
+            subset_id=f"{_DATASETNAME}_emotion",
+        ),
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_sentiment_source",
+            version=SOURCE_VERSION,
+            description=f"{_DATASETNAME} source schema",
+            schema="source",
+            subset_id=f"{_DATASETNAME}_sentiment",
         ),
         SEACrowdConfig(
             name=f"{_DATASETNAME}_emotion_seacrowd_{SEACROWD_SCHEMA_NAME}",
