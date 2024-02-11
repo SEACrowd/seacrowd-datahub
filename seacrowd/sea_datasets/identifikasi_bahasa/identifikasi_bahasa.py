@@ -66,7 +66,7 @@ _SEACROWD_VERSION = "1.0.0"
 _TAGS = ["Ambon", "Indo", "Jawa"]
 
 
-class IdentifikasiBahasa(datasets.GeneratorBasedBuilder):
+class IdentifikasiBahasaDataset(datasets.GeneratorBasedBuilder):
     """The "identifikasi-bahasa" dataset, manually grouped by language, \
     contains labeled Indonesian, Ambonese, and Javanese text entries, excluding \
     punctuation and numbers, with a minimum of 3,000 Ambonese, 10,000 Javanese, \
