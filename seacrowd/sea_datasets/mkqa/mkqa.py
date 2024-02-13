@@ -215,9 +215,8 @@ class MKQADataset(datasets.GeneratorBasedBuilder):
         with open(filepath, "r", encoding="utf8") as ipt:
             for cur in map(json.loads, ipt):
                 cur["example_id"] = str(cur["example_id"])
-                if lang:
-                    for key in ["answers", "queries"]:
-                        cur[key] = {k: v for k, v in cur[key].items() if k == lang}
+                for key in ["answers", "queries"]:
+                    cur[key] = {k: v for k, v in cur[key].items() if k in ([lang] if lang else self._SOURCE_LANGUAGES)}
                 datas.append(cur)
 
         if self.config.schema == "source":
