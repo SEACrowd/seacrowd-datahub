@@ -66,7 +66,7 @@ _SEACROWD_VERSION = "1.0.0"
 
 _LANGUAGES = [
     "khm",
-    "msa",
+    "zlm",
     "tha",
     "vie",
 ]  # follows the convention of 3-letter code as suggested since NusaCrowd.
@@ -114,7 +114,7 @@ class MKQADataset(datasets.GeneratorBasedBuilder):
 
     _LANG_3TO2 = {
         "khm": "km",
-        "msa": "ms",
+        "zlm": "ms",
         "tha": "th",
         "vie": "vi",
     }
