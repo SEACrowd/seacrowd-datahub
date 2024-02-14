@@ -2,14 +2,27 @@ from collections import defaultdict
 from enum import Enum
 from types import SimpleNamespace
 
-from seacrowd.utils.schemas import (image_text_features, kb_features,
-                                    pairs_features, pairs_features_score,
-                                    pairs_multi_features, qa_features,
-                                    seq_label_features, speech2speech_features,
-                                    speech_features, speech_multi_features,
-                                    speech_text_features, ssp_features,
-                                    text2text_features, text_features,
-                                    text_multi_features, video_features)
+from seacrowd.utils.schemas import (
+    image_text_features,
+    kb_features,
+    tree_features,
+    pairs_features,
+    pairs_features_score,
+    pairs_multi_features,
+    qa_features,
+    imqa_features,
+    seq_label_features,
+    speech2speech_features,
+    speech_features,
+    speech_multi_features,
+    speech_text_features,
+    ssp_features,
+    text2text_features,
+    text_features,
+    text_multi_features,
+    video_features,
+    tod_features,
+)
 
 METADATA: dict = {
     "_LOCAL": bool,
@@ -25,33 +38,50 @@ DEFAULT_SEACROWD_VIEW_NAME = "seacrowd"
 
 
 class Tasks(Enum):
+    # Knowledge Base
     DEPENDENCY_PARSING = "DEP"
-    WORD_SENSE_DISAMBIGUATION = "WSD"
-    WORD_ANALOGY = "WA"
     KEYWORD_EXTRACTION = "KE"
+    WORD_ANALOGY = "WA"
+    WORD_SENSE_DISAMBIGUATION = "WSD"
     COREFERENCE_RESOLUTION = "COREF"
 
-    # Single Text Classification
-    SENTIMENT_ANALYSIS = "SA"
-    ASPECT_BASED_SENTIMENT_ANALYSIS = "ABSA"
+    # Tree
+    CONSTITUENCY_PARSING = "CONST_PAR"
+
+    # Single Text Classification (single-label)
+    ABUSIVE_LANGUAGE_PREDICTION = "ABL"
+    DOMAIN_KNOWLEDGE_CLASSIFICATION = "DKC" # classification for non NLP-oriented label
+
     EMOTION_CLASSIFICATION = "EC"
+    LANGUAGE_IDENTIFICATION = "LI"
     HOAX_NEWS_CLASSIFICATION = "HNC"
     INTENT_CLASSIFICATION = "INT"
-    TAX_COURT_VERDICT = "TACOS"
     LEGAL_CLASSIFICATION = "LC"
+    MORALITY_CLASSIFICATION = "MC"
+    READABILITY_ASSESSMENT = "RA"
     RHETORIC_MODE_CLASSIFICATION = "RMC"
+    SENTIMENT_ANALYSIS = "SA"
+    TAX_COURT_VERDICT = "TACOS"
     TOPIC_MODELING = "TL"
+    REINFORCEMENT_LEARNING_WITH_HUMAN_FEEDBACK = "RLHF"
+
+    # Single Text Classification (multi-label)
+    ASPECT_BASED_SENTIMENT_ANALYSIS = "ABSA"
+    DOMAIN_KNOWLEDGE_MULTICLASSIFICATION = "DKM" # multi-classification for non NLP-oriented label
 
     # Single Text Sequence Labeling
-    POS_TAGGING = "POS"
     KEYWORD_TAGGING = "KT"
     NAMED_ENTITY_RECOGNITION = "NER"
+    POS_TAGGING = "POS"
     SENTENCE_ORDERING = "SO"
+    SLOT_FILLING = "SF"
+    SPAN_BASED_ABSA = "SPAN_ABSA"
     TOKEN_LEVEL_LANGUAGE_IDENTIFICATION = "LANGID"
 
     # Pair Text Classification
     COMMONSENSE_REASONING = "CR"
     QUESTION_ANSWERING = "QA"
+    TEXT_RETRIEVAL = "TRV"
     TEXTUAL_ENTAILMENT = "TE"
     SEMANTIC_SIMILARITY = "STS"
     NEXT_SENTENCE_PREDICTION = "NSP"
@@ -60,16 +90,19 @@ class Tasks(Enum):
     CONCEPT_ALIGNMENT_CLASSIFICATION = "CAC"
 
     # Single Text Generation
+    INSTRUCTION_TUNING = "ITT"
     MACHINE_TRANSLATION = "MT"
+    MULTILEXNORM = "MLN"
     PARAPHRASING = "PARA"
     SUMMARIZATION = "SUM"
-    MULTILEXNORM = "MLN"
-    TRANSLITERATION = "TR"
+    TRANSLITERATION = "TRL"
 
     # Multi Text Generation
     DIALOGUE_SYSTEM = "DS"
+    E2E_TASK_ORIENTED_DIALOGUE = "TOD"
 
-    # Self Supervised Pretraining
+    # Self Supervised & Unsupervised Text
+    PROMPTING = "PRT"
     SELF_SUPERVISED_PRETRAINING = "SSP"
 
     # SpeechText
@@ -87,6 +120,8 @@ class Tasks(Enum):
 
     # ImageText
     IMAGE_CAPTIONING = "IC"
+    VISUAL_QUESTION_ANSWERING = "VQA"
+    SIGN_LANGUAGE_RECOGNITION = "SLR"
     STYLIZED_IMAGE_CAPTIONING = "SIC"
     VISUALLY_GROUNDED_REASONING = "VGR"
 
@@ -182,37 +217,52 @@ class Licenses(Enum):
 
 
 TASK_TO_SCHEMA = {
+    Tasks.COREFERENCE_RESOLUTION: "KB",
     Tasks.DEPENDENCY_PARSING: "KB",
+    Tasks.CONSTITUENCY_PARSING: "TREE",
+    Tasks.E2E_TASK_ORIENTED_DIALOGUE: "TOD",
+    Tasks.DIALOGUE_SYSTEM: "T2T",
     Tasks.WORD_SENSE_DISAMBIGUATION: "T2T",
     Tasks.WORD_ANALOGY: "T2T",
     Tasks.KEYWORD_EXTRACTION: "SEQ_LABEL",
-    Tasks.COREFERENCE_RESOLUTION: "KB",
-    Tasks.DIALOGUE_SYSTEM: "T2T",
+    Tasks.KEYWORD_TAGGING: "SEQ_LABEL",
     Tasks.NAMED_ENTITY_RECOGNITION: "SEQ_LABEL",
     Tasks.POS_TAGGING: "SEQ_LABEL",
-    Tasks.KEYWORD_TAGGING: "SEQ_LABEL",
     Tasks.SENTENCE_ORDERING: "SEQ_LABEL",
+    Tasks.SLOT_FILLING: "SEQ_LABEL",
+    Tasks.SPAN_BASED_ABSA: "SEQ_LABEL",
     Tasks.TOKEN_LEVEL_LANGUAGE_IDENTIFICATION: "SEQ_LABEL",
     Tasks.COMMONSENSE_REASONING: "QA",
     Tasks.QUESTION_ANSWERING: "QA",
+    Tasks.CONCEPT_ALIGNMENT_CLASSIFICATION: "PAIRS",
+    Tasks.NEXT_SENTENCE_PREDICTION: "PAIRS",
+    Tasks.TEXT_RETRIEVAL: "PAIRS",
     Tasks.TEXTUAL_ENTAILMENT: "PAIRS",
     Tasks.SEMANTIC_SIMILARITY: "PAIRS_SCORE",
-    Tasks.NEXT_SENTENCE_PREDICTION: "PAIRS",
     Tasks.SHORT_ANSWER_GRADING: "PAIRS_SCORE",
     Tasks.MORPHOLOGICAL_INFLECTION: "PAIRS_MULTI",
+    Tasks.INSTRUCTION_TUNING: "T2T",
     Tasks.PARAPHRASING: "T2T",
     Tasks.MACHINE_TRANSLATION: "T2T",
-    Tasks.SUMMARIZATION: "T2T",
     Tasks.MULTILEXNORM: "T2T",
+    Tasks.SUMMARIZATION: "T2T",
     Tasks.TRANSLITERATION: "T2T",
-    Tasks.SENTIMENT_ANALYSIS: "TEXT",
     Tasks.ASPECT_BASED_SENTIMENT_ANALYSIS: "TEXT_MULTI",
+    Tasks.DOMAIN_KNOWLEDGE_MULTICLASSIFICATION: "TEXT_MULTI",
+    Tasks.ABUSIVE_LANGUAGE_PREDICTION: "TEXT",
+    Tasks.DOMAIN_KNOWLEDGE_CLASSIFICATION: "TEXT",
+    Tasks.SENTIMENT_ANALYSIS: "TEXT",
     Tasks.TAX_COURT_VERDICT: "TEXT",
     Tasks.EMOTION_CLASSIFICATION: "TEXT",
+    Tasks.HOAX_NEWS_CLASSIFICATION: "TEXT",
+    Tasks.LANGUAGE_IDENTIFICATION: "TEXT",
     Tasks.LEGAL_CLASSIFICATION: "TEXT",
     Tasks.INTENT_CLASSIFICATION: "TEXT",
+    Tasks.READABILITY_ASSESSMENT: "TEXT",
     Tasks.RHETORIC_MODE_CLASSIFICATION: "TEXT",
     Tasks.TOPIC_MODELING: "TEXT",
+    Tasks.REINFORCEMENT_LEARNING_WITH_HUMAN_FEEDBACK: "TEXT",
+    Tasks.PROMPTING: "SSP",
     Tasks.SELF_SUPERVISED_PRETRAINING: "SSP",
     Tasks.SPEECH_RECOGNITION: "SPTEXT",
     Tasks.SPEECH_TO_TEXT_TRANSLATION: "SPTEXT",
@@ -221,14 +271,15 @@ TASK_TO_SCHEMA = {
     Tasks.SPEECH_LANGUAGE_IDENTIFICATION: "SPEECH",
     Tasks.SPEECH_EMOTION_RECOGNITION: "SPEECH",
     Tasks.SPEECH_EMOTION_RECOGNITION_MULTILABEL: "SPEECH_MULTI",
+    Tasks.VISUAL_QUESTION_ANSWERING: "IMQA",
     Tasks.IMAGE_CAPTIONING: "IMTEXT",
+    Tasks.SIGN_LANGUAGE_RECOGNITION: "IMTEXT",
     Tasks.STYLIZED_IMAGE_CAPTIONING: "IMTEXT",
     Tasks.VISUALLY_GROUNDED_REASONING: "IMTEXT",
-    Tasks.HOAX_NEWS_CLASSIFICATION: "TEXT",
-    Tasks.CONCEPT_ALIGNMENT_CLASSIFICATION: "PAIRS",
-    Tasks.FACT_CHECKING: None,
     Tasks.VIDEO_CAPTIONING: "VIDTEXT",
     Tasks.VIDEO_TO_TEXT_RETRIEVAL: "VIDTEXT",
+    Tasks.FACT_CHECKING: None,
+    Tasks.MORALITY_CLASSIFICATION: "TEXT",
 }
 
 SCHEMA_TO_TASKS = defaultdict(set)
@@ -241,6 +292,7 @@ VALID_SCHEMAS = set(TASK_TO_SCHEMA.values())
 
 SCHEMA_TO_FEATURES = {
     "KB": kb_features,
+    "TREE": tree_features,
     "QA": qa_features,
     "T2T": text2text_features,
     "TEXT": text_features(),
@@ -255,13 +307,16 @@ SCHEMA_TO_FEATURES = {
     "SPEECH": speech_features(),
     "SPEECH_MULTI": speech_multi_features(),
     "IMTEXT": image_text_features(),
+    "IMQA": imqa_features,
     "VIDTEXT": video_features,
+    "TOD": tod_features,
 }
 
 TASK_TO_FEATURES = {
     Tasks.NAMED_ENTITY_RECOGNITION: {"entities"},
     Tasks.DEPENDENCY_PARSING: {"relations", "entities"},
     Tasks.COREFERENCE_RESOLUTION: {"entities", "coreferences"},
+    # Tasks.SPAN_BASED_ABSA: {"entities", "coreferences"},
     # Tasks.NAMED_ENTITY_DISAMBIGUATION: {"entities", "normalized"},
     # Tasks.EVENT_EXTRACTION: {"events"}
 }
