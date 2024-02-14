@@ -24,7 +24,6 @@ from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
-# TODO: Add BibTeX citation
 _CITATION = """
 Wannaphong Phatthiyaphaibun. (2021). PyThaiNLP/Thai-Lao-Parallel-Corpus: \
 Thai Lao Parallel corpus v0.7 (v0.7). Zenodo \
