@@ -103,6 +103,7 @@ class QasinaDataset(datasets.GeneratorBasedBuilder):
 
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             features = schemas.qa.features
+            features["meta"] = {"context_title": datasets.Value("string")}
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -163,5 +164,7 @@ class QasinaDataset(datasets.GeneratorBasedBuilder):
                         "choices": [],
                         "context": line["context"],
                         "answer": [question_answer["answer"]],
-                        "meta": {},
+                        "meta": {
+                            "context_title": line["context_title"],
+                        },
                     }
