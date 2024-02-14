@@ -18,16 +18,12 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 import datasets
-
-from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
+import numpy as np
+import pandas as pd
 
 from seacrowd.utils import schemas
-
-import pandas as pd
-import numpy as np
-
-
+from seacrowd.utils.configs import SEACrowdConfig
+from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @article{,
@@ -50,20 +46,20 @@ environment, health, politics, rights and science.
 """
 
 _HOMEPAGE = "https://github.com/GKLMIP/Pretrained-Models-For-Khmer"
-_LANGUAGES = ["khm"] 
+_LANGUAGES = ["khm"]
 
-_LICENSE = Licenses.UNLICENSE.value
+_LICENSE = Licenses.UNKNOWN.value
 _LOCAL = False
 
 _URLS = {
     _DATASETNAME: "https://github.com/GKLMIP/Pretrained-Models-For-Khmer/raw/main/NewsDataset.zip",
 }
 
-_SUPPORTED_TASKS = [Tasks.TOPIC_MODELING] 
+_SUPPORTED_TASKS = [Tasks.TOPIC_MODELING]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
-_TAGS=["culture", "economic", "education", "environment", "health", "politics", "right", "science"]
+_TAGS = ["culture", "economic", "education", "environment", "health", "politics", "right", "science"]
 
 
 class GklmipNewsclass(datasets.GeneratorBasedBuilder):
@@ -99,7 +95,7 @@ class GklmipNewsclass(datasets.GeneratorBasedBuilder):
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
             features = datasets.Features(
-               {
+                {
                     "text": datasets.Value("string"),
                     "culture": datasets.Value("bool"),
                     "economic": datasets.Value("bool"),
@@ -108,12 +104,10 @@ class GklmipNewsclass(datasets.GeneratorBasedBuilder):
                     "health": datasets.Value("bool"),
                     "politics": datasets.Value("bool"),
                     "right": datasets.Value("bool"),
-                    "science": datasets.Value("bool")
-
-               }
+                    "science": datasets.Value("bool"),
+                }
             )
 
-        
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             features = schemas.text_features(_TAGS)
 
@@ -153,7 +147,6 @@ class GklmipNewsclass(datasets.GeneratorBasedBuilder):
             ),
         ]
 
-
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
@@ -175,9 +168,4 @@ class GklmipNewsclass(datasets.GeneratorBasedBuilder):
 
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             for i, row in dataset.iterrows():
-                yield i, {
-                    "id": i,
-                    "text": row["text"],
-                    "label": reverse_encoding[np.argmax(row[_TAGS])]
-                }
-
+                yield i, {"id": i, "text": row["text"], "label": reverse_encoding[np.argmax(row[_TAGS])]}
