@@ -6,8 +6,7 @@ from typing import Dict, List, Tuple
 import datasets
 
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import (SCHEMA_TO_FEATURES, TASK_TO_SCHEMA,
-                                      Licenses, Tasks)
+from seacrowd.utils.constants import SCHEMA_TO_FEATURES, Licenses, Tasks
 
 _CITATION = """\
 @inproceedings{lin2022fewshot,
@@ -54,11 +53,12 @@ dataset (Spring 2016 version) to 10 non-English languages. This dataset is relea
 Meta AI.
 """
 _HOMEPAGE = "https://huggingface.co/datasets/juletxara/xstory_cloze"
+_LANGUAGES = ["ind", "mya"]
 _LICENSE = Licenses.CC_BY_SA_4_0.value
 
 _LOCAL = False
 _BASE_URL = "https://huggingface.co/datasets/juletxara/xstory_cloze/resolve/main/spring2016.val.{lang}.tsv.split_20_80_{split}.tsv"
-_SUPPORTED_TASKS = [Tasks.COMMONSENSE_REASONING, Tasks.SELF_SUPERVISED_PRETRAINING]
+_SUPPORTED_TASKS = [Tasks.COMMONSENSE_REASONING]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
@@ -69,7 +69,6 @@ class xStoryClozeDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    SEACROWD_SCHEMA_NAME = [TASK_TO_SCHEMA[task].lower() for task in _SUPPORTED_TASKS]
     SEACROWD_SUBSET = ["id", "my"]
 
     BUILDER_CONFIGS = [
@@ -79,17 +78,17 @@ class xStoryClozeDataset(datasets.GeneratorBasedBuilder):
             description=f"{_DATASETNAME} {subset} source schema",
             schema="source",
             subset_id=f"{_DATASETNAME}_{subset}",
-        ) 
+        )
         for subset in SEACROWD_SUBSET
     ] + [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_{subset}_seacrowd_{schema}",
+            name=f"{_DATASETNAME}_{subset}_seacrowd_qa",
             version=datasets.Version(_SEACROWD_VERSION),
             description=f"{_DATASETNAME} {subset} SEACrowd schema",
-            schema=f"seacrowd_{schema}",
+            schema="seacrowd_qa",
             subset_id=f"{_DATASETNAME}_{subset}",
         )
-        for subset, schema in list(itertools.product(SEACROWD_SUBSET, SEACROWD_SCHEMA_NAME))
+        for subset in SEACROWD_SUBSET
     ]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{SEACROWD_SUBSET[0]}_source"
@@ -108,10 +107,8 @@ class xStoryClozeDataset(datasets.GeneratorBasedBuilder):
                     "answer_right_ending": datasets.Value("int32"),
                 }
             )
-        elif self.config.schema == f"seacrowd_{(schema := self.SEACROWD_SCHEMA_NAME[0])}":
-            features = SCHEMA_TO_FEATURES[schema.upper()]  # qa_features
-        elif self.config.schema == f"seacrowd_{(schema := self.SEACROWD_SCHEMA_NAME[1])}":
-            features = SCHEMA_TO_FEATURES[schema.upper()]  # ssp_features
+        elif self.config.schema == "seacrowd_qa":
+            features = SCHEMA_TO_FEATURES["QA"]
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -163,7 +160,7 @@ class xStoryClozeDataset(datasets.GeneratorBasedBuilder):
                         "sentence_quiz2": row[6],
                         "answer_right_ending": int(row[7]),
                     }
-            elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME[0]}":
+            elif self.config.schema == "seacrowd_qa":
                 for id, row in enumerate(data):
                     question = " ".join(row[1:5])
                     choices = [row[5], row[6]]
@@ -177,12 +174,4 @@ class xStoryClozeDataset(datasets.GeneratorBasedBuilder):
                         "context": None,
                         "answer": [choices[int(row[7]) - 1]],
                         "meta": {},
-                    }
-            elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME[1]}":
-                for id, row in enumerate(data):
-                    question = " ".join(row[1:5])
-                    correct = row[5] if int(row[7]) == 1 else row[6]
-                    yield id, {
-                        "id": str(id),
-                        "text": question + " " + correct,
                     }
