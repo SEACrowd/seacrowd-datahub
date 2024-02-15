@@ -5,7 +5,8 @@ import datasets
 import pandas as pd
 
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses, TASK_TO_SCHEMA, SCHEMA_TO_FEATURES
+from seacrowd.utils.constants import (SCHEMA_TO_FEATURES, TASK_TO_SCHEMA,
+                                      Licenses, Tasks)
 
 _CITATION = """\
 @article{hendria2023msvd,
@@ -27,6 +28,7 @@ MSVD-Indonesian dataset contains about 80k video-text pairs.
 """
 
 _HOMEPAGE = "https://github.com/willyfh/msvd-indonesian"
+_LANGUAGES = ["ind"]
 _LICENSE = Licenses.MIT.value
 _URLS = {
     "text": "https://raw.githubusercontent.com/willyfh/msvd-indonesian/main/data/MSVD-indonesian.txt",
@@ -44,7 +46,7 @@ class IdMsvdDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    SEACROWD_SCHEMA_NAME = TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]].lower()
+    SEACROWD_SCHEMA_NAME = TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]].lower()  # "vidtext"
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
@@ -70,11 +72,11 @@ class IdMsvdDataset(datasets.GeneratorBasedBuilder):
             features = datasets.Features(
                 {
                     "video_path": datasets.Value("string"),
-                    "text": datasets.Sequence(datasets.Value("string")),
+                    "texts": datasets.Sequence(datasets.Value("string")),
                 }
             )
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
-            features = SCHEMA_TO_FEATURES[self.SEACROWD_SCHEMA_NAME.upper()]
+            features = SCHEMA_TO_FEATURES[self.SEACROWD_SCHEMA_NAME.upper()]  # video_features
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -99,7 +101,7 @@ class IdMsvdDataset(datasets.GeneratorBasedBuilder):
             ),
         ]
 
-    def _generate_examples(self, text_path: Path, video_path:Path, split: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, text_path: Path, video_path: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         text_data = []
         with open(text_path, "r", encoding="utf-8") as f:
@@ -110,21 +112,21 @@ class IdMsvdDataset(datasets.GeneratorBasedBuilder):
                 text_data.append([video, text])
 
         df = pd.DataFrame(text_data, columns=["video_path", "text"])
-        df = df.groupby("video_path").agg(list).reset_index()
-        df['video_path'] = df['video_path'].apply(lambda x: video_path / f"{x}.avi")
+        df["video_path"] = df["video_path"].apply(lambda x: video_path / f"{x}.avi")
 
         if self.config.schema == "source":
+            df = df.groupby("video_path").agg(list).reset_index()
             for i, row in df.iterrows():
                 yield i, {
                     "video_path": str(row["video_path"]),
-                    "text": row["text"],
+                    "texts": row["text"],
                 }
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             for i, row in df.iterrows():
                 yield i, {
                     "id": str(i),
                     "video_path": str(row["video_path"]),
-                    "texts": row["text"],
+                    "text": row["text"],
                     "metadata": {
                         "resolution": {
                             "width": None,
