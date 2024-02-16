@@ -109,15 +109,7 @@ The documents have also been tokenized and cleaned"""
 
     def _info(self) -> datasets.DatasetInfo:
 
-        if self.config.schema == "source":
-            features = datasets.Features({
-                "id": datasets.Value("string"),
-                "owner": datasets.Value("string"),
-                "lawyer": datasets.ClassLabel(names=[False, True]),
-                "verdict": datasets.ClassLabel(names=["guilty", "bebas", "lepas"]),
-                "indictment": datasets.ClassLabel(names=["NA", "tunggal", "subsider", "komul", "alternatif", "kombinasi", "gabungan"]),
-                "text-tags": datasets.Sequence(datasets.ClassLabel(names=
-                    ['O', 'B-Jenis Amar', 'B-Jenis Dakwaan', 'B-Jenis Perkara', 'B-Melanggar UU (Dakwaan)', 
+        NAMED_ENTITIES = ['O', 'B-Jenis Amar', 'B-Jenis Dakwaan', 'B-Jenis Perkara', 'B-Melanggar UU (Dakwaan)', 
                     'B-Melanggar UU (Pertimbangan Hukum)', 'B-Melanggar UU (Tuntutan)', 'B-Nama Hakim Anggota', 'B-Nama Hakim Ketua', 
                     'B-Nama Jaksa', 'B-Nama Panitera', 'B-Nama Pengacara', 'B-Nama Pengadilan', 
                     'B-Nama Saksi', 'B-Nama Terdakwa', 'B-Nomor Putusan', 'B-Putusan Hukuman', 
@@ -127,22 +119,19 @@ The documents have also been tokenized and cleaned"""
                     'I-Nama Jaksa', 'I-Nama Panitera', 'I-Nama Pengacara', 'I-Nama Pengadilan', 
                     'I-Nama Saksi', 'I-Nama Terdakwa', 'I-Nomor Putusan', 'I-Putusan Hukuman', 
                     'I-Tanggal Kejadian', 'I-Tanggal Putusan', 'I-Tingkat Kasus', 'I-Tuntutan Hukuman']
-                )),
+
+        if self.config.schema == "source":
+            features = datasets.Features({
+                "id": datasets.Value("string"),
+                "owner": datasets.Value("string"),
+                "lawyer": datasets.ClassLabel(names=[False, True]),
+                "verdict": datasets.ClassLabel(names=["guilty", "bebas", "lepas"]),
+                "indictment": datasets.ClassLabel(names=["NA", "tunggal", "subsider", "komul", "alternatif", "kombinasi", "gabungan"]),
+                "text-tags": datasets.Sequence(datasets.ClassLabel(names=NAMED_ENTITIES)),
                 "text": datasets.Sequence(datasets.Value("string")),
             })
         elif self.config.schema == "seacrowd_seq_label":
-            features = schemas.seq_label.features(
-                ['O', 'B-Jenis Amar', 'B-Jenis Dakwaan', 'B-Jenis Perkara', 'B-Melanggar UU (Dakwaan)', 
-                'B-Melanggar UU (Pertimbangan Hukum)', 'B-Melanggar UU (Tuntutan)', 'B-Nama Hakim Anggota', 'B-Nama Hakim Ketua', 
-                'B-Nama Jaksa', 'B-Nama Panitera', 'B-Nama Pengacara', 'B-Nama Pengadilan', 
-                'B-Nama Saksi', 'B-Nama Terdakwa', 'B-Nomor Putusan', 'B-Putusan Hukuman', 
-                'B-Tanggal Kejadian', 'B-Tanggal Putusan', 'B-Tingkat Kasus', 'B-Tuntutan Hukuman', 
-                'I-Jenis Amar', 'I-Jenis Dakwaan', 'I-Jenis Perkara', 'I-Melanggar UU (Dakwaan)', 
-                'I-Melanggar UU (Pertimbangan Hukum)', 'I-Melanggar UU (Tuntutan)', 'I-Nama Hakim Anggota', 'I-Nama Hakim Ketua', 
-                'I-Nama Jaksa', 'I-Nama Panitera', 'I-Nama Pengacara', 'I-Nama Pengadilan', 
-                'I-Nama Saksi', 'I-Nama Terdakwa', 'I-Nomor Putusan', 'I-Putusan Hukuman', 
-                'I-Tanggal Kejadian', 'I-Tanggal Putusan', 'I-Tingkat Kasus', 'I-Tuntutan Hukuman']
-            )
+            features = schemas.seq_label.features(NAMED_ENTITIES)
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
             features=features,
@@ -181,7 +170,7 @@ The documents have also been tokenized and cleaned"""
                 gen_kwargs={
                     "filepath": data_path,
                     "idx_path": valid_path,
-                    "split": "dev",
+                    "split": "validation",
                 },
             ),
         ]
