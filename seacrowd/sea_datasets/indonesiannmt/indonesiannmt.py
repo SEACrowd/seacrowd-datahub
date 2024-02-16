@@ -44,7 +44,7 @@ _DESCRIPTION = """\
 This dataset is used on the paper "Replicable Benchmarking of Neural Machine Translation (NMT) on Low-Resource Local Languages in Indonesia". This repository contains two types of data:
 1. Monolingual (*.txt) [Indonesian, Javanese]
 2. Bilingual (*.tsv) [Indonesian-Javanese, Indonesian-Balinese, Indonesian-Minangkabau, Indonesian-Sundanese]
-
+Only the Bilingual dataset is available for this dataloader
 """
 
 _HOMEPAGE = "https://huggingface.co/datasets/Exqrch/IndonesianNMT"
@@ -56,12 +56,10 @@ _LICENSE = Licenses.CC_BY_NC_SA_4_0.value
 _LOCAL = False
 
 _URLS = {
-    "parallel_ind_jav": "https://huggingface.co/datasets/Exqrch/IndonesianNMT/resolve/main/id-jv.tsv?download=true",
-    "parallel_ind_sun": "https://huggingface.co/datasets/Exqrch/IndonesianNMT/resolve/main/id-su.tsv?download=true",
-    "parallel_ind_ban": "https://huggingface.co/datasets/Exqrch/IndonesianNMT/resolve/main/id-ban.tsv?download=true",
-    "parallel_ind_min": "https://huggingface.co/datasets/Exqrch/IndonesianNMT/resolve/main/id-min.tsv?download=true",
-    "mono_ind": "https://huggingface.co/datasets/Exqrch/IndonesianNMT/resolve/main/bt-id-jv.id.txt?download=true",
-    "mono_jav": "https://huggingface.co/datasets/Exqrch/IndonesianNMT/resolve/main/bt-id-jv.jv.txt?download=true",
+    "ind_jav": "https://huggingface.co/datasets/Exqrch/IndonesianNMT/resolve/main/id-jv.tsv?download=true",
+    "ind_sun": "https://huggingface.co/datasets/Exqrch/IndonesianNMT/resolve/main/id-su.tsv?download=true",
+    "ind_ban": "https://huggingface.co/datasets/Exqrch/IndonesianNMT/resolve/main/id-ban.tsv?download=true",
+    "ind_min": "https://huggingface.co/datasets/Exqrch/IndonesianNMT/resolve/main/id-min.tsv?download=true",
 }
 
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]  
@@ -101,8 +99,8 @@ class IndonesianNMT(datasets.GeneratorBasedBuilder):
             schema=f"seacrowd_t2t",
             subset_id="indonesiannmt",
         )] +
-        [seacrowd_config_constructor(x, 'source', _SOURCE_VERSION) for x in ['mono_ind', 'mono_jav', 'parallel_ind_jav', 'parallel_ind_min', 'parallel_ind_sun', 'parallel_ind_ban']]
-        + [seacrowd_config_constructor(x, 'seacrowd_t2t', _SEACROWD_VERSION) for x in ['mono_ind', 'mono_jav', 'parallel_ind_jav', 'parallel_ind_min', 'parallel_ind_sun', 'parallel_ind_ban']])
+        [seacrowd_config_constructor(x, 'source', _SOURCE_VERSION) for x in ['ind_jav', 'ind_min', 'ind_sun', 'ind_ban']]
+        + [seacrowd_config_constructor(x, 'seacrowd_t2t', _SEACROWD_VERSION) for x in ['ind_jav', 'ind_min', 'ind_sun', 'ind_ban']])
 
     DEFAULT_CONFIG_NAME = "indonesiannmt_source"
 
@@ -130,17 +128,11 @@ class IndonesianNMT(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        # ex mono: indonesiannmt-mono_ind_source OR indonesiannmt-mono_ind_seacrowd_t2t
-        # ex para: indonesiannmt-parallel_ind_jav_source OR indonesiannmt-parallel_ind_jav_seacrowd_t2t
+        # ex para: indonesiannmt-ind_jav_source OR indonesiannmt-ind_jav_seacrowd_t2t
         if self.config.name in ['indonesiannmt_source', 'indonesiannmt_seacrowd_t2t']:
-            path = dl_manager.download_and_extract(_URLS['parallel_ind_jav'])
+            path = dl_manager.download_and_extract(_URLS['ind_jav'])
         else:         
-            mono_or_para = self.config.name.split('-')[1].split('_')[0]
-            target = ""
-            if mono_or_para == "mono":
-                target = '_'.join(self.config.name.split('-')[1].split('_')[:2])
-            elif mono_or_para == "parallel":
-                target = '_'.join(self.config.name.split('-')[1].split('_')[:3])
+            target = '_'.join(self.config.name.split('-')[1].split('_')[:2])
             url = _URLS[target]
             path = dl_manager.download_and_extract(url)
 
@@ -158,66 +150,39 @@ class IndonesianNMT(datasets.GeneratorBasedBuilder):
         """Yields examples as (key, example) tuples."""
         with open(filepath, encoding="utf-8") as f:
             flag = True  
-            mono = True
             if self.config.schema == "source":
                 for counter, row in enumerate(f):
-                    if mono and not row.startswith('Indonesian'):
+                    if flag:
+                        src, tgt = row.split('\t')
+                        tgt = tgt.strip()
+                        flag = False
+                    else:
                         if row.strip() != "":
-                            yield (
+                            yield(
                                 counter,
                                 {
                                     "id": str(counter),
-                                    "text_1": row.strip(),
-                                    "text_2": None,
-                                    "lang_1": None,
-                                    "lang_2": None,
-                                },
+                                    "text_1": row.split('\t')[0].strip(),
+                                    "text_2": row.split('\t')[1].strip(),
+                                    "lang_1": src,
+                                    "lang_2": tgt,
+                                }
                             )
-                    else:
-                        mono = False 
-                        if flag:
-                            src, tgt = row.split('\t')
-                            flag = False
-                        else:
-                            if row.strip() != "":
-                                yield(
-                                    counter,
-                                    {
-                                        "id": str(counter),
-                                        "text_1": row.split('\t')[0].strip(),
-                                        "text_2": row.split('\t')[1].strip(),
-                                        "lang_1": src,
-                                        "lang_2": tgt,
-                                    }
-                                )
             else:
                 for counter, row in enumerate(f):
-                    if mono and not row.startswith('Indonesian'):
+                    if flag:
+                        src, tgt = row.split('\t')
+                        tgt = tgt.strip()
+                        flag = False
+                    else:
                         if row.strip() != "":
-                            yield (
+                            yield(
                                 counter,
                                 {
                                     "id": str(counter),
-                                    "text_1": row.strip(),
-                                    "text_2": None,
-                                    "text_1_name": None,
-                                    "text_2_name": None,
-                                },
+                                    "text_1": row.split('\t')[0].strip(),
+                                    "text_2": row.split('\t')[1].strip(),
+                                    "text_1_name": src,
+                                    "text_2_name": tgt,
+                                }
                             )
-                    else:
-                        mono = False 
-                        if flag:
-                            src, tgt = row.split('\t')
-                            flag = False
-                        else:
-                            if row.strip() != "":
-                                yield(
-                                    counter,
-                                    {
-                                        "id": str(counter),
-                                        "text_1": row.split('\t')[0].strip(),
-                                        "text_2": row.split('\t')[1].strip(),
-                                        "text_1_name": src,
-                                        "text_2_name": tgt,
-                                    }
-                                )
