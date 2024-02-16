@@ -57,6 +57,8 @@ _URLS = {
     },
 }
 
+_LOCAL = False
+_LANGUAGES = ["vie"]
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 
 _SEACROWD_VERSION = "1.0.0"

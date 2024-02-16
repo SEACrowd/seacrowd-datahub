@@ -29,6 +29,7 @@ German, Spanish, Hindi, Vietnamese and Simplified Chinese. MLQA is highly parall
 
 _HOMEPAGE = "https://github.com/facebookresearch/MLQA"
 _LICENSE = Licenses.CC_BY_SA_3_0.value
+_LANGUAGES = ["vie"]
 _URL = "https://dl.fbaipublicfiles.com/MLQA/"
 _DEV_TEST_URL = "MLQA_V1.zip"
 _TRANSLATE_TEST_URL = "mlqa-translate-test.tar.gz"

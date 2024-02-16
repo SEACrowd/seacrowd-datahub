@@ -30,6 +30,9 @@ sentiment categories: positive, negative, and neutral.
 
 _HOMEPAGE = "https://github.com/imperialite/Philippine-Languages-Online-Corpora/tree/master/Tweets/Annotated%20Yolanda"
 
+_LOCAL = False
+_LANGUAGES = ["fil"]
+
 _LICENSE = Licenses.CC_BY_4_0.value
 
 _ROOT_URL = "https://raw.githubusercontent.com/imperialite/Philippine-Languages-Online-Corpora/master/Tweets/Annotated%20Yolanda/"

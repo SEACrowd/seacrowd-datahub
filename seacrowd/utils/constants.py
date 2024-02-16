@@ -10,6 +10,7 @@ from seacrowd.utils.schemas import (
     pairs_features_score,
     pairs_multi_features,
     qa_features,
+    imqa_features,
     seq_label_features,
     speech2speech_features,
     speech_features,
@@ -57,6 +58,7 @@ class Tasks(Enum):
     HOAX_NEWS_CLASSIFICATION = "HNC"
     INTENT_CLASSIFICATION = "INT"
     LEGAL_CLASSIFICATION = "LC"
+    MORALITY_CLASSIFICATION = "MC"
     READABILITY_ASSESSMENT = "RA"
     RHETORIC_MODE_CLASSIFICATION = "RMC"
     SENTIMENT_ANALYSIS = "SA"
@@ -73,6 +75,7 @@ class Tasks(Enum):
     NAMED_ENTITY_RECOGNITION = "NER"
     POS_TAGGING = "POS"
     SENTENCE_ORDERING = "SO"
+    SLOT_FILLING = "SF"
     SPAN_BASED_ABSA = "SPAN_ABSA"
     TOKEN_LEVEL_LANGUAGE_IDENTIFICATION = "LANGID"
 
@@ -118,6 +121,7 @@ class Tasks(Enum):
 
     # ImageText
     IMAGE_CAPTIONING = "IC"
+    VISUAL_QUESTION_ANSWERING = "VQA"
     SIGN_LANGUAGE_RECOGNITION = "SLR"
     STYLIZED_IMAGE_CAPTIONING = "SIC"
     VISUALLY_GROUNDED_REASONING = "VGR"
@@ -219,14 +223,15 @@ TASK_TO_SCHEMA = {
     Tasks.RELATION_EXTRACTION: "KB",
     Tasks.CONSTITUENCY_PARSING: "TREE",
     Tasks.E2E_TASK_ORIENTED_DIALOGUE: "TOD",
+    Tasks.DIALOGUE_SYSTEM: "T2T",
     Tasks.WORD_SENSE_DISAMBIGUATION: "T2T",
     Tasks.WORD_ANALOGY: "T2T",
     Tasks.KEYWORD_EXTRACTION: "SEQ_LABEL",
-    Tasks.DIALOGUE_SYSTEM: "T2T",
     Tasks.KEYWORD_TAGGING: "SEQ_LABEL",
     Tasks.NAMED_ENTITY_RECOGNITION: "SEQ_LABEL",
     Tasks.POS_TAGGING: "SEQ_LABEL",
     Tasks.SENTENCE_ORDERING: "SEQ_LABEL",
+    Tasks.SLOT_FILLING: "SEQ_LABEL",
     Tasks.SPAN_BASED_ABSA: "SEQ_LABEL",
     Tasks.TOKEN_LEVEL_LANGUAGE_IDENTIFICATION: "SEQ_LABEL",
     Tasks.COMMONSENSE_REASONING: "QA",
@@ -268,6 +273,7 @@ TASK_TO_SCHEMA = {
     Tasks.SPEECH_LANGUAGE_IDENTIFICATION: "SPEECH",
     Tasks.SPEECH_EMOTION_RECOGNITION: "SPEECH",
     Tasks.SPEECH_EMOTION_RECOGNITION_MULTILABEL: "SPEECH_MULTI",
+    Tasks.VISUAL_QUESTION_ANSWERING: "IMQA",
     Tasks.IMAGE_CAPTIONING: "IMTEXT",
     Tasks.SIGN_LANGUAGE_RECOGNITION: "IMTEXT",
     Tasks.STYLIZED_IMAGE_CAPTIONING: "IMTEXT",
@@ -275,6 +281,7 @@ TASK_TO_SCHEMA = {
     Tasks.VIDEO_CAPTIONING: "VIDTEXT",
     Tasks.VIDEO_TO_TEXT_RETRIEVAL: "VIDTEXT",
     Tasks.FACT_CHECKING: None,
+    Tasks.MORALITY_CLASSIFICATION: "TEXT",
 }
 
 SCHEMA_TO_TASKS = defaultdict(set)
@@ -302,6 +309,7 @@ SCHEMA_TO_FEATURES = {
     "SPEECH": speech_features(),
     "SPEECH_MULTI": speech_multi_features(),
     "IMTEXT": image_text_features(),
+    "IMQA": imqa_features,
     "VIDTEXT": video_features,
     "TOD": tod_features,
 }
