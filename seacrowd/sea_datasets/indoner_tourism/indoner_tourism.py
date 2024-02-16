@@ -72,9 +72,7 @@ _LICENSE = Licenses.AFL_3_0.value
 
 _LOCAL = False
 
-_URLS = {
-    _DATASETNAME: "https://raw.githubusercontent.com/fathanick/IndoNER-Tourism/main/ner_data.tsv",
-}
+_URL = "https://raw.githubusercontent.com/fathanick/IndoNER-Tourism/main/ner_data.tsv"
 
 _SUPPORTED_TASKS = [Tasks.NAMED_ENTITY_RECOGNITION]
 
@@ -83,7 +81,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class IndoNERTourism(datasets.GeneratorBasedBuilder):
+class IndoNERTourismDataset(datasets.GeneratorBasedBuilder):
     """\
 This dataset is designed for named entity recognition (NER) tasks in the Bahasa Indonesia tourism domain. It contains labeled sequences of named entities, including locations, facilities, and tourism-related entities. The dataset is annotated with the following entity types:
 
@@ -101,22 +99,22 @@ This dataset is designed for named entity recognition (NER) tasks in the Bahasa 
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="indoner_tourism_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
             description="indoner_tourism source schema",
             schema="source",
-            subset_id="indoner_tourism",
+            subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
-            name="indoner_tourism_seacrowd_seq_label",
+            name=f"{_DATASETNAME}_seacrowd_seq_label",
             version=SEACROWD_VERSION,
             description="indoner_tourism SEACrowd schema",
             schema="seacrowd_seq_label",
-            subset_id="indoner_tourism",
+            subset_id=_DATASETNAME,
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = "indoner_tourism_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -141,7 +139,7 @@ This dataset is designed for named entity recognition (NER) tasks in the Bahasa 
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        urls = _URLS[_DATASETNAME]
+        urls = _URL
         path = dl_manager.download_and_extract(urls)
 
         return [
@@ -161,30 +159,19 @@ This dataset is designed for named entity recognition (NER) tasks in the Bahasa 
         counter = 0
         with open(filepath, encoding="utf-8") as file:
             for line in file:
+                # End of Sentence met
                 if line.strip() == "":
                     if self.config.schema == "source":
-                        yield(
-                            counter,
-                            {
-                                'tokens'  : tokens,
-                                'ner_tags': ner_tags,
-                            }
-                        )
+                        yield counter, {'tokens': tokens, 'ner_tags': ner_tags}
                         counter += 1
                         tokens = []
                         ner_tags = []
                     elif self.config.schema == "seacrowd_seq_label":
-                        yield(
-                            counter,
-                            {
-                                'id'    : counter,
-                                'tokens': tokens,
-                                'labels': ner_tags,
-                            }
-                        )
+                        yield counter, {'id': counter, 'tokens': tokens, 'labels': ner_tags}
                         counter += 1
                         tokens = []
                         ner_tags = []
+                # Process until End of Sentence met
                 elif len(line.split('\t')) == 2:
                     token, ner_tag = line.split('\t')
                     tokens.append(token.strip())
