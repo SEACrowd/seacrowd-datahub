@@ -123,6 +123,7 @@ class NewDataset(datasets.GeneratorBasedBuilder):
 
         urls = _URLS[_DATASETNAME]
         data_dir = dl_manager.download_and_extract(urls)
+        # Since the data is stored based on date extracted, it will follow the pattern data/year/month/day/{article_names}.txt
         list_all_txt_files = list(glob.glob(os.path.join(data_dir, "thaigov-v2-corpus-master", "data", "*", "*", "*", "*.txt")))
         all_data = []
         counter = 0
