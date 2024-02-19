@@ -60,9 +60,12 @@ _URLS = {
     "ind_sun": "https://huggingface.co/datasets/Exqrch/IndonesianNMT/resolve/main/id-su.tsv?download=true",
     "ind_ban": "https://huggingface.co/datasets/Exqrch/IndonesianNMT/resolve/main/id-ban.tsv?download=true",
     "ind_min": "https://huggingface.co/datasets/Exqrch/IndonesianNMT/resolve/main/id-min.tsv?download=true",
+    "ind": "https://huggingface.co/datasets/Exqrch/IndonesianNMT/resolve/main/bt-id-jv.id.txt?download=true",
+    "jav": "https://huggingface.co/datasets/Exqrch/IndonesianNMT/resolve/main/bt-id-jv.jv.txt?download=true",
+
 }
 
-_SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]  
+_SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION, Tasks.SELF_SUPERVISED_PRETRAINING]  
 
 _SOURCE_VERSION = "1.0.0"
 
@@ -70,9 +73,9 @@ _SEACROWD_VERSION = "1.0.0"
 
 def seacrowd_config_constructor(modifier, schema, version):
     return SEACrowdConfig(
-            name=f"indonesiannmt-{modifier}_{schema}",
+            name=f"indonesiannmt_{modifier}_{schema}",
             version=version,
-            description=f"indonesiannmt-{modifier} {schema} schema",
+            description=f"indonesiannmt_{modifier} {schema} schema",
             schema=f"{schema}",
             subset_id="indonesiannmt",
         )
@@ -85,27 +88,33 @@ class IndonesianNMT(datasets.GeneratorBasedBuilder):
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
     BUILDER_CONFIGS = (
-        [SEACrowdConfig(
-            name=f"indonesiannmt_source",
-            version=_SOURCE_VERSION,
-            description=f"indonesiannmt source schema",
-            schema=f"source",
-            subset_id="indonesiannmt",
-        )] + 
-        [SEACrowdConfig(
-            name=f"indonesiannmt_seacrowd_t2t",
-            version=_SEACROWD_VERSION,
-            description=f"indonesiannmt seacrowd_t2t schema",
-            schema=f"seacrowd_t2t",
-            subset_id="indonesiannmt",
-        )] +
-        [seacrowd_config_constructor(x, 'source', _SOURCE_VERSION) for x in ['ind_jav', 'ind_min', 'ind_sun', 'ind_ban']]
+        [seacrowd_config_constructor(x, 'source', _SOURCE_VERSION) for x in ['ind', 'jav']]
+        + [seacrowd_config_constructor(x, 'seacrowd_ssp', _SOURCE_VERSION) for x in ['ind', 'jav']]
+        + [seacrowd_config_constructor(x, 'source', _SOURCE_VERSION) for x in ['ind_jav', 'ind_min', 'ind_sun', 'ind_ban']]
         + [seacrowd_config_constructor(x, 'seacrowd_t2t', _SEACROWD_VERSION) for x in ['ind_jav', 'ind_min', 'ind_sun', 'ind_ban']])
 
-    DEFAULT_CONFIG_NAME = "indonesiannmt_source"
+    DEFAULT_CONFIG_NAME = "indonesiannmt_ind_source"
+
+    def is_mono(self):
+        if self.config.schema == "seacrowd_ssp":
+            return True 
+        if 'source' in self.config.schema:
+            if len(self.config.name.split('_')) == 3:
+                return True 
+        return False
 
     def _info(self) -> datasets.DatasetInfo:
-        if self.config.schema == "source":
+        # ex mono: indonesiannmt_ind_source OR indonesiannmt_ind_seacrowd_ssp
+        # ex para: indonesiannmt_ind_jav_source OR indonesiannmt_ind_jav_seacrowd_t2t
+        is_mono = self.is_mono()
+        if is_mono and self.config.schema == "source":
+            features = datasets.Features(
+                {
+                    "id": datasets.Value("string"),
+                    "text": datasets.Value("string"),
+                }
+            )
+        elif self.config.schema == "source":
             features = datasets.Features(
                 {
                     "id": datasets.Value("string"),
@@ -117,6 +126,8 @@ class IndonesianNMT(datasets.GeneratorBasedBuilder):
             )
         elif self.config.schema == "seacrowd_t2t":
             features = schemas.text_to_text.features
+        elif self.config.schema == "seacrowd_ssp":
+            features = schemas.self_supervised_pretraining.features
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -128,11 +139,14 @@ class IndonesianNMT(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        # ex para: indonesiannmt-ind_jav_source OR indonesiannmt-ind_jav_seacrowd_t2t
-        if self.config.name in ['indonesiannmt_source', 'indonesiannmt_seacrowd_t2t']:
-            path = dl_manager.download_and_extract(_URLS['ind_jav'])
+        # ex mono: indonesiannmt_ind_source OR indonesiannmt_ind_seacrowd_ssp
+        # ex para: indonesiannmt_ind_jav_source OR indonesiannmt_ind_jav_seacrowd_t2t
+        is_mono = self.is_mono()
+        if 'seacrowd_ssp' in self.config.schema or is_mono:
+            lang = self.config.name.split('_')[1]
+            path = dl_manager.download_and_extract(_URLS[lang])
         else:         
-            target = '_'.join(self.config.name.split('-')[1].split('_')[:2])
+            target = '_'.join(self.config.name.split('_')[1:3])
             url = _URLS[target]
             path = dl_manager.download_and_extract(url)
 
@@ -148,9 +162,26 @@ class IndonesianNMT(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
+        is_mono = self.is_mono()
+        STR_TO_ISO = {
+            'Indonesian': 'ind',
+            'Javanese': 'jav',
+            'Minangkabau': 'min',
+            'Sundanese': 'sun',
+            'Balinese': 'ban'
+        }
+
         with open(filepath, encoding="utf-8") as f:
             flag = True  
-            if self.config.schema == "source":
+            if 'seacrowd_ssp' in self.config.schema or is_mono:
+                for counter, row in enumerate(f):
+                    if row.strip != '':
+                        yield(counter, {
+                                "id": str(counter),
+                                "text": row.strip(),
+                            }
+                        )
+            elif self.config.schema == "source":
                 for counter, row in enumerate(f):
                     if flag:
                         src, tgt = row.split('\t')
@@ -164,11 +195,11 @@ class IndonesianNMT(datasets.GeneratorBasedBuilder):
                                     "id": str(counter),
                                     "text_1": row.split('\t')[0].strip(),
                                     "text_2": row.split('\t')[1].strip(),
-                                    "lang_1": src,
-                                    "lang_2": tgt,
+                                    "lang_1": STR_TO_ISO[src],
+                                    "lang_2": STR_TO_ISO[tgt],
                                 }
                             )
-            else:
+            elif self.config.schema == "seacrowd_t2t":
                 for counter, row in enumerate(f):
                     if flag:
                         src, tgt = row.split('\t')
@@ -182,7 +213,7 @@ class IndonesianNMT(datasets.GeneratorBasedBuilder):
                                     "id": str(counter),
                                     "text_1": row.split('\t')[0].strip(),
                                     "text_2": row.split('\t')[1].strip(),
-                                    "text_1_name": src,
-                                    "text_2_name": tgt,
+                                    "text_1_name": STR_TO_ISO[src],
+                                    "text_2_name": STR_TO_ISO[tgt],
                                 }
                             )
