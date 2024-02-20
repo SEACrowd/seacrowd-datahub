@@ -51,10 +51,8 @@ _SEACROWD_VERSION = "1.0.0"
 
 class ViHealthQADataset(datasets.GeneratorBasedBuilder):
     '''
-Vietnamese Visual Question Answering (ViVQA) consist of 10328 images and 15000 question-answer
-pairs in Vietnamese for evaluating Vietnamese VQA models. This dataset is built based on 10328 randomly
-selected images from MS COCO dataset. The question-answer pairs were based on the COCO-QA dataset that
-was automatically translated from English to Vietnamese.
+This is a SeaCrowed dataloader for dataset Vietnamese Visual Question Answering (ViVQA), which consists of 10328 images and 15000 question-answer
+pairs in Vietnamese for evaluating Vietnamese VQA models.
     '''
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
