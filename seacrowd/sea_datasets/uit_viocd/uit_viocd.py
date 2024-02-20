@@ -41,7 +41,7 @@ _URLS = {
     "test": "https://huggingface.co/datasets/tarudesu/ViOCD/resolve/main/test.csv?download=true",
 }
 
-_SUPPORTED_TASKS = [Tasks.INTENT_CLASSIFICATION]
+_SUPPORTED_TASKS = [Tasks.COMPLAINT_DETECTION]
 
 _SOURCE_VERSION = "1.0.0"
 
