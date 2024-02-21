@@ -19,7 +19,8 @@ developed for Khmer language NLP research and developments. We collected Khmer s
 various area such as economics, news, politics. Moreover it is also contained some student list and voter list of 
 national election committee of Cambodia. The average number of words per sentence in the whole corpus is 10.75. 
 Here, some symbols such as "។" (Khmer sign Khan), "៖" (Khmer sign Camnuc pii kuuh), "-", "?", "[", "]" etc. also 
-counted as words. The shotest sentence contained only 1 word and longest sentence contained 169 words.
+counted as words. The shortest sentence contained only 1 word and longest sentence contained 169 words. This dataset contains
+A validation set and a test set, each containing 1000 sentences.
 """
 import os
 from pathlib import Path
@@ -50,7 +51,8 @@ developed for Khmer language NLP research and developments. We collected Khmer s
 various area such as economics, news, politics. Moreover it is also contained some student list and voter list of 
 national election committee of Cambodia. The average number of words per sentence in the whole corpus is 10.75. 
 Here, some symbols such as "។" (Khmer sign Khan), "៖" (Khmer sign Camnuc pii kuuh), "-", "?", "[", "]" etc. also 
-counted as words. The shotest sentence contained only 1 word and longest sentence contained 169 words.
+counted as words. The shortest sentence contained only 1 word and longest sentence contained 169 words. This dataset contains
+A validation set and a test set, each containing 1000 sentences.
 """
 
 _HOMEPAGE = "https://github.com/ye-kyaw-thu/khPOS/tree/master"
@@ -63,6 +65,8 @@ _LOCAL = False
 
 _URLS = {
     _DATASETNAME: "https://raw.githubusercontent.com/ye-kyaw-thu/khPOS/master/corpus-draft-ver-1.0/data/after-replace/train.all2",
+    'validation': "https://raw.githubusercontent.com/ye-kyaw-thu/khPOS/master/corpus-draft-ver-1.0/data/OPEN-TEST",
+    'test'      : "https://raw.githubusercontent.com/ye-kyaw-thu/khPOS/master/corpus-draft-ver-1.0/data/CLOSE-TEST"
 }
 
 _SUPPORTED_TASKS = [Tasks.POS_TAGGING]  
@@ -76,7 +80,8 @@ class KhPOS(datasets.GeneratorBasedBuilder):
     """\
 This datasets contain 12000 sentences (25626 words) for the Khmer language.
 There are 24 POS tags and their description can be found at https://github.com/ye-kyaw-thu/khPOS/tree/master.
-The used Khmer Tokenizer can be found in the above github repository as well.
+The used Khmer Tokenizer can be found in the above github repository as well. This dataset contains
+A validation set and a test set, each containing 1000 sentences.
     """
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
@@ -141,12 +146,32 @@ The used Khmer Tokenizer can be found in the above github repository as well.
         urls = _URLS[_DATASETNAME]
         path = dl_manager.download_and_extract(urls)
 
+        dev_url  = _URLS['validation']
+        dev_path = dl_manager.download_and_extract(dev_url)
+
+        test_url  = _URLS['test']
+        test_path = dl_manager.download_and_extract(test_url)
+
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
                     "filepath": path,
                     "split": "train",
+                },
+            ),
+            datasets.SplitGenerator(
+                name=datasets.Split.VALIDATION,
+                gen_kwargs={
+                    "filepath": dev_path,
+                    "split": "dev",
+                },
+            ),
+            datasets.SplitGenerator(
+                name=datasets.Split.TEST,
+                gen_kwargs={
+                    "filepath": test_path,
+                    "split": "test",
                 },
             ),
         ]
