@@ -101,7 +101,7 @@ class UiTVihsdDataset(datasets.GeneratorBasedBuilder):
         if self.config.schema == "source":
             features = datasets.Features(
                 {
-                    "id": datasets.Value("int64"),  # Column name missing in original dataset
+                    "id": datasets.Value("int64"),
                     "text": datasets.Value("string"),
                     "label": datasets.Value("string"),
                 }
