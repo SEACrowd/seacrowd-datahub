@@ -12,12 +12,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
 from typing import Dict, List, Tuple
 
 import datasets
-import os
-import sys
-
 import pandas
 
 from seacrowd.utils import schemas
@@ -63,9 +61,9 @@ _LICENSE = Licenses.CC_BY_NC_4_0.value
 _URL = "https://raw.githubusercontent.com/sonlam1102/vihsd/main/data/vihsd.zip"
 
 _Split_Path = {
-    "train": "train.csv",
-    "validation": "dev.csv",
-    "test": "test.csv",
+    "train": "vihsd/train.csv",
+    "validation": "vihsd/dev.csv",
+    "test": "vihsd/test.csv",
 }
 
 _SUPPORTED_TASKS = [Tasks.SENTIMENT_ANALYSIS]
@@ -94,8 +92,8 @@ class UiTVihsdDataset(datasets.GeneratorBasedBuilder):
             description=f"{_DATASETNAME} SEACrowd schema ",
             schema="seacrowd_text",
             subset_id=f"{_DATASETNAME}",
-        )
-        ]
+        ),
+    ]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
@@ -123,8 +121,6 @@ class UiTVihsdDataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         # dl_manager not used since dataloader uses HF 'load_dataset'
         file_paths = dl_manager.download_and_extract(_URL)
-        print(file_paths)
-        print('##########################')
 
         return [
             datasets.SplitGenerator(
@@ -144,14 +140,6 @@ class UiTVihsdDataset(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         data_lines = pandas.read_csv(filepath)
-        for index, row in enumerate(data_lines):
-            if self.config.schema == "source":
-                example = row
-
-            elif self.config.schema == "seacrowd_text":
-                if "constructiveness" in self.config.name:
-                    label = row["Constructiveness"]
-                elif "toxicity" in self.config.name:
-                    label = row["Toxicity"]
-                example = {"id": str(index), "text": row["Comment"], "label": label}
-            yield index, example
+        for row in data_lines.itertuples():
+            example = {"id": str(row.Index), "text": row.free_text, "label": row.label_id}
+            yield row.Index, example
