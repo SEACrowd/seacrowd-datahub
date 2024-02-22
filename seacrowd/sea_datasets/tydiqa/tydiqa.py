@@ -37,6 +37,30 @@ _CITATION = r"""\
     written by people who want to know the answer, but don{'}t know the answer yet, and the data is collected directly
     in each language without the use of translation.",
 }
+
+@inproceedings{cahyawijaya-etal-2021-indonlg,
+    title = "{I}ndo{NLG}: Benchmark and Resources for Evaluating {I}ndonesian Natural Language Generation",
+    author = "Cahyawijaya, Samuel  and
+      Winata, Genta Indra  and
+      Wilie, Bryan  and
+      Vincentio, Karissa  and
+      Li, Xiaohong  and
+      Kuncoro, Adhiguna  and
+      Ruder, Sebastian  and
+      Lim, Zhi Yuan  and
+      Bahar, Syafri  and
+      Khodra, Masayu  and
+      Purwarianti, Ayu  and
+      Fung, Pascale",
+    booktitle = "Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing",
+    month = nov,
+    year = "2021",
+    address = "Online and Punta Cana, Dominican Republic",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.emnlp-main.699",
+    doi = "10.18653/v1/2021.emnlp-main.699",
+    pages = "8875--8898"
+}
 """
 
 _DATASETNAME = "tydiqa"
@@ -260,22 +284,28 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
                     doc = data["document_plaintext"]
                     url = data["document_url"]
                     if self.config.name == "tydiqa_primary_task_source":
-                        yield id_, primary_source_helper(id_, start_byte, end_byte, question, title, lang, passage_cand_answers, min_answers_start_byte, min_answers_end_byte, yes_no_answers, doc, url)
+                        yield id_, primary_source_helper(id_, start_byte, end_byte, question, title, lang, passage_cand_answers,
+                                                         min_answers_start_byte, min_answers_end_byte, yes_no_answers, doc, url)
                     elif self.config.name == "tydiqa_primary_task_indonesian_source":
                         if lang == "indonesian":
-                            yield id_, primary_source_helper(id_, start_byte, end_byte, question, title, lang, passage_cand_answers, min_answers_start_byte, min_answers_end_byte, yes_no_answers, doc, url)
+                            yield id_, primary_source_helper(id_, start_byte, end_byte, question, title, lang, passage_cand_answers,
+                                                             min_answers_start_byte, min_answers_end_byte, yes_no_answers, doc, url)
                     elif self.config.name == "tydiqa_primary_task_thai_source":
                         if lang == "thai":
-                            yield id_, primary_source_helper(id_, start_byte, end_byte, question, title, lang, passage_cand_answers, min_answers_start_byte, min_answers_end_byte, yes_no_answers, doc, url)
+                            yield id_, primary_source_helper(id_, start_byte, end_byte, question, title, lang, passage_cand_answers,
+                                                             min_answers_start_byte, min_answers_end_byte, yes_no_answers, doc, url)
                     # seacrowd
                     elif self.config.name == "tydiqa_primary_task_seacrowd_qa":
-                        yield id_, primary_seacrowd_helper(id_, title, question, doc, start_byte, end_byte, passage_cand_answers, min_answers_start_byte, min_answers_end_byte, yes_no_answers, lang)
+                        yield id_, primary_seacrowd_helper(id_, title, question, doc, start_byte, end_byte, passage_cand_answers,
+                                                           min_answers_start_byte, min_answers_end_byte, yes_no_answers, lang)
                     elif self.config.name == "tydiqa_primary_task_indonesian_seacrowd_qa":
                         if lang == "indonesian":
-                            yield id_, primary_seacrowd_helper(id_, title, question, doc, start_byte, end_byte, passage_cand_answers, min_answers_start_byte, min_answers_end_byte, yes_no_answers, lang)
+                            yield id_, primary_seacrowd_helper(id_, title, question, doc, start_byte, end_byte, passage_cand_answers,
+                                                               min_answers_start_byte, min_answers_end_byte, yes_no_answers, lang)
                     elif self.config.name == "tydiqa_primary_task_thai_seacrowd_qa":
                         if lang == "thai":
-                            yield id_, primary_seacrowd_helper(id_, title, question, doc, start_byte, end_byte, passage_cand_answers, min_answers_start_byte, min_answers_end_byte, yes_no_answers, lang)
+                            yield id_, primary_seacrowd_helper(id_, title, question, doc, start_byte, end_byte, passage_cand_answers,
+                                                               min_answers_start_byte, min_answers_end_byte, yes_no_answers, lang)
                     else:
                         raise ValueError(f"No configs to match {self.config.name} in primary_task")
 
@@ -326,7 +356,8 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
                                 raise ValueError(f"No configs to match {self.config.name} in secondary_task")
 
 
-def primary_source_helper(id_, start_byte, end_byte, question, title, lang, passage_cand_answers, min_answers_start_byte, min_answers_end_byte, yes_no_answers, doc, url):
+def primary_source_helper(id_, start_byte, end_byte, question, title, lang, passage_cand_answers,
+                          min_answers_start_byte, min_answers_end_byte, yes_no_answers, doc, url):
     return {
         "passage_answer_candidates": {
             "plaintext_start_byte": start_byte,
@@ -346,7 +377,8 @@ def primary_source_helper(id_, start_byte, end_byte, question, title, lang, pass
     }
 
 
-def primary_seacrowd_helper(id_, title, question, doc, start_byte, end_byte, passage_cand_answers, min_answers_start_byte, min_answers_end_byte, yes_no_answers, lang):
+def primary_seacrowd_helper(id_, title, question, doc, start_byte, end_byte, passage_cand_answers,
+                            min_answers_start_byte, min_answers_end_byte, yes_no_answers, lang):
     return {
         "id": str(id_),
         "question_id": title,
@@ -386,4 +418,6 @@ def second_source_helper(id_, title, context, question, answer_starts, answers):
 
 
 def second_seacrowd_helper(id_, question, context, answers, answer_starts):
-    return {"id": id_, "question_id": id_, "document_id": id_, "question": question, "type": "abstractive", "choices": [], "context": context, "answer": answers, "meta": {"answer_start": answer_starts}}
+    return {"id": id_, "question_id": id_, "document_id": id_, "question": question,
+            "type": "abstractive", "choices": [], "context": context, "answer": answers,
+            "meta": {"answer_start": answer_starts}}
