@@ -160,11 +160,13 @@ class QasinaDataset(datasets.GeneratorBasedBuilder):
                         "question_id": question_answer["question_id"],
                         "document_id": line["context_id"],
                         "question": question_answer["question"],
-                        "type": question_answer["type"],
+                        "type": "extractive",
                         "choices": [],
                         "context": line["context"],
                         "answer": [question_answer["answer"]],
                         "meta": {
                             "context_title": line["context_title"],
+                            "answer_start": question_answer["answer_start"],
+                            "context_length": line["context_length"],
                         },
                     }
