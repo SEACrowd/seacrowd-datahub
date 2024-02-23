@@ -103,7 +103,7 @@ class QasinaDataset(datasets.GeneratorBasedBuilder):
 
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             features = schemas.qa.features
-            features["meta"] = {"context_title": datasets.Value("string")}
+            features["meta"] = {"context_title": datasets.Value("string"), "answer_start": datasets.Value("int32"),"context_length": datasets.Value("int32"), "type": datasets.Value("string")}
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -168,5 +168,6 @@ class QasinaDataset(datasets.GeneratorBasedBuilder):
                             "context_title": line["context_title"],
                             "answer_start": question_answer["answer_start"],
                             "context_length": line["context_length"],
+                            "type": question_answer["type"],
                         },
                     }
