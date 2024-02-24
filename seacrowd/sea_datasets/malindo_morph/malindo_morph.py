@@ -84,7 +84,7 @@ class MalindoMorph(datasets.GeneratorBasedBuilder):
             version=SOURCE_VERSION,
             description="[dataset_name] source schema",
             schema="source",
-            subset_id="[dataset_name]",
+            subset_id=f"{_DATASETNAME}",
         ),
     ]
 
