@@ -82,7 +82,7 @@ class MalindoMorph(datasets.GeneratorBasedBuilder):
         SEACrowdConfig(
             name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
-            description="[dataset_name] source schema",
+            description=f"{_DATASETNAME} source schema",
             schema="source",
             subset_id=f"{_DATASETNAME}",
         ),
