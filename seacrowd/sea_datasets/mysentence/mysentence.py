@@ -132,7 +132,7 @@ class MysentenceDataset(datasets.GeneratorBasedBuilder):
         """Returns SplitGenerators."""
         if self.config.subset_id == f"{_DATASETNAME}":
             DATA_URL_ = _URLS["sent"]
-        elif self.config.subset_id == f"{_DATASETNAME}+paragraphs":
+        elif self.config.subset_id == f"{_DATASETNAME}_and_paragraphs":
             DATA_URL_ = _URLS["sent+para"]
         else:
             raise ValueError(f"No related dataset id for {self.config.subset_id}")
