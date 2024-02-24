@@ -1,7 +1,7 @@
 """
 SEA Crowd Data Loader for Bloom LM.
 """
-from typing import Dict, List, Generator
+from typing import Dict, List, Tuple, Iterator
 
 import datasets
 from datasets.download.download_manager import DownloadManager
@@ -229,7 +229,7 @@ class BloomLMDataset(datasets.GeneratorBasedBuilder):
 
         return [datasets.SplitGenerator(name=datasets.Split(dset_key), gen_kwargs={"hf_dset": dset}) for dset_key, dset in hf_dset_dict.items() if dset.num_rows > 0]
 
-    def _generate_examples(self, hf_dset) -> Generator[int, Dict]:
+    def _generate_examples(self, hf_dset) -> Iterator[Tuple[int, Dict]]:
         _config_schema_name = self.config.schema
 
         _idx = 0
