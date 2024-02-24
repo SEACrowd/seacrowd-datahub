@@ -193,7 +193,7 @@ class MSWC(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS.extend(seacrowd_schema_config)
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
+    DEFAULT_CONFIG_NAME = f"{_LANGUAGES[0]}_{_FORMATS[0]}_source"
 
     def _info(self) -> datasets.DatasetInfo:
 
