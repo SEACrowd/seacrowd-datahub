@@ -1,7 +1,7 @@
 """
 SEA Crowd Data Loader for Bloom LM.
 """
-from typing import Dict, List, Tuple
+from typing import Dict, List, Generator
 
 import datasets
 from datasets.download.download_manager import DownloadManager
@@ -94,7 +94,7 @@ _LANG_CONFIG = {
     "pdu": "Kayan",
     "pea": "Peranakan Indonesian",
     "pmf": "Pamona",
-    "psp": "Filipino Sign Language",
+    "psp_ceb": "Filipino Sign Language",
     "sea": "Semai",
     "sgd": "Surigaonon",
     "shn": "Shan",
@@ -141,15 +141,10 @@ _SEACROWD_VERSION = "1.0.0"
 CONFIG_SUFFIXES_FOR_TASK = [TASK_TO_SCHEMA.get(task).lower() for task in _SUPPORTED_TASKS]
 
 
-def construct_configs_on_langs(languages: list = None) -> List[SEACrowdConfig]:
+def construct_configs_on_langs() -> List[SEACrowdConfig]:
     """
-    The function `construct_configs` constructs a list of SEACrowdConfig objects based on the provided
-    languages or a default language, and returns the list.
+    The function `construct_configs` constructs a list of SEACrowdConfig objects based on `_LANGUAGES` var, and returns the list.
 
-    input:
-        languages (list, default None): The `languages` parameter is a list that specifies the languages for which the
-        configurations need to be constructed. If no languages are provided (value=None), the first value in language config
-        will be used.
     output:
         a list of `SEACrowdConfig` objects based on instantiated init variables
     """
@@ -168,9 +163,10 @@ def construct_configs_on_langs(languages: list = None) -> List[SEACrowdConfig]:
             version=datasets.Version(version),
             description=f"{_DATASETNAME} {config_name_prefix} schema for language code {_LANG}",
             schema=f"{config_name_prefix}",
-            subset_id=_LANG,
+            # since the actual subset_id in source for "psp_ceb" is "psp", we are defining the subset_id as following for loading to source HF
+            subset_id=_LANG if _LANG != "psp_ceb" else "psp",
         )
-        for _LANG in languages
+        for _LANG in _LANGUAGES
     ]
 
     # implement SEACrowd schema
@@ -182,9 +178,10 @@ def construct_configs_on_langs(languages: list = None) -> List[SEACrowdConfig]:
                 version=datasets.Version(version),
                 description=f"{_DATASETNAME} {config_name_prefix} schema for {task_obj.name} and language code {_LANG}",
                 schema=f"{config_name_prefix}_{config_name_suffix}",
-                subset_id=_LANG,
+                # since the actual subset_id in source for "psp_ceb" is "psp", we are defining the subset_id as following for loading to source HF
+                subset_id=_LANG if _LANG != "psp_ceb" else "psp",
             )
-            for _LANG in languages
+            for _LANG in _LANGUAGES
         ]
     return config_list
 
@@ -193,7 +190,7 @@ class BloomLMDataset(datasets.GeneratorBasedBuilder):
     """Bloom LM dataset, subsetted from https://huggingface.co/datasets/sil-ai/bloom-lm"""
 
     # get all schema w/o lang arg + get all schema w/ lang arg
-    BUILDER_CONFIGS = construct_configs_on_langs(_LANGUAGES)
+    BUILDER_CONFIGS = construct_configs_on_langs()
 
     def _info(self) -> datasets.DatasetInfo:
         _config_schema_name = self.config.schema
@@ -232,7 +229,7 @@ class BloomLMDataset(datasets.GeneratorBasedBuilder):
 
         return [datasets.SplitGenerator(name=datasets.Split(dset_key), gen_kwargs={"hf_dset": dset}) for dset_key, dset in hf_dset_dict.items() if dset.num_rows > 0]
 
-    def _generate_examples(self, hf_dset) -> Tuple[int, Dict]:
+    def _generate_examples(self, hf_dset) -> Generator[int, Dict]:
         _config_schema_name = self.config.schema
 
         _idx = 0
