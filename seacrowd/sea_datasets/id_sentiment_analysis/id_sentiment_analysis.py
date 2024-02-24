@@ -116,8 +116,6 @@ class IdSentimentAnalysis(datasets.GeneratorBasedBuilder):
 
         path = dl_manager.download_and_extract(_URLS[_DATASETNAME])
 
-        print(path)
-
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
