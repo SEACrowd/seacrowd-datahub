@@ -80,7 +80,6 @@ class FilWordNetDataset(datasets.GeneratorBasedBuilder):
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
-            # TODO: Create your source schema here
             features = datasets.Features(
                 {
                     "word_id": datasets.Value("int32"),
