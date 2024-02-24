@@ -132,5 +132,15 @@ class FilWordNetDataset(datasets.GeneratorBasedBuilder):
 
         if self.config.schema == "source":
             for key, row in enumerate(rows):
-                example = {"word_id": row[0], "lemma": row[1], "synset_id": row[2], "sense_id": row[3], "pos": row[4], "lexdomain_id": row[5], "definition": row[6], "last_modifier": row[7], "sumo": row[8]}
+                example = {
+                    "word_id": row[0],
+                    "lemma": row[1],
+                    "synset_id": row[2],
+                    "sense_id": row[3],
+                    "pos": row[4],
+                    "lexdomain_id": row[5],
+                    "definition": row[6],
+                    "last_modifier": row[7],
+                    "sumo": row[8],
+                }
                 yield key, example
