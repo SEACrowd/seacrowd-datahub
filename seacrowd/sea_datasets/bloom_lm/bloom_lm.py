@@ -1,7 +1,7 @@
 """
 SEA Crowd Data Loader for Bloom LM.
 """
-from typing import Dict, List, Tuple, Iterator
+from typing import Dict, Iterator, List, Tuple
 
 import datasets
 from datasets.download.download_manager import DownloadManager
