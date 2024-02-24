@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -60,6 +60,19 @@ _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
+_LANGUAGE_TO_COLUMN = {
+    "vie": "vi",
+    "tha": "th",
+    "jav": "jv",
+}
+
+
+@dataclass
+class XlJailbreakSeacrowdConfig(SEACrowdConfig):
+    """BuilderConfig for Nusantara."""
+
+    language: str = None
+
 
 class XlJailbreak(datasets.GeneratorBasedBuilder):
     """This dataset contains the data for the paper "Multilingual Jailbreak Challenges in Large Language Models"."""
@@ -67,33 +80,42 @@ class XlJailbreak(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    BUILDER_CONFIGS = [
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_source",
-            version=SOURCE_VERSION,
-            description=f"{_DATASETNAME} source schema",
-            schema="source",
-            subset_id=f"{_DATASETNAME}",
-        ),
-    ]
+    BUILDER_CONFIGS = []
+
+    for language in _LANGUAGES:
+        subset_id = language
+
+        BUILDER_CONFIGS.append(
+            XlJailbreakSeacrowdConfig(
+                name=f"{subset_id}_source",
+                version=SOURCE_VERSION,
+                description=f"{_DATASETNAME} {language} schema",
+                schema="source",
+                subset_id=subset_id,
+                language=language,
+            )
+        )
 
     seacrowd_schema_config: list[SEACrowdConfig] = []
 
     for seacrowd_schema in _SUPPORTED_SCHEMA_STRINGS:
+        for language in _LANGUAGES:
+            subset_id = language
 
-        seacrowd_schema_config.append(
-            SEACrowdConfig(
-                name=f"{_DATASETNAME}_{seacrowd_schema}",
-                version=SEACROWD_VERSION,
-                description=f"{_DATASETNAME} {seacrowd_schema} schema",
-                schema=f"{seacrowd_schema}",
-                subset_id=f"{_DATASETNAME}",
+            seacrowd_schema_config.append(
+                XlJailbreakSeacrowdConfig(
+                    name=f"{subset_id}_{seacrowd_schema}",
+                    version=SEACROWD_VERSION,
+                    description=f"{_DATASETNAME} {seacrowd_schema} schema",
+                    schema=f"{seacrowd_schema}",
+                    subset_id=subset_id,
+                    language=language,
+                )
             )
-        )
 
     BUILDER_CONFIGS.extend(seacrowd_schema_config)
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
+    DEFAULT_CONFIG_NAME = f"{_LANGUAGES[0]}_source"
 
     def _info(self) -> datasets.DatasetInfo:
 
@@ -159,14 +181,8 @@ class XlJailbreak(datasets.GeneratorBasedBuilder):
         elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.PROMPTING]).lower()}":
             df = pd.read_parquet(filepath)
 
-            def row_to_json(row):
-                # Create a dictionary excluding the id column
-                row_dict = {col: row[col] for col in df.columns if col != "id"}
-                # Convert the dictionary to a JSON string
-                return json.dumps(row_dict)
-
             # Apply the function to each row and create a new column with the JSON string
-            df["text"] = df.apply(row_to_json, axis=1)
+            df["text"] = df[_LANGUAGE_TO_COLUMN[self.config.language]]
 
             df = df[["id", "text"]]
 
