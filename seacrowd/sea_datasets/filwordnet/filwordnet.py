@@ -60,7 +60,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class FilWordNet(datasets.GeneratorBasedBuilder):
+class FilWordNetDataset(datasets.GeneratorBasedBuilder):
     """The Filipino WordNet (FilWordNet) is a lexical database of Filipino language containing 13,539 unique words and 9,519 synsets."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
