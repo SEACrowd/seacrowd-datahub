@@ -48,7 +48,7 @@ _HOMEPAGE = "https://huggingface.co/datasets/CohereForAI/aya_dataset"
 
 _LANGUAGES = ["ceb", "ind", "jav", "mya", "tam", "tgl", "sun", "tha", "vie", "zsm"]
 
-_LICENSE = Licenses.APACHE_2_0
+_LICENSE = Licenses.APACHE_2_0.value
 
 _LOCAL = False
 
