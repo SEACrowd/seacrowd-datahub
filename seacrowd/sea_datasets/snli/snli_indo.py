@@ -28,7 +28,7 @@ _CITATION = """\
 }
 """
 
-_DATASETNAME = "snli"
+_DATASETNAME = "snli_"
 
 _DESCRIPTION = """\
 The SNLI Indo dataset is derived from the SNLI corpus by translating each premise and hypothesis sentence from English to Indonesia via the Google Cloud Translation API. Premise sentences are crawled image captions from Flickr, and hypothesis sentences are manually created through crowdsourcing. Five annotators are assigned per sentence pair to label the inference relationship as entailment (true), contradiction (false) or neutral (undetermined).
