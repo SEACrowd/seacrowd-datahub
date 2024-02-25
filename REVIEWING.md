@@ -66,7 +66,7 @@ The objective of datasheet review is to ensure that all dataloaders in SEACrowd 
  b. Execute `datasets.load_dataset` check based on config list (a)
  c. Check on the dataset schema & few first examples for plausibility.
 5. Follows some general rules/conventions:
-    1. Use `PascalCase` for the dataloader class name (optional: “Dataset” can be appended to the Dataloader class name, see templates/templates.py for example).
+    1. Use `PascalCase` for the dataloader class name (optional: “Dataset” can be appended to the Dataloader class name, see `templates/template.py` for example).
     2. Use lowercase word characters (regex identifier: `\w`) for schema column names, including the `source` schema if the original dataset doesn’t follow it.
 6. The code aligns with the `black` formatter:
 use this `make check_file=seacrowd/sea_datasets/{dataloader}/{dataloader}.py`
