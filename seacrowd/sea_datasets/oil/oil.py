@@ -25,12 +25,34 @@ from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import TASK_TO_SCHEMA, Licenses, Tasks
 
 _CITATION = """\
-{@inproceedings{Maxwell-Smith_Foley_2023_Automated,
-  title     = {{Automated speech recognition of Indonesian-English language lessons on YouTube using transfer learning}},
-  author    = {Maxwell-Smith, Zara and Foley, Ben},
-  booktitle = {Proceedings of the {Second Workshop on NLP Applications to Field Linguistics (EACL)}},
-  pages     = {},
-  year      = {forthcoming}
+@inproceedings{maxwelll-smith-foley-2023-automated,
+title = "Automated speech recognition of {I}ndonesian-{E}nglish language lessons on {Y}ou{T}ube using transfer learning",
+author = "Maxwell-Smith, Zara and Foley, Ben",
+editor = "Serikov, Oleg
+        and Voloshina, Ekaterina
+        and Postnikova, Anna
+        and Klyachko, Elena
+        and Vylomova, Ekaterina
+        and Shavrina, Tatiana
+        and Le Ferrand, Eric
+        and Malykh, Valentin
+        and Tyers, Francis
+        and Arkhangelskiy, Timofey
+        and Mikhailov, Vladislav",
+    booktitle = "Proceedings of the Second Workshop on NLP Applications to Field Linguistics",
+    month = may,
+    year = "2023",
+    address = "Dubrovnik, Croatia",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.fieldmatters-1.1",
+    doi = "10.18653/v1/2023.fieldmatters-1.1",
+    pages = "1--16",
+    abstract = "Experiments to fine-tune large multilingual models with limited data from a specific domain or setting has potential
+    to improve automatic speech recognition (ASR) outcomes. This paper reports on the use of the Elpis ASR pipeline to fine-tune two
+    pre-trained base models, Wav2Vec2-XLSR-53 and Wav2Vec2-Large-XLSR-Indonesian, with various mixes of data from 3 YouTube channels
+    teaching Indonesian with English as the language of instruction. We discuss our results inferring new lesson audio (22-46%
+    word error rate) in the context of speeding data collection in diverse and specialised settings. This study is an example of how
+    ASR can be used to accelerate natural language research, expanding ethically sourced data in low-resource settings.",
 }
 """
 
