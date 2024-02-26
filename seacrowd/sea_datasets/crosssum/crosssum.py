@@ -56,14 +56,14 @@ class CrossSumDataset(datasets.GeneratorBasedBuilder):
     """Dataset of cross-lingual article-summary samples."""
 
     SUBSETS = [
-        "id_my",
-        "id_vi",
-        "my_id",
-        "my_vi",
-        "vi_my",
-        "vi_id",
+        "ind_mya",
+        "ind_vie",
+        "mya_ind",
+        "mya_vie",
+        "vie_mya",
+        "vie_ind",
     ]
-    LANG_CODE_MAPPER = {"id": "indonesian", "my": "burmese", "vi": "vietnamese"}
+    LANG_CODE_MAPPER = {"ind": "indonesian", "mya": "burmese", "vie": "vietnamese"}
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
@@ -85,7 +85,7 @@ class CrossSumDataset(datasets.GeneratorBasedBuilder):
         for subset in SUBSETS
     ]
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_id_my_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_ind_mya_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
