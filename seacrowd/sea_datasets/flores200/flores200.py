@@ -343,42 +343,43 @@ class Flores200(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = []
 
-    for first_lang_name in _LANGUAGE_NAMES:
-        for second_lang_name in _LANGUAGE_NAMES:
-            if first_lang_name == second_lang_name:
-                continue
+    first_lang_name = "eng_Latn"
 
-            subset_id = f"{_DATASETNAME}_{first_lang_name}_{second_lang_name}"
+    for second_lang_name in _LANGUAGE_NAMES:
+        if first_lang_name == second_lang_name:
+            continue
 
-            BUILDER_CONFIGS.append(
+        subset_id = f"{_DATASETNAME}_{first_lang_name}_{second_lang_name}"
+
+        BUILDER_CONFIGS.append(
+            Flores200SeacrowdConfig(
+                name=f"{subset_id}_source",
+                version=SOURCE_VERSION,
+                description=f"{_DATASETNAME} source schema",
+                schema="source",
+                subset_id=subset_id,
+                first_language_name=first_lang_name,
+                second_language_name=second_lang_name,
+            )
+        )
+
+        seacrowd_schema_config: list[SEACrowdConfig] = []
+
+        for seacrowd_schema in _SUPPORTED_SCHEMA_STRINGS:
+
+            seacrowd_schema_config.append(
                 Flores200SeacrowdConfig(
-                    name=f"{subset_id}_source",
-                    version=SOURCE_VERSION,
-                    description=f"{_DATASETNAME} source schema",
-                    schema="source",
+                    name=f"{subset_id}_{seacrowd_schema}",
+                    version=SEACROWD_VERSION,
+                    description=f"{_DATASETNAME} {seacrowd_schema} schema",
+                    schema=f"{seacrowd_schema}",
                     subset_id=subset_id,
                     first_language_name=first_lang_name,
                     second_language_name=second_lang_name,
                 )
             )
 
-            seacrowd_schema_config: list[SEACrowdConfig] = []
-
-            for seacrowd_schema in _SUPPORTED_SCHEMA_STRINGS:
-
-                seacrowd_schema_config.append(
-                    Flores200SeacrowdConfig(
-                        name=f"{subset_id}_{seacrowd_schema}",
-                        version=SEACROWD_VERSION,
-                        description=f"{_DATASETNAME} {seacrowd_schema} schema",
-                        schema=f"{seacrowd_schema}",
-                        subset_id=subset_id,
-                        first_language_name=first_lang_name,
-                        second_language_name=second_lang_name,
-                    )
-                )
-
-            BUILDER_CONFIGS.extend(seacrowd_schema_config)
+        BUILDER_CONFIGS.extend(seacrowd_schema_config)
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{_LANGUAGE_NAMES[0]}_{_LANGUAGE_NAMES[1]}_source"
 
