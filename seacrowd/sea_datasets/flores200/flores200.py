@@ -348,7 +348,7 @@ class Flores200(datasets.GeneratorBasedBuilder):
             if first_lang_name == second_lang_name:
                 continue
 
-            subset_id = f"{first_lang_name}_{second_lang_name}"
+            subset_id = f"{_DATASETNAME}_{first_lang_name}_{second_lang_name}"
 
             BUILDER_CONFIGS.append(
                 Flores200SeacrowdConfig(
@@ -380,7 +380,7 @@ class Flores200(datasets.GeneratorBasedBuilder):
 
             BUILDER_CONFIGS.extend(seacrowd_schema_config)
 
-    DEFAULT_CONFIG_NAME = f"{_LANGUAGE_NAMES[0]}_{_LANGUAGE_NAMES[1]}_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{_LANGUAGE_NAMES[0]}_{_LANGUAGE_NAMES[1]}_source"
 
     def _info(self) -> datasets.DatasetInfo:
 
