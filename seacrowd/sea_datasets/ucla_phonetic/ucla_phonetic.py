@@ -47,7 +47,7 @@ Each language has a directory of text and audio files, with the latter forming o
 The dataset is prepared from the online UCLA phonetic dataset, which contains 7000 utterances across 100 low-resource languages, phonetically aligned using various automatic approaches, and manually fixed for misalignments.
 """
 
-_HOMEPAGE = "https://github.com/xinjli/ucla-phonetic-corpus?tab=readme-ov-file"
+_HOMEPAGE = "https://github.com/xinjli/ucla-phonetic-corpus"
 
 _LANGUAGES = ["ace", "brv", "hil", "hni", "ilo", "khm", "mak", "mya", "pam"]
 
@@ -106,7 +106,7 @@ class UCLAPhoneticDataset(datasets.GeneratorBasedBuilder):
         + [seacrowd_config_constructor(lang, "seacrowd_sptext", _SEACROWD_VERSION) for lang in _LANGUAGES]
     )
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_ace_source"
+    DEFAULT_CONFIG_NAME = "ucla_phonetic_source"
 
     def _info(self) -> datasets.DatasetInfo:
 
