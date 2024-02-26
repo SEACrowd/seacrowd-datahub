@@ -299,8 +299,7 @@ _LANGUAGE_NAMES = [
     "zul_Latn",
 ]
 
-_SCRIPT_LANGUAGE_NAMES = ["Latn"]
-_LANGUAGE_NAMES = [lang for lang in _LANGUAGE_NAMES if (lang.split("_")[0] in _LANGUAGES) and (lang.split("_")[1] in _SCRIPT_LANGUAGE_NAMES)]
+_LANGUAGE_NAMES = [lang for lang in _LANGUAGE_NAMES if (lang.split("_")[0] in _LANGUAGES)]
 
 _LICENSE = Licenses.CC_BY_NC_4_0.value
 
@@ -332,7 +331,6 @@ class Flores200SeacrowdConfig(SEACrowdConfig):
 
     first_language_name: str = None
     second_language_name: str = None
-    script_language: str = None
 
 
 class Flores200(datasets.GeneratorBasedBuilder):
@@ -345,52 +343,44 @@ class Flores200(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = []
 
-    for script_names in _SCRIPT_LANGUAGE_NAMES:
-        for first_lang in _LANGUAGES:
-            first_lang_name = f"{first_lang}_{script_names}"
+    for first_lang_name in _LANGUAGE_NAMES:
+        for second_lang_name in _LANGUAGE_NAMES:
+            if first_lang_name == second_lang_name:
+                continue
 
-            for second_lang in _LANGUAGES:
+            subset_id = f"{first_lang_name}_{second_lang_name}"
 
-                if first_lang == second_lang:
-                    continue
+            BUILDER_CONFIGS.append(
+                Flores200SeacrowdConfig(
+                    name=f"{subset_id}_source",
+                    version=SOURCE_VERSION,
+                    description=f"{_DATASETNAME} source schema",
+                    schema="source",
+                    subset_id=subset_id,
+                    first_language_name=first_lang_name,
+                    second_language_name=second_lang_name,
+                )
+            )
 
-                second_lang_name = f"{second_lang}_{script_names}"
+            seacrowd_schema_config: list[SEACrowdConfig] = []
 
-                subset_id = f"{first_lang}_{second_lang}_{script_names}"
+            for seacrowd_schema in _SUPPORTED_SCHEMA_STRINGS:
 
-                BUILDER_CONFIGS.append(
+                seacrowd_schema_config.append(
                     Flores200SeacrowdConfig(
-                        name=f"{subset_id}_source",
-                        version=SOURCE_VERSION,
-                        description=f"{_DATASETNAME} source schema",
-                        schema="source",
+                        name=f"{subset_id}_{seacrowd_schema}",
+                        version=SEACROWD_VERSION,
+                        description=f"{_DATASETNAME} {seacrowd_schema} schema",
+                        schema=f"{seacrowd_schema}",
                         subset_id=subset_id,
                         first_language_name=first_lang_name,
                         second_language_name=second_lang_name,
-                        script_language=script_names,
                     )
                 )
 
-                seacrowd_schema_config: list[SEACrowdConfig] = []
+            BUILDER_CONFIGS.extend(seacrowd_schema_config)
 
-                for seacrowd_schema in _SUPPORTED_SCHEMA_STRINGS:
-
-                    seacrowd_schema_config.append(
-                        Flores200SeacrowdConfig(
-                            name=f"{subset_id}_{seacrowd_schema}",
-                            version=SEACROWD_VERSION,
-                            description=f"{_DATASETNAME} {seacrowd_schema} schema",
-                            schema=f"{seacrowd_schema}",
-                            subset_id=subset_id,
-                            first_language_name=first_lang_name,
-                            second_language_name=second_lang_name,
-                            script_language=script_names,
-                        )
-                    )
-
-                BUILDER_CONFIGS.extend(seacrowd_schema_config)
-
-    DEFAULT_CONFIG_NAME = f"{_LANGUAGES[0]}{_LANGUAGES[1]}_{_SCRIPT_LANGUAGE_NAMES[0]}_source"
+    DEFAULT_CONFIG_NAME = f"{_LANGUAGE_NAMES[0]}_{_LANGUAGE_NAMES[1]}_source"
 
     def _info(self) -> datasets.DatasetInfo:
 
