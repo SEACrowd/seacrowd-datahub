@@ -148,5 +148,4 @@ class MyParaphraseDataset(datasets.GeneratorBasedBuilder):
 
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             for i, row in dataset.iterrows():
-                # breakpoint()
-                yield i, {"id": i, "text_1": row["paraphrase1"], "text_2": row["paraphrase2"], "label": int(row["is_paraphrase"])}
+                yield i, {"id": i, "text_1": row["paraphrase1"], "text_2": row["paraphrase2"], "label": row["is_paraphrase"]}
