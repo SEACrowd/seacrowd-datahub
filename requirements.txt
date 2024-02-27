@@ -24,5 +24,4 @@ typing_extensions
 scikit-learn==1.1.2
 pyarrow
 opencv-python>=4.9
-tensorflow-datasets==4.9.4
-tensorflow==2.15.0
+tensorflow-datasets

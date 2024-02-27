@@ -2,7 +2,6 @@ from pathlib import Path
 
 import datasets
 import pandas as pd
-import tensorflow as tf
 import tensorflow_datasets as tfds
 
 from seacrowd.utils import schemas
@@ -76,8 +75,7 @@ def get_article(gem_id, split):
     assert "wiki_lingua" in gem_id or "xlsum" in gem_id, "gem_id should either from wiki_lingua or xlsum."
     if "wiki_lingua" in gem_id:
         hfdf = _WIKILINGUAL_DATA[split if split == "test" else "validation"]
-        target_value_byte = tf.constant(gem_id, dtype=tf.string)
-        target_row = hfdf[hfdf["gem_id"] == target_value_byte]
+        target_row = hfdf[hfdf["gem_id"].apply(lambda x: x.decode("utf-8")) == gem_id]
         return target_row["source"].values[0].decode("utf-8")
     else:
         hfdf = _XLSUM_DATA[split if split == "test" else "validation"]
