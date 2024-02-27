@@ -19,7 +19,7 @@ South East Asia is home to more than 1,000 native languages. Nevertheless, South
 
 ## How to contribute?
 
-You can contribute by proposing **unregistered NLP dataset** on [our record](https://seacrowd.github.io/seacrowd-catalogue/). [Just fill out this form](https://jotform.com/team/232952680898069/seacrowd-sea-datasets), and we will check and approve your entry.
+You can contribute by proposing **unregistered NLP dataset** on [our approved record](https://seacrowd.github.io/seacrowd-catalogue/) and our [in-review datasets](https://docs.google.com/spreadsheets/d/1ibbywsC1tQ_sLPX8bUAjC-vrTrUqZgZA46W_sxWw4Ss/edit?usp=sharing). [Just fill out this form](https://jotform.com/team/232952680898069/seacrowd-sea-datasets), and we will check and approve your entry if it meets our requirements (see [this](https://github.com/SEACrowd/seacrowd-datahub/blob/master/REVIEWING.md#approval-checklist) for the detailed checklist).
 
 We will give **contribution points** based on several factors, including: **supported modality**, **language scarcity**, or **task scarcity**.
 
@@ -55,8 +55,7 @@ The license for a dataset is not always obvious. Here are some strategies to try
 If no official license is listed anywhere, but you find a webpage that describes general data usage policies for the dataset, you can fall back to providing that URL in the `_LICENSE` variable. If you can't find any license information, please note in your PR and put `_LICENSE="Unknown"` in your dataset script.
 
 #### What if my dataset is not yet publicly available?
-
-You can upload your dataset publicly first, eg. on Github.
+You can upload your dataset publicly first, eg. on Github. If you're an owner of a Private Dataset that is being contacted by SEACrowd Representative for a possibility of opening that dataset, you may visit this [Private Dataset FAQ](PRIVATE.md).
 
 #### Can I create a PR if I have an idea?
 
@@ -71,7 +70,7 @@ Yes, you can ask for helps in SEACrowd's community channel! Please join our [Dis
 
 We greatly appreciate your help!
 
-The artifacts of this initiative will be described in a forthcoming academic paper targeting a machine learning or NLP audience. Please refer to [this section](#contribution-guidelines) for your contribution rewards for helping South-East Asian NLP. We recognize that some datasets require more effort than others, so please reach out if you have questions. Our goal is to be inclusive with credit!
+The artifacts of this initiative will be described in a forthcoming academic paper targeting a machine learning or NLP audience. Please refer to [this section](https://github.com/SEACrowd#how-much-should-i-contribute) for your contribution rewards in helping South-East Asian NLP. We recognize that some datasets require more effort than others, so please reach out if you have questions. Our goal is to be inclusive with credit!
 
 ## Acknowledgements
 

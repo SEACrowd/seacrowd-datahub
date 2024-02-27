@@ -86,4 +86,4 @@ For a multilingual dataset of Lang Identification (or Linguistic Features/Unit I
 ## Approval process
 1. For every dataloader, it requires 2 reviewers per issue (the assignee must not review their own dataloader).
 2. Once the second reviewer approved, the PR should be merged to the `master` branch using `squash and merge` strategy for cleaner commit history.
-3. Reviewers will be assigned from the reviewer pool once/twice a week (by holy@aisingapore.org) or any reviewers can take any unassigned review process as long as it can be done in timely manner.
+3. Reviewers will be assigned from the reviewer pool once/twice a week (by @holylovenia) or any reviewers can take any unassigned review process as long as it can be done in timely manner.
