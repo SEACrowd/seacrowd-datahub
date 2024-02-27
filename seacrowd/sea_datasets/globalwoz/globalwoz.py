@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 import datasets
+import itertools
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
@@ -28,7 +29,7 @@ _CITATION = """\
 }
 """
 
-_DATASETNAME = "[globalwoz]"
+_DATASETNAME = "globalwoz"
 
 _DESCRIPTION = """\
 This is the data of the paper “GlobalWoZ: Globalizing MultiWoZ to Develop Multilingual Task-Oriented Dialogue Systems” accepted by ACL 2022. The dataset contains several sub-datasets in 20 languages and 3 schemes (F&E, E&F, F&F), including Indonesian (id), Thai (th), and Vietnamese (vi) language. The method is based on translating dialogue templates and filling them with local entities in the target language countries.
@@ -82,27 +83,8 @@ class GlobalWoZ(datasets.GeneratorBasedBuilder):
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
     BUILDER_CONFIGS = [
-        seacrowd_config_constructor("EandF", "id", "source", _SOURCE_VERSION),
-        seacrowd_config_constructor("EandF", "th", "source", _SOURCE_VERSION),
-        seacrowd_config_constructor("EandF", "vi", "source", _SOURCE_VERSION),
-        seacrowd_config_constructor("FandE", "id", "source", _SOURCE_VERSION),
-        seacrowd_config_constructor("FandE", "th", "source", _SOURCE_VERSION),
-        seacrowd_config_constructor("FandE", "vi", "source", _SOURCE_VERSION),
-        seacrowd_config_constructor("FandF", "id", "source", _SOURCE_VERSION),
-        seacrowd_config_constructor("FandF", "th", "source", _SOURCE_VERSION),
-        seacrowd_config_constructor("FandF", "vi", "source", _SOURCE_VERSION),
-        seacrowd_config_constructor("EandF", "id", "seacrowd_tod", _SEACROWD_VERSION),
-        seacrowd_config_constructor("EandF", "th", "seacrowd_tod", _SEACROWD_VERSION),
-        seacrowd_config_constructor("EandF", "vi", "seacrowd_tod", _SEACROWD_VERSION),
-        seacrowd_config_constructor("FandE", "id", "seacrowd_tod", _SEACROWD_VERSION),
-        seacrowd_config_constructor("FandE", "th", "seacrowd_tod", _SEACROWD_VERSION),
-        seacrowd_config_constructor("FandE", "vi", "seacrowd_tod", _SEACROWD_VERSION),
-        seacrowd_config_constructor("FandF", "id", "seacrowd_tod", _SEACROWD_VERSION),
-        seacrowd_config_constructor("FandF", "th", "seacrowd_tod", _SEACROWD_VERSION),
-        seacrowd_config_constructor("FandF", "vi", "seacrowd_tod", _SEACROWD_VERSION),
+        seacrowd_config_constructor(tod_format, lang, schema, _SOURCE_VERSION if schema == "source" else _SEACROWD_VERSION) for tod_format, lang, schema in itertools.product(("EandF", "FandE", "FandF"), ("id", "th", "vi"), ("source", "seacrowd_tod"))
     ]
-
-    DEFAULT_CONFIG_NAME = "globalwoz_EandF_id_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
