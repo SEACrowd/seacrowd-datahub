@@ -78,7 +78,6 @@ class Tasks(Enum):
     SPAN_BASED_ABSA = "SPAN_ABSA"
     TOKEN_LEVEL_LANGUAGE_IDENTIFICATION = "LANGID"
 
-
     # Pair Text Classification
     COMMONSENSE_REASONING = "CR"
     QUESTION_ANSWERING = "QA"
