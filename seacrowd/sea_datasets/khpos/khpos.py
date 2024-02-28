@@ -22,7 +22,6 @@ Here, some symbols such as "។" (Khmer sign Khan), "៖" (Khmer sign Camnuc pii
 counted as words. The shortest sentence contained only 1 word and longest sentence contained 169 words. This dataset contains
 A validation set and a test set, each containing 1000 sentences.
 """
-import os
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -64,9 +63,11 @@ _LICENSE = Licenses.CC_BY_NC_SA_4_0.value
 _LOCAL = False
 
 _URLS = {
-    _DATASETNAME: "https://raw.githubusercontent.com/ye-kyaw-thu/khPOS/master/corpus-draft-ver-1.0/data/after-replace/train.all2",
-    'validation': "https://raw.githubusercontent.com/ye-kyaw-thu/khPOS/master/corpus-draft-ver-1.0/data/OPEN-TEST",
-    'test'      : "https://raw.githubusercontent.com/ye-kyaw-thu/khPOS/master/corpus-draft-ver-1.0/data/CLOSE-TEST"
+    _DATASETNAME: {
+        'train': "https://raw.githubusercontent.com/ye-kyaw-thu/khPOS/master/corpus-draft-ver-1.0/data/after-replace/train.all2",
+        'validation': "https://raw.githubusercontent.com/ye-kyaw-thu/khPOS/master/corpus-draft-ver-1.0/data/OPEN-TEST",
+        'test': "https://raw.githubusercontent.com/ye-kyaw-thu/khPOS/master/corpus-draft-ver-1.0/data/CLOSE-TEST"
+    }
 }
 
 _SUPPORTED_TASKS = [Tasks.POS_TAGGING]  
@@ -143,13 +144,13 @@ A validation set and a test set, each containing 1000 sentences.
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        urls = _URLS[_DATASETNAME]
+        urls = _URLS[_DATASETNAME]['train']
         path = dl_manager.download_and_extract(urls)
 
-        dev_url  = _URLS['validation']
+        dev_url  = _URLS[_DATASETNAME]['validation']
         dev_path = dl_manager.download_and_extract(dev_url)
 
-        test_url  = _URLS['test']
+        test_url  = _URLS[_DATASETNAME]['test']
         test_path = dl_manager.download_and_extract(test_url)
 
         return [
