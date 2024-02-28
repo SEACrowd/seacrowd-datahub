@@ -101,7 +101,8 @@ _SOURCE_VERSION = ""
 _SEACROWD_VERSION = "1.0.0"
 
 
-# TODO: Name the dataset class to match the script name using CamelCase instead of snake_case
+# TODO: Name the dataset class to match the script name using PascalCase instead of snake_case. 
+# optional: class name can append "Dataset" as suffix to provide better clarity (e.g. OSCAR 2201 --> Oscar2201Dataset/Oscar2201)
 class NewDataset(datasets.GeneratorBasedBuilder):
     """TODO: Short description of my dataset."""
 
