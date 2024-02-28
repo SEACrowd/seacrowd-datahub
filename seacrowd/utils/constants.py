@@ -51,7 +51,6 @@ class Tasks(Enum):
     # Single Text Classification (single-label)
     ABUSIVE_LANGUAGE_PREDICTION = "ABL"
     COMPLAINT_DETECTION = "CD"
-    COMPLAINT_DETECTION = "CD"
     DOMAIN_KNOWLEDGE_CLASSIFICATION = "DKC" # classification for non NLP-oriented label
     EMOTION_CLASSIFICATION = "EC"
     LANGUAGE_IDENTIFICATION = "LI"
