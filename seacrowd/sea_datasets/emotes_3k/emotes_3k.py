@@ -72,7 +72,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class Emotes3K(datasets.GeneratorBasedBuilder):
+class Emotes3KDatasets(datasets.GeneratorBasedBuilder):
     """
     Emotes3K consists of one human annotated dataset for the purpose of morality classification and instruction tuning.
     """
@@ -82,57 +82,57 @@ class Emotes3K(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="emotes_3k_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
-            description="emotes_3k source schema",
+            description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id="emotes_3k",
+            subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
-            name="emotes_3k_seacrowd_text",
+            name=f"{_DATASETNAME}_seacrowd_text",
             version=SEACROWD_VERSION,
-            description="emotes_3k SEACrowd schema",
+            description=f"{_DATASETNAME} SEACrowd schema",
             schema="seacrowd_text",
-            subset_id="emotes_3k",
+            subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
-            name="emotes_3k_eng_seacrowd_text",
+            name=f"{_DATASETNAME}_eng_seacrowd_text",
             version=SEACROWD_VERSION,
-            description="emotes_3k SEACrowd schema",
+            description=f"{_DATASETNAME} SEACrowd schema",
             schema="seacrowd_text",
-            subset_id="emotes_3k",
+            subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
-            name="emotes_3k_tgl_seacrowd_text",
+            name=f"{_DATASETNAME}_tgl_seacrowd_text",
             version=SEACROWD_VERSION,
-            description="emotes_3k SEACrowd schema",
+            description=f"{_DATASETNAME} SEACrowd schema",
             schema="seacrowd_text",
-            subset_id="emotes_3k",
+            subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
-            name="emotes_3k_seacrowd_t2t",
+            name=f"{_DATASETNAME}_seacrowd_t2t",
             version=SEACROWD_VERSION,
-            description="emotes_3k SEACrowd schema",
+            description=f"{_DATASETNAME} SEACrowd schema",
             schema="seacrowd_t2t",
-            subset_id="emotes_3k",
+            subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
-            name="emotes_3k_eng_seacrowd_t2t",
+            name=f"{_DATASETNAME}_eng_seacrowd_t2t",
             version=SEACROWD_VERSION,
-            description="emotes_3k SEACrowd schema",
+            description=f"{_DATASETNAME} SEACrowd schema",
             schema="seacrowd_t2t",
-            subset_id="emotes_3k",
+            subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
-            name="emotes_3k_tgl_seacrowd_t2t",
+            name=f"{_DATASETNAME}_tgl_seacrowd_t2t",
             version=SEACROWD_VERSION,
-            description="emotes_3k SEACrowd schema",
+            description=f"{_DATASETNAME} SEACrowd schema",
             schema="seacrowd_t2t",
-            subset_id="emotes_3k",
+            subset_id=_DATASETNAME,
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = "emotes_3k_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
