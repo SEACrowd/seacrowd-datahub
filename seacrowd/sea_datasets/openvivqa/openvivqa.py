@@ -37,9 +37,9 @@ _URLS = {
         "test": "https://huggingface.co/datasets/uitnlp/OpenViVQA-dataset/raw/main/vlsp2023_test_data.json",
         "dev": "https://huggingface.co/datasets/uitnlp/OpenViVQA-dataset/raw/main/vlsp2023_dev_data.json"},
     "images": {
-        "train": "https://huggingface.co/datasets/uitnlp/OpenViVQA-dataset/raw/main/train-images.zip",
-        "test": "https://huggingface.co/datasets/uitnlp/OpenViVQA-dataset/raw/main/test-images.zip",
-        "dev": "https://huggingface.co/datasets/uitnlp/OpenViVQA-dataset/raw/main/dev-images.zip"
+        "train": "https://huggingface.co/datasets/uitnlp/OpenViVQA-dataset/resolve/main/train-images.zip?download=true",
+        "test": "https://huggingface.co/datasets/uitnlp/OpenViVQA-dataset/resolve/main/test-images.zip?download=true",
+        "dev": "https://huggingface.co/datasets/uitnlp/OpenViVQA-dataset/resolve/main/dev-images.zip?download=true"
     }
 }
 _SUPPORTED_TASKS = [Tasks.VISUAL_QUESTION_ANSWERING]
@@ -98,12 +98,14 @@ class OpenViVQADataset(datasets.GeneratorBasedBuilder):
         train_image_dir = dl_manager.download_and_extract(_URLS["images"]["train"])
         test_image_dir = dl_manager.download_and_extract(_URLS["images"]["test"])
         dev_image_dir = dl_manager.download_and_extract(_URLS["images"]["dev"])
+        image_dir = dl_manager.download_and_extract(_URLS["images"])
+
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
                     "filepath": data_dir["train"],
-                    "imagepath": train_image_dir,
+                    "imagepath": os.path.join(image_dir["train"], "training-images"),
                     "split": "train",
                 },
             ),
@@ -111,7 +113,7 @@ class OpenViVQADataset(datasets.GeneratorBasedBuilder):
                 name=datasets.Split.TEST,
                 gen_kwargs={
                     "filepath": data_dir["test"],
-                    "imagepath": test_image_dir,
+                    "imagepath": os.path.join(image_dir["test"], "test-images"),
                     "split": "test",
                 },
             ),
@@ -119,7 +121,7 @@ class OpenViVQADataset(datasets.GeneratorBasedBuilder):
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
                     "filepath": data_dir["dev"],
-                    "imagepath": dev_image_dir,
+                    "imagepath": os.path.join(image_dir["dev"], "dev-images"),
                     "split": "validation",
                 },
             ),
