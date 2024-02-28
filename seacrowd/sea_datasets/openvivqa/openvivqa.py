@@ -1,11 +1,11 @@
 # coding=utf-8
+import json
 import os
 from pathlib import Path
 from typing import Dict, List, Tuple
 
 import datasets
-import pandas as pd
-import json
+
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
@@ -35,12 +35,13 @@ _URLS = {
     "dataset": {
         "train": "https://huggingface.co/datasets/uitnlp/OpenViVQA-dataset/raw/main/vlsp2023_train_data.json",
         "test": "https://huggingface.co/datasets/uitnlp/OpenViVQA-dataset/raw/main/vlsp2023_test_data.json",
-        "dev": "https://huggingface.co/datasets/uitnlp/OpenViVQA-dataset/raw/main/vlsp2023_dev_data.json"},
+        "dev": "https://huggingface.co/datasets/uitnlp/OpenViVQA-dataset/raw/main/vlsp2023_dev_data.json",
+    },
     "images": {
         "train": "https://huggingface.co/datasets/uitnlp/OpenViVQA-dataset/resolve/main/train-images.zip?download=true",
         "test": "https://huggingface.co/datasets/uitnlp/OpenViVQA-dataset/resolve/main/test-images.zip?download=true",
-        "dev": "https://huggingface.co/datasets/uitnlp/OpenViVQA-dataset/resolve/main/dev-images.zip?download=true"
-    }
+        "dev": "https://huggingface.co/datasets/uitnlp/OpenViVQA-dataset/resolve/main/dev-images.zip?download=true",
+    },
 }
 _SUPPORTED_TASKS = [Tasks.VISUAL_QUESTION_ANSWERING]
 _SOURCE_VERSION = "1.0.0"
@@ -74,13 +75,10 @@ class OpenViVQADataset(datasets.GeneratorBasedBuilder):
     def _info(self) -> datasets.DatasetInfo:
 
         if self.config.schema == "source":
-            features = datasets.Features({"img_path": datasets.Value("string"),
-                                          "question": datasets.Value("string"),
-                                          "answer": datasets.Value("string"),
-                                          "id": datasets.Value("string")})
+            features = datasets.Features({"img_path": datasets.Value("string"), "question": datasets.Value("string"), "answer": datasets.Value("string"), "id": datasets.Value("string")})
         elif self.config.schema == "seacrowd_imqa":
             features = schemas.imqa_features
-            features['meta'] = {"image_path": datasets.Value("string")}
+            features["meta"] = {"image_path": datasets.Value("string")}
         else:
             raise ValueError(f"No schema matched for {self.config.schema}")
 
@@ -95,9 +93,6 @@ class OpenViVQADataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
         data_dir = dl_manager.download_and_extract(_URLS["dataset"])
-        train_image_dir = dl_manager.download_and_extract(_URLS["images"]["train"])
-        test_image_dir = dl_manager.download_and_extract(_URLS["images"]["test"])
-        dev_image_dir = dl_manager.download_and_extract(_URLS["images"]["dev"])
         image_dir = dl_manager.download_and_extract(_URLS["images"])
 
         return [
@@ -130,7 +125,7 @@ class OpenViVQADataset(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath: Path, imagepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
-        raw_examples = json.load(open(filepath, 'r'))
+        raw_examples = json.load(open(filepath, "r"))
         images = raw_examples["images"]
         data_annotations = raw_examples["annotations"]
         for sample_id, q_key in enumerate(list(data_annotations.keys())):
@@ -143,11 +138,7 @@ class OpenViVQADataset(datasets.GeneratorBasedBuilder):
             sample_question = sample["question"]
             sample_answer = sample["answer"]
             if self.config.schema == "source":
-                yield sample_id, {"img_path": sample_img_path,
-                                  "question": sample_question,
-                                  "answer": sample_answer,
-                                  "id": quest_id
-                                  }
+                yield sample_id, {"img_path": sample_img_path, "question": sample_question, "answer": sample_answer, "id": quest_id}
             elif self.config.schema == "seacrowd_imqa":
                 example = {
                     "id": q_key,
@@ -159,7 +150,7 @@ class OpenViVQADataset(datasets.GeneratorBasedBuilder):
                     "context": sample_img_id,
                     "answer": [sample_answer],
                     "image_paths": [sample_img_path],
-                    "meta": {"image_path": sample_img_path}
+                    "meta": {"image_path": sample_img_path},
                 }
 
                 yield sample_id, example
