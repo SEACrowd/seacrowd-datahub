@@ -91,8 +91,6 @@ _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
-logger = datasets.logging.get_logger(__name__)
-
 
 class WITDataset(datasets.GeneratorBasedBuilder):
     """
@@ -205,7 +203,7 @@ class WITDataset(datasets.GeneratorBasedBuilder):
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
                     "filepaths": val_paths,
-                    "split": "val",
+                    "split": "validation",
                 },
             ),
         ]
@@ -238,12 +236,23 @@ class WITDataset(datasets.GeneratorBasedBuilder):
                 if self.config.schema == "seacrowd_imtext":
                     for d in data:
                         if d["language"] in language_list:
+                            text = None
+                            context = None
+                            if d["caption_reference_description"] != "":
+                                text = d["caption_reference_description"]
+                                context = "caption_reference_description"
+                            elif d["caption_attribution_description"] != "":
+                                text = d["caption_attribution_description"]
+                                context = "caption_attribution_description"
+                            else:
+                                text = d["caption_alt_text_description"]
+                                context = "caption_alt_text_description"
                             x = {
                                 "id": idx,
                                 "image_paths": [d["image_url"]],
-                                "texts": d["page_title"],
+                                "texts": text,
                                 "metadata": {
-                                    "context": None,
+                                    "context": context,
                                     "labels": None,
                                 },
                             }
@@ -256,3 +265,4 @@ class WITDataset(datasets.GeneratorBasedBuilder):
                             x = {k: v if v != "" and k in self.info.features else None for k, v in d.items()}
                             yield idx, x
                             idx += 1
+                            
