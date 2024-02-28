@@ -62,7 +62,7 @@ from more than 50 native Vietnamese volunteers.
 
 _HOMEPAGE = "https://zenodo.org/records/7068130"
 
-_LANGUAGES = {"vie": "vi"}
+_LANGUAGES = ["vie"]
 
 _LICENSE = Licenses.CC_BY_SA_4_0.value
 
