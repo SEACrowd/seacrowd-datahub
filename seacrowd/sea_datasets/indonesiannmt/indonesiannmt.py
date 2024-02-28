@@ -14,11 +14,10 @@
 # limitations under the License.
 
 """
-The dataset is split into two: 
+The dataset is split into two:
 1. Monolingual (ends with .txt) [Indonesian, Javanese]
 2. Bilingual (ends with .tsv) [Indonesian-Javanese, Indonesian-Balinese, Indonesian-Minangkabau, Indonesian-Sundanese]
 """
-import os
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -26,11 +25,11 @@ import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
+from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @misc{susanto2023replicable,
-      title={Replicable Benchmarking of Neural Machine Translation (NMT) on Low-Resource Local Languages in Indonesia}, 
+      title={Replicable Benchmarking of Neural Machine Translation (NMT) on Low-Resource Local Languages in Indonesia},
       author={Lucky Susanto and Ryandito Diandaru and Adila Krisnadhi and Ayu Purwarianti and Derry Wijaya},
       year={2023},
       eprint={2311.00998},
@@ -49,9 +48,9 @@ Only the Bilingual dataset is available for this dataloader
 
 _HOMEPAGE = "https://huggingface.co/datasets/Exqrch/IndonesianNMT"
 
-_LANGUAGES = ['ind', 'jav', 'ban', 'min', 'sun']  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
+_LANGUAGES = ["ind", "jav", "ban", "min", "sun"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 
-_LICENSE = Licenses.CC_BY_NC_SA_4_0.value 
+_LICENSE = Licenses.CC_BY_NC_SA_4_0.value
 
 _LOCAL = False
 
@@ -62,45 +61,47 @@ _URLS = {
     "ind_min": "https://huggingface.co/datasets/Exqrch/IndonesianNMT/resolve/main/id-min.tsv?download=true",
     "ind": "https://huggingface.co/datasets/Exqrch/IndonesianNMT/resolve/main/bt-id-jv.id.txt?download=true",
     "jav": "https://huggingface.co/datasets/Exqrch/IndonesianNMT/resolve/main/bt-id-jv.jv.txt?download=true",
-
 }
 
-_SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION, Tasks.SELF_SUPERVISED_PRETRAINING]  
+_SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION, Tasks.SELF_SUPERVISED_PRETRAINING]
 
 _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
+
 def seacrowd_config_constructor(modifier, schema, version):
     return SEACrowdConfig(
-            name=f"indonesiannmt_{modifier}_{schema}",
-            version=version,
-            description=f"indonesiannmt_{modifier} {schema} schema",
-            schema=f"{schema}",
-            subset_id="indonesiannmt",
-        )
+        name=f"indonesiannmt_{modifier}_{schema}",
+        version=version,
+        description=f"indonesiannmt_{modifier} {schema} schema",
+        schema=f"{schema}",
+        subset_id="indonesiannmt",
+    )
+
 
 class IndonesianNMT(datasets.GeneratorBasedBuilder):
-    """IndonesianNMT consists of 4 parallel datasets and 2 monolingual datasets, 
+    """IndonesianNMT consists of 4 parallel datasets and 2 monolingual datasets,
     all obtained synthetically from either gpt-3.5-turbo or text-davinci-003"""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
     BUILDER_CONFIGS = (
-        [seacrowd_config_constructor(x, 'source', _SOURCE_VERSION) for x in ['ind', 'jav']]
-        + [seacrowd_config_constructor(x, 'seacrowd_ssp', _SOURCE_VERSION) for x in ['ind', 'jav']]
-        + [seacrowd_config_constructor(x, 'source', _SOURCE_VERSION) for x in ['ind_jav', 'ind_min', 'ind_sun', 'ind_ban']]
-        + [seacrowd_config_constructor(x, 'seacrowd_t2t', _SEACROWD_VERSION) for x in ['ind_jav', 'ind_min', 'ind_sun', 'ind_ban']])
+        [seacrowd_config_constructor(x, "source", _SOURCE_VERSION) for x in ["ind", "jav"]]
+        + [seacrowd_config_constructor(x, "seacrowd_ssp", _SOURCE_VERSION) for x in ["ind", "jav"]]
+        + [seacrowd_config_constructor(x, "source", _SOURCE_VERSION) for x in ["ind_jav", "ind_min", "ind_sun", "ind_ban"]]
+        + [seacrowd_config_constructor(x, "seacrowd_t2t", _SEACROWD_VERSION) for x in ["ind_jav", "ind_min", "ind_sun", "ind_ban"]]
+    )
 
     DEFAULT_CONFIG_NAME = "indonesiannmt_ind_source"
 
     def is_mono(self):
         if self.config.schema == "seacrowd_ssp":
-            return True 
-        if 'source' in self.config.schema:
-            if len(self.config.name.split('_')) == 3:
-                return True 
+            return True
+        if "source" in self.config.schema:
+            if len(self.config.name.split("_")) == 3:
+                return True
         return False
 
     def _info(self) -> datasets.DatasetInfo:
@@ -142,11 +143,11 @@ class IndonesianNMT(datasets.GeneratorBasedBuilder):
         # ex mono: indonesiannmt_ind_source OR indonesiannmt_ind_seacrowd_ssp
         # ex para: indonesiannmt_ind_jav_source OR indonesiannmt_ind_jav_seacrowd_t2t
         is_mono = self.is_mono()
-        if 'seacrowd_ssp' in self.config.schema or is_mono:
-            lang = self.config.name.split('_')[1]
+        if "seacrowd_ssp" in self.config.schema or is_mono:
+            lang = self.config.name.split("_")[1]
             path = dl_manager.download_and_extract(_URLS[lang])
-        else:         
-            target = '_'.join(self.config.name.split('_')[1:3])
+        else:
+            target = "_".join(self.config.name.split("_")[1:3])
             url = _URLS[target]
             path = dl_manager.download_and_extract(url)
 
@@ -163,57 +164,53 @@ class IndonesianNMT(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         is_mono = self.is_mono()
-        STR_TO_ISO = {
-            'Indonesian': 'ind',
-            'Javanese': 'jav',
-            'Minangkabau': 'min',
-            'Sundanese': 'sun',
-            'Balinese': 'ban'
-        }
+        STR_TO_ISO = {"Indonesian": "ind", "Javanese": "jav", "Minangkabau": "min", "Sundanese": "sun", "Balinese": "ban"}
 
         with open(filepath, encoding="utf-8") as f:
-            flag = True  
-            if 'seacrowd_ssp' in self.config.schema or is_mono:
+            flag = True
+            if "seacrowd_ssp" in self.config.schema or is_mono:
                 for counter, row in enumerate(f):
-                    if row.strip != '':
-                        yield(counter, {
+                    if row.strip != "":
+                        yield (
+                            counter,
+                            {
                                 "id": str(counter),
                                 "text": row.strip(),
-                            }
+                            },
                         )
             elif self.config.schema == "source":
                 for counter, row in enumerate(f):
                     if flag:
-                        src, tgt = row.split('\t')
+                        src, tgt = row.split("\t")
                         tgt = tgt.strip()
                         flag = False
                     else:
                         if row.strip() != "":
-                            yield(
+                            yield (
                                 counter,
                                 {
                                     "id": str(counter),
-                                    "text_1": row.split('\t')[0].strip(),
-                                    "text_2": row.split('\t')[1].strip(),
+                                    "text_1": row.split("\t")[0].strip(),
+                                    "text_2": row.split("\t")[1].strip(),
                                     "lang_1": STR_TO_ISO[src],
                                     "lang_2": STR_TO_ISO[tgt],
-                                }
+                                },
                             )
             elif self.config.schema == "seacrowd_t2t":
                 for counter, row in enumerate(f):
                     if flag:
-                        src, tgt = row.split('\t')
+                        src, tgt = row.split("\t")
                         tgt = tgt.strip()
                         flag = False
                     else:
                         if row.strip() != "":
-                            yield(
+                            yield (
                                 counter,
                                 {
                                     "id": str(counter),
-                                    "text_1": row.split('\t')[0].strip(),
-                                    "text_2": row.split('\t')[1].strip(),
+                                    "text_1": row.split("\t")[0].strip(),
+                                    "text_2": row.split("\t")[1].strip(),
                                     "text_1_name": STR_TO_ISO[src],
                                     "text_2_name": STR_TO_ISO[tgt],
-                                }
+                                },
                             )
