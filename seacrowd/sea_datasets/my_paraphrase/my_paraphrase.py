@@ -55,7 +55,7 @@ _URLS = {
     ],
 }
 
-_SUPPORTED_TASKS = [Tasks.SEMANTIC_SIMILARITY]
+_SUPPORTED_TASKS = [Tasks.PARAPHRASING]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 _TAGS = [0, 1]
@@ -67,7 +67,7 @@ class MyParaphraseDataset(datasets.GeneratorBasedBuilder):
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-    SEACROWD_SCHEMA_NAME = "pairs_score"
+    SEACROWD_SCHEMA_NAME = "t2t"
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
@@ -93,7 +93,7 @@ class MyParaphraseDataset(datasets.GeneratorBasedBuilder):
             features = datasets.Features({"id": datasets.Value("int32"), "paraphrase1": datasets.Value("string"), "paraphrase2": datasets.Value("string"), "is_paraphrase": datasets.Value("int32")})
 
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
-            features = schemas.pairs_features(_TAGS)
+            features = schemas.text2text_features
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -148,4 +148,4 @@ class MyParaphraseDataset(datasets.GeneratorBasedBuilder):
 
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             for i, row in dataset.iterrows():
-                yield i, {"id": i, "text_1": row["paraphrase1"], "text_2": row["paraphrase2"], "label": row["is_paraphrase"]}
+                yield i, {"id": i, "text_1": row["paraphrase1"], "text_2": row["paraphrase2"], "text_1_name": "anchor_text", "text_2_name": "paraphrased_text" if row["is_paraphrase"] else "non_paraphrased_text"}

@@ -292,7 +292,7 @@ SCHEMA_TO_FEATURES = {
     "TEXT_MULTI": text_multi_features(),
     "PAIRS": pairs_features(),
     "PAIRS_MULTI": pairs_multi_features(),
-    "PAIRS_SCORE": pairs_features(),
+    "PAIRS_SCORE": pairs_features_score(),
     "SEQ_LABEL": seq_label_features(),
     "SSP": ssp_features,
     "SPTEXT": speech_text_features,
