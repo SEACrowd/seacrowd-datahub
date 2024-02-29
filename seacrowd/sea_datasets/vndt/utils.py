@@ -1,23 +1,15 @@
-
-import conllu
-import re
 import typing as T
 
 from conllu.exceptions import ParseException
 from conllu.models import Metadata, TokenList
-from conllu.parser import (
-    _FieldParserType, _MetadataParserType, DEFAULT_FIELDS, DEFAULT_FIELD_PARSERS
-)
-from conllu.parser import (
-    parse_comment_line, parse_line
-)
+from conllu.parser import (DEFAULT_FIELD_PARSERS, DEFAULT_FIELDS,
+                           _FieldParserType, _MetadataParserType,
+                           parse_comment_line, parse_line)
 
 imputed_sent_id: int = 1
 
-def parse_token_and_impute_metadata(data: str, fields: T.Optional[T.Sequence[str]] = None,
-                             field_parsers: T.Optional[T.Dict[str, _FieldParserType]] = None,
-                             metadata_parsers: T.Optional[T.Dict[str, _MetadataParserType]] = None
-                             ) -> TokenList:
+
+def parse_token_and_impute_metadata(data: str, fields: T.Optional[T.Sequence[str]] = None, field_parsers: T.Optional[T.Dict[str, _FieldParserType]] = None, metadata_parsers: T.Optional[T.Dict[str, _MetadataParserType]] = None) -> TokenList:
     """
     Overrides conllu.parse_token_and_metadata via monkey patching.
     This function imputes the following metadata, if these are not found in the .conllu file:
@@ -57,7 +49,7 @@ def parse_token_and_impute_metadata(data: str, fields: T.Optional[T.Sequence[str
             tokens.append(parse_line(line, fields, field_parsers))
 
     if 'sent_id' not in metadata:
-        metadata['sent_id'] = imputed_sent_id 
+        metadata['sent_id'] = str(imputed_sent_id)
         imputed_sent_id += 1
 
     if 'text' not in metadata:
@@ -67,5 +59,3 @@ def parse_token_and_impute_metadata(data: str, fields: T.Optional[T.Sequence[str
         metadata['text'] = imputed_text
 
     return TokenList(tokens, metadata, default_fields=fields)
-
-conllu.parse_token_and_metadata = parse_token_and_impute_metadata

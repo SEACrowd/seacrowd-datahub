@@ -16,15 +16,15 @@
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+import conllu
 import datasets
 
+from seacrowd.sea_datasets.vndt.utils import parse_token_and_impute_metadata
 from seacrowd.utils import schemas
 from seacrowd.utils.common_parser import (load_ud_data,
                                           load_ud_data_as_seacrowd_kb)
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
-
-import seacrowd.sea_datasets.vndt.utils
 
 _CITATION = """\
 @InProceedings{Nguyen2014NLDB,
@@ -67,11 +67,13 @@ _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
-
 class VnDTDataset(datasets.GeneratorBasedBuilder):
     """
     VnDT is a Vietnamese dependency treebank from https://github.com/datquocnguyen/VnDT.
     """
+
+    # Override conllu.parse_token_and_metadata via monkey patching
+    conllu.parse_token_and_metadata = parse_token_and_impute_metadata
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
@@ -189,4 +191,7 @@ class VnDTDataset(datasets.GeneratorBasedBuilder):
                 raise ValueError(f"Invalid config: '{self.config.name}'")
 
         for idx, example in enumerate(dataset):
+            if self.config.schema == "source":
+                example.pop('sent_id', None)
+                example.pop('text', None)
             yield idx, example
