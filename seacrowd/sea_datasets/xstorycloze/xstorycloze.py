@@ -1,5 +1,4 @@
 import csv
-import itertools
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -63,7 +62,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class xStoryClozeDataset(datasets.GeneratorBasedBuilder):
+class XStoryClozeDataset(datasets.GeneratorBasedBuilder):
     """XStoryCloze subset for Indonesian and Burmese language."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
