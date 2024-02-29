@@ -126,7 +126,7 @@ class IdMsvdDataset(datasets.GeneratorBasedBuilder):
                 yield i, {
                     "id": str(i),
                     "video_path": str(row["video_path"]),
-                    "text": row["text"],
+                    "texts": row["text"],
                     "metadata": {
                         "resolution": {
                             "width": None,
