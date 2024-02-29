@@ -60,7 +60,8 @@ _LANGUAGES = ["ace", "ban", "bbc", "bew", "bjn", "bts", "btx", "bug", "cnh", "hi
 _LICENSE = Licenses.CC_BY_4_0.value
 
 _LOCAL = False
-_URL_TEMPLATE = "https://raw.githubusercontent.com/google-research/url-nlp/main/gatitos/{src}_{tgt}.tsv"
+
+_URLs = "https://raw.githubusercontent.com/google-research/url-nlp/main/gatitos/{src}_{tgt}.tsv"
 
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 
@@ -74,44 +75,25 @@ class GATITOSDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    BUILDER_CONFIGS = (
-        [
-            SEACrowdConfig(
-                name=f"{_DATASETNAME}_source",
-                version=SOURCE_VERSION,
-                description=f"{_DATASETNAME} source schema",
-                schema="source",
-                subset_id=f"{_DATASETNAME}_ace_eng",
-            ),
-            SEACrowdConfig(
-                name=f"{_DATASETNAME}_seacrowd_t2t",
-                version=SEACROWD_VERSION,
-                description=f"{_DATASETNAME} SEACrowd schema",
-                schema="seacrowd_t2t",
-                subset_id=f"{_DATASETNAME}_ace_eng",
-            ),
-        ]
-        + [
-            SEACrowdConfig(
-                name=f"{_DATASETNAME}_{src_lang}_{tgt_lang}_source",
-                version=datasets.Version(_SOURCE_VERSION),
-                description=f"{_DATASETNAME} source schema",
-                schema="source",
-                subset_id=f"{_DATASETNAME}_{src_lang}_{tgt_lang}",
-            )
-            for (src_lang, tgt_lang) in [("eng", lang) for lang in _LANGUAGES] + [(lang, "eng") for lang in _LANGUAGES]
-        ]
-        + [
-            SEACrowdConfig(
-                name=f"{_DATASETNAME}_{src_lang}_{tgt_lang}_seacrowd_t2t",
-                version=datasets.Version(_SEACROWD_VERSION),
-                description=f"{_DATASETNAME} SEACrowd schema",
-                schema="seacrowd_t2t",
-                subset_id=f"{_DATASETNAME}_{src_lang}_{tgt_lang}",
-            )
-            for (src_lang, tgt_lang) in [("eng", lang) for lang in _LANGUAGES] + [(lang, "eng") for lang in _LANGUAGES]
-        ]
-    )
+    BUILDER_CONFIGS = [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{src_lang}_{tgt_lang}_source",
+            version=datasets.Version(_SOURCE_VERSION),
+            description=f"{_DATASETNAME} source schema",
+            schema="source",
+            subset_id=f"{_DATASETNAME}_{src_lang}_{tgt_lang}",
+        )
+        for (src_lang, tgt_lang) in [("eng", lang) for lang in _LANGUAGES] + [(lang, "eng") for lang in _LANGUAGES]
+    ] + [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{src_lang}_{tgt_lang}_seacrowd_t2t",
+            version=datasets.Version(_SEACROWD_VERSION),
+            description=f"{_DATASETNAME} SEACrowd schema",
+            schema="seacrowd_t2t",
+            subset_id=f"{_DATASETNAME}_{src_lang}_{tgt_lang}",
+        )
+        for (src_lang, tgt_lang) in [("eng", lang) for lang in _LANGUAGES] + [(lang, "eng") for lang in _LANGUAGES]
+    ]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
@@ -136,7 +118,7 @@ class GATITOSDataset(datasets.GeneratorBasedBuilder):
 
         _, src_lang, tgt_lang = self.config.subset_id.split("_")
 
-        filepath = dl_manager.download_and_extract(_URL_TEMPLATE.format(src=src_lang.replace("eng", "en"), tgt=tgt_lang.replace("eng", "en")))
+        filepath = dl_manager.download_and_extract(_URLs.format(src=src_lang.replace("eng", "en"), tgt=tgt_lang.replace("eng", "en")))
 
         return [
             datasets.SplitGenerator(
