@@ -155,8 +155,6 @@ class SarawakMalayDataset(datasets.GeneratorBasedBuilder):
                 malay_text = malay_tg.mark
                 speaker_id = speaker.mark
 
-                # if text == '':
-                #     continue
                 start_sec, end_sec = int(start * 1000), int(end * 1000)
                 segment = audio_file[start_sec:end_sec]
                 segement_filename = f"{filepath}/segmented/{filename}-{round(start, 0)}-{round(end, 0)}.wav"
