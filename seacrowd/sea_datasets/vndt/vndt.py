@@ -24,6 +24,8 @@ from seacrowd.utils.common_parser import (load_ud_data,
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
+import seacrowd.sea_datasets.vndt.utils
+
 _CITATION = """\
 @InProceedings{Nguyen2014NLDB,
   author = {Nguyen, Dat Quoc  and  Nguyen, Dai Quoc  and  Pham, Son Bao and Nguyen, Phuong-Thai and Nguyen, Minh Le},
