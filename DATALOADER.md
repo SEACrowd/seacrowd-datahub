@@ -103,7 +103,7 @@ Make sure your `pip` package points to your environment's source.
 Use this bash script to initialize your new dataloader folder along with template of your dataloader script under `SEACrowd/seacrowd-datahub/sea_datasets` directory using this:
 
     sh templates/initiate_seacrowd_dataloader.sh <YOUR_DATALOADER_NAME>
-The value of <YOUR_DATALODER_NAME> can be checked on the issue ticket that you were assigned to.
+The value of `<YOUR_DATALODER_NAME>` can be checked on the issue ticket that you were assigned to.
 
 i.e: for this [issue ticket](https://github.com/SEACrowd/seacrowd-datahub/issues/32), the dataloader name indicates `Dataloader name: xl_sum/xl_sum.py`, hence the value of `<YOUR_DATALOADER_NAME>` is `xl_sum`.
 
@@ -134,7 +134,7 @@ To help you implement a dataset, you can see the implementation of [other datase
 
 #### Running & Debugging:
 You can run your data loader script during development by appending the following
-statement to your code (if you have your dataloader folder initialized using previous bash script, it already includes this):
+statement to your code (if you have your dataloader folder initialized using previous bash script, it already includes this, else you may add these by yourself):
 
 ```python
 if __name__ == "__main__":
