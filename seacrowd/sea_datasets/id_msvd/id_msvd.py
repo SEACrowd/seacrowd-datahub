@@ -72,7 +72,7 @@ class IdMsvdDataset(datasets.GeneratorBasedBuilder):
             features = datasets.Features(
                 {
                     "video_path": datasets.Value("string"),
-                    "texts": datasets.Sequence(datasets.Value("string")),
+                    "text": datasets.Value("string"),
                 }
             )
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
@@ -115,11 +115,10 @@ class IdMsvdDataset(datasets.GeneratorBasedBuilder):
         df["video_path"] = df["video_path"].apply(lambda x: video_path / f"{x}.avi")
 
         if self.config.schema == "source":
-            df = df.groupby("video_path").agg(list).reset_index()
             for i, row in df.iterrows():
                 yield i, {
                     "video_path": str(row["video_path"]),
-                    "texts": row["text"],
+                    "text": row["text"],
                 }
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             for i, row in df.iterrows():
