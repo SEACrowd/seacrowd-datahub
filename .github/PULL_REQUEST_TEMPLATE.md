@@ -1,6 +1,9 @@
 Please name your PR title and the first line of PR message after the issue it will close. You can use the following examples:
+
 **Title**: Closes #{ISSUE_NUMBER} | Add/Update Dataloader {DATALOADER_NAME}
+
 **First line PR Message**: Closes #{ISSUE_NUMBER}
+
 where you replace the {ISSUE_NUMBER} with the one corresponding to your dataset.
 
 ### Checkbox
