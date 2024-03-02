@@ -28,7 +28,6 @@ from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
-# TODO: Add BibTeX citation
 _CITATION = """\
 @inproceedings{lample2018word,
   title={Word translation without parallel data},
@@ -48,7 +47,6 @@ It comprises of Europeans languages in every direction, and SEA languages to and
 
 _HOMEPAGE = "https://github.com/facebookresearch/MUSE#ground-truth-bilingual-dictionaries"
 
-# TODO: Add languages related to this dataset
 _LANGUAGES = ["fil", "ind", "zlm", "tha", "vie"]
 
 _LICENSE = Licenses.CC_BY_NC_ND_4_0.value
@@ -143,7 +141,6 @@ class MUSEDataset(datasets.GeneratorBasedBuilder):
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
-                # Whatever you put in gen_kwargs will be passed to _generate_examples
                 gen_kwargs={"src_lang": src_lang, "tgt_lang": tgt_lang, "filepath": train_file},
             ),
             datasets.SplitGenerator(
