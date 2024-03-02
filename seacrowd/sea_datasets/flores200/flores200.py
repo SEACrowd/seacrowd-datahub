@@ -86,7 +86,7 @@ _LANGUAGES = [
     "tha",
     "vie",
     "war",
-    "zsm"
+    "zsm",
 ]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 
 _LANGUAGE_NAMES = [
@@ -479,9 +479,3 @@ class Flores200(datasets.GeneratorBasedBuilder):
 
         else:
             raise ValueError(f"Invalid config: {self.config.name}")
-
-
-# This allows you to run your dataloader with `python [dataset_name].py` during development
-# TODO: Remove this before making your PR
-if __name__ == "__main__":
-    datasets.load_dataset(__file__, "flores200_source")
