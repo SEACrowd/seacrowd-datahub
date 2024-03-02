@@ -146,4 +146,4 @@ class LazadaReviewFilipinoDataset(datasets.GeneratorBasedBuilder):
 
         elif self.config.schema == "seacrowd_text":
             for i in range(len(data)):
-                yield i, {"id": str(i), "text": data[i]['review'], "label": data[i]['rating']}
+                yield i, {"id": str(i), "text": data[i]['review'], "label": str(data[i]['rating'])}
