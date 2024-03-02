@@ -83,33 +83,25 @@ class MKQADataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
+    _ANS_TYPES = [
+        "binary",
+        "date",
+        "entity",
+        "long_answer",
+        "number",
+        "number_with_unit",
+        "short_phrase",
+        "unanswerable",
+    ]
+
     _SOURCE_LANGUAGES = [
-        # "ar",
-        # "da",
-        # "de",
-        # "en",
-        # "es",
-        # "fi",
-        # "fr",
-        # "he",
-        # "hu",
-        # "it",
-        # "ja",
-        # "ko",
         "km",
         "ms",
-        # "nl",
-        # "no",
-        # "pl",
-        # "pt",
-        # "ru",
-        # "sv",
         "th",
-        # "tr",
         "vi",
-        # "zh_cn",
-        # "zh_hk",
-        # "zh_tw",
+        # Filtered out:
+        # "ar", "da", "de", "en", "es", "fi", "fr", "he", "hu", "it", "ja", "ko",
+        # "nl", "no", "pl", "pt", "ru", "sv", "tr", "zh_cn", "zh_hk", "zh_tw",
     ]
 
     _LANG_3TO2 = {
@@ -155,18 +147,7 @@ class MKQADataset(datasets.GeneratorBasedBuilder):
                     "answers": {
                         cur_lang: [
                             {
-                                "type": datasets.ClassLabel(
-                                    names=[
-                                        "binary",
-                                        "date",
-                                        "entity",
-                                        "long_answer",
-                                        "number",
-                                        "number_with_unit",
-                                        "short_phrase",
-                                        "unanswerable",
-                                    ]
-                                ),
+                                "type": datasets.ClassLabel(names=self._ANS_TYPES),
                                 "entity": datasets.Value("string"),
                                 "text": datasets.Value("string"),
                                 "aliases": [datasets.Value("string")],
@@ -183,6 +164,7 @@ class MKQADataset(datasets.GeneratorBasedBuilder):
             features = schemas.qa_features
             features["meta"]["answer_entity"] = datasets.Sequence(datasets.Value("string"))
             features["meta"]["answer_aliases"] = datasets.Sequence(datasets.Sequence(datasets.Value("string")))
+            features["meta"]["answer_type"] = datasets.Sequence(datasets.ClassLabel(names=self._ANS_TYPES))
 
         else:  # schema not found! should NOT reach here ...
             raise NotImplementedError()
@@ -235,11 +217,11 @@ class MKQADataset(datasets.GeneratorBasedBuilder):
                         "question_id": cur["example_id"],
                         "document_id": "",
                         "question": cur["queries"][cur_lang],
-                        "type": [ans["type"] for ans in cur["answers"][cur_lang]],
+                        "type": "open_domain",
+                        # "type": [ans["type"] for ans in cur["answers"][cur_lang]],
                         "choices": [],
                         "context": "",
                         "answer": [ans.get("text", None) for ans in cur["answers"][cur_lang]],
-                        # "meta": {},
-                        "meta": {f"answer_{k}": [ans.get(k, None) for ans in cur["answers"][cur_lang]] for k in ["entity", "aliases"]},
+                        "meta": {f"answer_{k}": [ans.get(k, None) for ans in cur["answers"][cur_lang]] for k in ["entity", "aliases", "type"]},
                     }
                     yield ret["id"], ret
