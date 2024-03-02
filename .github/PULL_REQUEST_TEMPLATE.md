@@ -2,7 +2,7 @@ Please name your PR after the issue it closes. You can use the following line: "
 
 ### Checkbox
 - [ ] Confirm that this PR is linked to the dataset issue.
-- [ ] Create the dataloader script `seacrowd/sea_datasets/my_dataset/my_dataset.py` (please use only lowercase and underscore for dataset naming).
+- [ ] Create the dataloader script `seacrowd/sea_datasets/my_dataset/my_dataset.py` (please use only lowercase and underscore for dataset folder naming) and its `__init__.py` within `my_dataset` folder.
 - [ ] Provide values for the `_CITATION`, `_DATASETNAME`, `_DESCRIPTION`, `_HOMEPAGE`, `_LICENSE`, `_LOCAL`, `_URLs`, `_SUPPORTED_TASKS`, `_SOURCE_VERSION`, and `_SEACROWD_VERSION` variables.
 - [ ] Implement `_info()`, `_split_generators()` and `_generate_examples()` in dataloader script.
 - [ ] Make sure that the `BUILDER_CONFIGS` class attribute is a list with at least one `SEACrowdConfig` for the source schema and one for a seacrowd schema.
