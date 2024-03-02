@@ -82,13 +82,11 @@ _LANGUAGES = [
     "pag",
     "shn",
     "sun",
-    "tam",
     "tgl",
     "tha",
     "vie",
     "war",
-    "zsm",
-    "yue",
+    "zsm"
 ]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 
 _LANGUAGE_NAMES = [
