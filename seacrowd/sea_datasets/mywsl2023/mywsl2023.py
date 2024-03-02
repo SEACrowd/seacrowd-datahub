@@ -108,7 +108,7 @@ class MyWsl2023(datasets.GeneratorBasedBuilder):
             )
 
         elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SIGN_LANGUAGE_RECOGNITION]).lower()}":
-            features = schemas.image_text_features(label_names=[""])
+            features = schemas.image_text_features(label_names=[])
 
         else:
             raise ValueError(f"Invalid config: {self.config.name}")
@@ -165,7 +165,7 @@ class MyWsl2023(datasets.GeneratorBasedBuilder):
                     "texts": os.path.basename(image_folder_path),
                     "metadata": {
                         "context": "Malaysian Sign Language (XML)",
-                        "labels": [""],
+                        "labels": [],
                     },
                 }
                 idx += 1
