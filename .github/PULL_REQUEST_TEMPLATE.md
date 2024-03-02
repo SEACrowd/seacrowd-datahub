@@ -1,4 +1,7 @@
-Please name your PR after the issue it closes. You can use the following line: "Closes #ISSUE-NUMBER" where you replace the ISSUE-NUMBER with the one corresponding to your dataset.
+Please name your PR title and the first line of PR message after the issue it will close. You can use the following examples:
+**Title**: Closes #{ISSUE_NUMBER} | Add/Update Dataloader {DATALOADER_NAME}
+**First line PR Message**: Closes #{ISSUE_NUMBER}
+where you replace the {ISSUE_NUMBER} with the one corresponding to your dataset.
 
 ### Checkbox
 - [ ] Confirm that this PR is linked to the dataset issue.
