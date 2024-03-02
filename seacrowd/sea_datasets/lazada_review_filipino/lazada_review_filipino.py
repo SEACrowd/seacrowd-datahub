@@ -91,7 +91,7 @@ class LazadaReviewFilipinoDataset(datasets.GeneratorBasedBuilder):
             subset_id="lazada_review_filipino",
         ),
         SEACrowdConfig(
-            name="lazada_review_filipino_seacrowd_[seacrowd_schema_name]",
+            name="lazada_review_filipino_seacrowd_seacrowd_text",
             version=SEACROWD_VERSION,
             description="lazada reviews in filipino SEACrowd schema",
             schema="seacrowd_text",
