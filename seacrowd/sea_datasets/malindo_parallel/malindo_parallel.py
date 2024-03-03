@@ -80,7 +80,7 @@ _SEACROWD_VERSION = "1.0.0"
 
 
 
-class MalindoParallel(datasets.GeneratorBasedBuilder):
+class MalindoParallelDataset(datasets.GeneratorBasedBuilder):
     """Data terjemahan bahasa Melayu/Indonesia"""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
