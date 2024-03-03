@@ -8,6 +8,9 @@ on:
   issues:
     types:
       - labeled
+  pull_request:
+    types:
+      - labeled
 
 jobs:
   add-comment-on-staled-issue:
