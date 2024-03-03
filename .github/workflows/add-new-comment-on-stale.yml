@@ -5,15 +5,15 @@
 # https://github.com/peter-evans/create-or-update-comment
 name: Adding reminder comment on staled issues & PRs
 on:
-  issues:
-    types:
-      - labeled
+  - issues:
+      types:
+        - labeled
   # read these to see why it uses 'pull_request_target' instead of 'pull_request':
   # 1. https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
   # 2. https://github.com/peter-evans/create-or-update-comment?tab=readme-ov-file#action-inputs (note section)
-  pull_request_target:
-    types:
-      - labeled
+  - pull_request_target:
+      types:
+        - labeled
 
 jobs:
   add-comment-on-staled-issue:
