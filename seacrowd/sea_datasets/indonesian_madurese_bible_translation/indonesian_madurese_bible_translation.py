@@ -32,7 +32,6 @@ from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
-# TODO: Add BibTeX citation
 _CITATION = """\
 @article{,
   author    = {Sulistyo, Danang Arbian and Wibawa, Aji Prasetya and Prasetya, Didik Dwi and Nafalski, Andrew},
@@ -47,12 +46,8 @@ _CITATION = """\
 }
 """
 
-# TODO: create a module level variable with your dataset name (should match script name)
-#  E.g. Hallmarks of Cancer: [dataset_name] --> hallmarks_of_cancer
 _DATASETNAME = "indonesian_madurese_bible_translation"
 
-# TODO: Add description of the dataset here
-# You can copy an official description
 _DESCRIPTION = """\
 The Madurese Parallel Corpus Dataset is created by scraping content from the online Bible, resulting in 30,013 Indonesian-Madurese sentences.
 This corpus is distinct from a previous Madurese dataset, which was gathered from physical documents such as the Kamus Lengkap Bahasa Madura-Indonesia.
@@ -62,87 +57,38 @@ like lemmas, pronunciation, linguistic descriptions, part of speech, loanwords, 
 on bilingual sentence pairs, potentially broadening the scope for linguistic studies and language technology advancements in the Madurese language.
 """
 
-# TODO: Add a link to an official homepage for the dataset here (if possible)
 _HOMEPAGE = "https://data.mendeley.com/datasets/cgtg4bhrtf/3"
-
-# TODO: Add languages related to this dataset
 _LANGUAGES = ["ind", "mad"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
-
-# TODO: Add the licence for the dataset here
-# Note that this doesn't have to be a common open source license.
-# In the case of the dataset intentionally is built without license, please use `Licenses.UNLICENSE.value`
-# In the case that it's not clear whether the dataset has a license or not, please use `Licenses.UNKNOWN.value`
-# Some datasets may also have custom licenses. In this case, simply put f'{Licenses.OTHERS.value} | {FULL_LICENSE_TERM}' into `_LICENSE`
 _LICENSE = Licenses.CC_BY_4_0.value  # example: Licenses.MIT.value, Licenses.CC_BY_NC_SA_4_0.value, Licenses.UNLICENSE.value, Licenses.UNKNOWN.value
-
-# TODO: Add a _LOCAL flag to indicate whether the data cannot be sourced from a public link
-#  E.g. the dataset requires signing a specific term of use, the dataset is sent through email, etc.
 _LOCAL = False
-
-# TODO: Add links to the urls needed to download your dataset files.
-#  For local datasets, this variable can be an empty dictionary.
-
-# For publicly available datasets you will most likely end up passing these URLs to dl_manager in _split_generators.
-# In most cases the URLs will be the same for the source and seacrowd config.
-# However, if you need to access different files for each config you can have multiple entries in this dict.
-# This can be an arbitrarily nested dict/list of URLs (see below in `_split_generators` method)
 _URLS = {
     _DATASETNAME: "https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/cgtg4bhrtf-3.zip",
 }
-
-# TODO: add supported task by dataset. One dataset may support multiple tasks
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]  # example: [Tasks.TRANSLITERATION, Tasks.NAMED_ENTITY_RECOGNITION, Tasks.RELATION_EXTRACTION]
-
-# TODO: set this to a version that is associated with the dataset. if none exists use "1.0.0"
-#  This version doesn't have to be consistent with semantic versioning. Anything that is
-#  provided by the original dataset as a version goes.
 _SOURCE_VERSION = "1.0.0"
-
 _SEACROWD_VERSION = "1.0.0"
 
 
-# TODO: Name the dataset class to match the script name using CamelCase instead of snake_case
-class NewDataset(datasets.GeneratorBasedBuilder):
+class IndonesianMadureseBibleTranslationDataset(datasets.GeneratorBasedBuilder):
     """TODO: This corpus consists of more than 20,000 Indonesian - Madurese sentences."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    # You will be able to load the "source" or "seacrowd" configurations with
-    # ds_source = datasets.load_dataset('my_dataset', name='source')
-    # ds_seacrowd = datasets.load_dataset('my_dataset', name='seacrowd')
-
-    # For local datasets you can make use of the `data_dir` and `data_files` kwargs
-    # https://huggingface.co/docs/datasets/add_dataset.html#downloading-data-files-and-organizing-splits
-    # ds_source = datasets.load_dataset('my_dataset', name='source', data_dir="/path/to/data/files")
-    # ds_seacrowd = datasets.load_dataset('my_dataset', name='seacrowd', data_dir="/path/to/data/files")
-
-    # TODO: For each dataset, implement Config for Source and SEACrowd;
-    #  If dataset contains more than one subset (see seacrowd/sea_datasets/smsa.py) implement for EACH of them.
-    #  Each of them should contain:
-    #   - name: should be unique for each dataset config eg. smsa_(source|seacrowd)_[seacrowd_schema_name]
-    #   - version: option = (SOURCE_VERSION|SEACROWD_VERSION)
-    #   - description: one line description for the dataset
-    #   - schema: options = (source|seacrowd_[seacrowd_schema_name])
-    #   - subset_id: subset id is the canonical name for the dataset (eg. smsa)
-    #  where [seacrowd_schema_name] can be checked in seacrowd/utils/constants.py
-    #    under variable `TASK_TO_SCHEMA`, in accordance to values from `_SUPPORTED_TASKS`
-    #    for all config(s) defined
-
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="indonesian_madurese_bible_translation_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
-            description="indonesian_madurese_bible_translation source schema",
+            description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id="indonesian_madurese_bible_translation",
+            subset_id=f"{_DATASETNAME}",
         ),
         SEACrowdConfig(
-            name="indonesian_madurese_bible_translation_seacrowd_t2t",
+            name=f"{_DATASETNAME}_seacrowd_t2t",
             version=SEACROWD_VERSION,
-            description="indonesian_madurese_bible_translation SEACrowd schema",
+            description=f"{_DATASETNAME} SEACrowd schema",
             schema="seacrowd_t2t",
-            subset_id="indonesian_madurese_bible_translation",
+            subset_id=f"{_DATASETNAME}",
         ),
     ]
 
@@ -200,10 +146,6 @@ class NewDataset(datasets.GeneratorBasedBuilder):
                 },
             )
         ]
-
-    # method parameters are unpacked from `gen_kwargs` as given in `_split_generators`
-
-    # TODO: change the args of this function to match the keys in `gen_kwargs`. You may add any necessary kwargs.
 
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
