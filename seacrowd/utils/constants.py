@@ -4,13 +4,12 @@ from types import SimpleNamespace
 
 from seacrowd.utils.schemas import (
     image_text_features,
+    imqa_features,
     kb_features,
-    tree_features,
     pairs_features,
     pairs_features_score,
     pairs_multi_features,
     qa_features,
-    imqa_features,
     seq_label_features,
     speech2speech_features,
     speech_features,
@@ -20,8 +19,9 @@ from seacrowd.utils.schemas import (
     text2text_features,
     text_features,
     text_multi_features,
-    video_features,
     tod_features,
+    tree_features,
+    video_features,
 )
 
 METADATA: dict = {
@@ -50,13 +50,14 @@ class Tasks(Enum):
 
     # Single Text Classification (single-label)
     ABUSIVE_LANGUAGE_PREDICTION = "ABL"
-    DOMAIN_KNOWLEDGE_CLASSIFICATION = "DKC" # classification for non NLP-oriented label
-
+    COMPLAINT_DETECTION = "CD"
+    DOMAIN_KNOWLEDGE_CLASSIFICATION = "DKC"  # classification for non NLP-oriented label
     EMOTION_CLASSIFICATION = "EC"
     LANGUAGE_IDENTIFICATION = "LI"
     HOAX_NEWS_CLASSIFICATION = "HNC"
     INTENT_CLASSIFICATION = "INT"
     LEGAL_CLASSIFICATION = "LC"
+    MORALITY_CLASSIFICATION = "MC"
     READABILITY_ASSESSMENT = "RA"
     RHETORIC_MODE_CLASSIFICATION = "RMC"
     SENTIMENT_ANALYSIS = "SA"
@@ -66,13 +67,14 @@ class Tasks(Enum):
 
     # Single Text Classification (multi-label)
     ASPECT_BASED_SENTIMENT_ANALYSIS = "ABSA"
-    DOMAIN_KNOWLEDGE_MULTICLASSIFICATION = "DKM" # multi-classification for non NLP-oriented label
+    DOMAIN_KNOWLEDGE_MULTICLASSIFICATION = "DKM"  # multi-classification for non NLP-oriented label
 
     # Single Text Sequence Labeling
     KEYWORD_TAGGING = "KT"
     NAMED_ENTITY_RECOGNITION = "NER"
     POS_TAGGING = "POS"
     SENTENCE_ORDERING = "SO"
+    SLOT_FILLING = "SF"
     SPAN_BASED_ABSA = "SPAN_ABSA"
     TOKEN_LEVEL_LANGUAGE_IDENTIFICATION = "LANGID"
 
@@ -220,14 +222,15 @@ TASK_TO_SCHEMA = {
     Tasks.DEPENDENCY_PARSING: "KB",
     Tasks.CONSTITUENCY_PARSING: "TREE",
     Tasks.E2E_TASK_ORIENTED_DIALOGUE: "TOD",
+    Tasks.DIALOGUE_SYSTEM: "T2T",
     Tasks.WORD_SENSE_DISAMBIGUATION: "T2T",
     Tasks.WORD_ANALOGY: "T2T",
     Tasks.KEYWORD_EXTRACTION: "SEQ_LABEL",
-    Tasks.DIALOGUE_SYSTEM: "T2T",
     Tasks.KEYWORD_TAGGING: "SEQ_LABEL",
     Tasks.NAMED_ENTITY_RECOGNITION: "SEQ_LABEL",
     Tasks.POS_TAGGING: "SEQ_LABEL",
     Tasks.SENTENCE_ORDERING: "SEQ_LABEL",
+    Tasks.SLOT_FILLING: "SEQ_LABEL",
     Tasks.SPAN_BASED_ABSA: "SEQ_LABEL",
     Tasks.TOKEN_LEVEL_LANGUAGE_IDENTIFICATION: "SEQ_LABEL",
     Tasks.COMMONSENSE_REASONING: "QA",
@@ -248,6 +251,7 @@ TASK_TO_SCHEMA = {
     Tasks.ASPECT_BASED_SENTIMENT_ANALYSIS: "TEXT_MULTI",
     Tasks.DOMAIN_KNOWLEDGE_MULTICLASSIFICATION: "TEXT_MULTI",
     Tasks.ABUSIVE_LANGUAGE_PREDICTION: "TEXT",
+    Tasks.COMPLAINT_DETECTION: "TEXT",
     Tasks.DOMAIN_KNOWLEDGE_CLASSIFICATION: "TEXT",
     Tasks.SENTIMENT_ANALYSIS: "TEXT",
     Tasks.TAX_COURT_VERDICT: "TEXT",
@@ -277,7 +281,8 @@ TASK_TO_SCHEMA = {
     Tasks.VIDEO_CAPTIONING: "VIDTEXT",
     Tasks.VIDEO_TO_TEXT_RETRIEVAL: "VIDTEXT",
     Tasks.FACT_CHECKING: None,
-    Tasks.NON_WORD_ERROR_SPELLING_CORRECTION: None,
+    Tasks.MORALITY_CLASSIFICATION: "TEXT",
+    Tasks.NON_WORD_ERROR_SPELLING_CORRECTION: "TEXT",
 }
 
 SCHEMA_TO_TASKS = defaultdict(set)
