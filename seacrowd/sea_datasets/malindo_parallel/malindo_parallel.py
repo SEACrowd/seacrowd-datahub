@@ -60,7 +60,7 @@ _HOMEPAGE = "https://github.com/matbahasa/MALINDO_Parallel/tree/master/OpenCampu
 _LANGUAGES = ["zlm", "jpn"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 
 
-_LICENSE = "Creative Commons Attribution 4.0 (cc-by-4.0)"  # example: Licenses.MIT.value, Licenses.CC_BY_NC_SA_4_0.value, Licenses.UNLICENSE.value, Licenses.UNKNOWN.value
+_LICENSE = "Creative Commons Attribution 4.0 (cc-by-4.0)" 
 
 
 _LOCAL = False
