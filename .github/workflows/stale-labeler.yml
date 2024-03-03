@@ -22,6 +22,7 @@ jobs:
       with:
       
         repo-token: ${{ secrets.GITHUB_TOKEN }}
+        # only labels the stale, the comment addition will be handled by another workflow
         stale-issue-message: ""
         stale-pr-message: ""
         stale-issue-label: "staled-issue"
