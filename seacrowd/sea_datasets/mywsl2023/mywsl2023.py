@@ -128,8 +128,6 @@ class MyWsl2023(datasets.GeneratorBasedBuilder):
 
         path = dl_manager.download_and_extract(_URLS[_DATASETNAME])
 
-        print(path)
-
         for split in _SPLITS:
             split_generators.append(
                 datasets.SplitGenerator(
