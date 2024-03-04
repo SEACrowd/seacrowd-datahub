@@ -39,10 +39,13 @@ associated with one license from the CC family. The licenses include 'CC BY', 'C
 'CC BY-NC-SA', 'CC-BY', 'CC-BY-NC', and 'Public Domain'. We also license the code, actual
 packaging and the metadata of these data under the cc0-1.0.
 """
+
+_LOCAL=False
+_LANGUAGES = ["khg", "khm", "mya", "tet", "tha", "vie"]
+
 _URLS = "https://huggingface.co/datasets/cis-lmu/GlotStoryBook/resolve/main/GlotStoryBook.csv"
 
 _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
-_SUPPORTED_LANGS = ["khg", "khm", "mya", "tet", "tha", "vie"]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
@@ -117,7 +120,7 @@ class GlotStoryBookDataset(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         df = pd.read_csv(filepath)
-        df = df[df["ISO639-3"].isin(_SUPPORTED_LANGS)]
+        df = df[df["ISO639-3"].isin(_LANGUAGES)]
 
         if self.config.schema == "source":
             for i, row in df.iterrows():
