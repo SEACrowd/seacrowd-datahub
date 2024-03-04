@@ -68,7 +68,7 @@ _HOMEPAGE = ""
 # TODO: Add languages related to this dataset
 _LANGUAGES = []  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 
-# TODO: Add the licence for the dataset here 
+# TODO: Add the licence for the dataset here (see constant choices in https://github.com/SEACrowd/seacrowd-datahub/blob/master/seacrowd/utils/constants.py)
 # Note that this doesn't have to be a common open source license.
 # In the case of the dataset intentionally is built without license, please use `Licenses.UNLICENSE.value`
 # In the case that it's not clear whether the dataset has a license or not, please use `Licenses.UNKNOWN.value`
@@ -90,7 +90,7 @@ _URLS = {
     _DATASETNAME: "url or list of urls or ... ",
 }
 
-# TODO: add supported task by dataset. One dataset may support multiple tasks
+# TODO: add supported task by dataset. One dataset may support multiple tasks --> # TODO: add supported task by dataset. One dataset may support multiple tasks (see constant choices in https://github.com/SEACrowd/seacrowd-datahub/blob/master/seacrowd/utils/constants.py)
 _SUPPORTED_TASKS = []  # example: [Tasks.TRANSLATION, Tasks.NAMED_ENTITY_RECOGNITION, Tasks.RELATION_EXTRACTION]
 
 # TODO: set this to a version that is associated with the dataset. if none exists use "1.0.0"
