@@ -111,8 +111,8 @@ class ThaiGPTeacherDataset(datasets.GeneratorBasedBuilder):
             for i, row in df.iterrows():
                 yield i, {
                     "id": str(i),
-                    "text_1": row["instruction"] + row["input"],
+                    "text_1": row["instruction"] + "\n" + row["input"],
                     "text_2": row["output"],
-                    "text_1_name": "instruction+input",
+                    "text_1_name": "instruction + input",
                     "text_2_name": "output",
                 }
