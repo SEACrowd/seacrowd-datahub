@@ -63,24 +63,28 @@ _SEACROWD_VERSION = "1.0.0"
 # The original dataset only contaions gem_id, we need to retrieve the article following https://github.com/google-research-datasets/seahorse?tab=readme-ov-file#retrieving-articles-from-gem
 def get_wikilingual_data(lang, split):
     ds, info = tfds.load(f"huggingface:gem/wiki_lingua_{lang}", split=split, with_info=True)
-    return tfds.as_dataframe(ds, info)
+    df = tfds.as_dataframe(ds, info)
+    return dict(zip(*[df[col].str.decode("utf8") for col in ["gem_id", "source"]]))
+
+
+def get_xlsum_data(lang, split):
+    df = datasets.load_dataset("GEM/xlsum", lang)
+    return {item["gem_id"]: item["text"] for item in df[split]}
 
 
 # Both train and validation splits in seahorse are taken from the validation split from the original dataset
 _WIKILINGUAL_DATA = {split: get_wikilingual_data("vietnamese_vi", split) for split in ["test", "validation"]}
-_XLSUM_DATA = datasets.load_dataset("GEM/xlsum", "vietnamese")
+_XLSUM_DATA = {split: get_xlsum_data("vietnamese", split) for split in ["test", "validation"]}
 
 
 def get_article(gem_id, split):
-    assert "wiki_lingua" in gem_id or "xlsum" in gem_id, "gem_id should either from wiki_lingua or xlsum."
     if "wiki_lingua" in gem_id:
-        hfdf = _WIKILINGUAL_DATA[split if split == "test" else "validation"]
-        target_row = hfdf[hfdf["gem_id"].apply(lambda x: x.decode("utf-8")) == gem_id]
-        return target_row["source"].values[0].decode("utf-8")
+        data = _WIKILINGUAL_DATA
+    elif "xlsum" in gem_id:
+        data = _XLSUM_DATA
     else:
-        hfdf = _XLSUM_DATA[split if split == "test" else "validation"]
-        target_row = hfdf.filter(lambda example: example["gem_id"] == gem_id)
-        return target_row[0]["text"]
+        raise AssertionError("gem_id should either from wiki_lingua or xlsum.")
+    return data[split if split == "test" else "validation"][gem_id]
 
 
 class SeahorseDataset(datasets.GeneratorBasedBuilder):
