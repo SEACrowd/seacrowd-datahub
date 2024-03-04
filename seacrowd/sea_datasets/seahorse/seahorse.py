@@ -62,7 +62,10 @@ _SEACROWD_VERSION = "1.0.0"
 
 # The original dataset only contaions gem_id, we need to retrieve the article following https://github.com/google-research-datasets/seahorse?tab=readme-ov-file#retrieving-articles-from-gem
 def get_wikilingual_data(lang, split):
-    ds, info = tfds.load(f"huggingface:gem/wiki_lingua_{lang}", split=split, with_info=True)
+    try:
+        ds, info = tfds.load(f"huggingface:gem/wiki_lingua_{lang}", split=split, with_info=True)
+    except Exception as e:
+        raise RuntimeError(f"An error occurred: {e}")
     df = tfds.as_dataframe(ds, info)
     return dict(zip(*[df[col].str.decode("utf8") for col in ["gem_id", "source"]]))
 
