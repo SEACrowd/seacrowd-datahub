@@ -306,7 +306,3 @@ class MSWC(datasets.GeneratorBasedBuilder):
             raise ValueError(f"Invalid config: {self.config.name}")
 
 
-# This allows you to run your dataloader with `python [dataset_name].py` during development
-# TODO: Remove this before making your PR
-if __name__ == "__main__":
-    datasets.load_dataset(__file__, "mswc_seacrowd_sptext")
