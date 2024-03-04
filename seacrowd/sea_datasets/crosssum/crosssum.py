@@ -47,7 +47,7 @@ _LICENSE = Licenses.CC_BY_NC_SA_4_0.value
 _URL = "https://huggingface.co/datasets/csebuetnlp/CrossSum"
 
 
-_SUPPORTED_TASKS = [Tasks.SUMMARIZATION]
+_SUPPORTED_TASKS = [Tasks.CROSS_LINGUAL_SUMMARIZATION]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
