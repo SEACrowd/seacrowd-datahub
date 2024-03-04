@@ -23,6 +23,14 @@ from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import TASK_TO_SCHEMA, Licenses, Tasks
 
 _CITATION = """\
+@misc{ridife2019idsa,
+  author = {Fe, Ridi},
+  title = {Indonesia Sentiment Analysis Dataset},
+  year = {2019},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/ridife/dataset-idsa}}
+}
 """
 
 _DATASETNAME = "id_sentiment_analysis"
