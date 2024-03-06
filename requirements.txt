@@ -24,3 +24,5 @@ typing_extensions
 scikit-learn==1.1.2
 pyarrow
 opencv-python>=4.9
+textgrid==1.5
+audiosegment==0.23.0
