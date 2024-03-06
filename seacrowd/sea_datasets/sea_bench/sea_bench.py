@@ -56,7 +56,7 @@ _LOCAL = False
 
 _URLS = "https://huggingface.co/datasets/SeaLLMs/Sea-bench/raw/main/question.jsonl"
 
-_SUPPORTED_TASKS = [Tasks.SUMMARIZATION, Tasks.MACHINE_TRANSLATION, Tasks.QUESTION_ANSWERING]
+_SUPPORTED_TASKS = [Tasks.INSTRUCTION_TUNING, Tasks.MACHINE_TRANSLATION]
 
 _SOURCE_VERSION = "1.0.0"
 
@@ -93,25 +93,6 @@ class WITDataset(datasets.GeneratorBasedBuilder):
         ]
         + [
             SEACrowdConfig(
-                name=f"{_DATASETNAME}_seacrowd_qa",
-                version=datasets.Version(_SEACROWD_VERSION),
-                description=f"{_DATASETNAME} SEACrowd schema for QA for all 8 languages",
-                schema="seacrowd_qa",
-                subset_id=f"{_DATASETNAME}",
-            )
-        ]
-        + [
-            SEACrowdConfig(
-                name=f"{_DATASETNAME}_{lang}_seacrowd_qa",
-                version=datasets.Version(_SEACROWD_VERSION),
-                description=f"{_DATASETNAME}_{lang} SEACrowd schema for QA",
-                schema="seacrowd_qa",
-                subset_id=f"{_DATASETNAME}_{lang}",
-            )
-            for lang in _LANGUAGES
-        ]
-        + [
-            SEACrowdConfig(
                 name=f"{_DATASETNAME}_seacrowd_t2t",
                 version=datasets.Version(_SEACROWD_VERSION),
                 description=f"{_DATASETNAME} SEACrowd schema for T2T for all 8 languages",
@@ -142,10 +123,10 @@ class WITDataset(datasets.GeneratorBasedBuilder):
                     "chatgpt_response": datasets.Value("string"),
                 }
             )
-        elif self.config.schema == "seacrowd_qa":
-            features = schemas.qa_features
         elif self.config.schema == "seacrowd_t2t":
             features = schemas.text2text_features
+        else:
+            raise ValueError(f"Invalid schema: '{self.config.schema}'")
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -195,31 +176,17 @@ class WITDataset(datasets.GeneratorBasedBuilder):
                             x["chatgpt_response"] = None
                         yield idx, x
                         idx += 1
-            elif self.config.schema == "seacrowd_qa":
-                for d in data:
-                    if d["lang"] in language_list:
-                        x = {
-                            "id": idx,
-                            "question_id": d["question_id"],
-                            "document_id": idx,
-                            "question": d["turns"][0],
-                            "type": d["category"],
-                            "choices": [],
-                            "context": None,
-                            "answer": [d["chatgpt_response"] if "chatgpt_response" in d else None],
-                            "meta": {},
-                        }
-                        yield idx, x
-                        idx += 1
             elif self.config.schema == "seacrowd_t2t":
                 for d in data:
                     if d["lang"] in language_list:
                         x = {
                             "id": idx,
-                            "text_1": d["turns"],
+                            "text_1": d["turns"] if "turns" in d else None,
                             "text_2": d["chatgpt_response"] if "chatgpt_response" in d else None,
                             "text_1_name": "turns",
                             "text_2_name": "chatgpt_response",
                         }
                         yield idx, x
                         idx += 1
+            else:
+                raise ValueError(f"Invalid schema: '{self.config.schema}'")
