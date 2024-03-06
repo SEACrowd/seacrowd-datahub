@@ -218,10 +218,10 @@ class MKQADataset(datasets.GeneratorBasedBuilder):
                         "document_id": "",
                         "question": cur["queries"][cur_lang],
                         "type": "open_domain",
-                        # "type": [ans["type"] for ans in cur["answers"][cur_lang]],
                         "choices": [],
                         "context": "",
                         "answer": [ans.get("text", None) for ans in cur["answers"][cur_lang]],
                         "meta": {f"answer_{k}": [ans.get(k, None) for ans in cur["answers"][cur_lang]] for k in ["entity", "aliases", "type"]},
                     }
+                    ret["meta"]["answer_aliases"] = list(map(lambda a: [] if a is None else a, ret["meta"]["answer_aliases"]))
                     yield ret["id"], ret
