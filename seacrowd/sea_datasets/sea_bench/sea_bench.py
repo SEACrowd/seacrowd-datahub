@@ -50,8 +50,6 @@ _HOMEPAGE = "https://huggingface.co/datasets/SeaLLMs/Sea-bench"
 
 _LANGUAGES = {"tgl": "tl", "khm": "km", "vie": "vi", "tha": "th", "lao": "lo", "mya": "my", "ind": "id", "zlm": "ms", "eng": "en"}
 
-_LANGUAGE_CODES = list(_LANGUAGES.values())
-
 _LICENSE = Licenses.APACHE_2_0.value
 
 _LOCAL = False
@@ -63,8 +61,6 @@ _SUPPORTED_TASKS = [Tasks.SUMMARIZATION, Tasks.MACHINE_TRANSLATION, Tasks.QUESTI
 _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
-
-logger = datasets.logging.get_logger(__name__)
 
 
 class WITDataset(datasets.GeneratorBasedBuilder):
@@ -186,7 +182,7 @@ class WITDataset(datasets.GeneratorBasedBuilder):
             if language_list in _LANGUAGES:
                 language_list = [_LANGUAGES[language_list]]
         else:
-            language_list = _LANGUAGE_CODES
+            language_list = list(_LANGUAGES.values())
 
         idx = 0
         with open(filepath, "r") as f:
