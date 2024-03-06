@@ -19,6 +19,7 @@ from typing import Dict, List, Tuple
 import datasets
 import pandas as pd
 
+from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
@@ -46,7 +47,6 @@ This dataloader provides examples for Indonesia, Vietnamese, Malay, and Filipino
 _HOMEPAGE = "https://github.com/SeaEval/SeaEval"
 
 _LANGUAGES = {"ind": "Indonesian", "vie": "Vietnamese", "zlm": "Malay", "fil": "Filipino"}
-_LANGUAGES_EXCHANGED = dict((v, k) for k, v in _LANGUAGES.items())
 
 _LICENSE = Licenses.CC_BY_NC_4_0.value
 
@@ -58,8 +58,6 @@ _URLS = {
     "sg_eval": "https://huggingface.co/datasets/SeaEval/SeaEval_datasets/raw/main/sg_eval.json",
     "ph_eval": "https://huggingface.co/datasets/SeaEval/SeaEval_datasets/raw/main/ph_eval.json",
 }
-
-_SUBSETS = list(_URLS.keys())
 
 _SUPPORTED_TASKS = [Tasks.COMMONSENSE_REASONING, Tasks.QUESTION_ANSWERING]
 
@@ -76,36 +74,31 @@ class SeaEvalDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
+    LANGUAGES_EXCHANGED = dict((v, k) for k, v in _LANGUAGES.items())
+    SUBSETS_CROSS_MMLU = ['cross_mmlu_' + lang for lang in _LANGUAGES.keys()] 
+    SUBSETS_CROSS_LOGIQA = ['cross_logiqa_' + lang for lang in _LANGUAGES.keys()]
+    SUBSETS = SUBSETS_CROSS_MMLU + SUBSETS_CROSS_LOGIQA + ['sg_eval_eng', 'ph_eval_eng']
+
     BUILDER_CONFIGS = [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_{subset}_source",
             version=datasets.Version(_SOURCE_VERSION),
-            description=f"{_DATASETNAME} {subset} source schema",
+            description=f"{_DATASETNAME}_{subset} source schema",
             schema="source",
-            subset_id=f"{subset}",
+            subset_id=f"{_DATASETNAME}_{subset}",
         )
-        for subset in _SUBSETS
+        for subset in SUBSETS
     ]
 
     BUILDER_CONFIGS += [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_{subset}_seacrowd_qa",
             version=datasets.Version(_SOURCE_VERSION),
-            description=f"{_DATASETNAME} {subset} SEACrowd schema",
+            description=f"{_DATASETNAME}_{subset} SEACrowd schema",
             schema="seacrowd_qa",
-            subset_id=f"{subset}",
+            subset_id=f"{_DATASETNAME}_{subset}",
         )
-        for subset in _SUBSETS
-    ]
-
-    BUILDER_CONFIGS += [
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_qa",
-            version=datasets.Version(_SEACROWD_VERSION),
-            description=f"{_DATASETNAME} SEACrowd schema",
-            schema="seacrowd_qa",
-            subset_id="all",
-        )
+        for subset in SUBSETS
     ]
 
     def _info(self) -> datasets.DatasetInfo:
@@ -113,7 +106,6 @@ class SeaEvalDataset(datasets.GeneratorBasedBuilder):
             features = datasets.Features(
                 {
                     "id": datasets.Value("string"),
-                    "language": datasets.Value("string"),
                     "question": datasets.Value("string"),
                     "choices": datasets.Sequence(datasets.Value("string")),
                     "answer": datasets.Value("string"),
@@ -123,7 +115,6 @@ class SeaEvalDataset(datasets.GeneratorBasedBuilder):
             features = datasets.Features(
                 {
                     "id": datasets.Value("string"),
-                    "language": datasets.Value("string"),
                     "question": datasets.Value("string"),
                     "context": datasets.Value("string"),
                     "choices": datasets.Sequence(datasets.Value("string")),
@@ -134,7 +125,6 @@ class SeaEvalDataset(datasets.GeneratorBasedBuilder):
             features = datasets.Features(
                 {
                     "id": datasets.Value("string"),
-                    "language": datasets.Value("string"),
                     "question": datasets.Value("string"),
                     "choices": datasets.Sequence(datasets.Value("string")),
                     "answer": datasets.Value("string"),
@@ -142,22 +132,7 @@ class SeaEvalDataset(datasets.GeneratorBasedBuilder):
                 }
             )
         elif self.config.schema == "seacrowd_qa":
-            features = datasets.Features(
-                {
-                    "id": datasets.Value("string"),
-                    "question_id": datasets.Value("string"),
-                    "document_id": datasets.Value("string"),
-                    "question": datasets.Value("string"),
-                    "type": datasets.Value("string"),
-                    "choices": datasets.Sequence(datasets.Value("string")),
-                    "context": datasets.Value("string"),
-                    "answer": datasets.Sequence(datasets.Value("string")),
-                    "meta": {
-                        "language": datasets.Value("string"),
-                    },
-                }
-            )
-
+            features = schemas.qa_features
         else:
             raise ValueError(f"Unexpected schema received! {self.config.schema}")
 
@@ -177,10 +152,9 @@ class SeaEvalDataset(datasets.GeneratorBasedBuilder):
         data = {key: dl_manager.download_and_extract(value) for key, value in _URLS.items()}
 
         paths = {}
-        if self.config.subset_id == "all":
-            paths = data
-        else:
-            paths[self.config.subset_id] = data[self.config.subset_id]
+        file = self.config.subset_id.split("_")
+        file = "_".join(file[1:3])
+        paths[self.config.subset_id] = data[file]
 
         return [
             datasets.SplitGenerator(
@@ -196,31 +170,27 @@ class SeaEvalDataset(datasets.GeneratorBasedBuilder):
         """
         Yields examples as (key, example) tuples.
         """
-        examples = []
+
+        language = self.config.subset_id.split("_")[3]
+        examples = None
 
         for key, path in paths.items():
             if "cross" in key:
-                data = pd.read_json(path).rename(columns=_LANGUAGES_EXCHANGED)
+                data = pd.read_json(path).rename(columns=self.LANGUAGES_EXCHANGED)
                 data = pd.melt(data, id_vars=["id"], value_vars=_LANGUAGES.keys(), var_name="language")
                 data_flattened = pd.json_normalize(data["value"])
-                data_merged = pd.merge(data, data_flattened, left_index=True, right_index=True).drop(columns=["value"])
-                examples.append(data_merged)
+                data_merged = pd.merge(data, data_flattened, left_index=True, right_index=True)
+                data_filtered = data_merged[data_merged['language']==language].drop(columns=["value", "language"])
+                examples = data_filtered.to_records()
             elif "eval" in key:
                 data = pd.read_json(path)
-                data["language"] = "eng"
-                examples.append(data)
-
-        if len(examples) > 1:
-            examples = pd.concat(examples).to_records()
-        else:
-            examples = examples[0].to_records()
+                examples = data.to_records()
 
         idx = 0
         if self.config.schema == "source" and self.config.subset_id not in ["cross_logiqa", "ph_eval"]:
             for row in examples:
                 x = {
                     "id": row["id"],
-                    "language": row["language"],
                     "question": row["question"],
                     "choices": row["choices"],
                     "answer": row["answer"],
@@ -231,9 +201,8 @@ class SeaEvalDataset(datasets.GeneratorBasedBuilder):
             for row in examples:
                 x = {
                     "id": row["id"],
-                    "language": row["language"],
                     "question": row["question"],
-                    "context": row["context"],
+                    "context": row["context"]  if "context" in row else None,
                     "choices": row["choices"],
                     "answer": row["answer"],
                 }
@@ -243,11 +212,10 @@ class SeaEvalDataset(datasets.GeneratorBasedBuilder):
             for row in examples:
                 x = {
                     "id": row["id"],
-                    "language": row["language"],
                     "question": row["question"],
                     "choices": row["choices"],
                     "answer": row["answer"],
-                    "category": row["category"],
+                    "category": row["category"]  if "category" in row else None,
                 }
                 yield idx, x
                 idx += 1
@@ -262,11 +230,9 @@ class SeaEvalDataset(datasets.GeneratorBasedBuilder):
                     "choices": row["choices"],
                     "context": row["context"] if "context" in row else None,
                     "answer": [row["answer"]],
-                    "meta": {
-                        "language": row["language"],
-                    },
+                    "meta": {},
                 }
                 yield idx, x
                 idx += 1
         else:
-            raise ValueError(f"Invalid config: {self.config.name}")
+            raise ValueError(f"Invalid schema: {self.config.schema}")
