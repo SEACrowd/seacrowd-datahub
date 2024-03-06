@@ -49,7 +49,10 @@ Wikipedia-based Image Text (WIT) Dataset is a large multimodal multilingual data
 WIT is composed of a curated set of 37.6 million entity rich image-text examples with
 11.5 million unique images across 108 Wikipedia languages. There are more than 12k
 examples in each of 108 languages, with 53 languages having 100k image-text pairs.
-Nine languages are spoken in the Southeast Asias region.
+Nine languages are spoken in the Southeast Asian region.
+Since the dataset contains multiple references, following Section 3.2 of the dataset's
+paper, the `seacrowd_imtext` subsets specify which reference is used for each data
+instance's texts via context in metadata.
 """
 
 _HOMEPAGE = "https://github.com/google-research-datasets/wit"
@@ -166,6 +169,8 @@ class WITDataset(datasets.GeneratorBasedBuilder):
             )
         elif self.config.schema == "seacrowd_imtext":
             features = schemas.image_text_features()
+        else:
+            raise ValueError(f"Invalid schema: '{self.config.schema}'")
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -265,4 +270,5 @@ class WITDataset(datasets.GeneratorBasedBuilder):
                             x = {k: v if v != "" and k in self.info.features else None for k, v in d.items()}
                             yield idx, x
                             idx += 1
-                            
+                else:
+                    raise ValueError(f"Invalid schema: '{self.config.schema}'")
