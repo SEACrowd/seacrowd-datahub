@@ -75,9 +75,9 @@ class SeaEvalDataset(datasets.GeneratorBasedBuilder):
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
     LANGUAGES_EXCHANGED = dict((v, k) for k, v in _LANGUAGES.items())
-    SUBSETS_CROSS_MMLU = ['cross_mmlu_' + lang for lang in _LANGUAGES.keys()] 
-    SUBSETS_CROSS_LOGIQA = ['cross_logiqa_' + lang for lang in _LANGUAGES.keys()]
-    SUBSETS = SUBSETS_CROSS_MMLU + SUBSETS_CROSS_LOGIQA + ['sg_eval_eng', 'ph_eval_eng']
+    SUBSETS_CROSS_MMLU = ["cross_mmlu_" + lang for lang in _LANGUAGES.keys()]
+    SUBSETS_CROSS_LOGIQA = ["cross_logiqa_" + lang for lang in _LANGUAGES.keys()]
+    SUBSETS = SUBSETS_CROSS_MMLU + SUBSETS_CROSS_LOGIQA + ["sg_eval_eng", "ph_eval_eng"]
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
@@ -180,7 +180,7 @@ class SeaEvalDataset(datasets.GeneratorBasedBuilder):
                 data = pd.melt(data, id_vars=["id"], value_vars=_LANGUAGES.keys(), var_name="language")
                 data_flattened = pd.json_normalize(data["value"])
                 data_merged = pd.merge(data, data_flattened, left_index=True, right_index=True)
-                data_filtered = data_merged[data_merged['language']==language].drop(columns=["value", "language"])
+                data_filtered = data_merged[data_merged["language"] == language].drop(columns=["value", "language"])
                 examples = data_filtered.to_records()
             elif "eval" in key:
                 data = pd.read_json(path)
@@ -202,7 +202,7 @@ class SeaEvalDataset(datasets.GeneratorBasedBuilder):
                 x = {
                     "id": row["id"],
                     "question": row["question"],
-                    "context": row["context"]  if "context" in row else None,
+                    "context": row["context"] if "context" in row else None,
                     "choices": row["choices"],
                     "answer": row["answer"],
                 }
@@ -215,7 +215,7 @@ class SeaEvalDataset(datasets.GeneratorBasedBuilder):
                     "question": row["question"],
                     "choices": row["choices"],
                     "answer": row["answer"],
-                    "category": row["category"]  if "category" in row else None,
+                    "category": row["category"] if "category" in row else None,
                 }
                 yield idx, x
                 idx += 1
