@@ -188,8 +188,7 @@ class PhoNerCovid(datasets.GeneratorBasedBuilder):
 
         elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.NAMED_ENTITY_RECOGNITION]).lower()}":
             df["id"] = df.index
-            df.rename(columns={"words": "tokens"}, inplace=True)
-            df.rename(columns={"tags": "labels"}, inplace=True)
+            df = df.rename(columns={"words":"tokens", "tags":"labels"})
 
             for _, row in df.iterrows():
                 yield idx, row.to_dict()
