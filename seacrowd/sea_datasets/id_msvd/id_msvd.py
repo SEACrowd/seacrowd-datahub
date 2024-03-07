@@ -30,10 +30,7 @@ MSVD-Indonesian dataset contains about 80k video-text pairs.
 _HOMEPAGE = "https://github.com/willyfh/msvd-indonesian"
 _LANGUAGES = ["ind"]
 _LICENSE = Licenses.MIT.value
-_URLS = {
-    "text": "https://raw.githubusercontent.com/willyfh/msvd-indonesian/main/data/MSVD-indonesian.txt",
-    "video": "https://www.cs.utexas.edu/users/ml/clamp/videoDescription/YouTubeClips.tar" 
-}
+_URLS = {"text": "https://raw.githubusercontent.com/willyfh/msvd-indonesian/main/data/MSVD-indonesian.txt", "video": "https://www.cs.utexas.edu/users/ml/clamp/videoDescription/YouTubeClips.tar"}
 
 _SUPPORTED_TASKS = [Tasks.VIDEO_TO_TEXT_RETRIEVAL]
 _SOURCE_VERSION = "1.0.0"
@@ -108,7 +105,7 @@ class IdMsvdDataset(datasets.GeneratorBasedBuilder):
             for line in f:
                 id = line.find(" ")
                 video = line[:id]
-                text = line[id+1:].strip()
+                text = line[id + 1 :].strip()
                 text_data.append([video, text])
 
         df = pd.DataFrame(text_data, columns=["video_path", "text"])
