@@ -95,7 +95,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class PhoNerCovid(datasets.GeneratorBasedBuilder):
+class PhoNerCovidDataset(datasets.GeneratorBasedBuilder):
     """A named entity recognition dataset for Vietnamese with 10 newly-defined entity types in the context of the COVID-19 pandemic."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
@@ -198,5 +198,3 @@ class PhoNerCovid(datasets.GeneratorBasedBuilder):
             raise ValueError(f"Invalid config: {self.config.name}")
 
 
-if __name__ == "__main__":
-    datasets.load_dataset(__file__, name="word_level_source")
