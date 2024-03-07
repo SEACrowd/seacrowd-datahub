@@ -29,7 +29,7 @@ _CITATION = """\
   year = {2019},
   publisher = {GitHub},
   journal = {GitHub repository},
-  howpublished = {\url{https://github.com/ridife/dataset-idsa}}
+  howpublished = {\\url{https://github.com/ridife/dataset-idsa}}
 }
 """
 
@@ -77,7 +77,7 @@ class IdSentimentAnalysis(datasets.GeneratorBasedBuilder):
         ),
     ]
 
-    seacrowd_schema_config: list[SEACrowdConfig] = []
+    seacrowd_schema_config: List[SEACrowdConfig] = []
 
     for seacrowd_schema in _SUPPORTED_SCHEMA_STRINGS:
 
