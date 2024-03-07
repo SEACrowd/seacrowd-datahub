@@ -199,5 +199,3 @@ class PhoNerCovidDataset(datasets.GeneratorBasedBuilder):
             raise ValueError(f"Invalid config: {self.config.name}")
 
 
-if __name__ == "__main__":
-    datasets.load_dataset(__file__, name="word_level_source")
