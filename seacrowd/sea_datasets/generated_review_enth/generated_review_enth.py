@@ -32,9 +32,8 @@ _LICENSE = Licenses.CC_BY_SA_4_0.value
 
 _LOCAL = False
 
-_URLS = {
-    _DATASETNAME: "https://github.com/vistec-AI/generated_reviews_enth/raw/main/data.zip"
-}
+_URLS = {_DATASETNAME: "https://github.com/vistec-AI/generated_reviews_enth/raw/main/data.zip"}
+
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 
 _SOURCE_VERSION = "1.0.0"
@@ -50,22 +49,22 @@ class GeneratedReviewENTHDataset(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="generated_review_enth_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
             description="Generated Review EN-TH source schema",
             schema="source",
-            subset_id="generated_review_enth",
+            subset_id=f"{_DATASETNAME}",
         ),
         SEACrowdConfig(
-            name="generated_review_enth_seacrowd_t2t",
+            name=f"{_DATASETNAME}_seacrowd_t2t",
             version=SEACROWD_VERSION,
             description="Generated Review EN-TH SEACrowd schema",
             schema="seacrowd_t2t",
-            subset_id="generated_review_enth",
+            subset_id=f"{_DATASETNAME}",
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = "generated_review_enth_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -89,9 +88,7 @@ class GeneratedReviewENTHDataset(datasets.GeneratorBasedBuilder):
             citation=_CITATION,
         )
 
-    def _split_generators(
-        self, dl_manager: datasets.DownloadManager
-    ) -> List[datasets.SplitGenerator]:
+    def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
 
         urls = _URLS[_DATASETNAME]
@@ -103,26 +100,23 @@ class GeneratedReviewENTHDataset(datasets.GeneratorBasedBuilder):
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
                     "filepath": os.path.join(data_dir, "train.jsonl"),
-                    "split": "train",
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
                 gen_kwargs={
                     "filepath": os.path.join(data_dir, "test.jsonl"),
-                    "split": "test",
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
                     "filepath": os.path.join(data_dir, "valid.jsonl"),
-                    "split": "dev",
                 },
             ),
         ]
 
-    def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
         if self.config.schema == "source":
