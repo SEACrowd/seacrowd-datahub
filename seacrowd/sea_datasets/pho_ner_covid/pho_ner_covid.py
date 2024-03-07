@@ -64,6 +64,11 @@ _URLS = {
 _SUPPORTED_TASKS = [Tasks.NAMED_ENTITY_RECOGNITION]
 _SUPPORTED_SCHEMA_STRINGS = [f"seacrowd_{str(TASK_TO_SCHEMA[task]).lower()}" for task in _SUPPORTED_TASKS]
 
+_SUPPORTED_SCHEMA_STRING_MAP: Dict[Tasks, str] = {}
+
+for task, schema_string in zip(_SUPPORTED_TASKS, _SUPPORTED_SCHEMA_STRINGS):
+    _SUPPORTED_SCHEMA_STRING_MAP[task] = schema_string
+
 _SUBSETS = ["word_level", "syllable_level"]
 _SPLITS = ["train", "dev", "test"]
 _TAGS = [
@@ -87,7 +92,7 @@ _TAGS = [
     "I-NAME",
     "I-AGE",
     "I-PATIENT_ID",
-    "I-GENDER"
+    "I-GENDER",
 ]
 
 _SOURCE_VERSION = "1.0.0"
@@ -142,7 +147,7 @@ class PhoNerCovidDataset(datasets.GeneratorBasedBuilder):
                 }
             )
 
-        elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.NAMED_ENTITY_RECOGNITION]).lower()}":
+        elif self.config.schema == _SUPPORTED_SCHEMA_STRING_MAP[Tasks.NAMED_ENTITY_RECOGNITION]:
             features = schemas.seq_label_features(label_names=_TAGS)
 
         else:
@@ -186,9 +191,9 @@ class PhoNerCovidDataset(datasets.GeneratorBasedBuilder):
                 yield idx, row.to_dict()
                 idx += 1
 
-        elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.NAMED_ENTITY_RECOGNITION]).lower()}":
+        elif self.config.schema == _SUPPORTED_SCHEMA_STRING_MAP[Tasks.NAMED_ENTITY_RECOGNITION]:
             df["id"] = df.index
-            df = df.rename(columns={"words":"tokens", "tags":"labels"})
+            df = df.rename(columns={"words": "tokens", "tags": "labels"})
 
             for _, row in df.iterrows():
                 yield idx, row.to_dict()
@@ -196,5 +201,3 @@ class PhoNerCovidDataset(datasets.GeneratorBasedBuilder):
 
         else:
             raise ValueError(f"Invalid config: {self.config.name}")
-
-
