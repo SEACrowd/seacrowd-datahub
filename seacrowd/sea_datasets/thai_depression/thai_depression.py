@@ -6,9 +6,7 @@ import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import (DEFAULT_SEACROWD_VIEW_NAME,
-                                      DEFAULT_SOURCE_VIEW_NAME, Licenses,
-                                      Tasks)
+from seacrowd.utils.constants import DEFAULT_SEACROWD_VIEW_NAME, DEFAULT_SOURCE_VIEW_NAME, Licenses, Tasks
 
 _DATASETNAME = "thai_depression"
 _SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
