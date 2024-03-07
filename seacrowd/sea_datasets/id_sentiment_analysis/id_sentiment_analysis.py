@@ -45,7 +45,7 @@ _HOMEPAGE = "https://github.com/ridife/dataset-idsa/blob/master/Indonesian%20Sen
 
 _LANGUAGES = ["ind"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 
-_LICENSE = Licenses.CC_BY_NC_4_0.value
+_LICENSE = Licenses.UNKNOWN.value
 
 _LOCAL = False
 
