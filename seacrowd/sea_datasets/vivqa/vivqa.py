@@ -29,8 +29,7 @@ _HOMEPAGE = "https://github.com/kh4nh12/ViVQA"
 _LANGUAGES = ["vie"]
 _LICENSE = Licenses.UNKNOWN.value
 _LOCAL = False
-_URLS = {"viviq": {"train": "https://raw.githubusercontent.com/kh4nh12/ViVQA/main/train.csv",
-                   "test": "https://raw.githubusercontent.com/kh4nh12/ViVQA/main/test.csv"}}
+_URLS = {"viviq": {"train": "https://raw.githubusercontent.com/kh4nh12/ViVQA/main/train.csv", "test": "https://raw.githubusercontent.com/kh4nh12/ViVQA/main/test.csv"}}
 _SUPPORTED_TASKS = [Tasks.VISUAL_QUESTION_ANSWERING]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
@@ -62,13 +61,11 @@ class VivQADataset(datasets.GeneratorBasedBuilder):
     def _info(self) -> datasets.DatasetInfo:
 
         if self.config.schema == "source":
-            features = datasets.Features({"img_id": datasets.Value("string"),
-                                          "question": datasets.Value("string"),
-                                          "answer": datasets.Value("string"),
-                                          "type": datasets.Value("string")})
+            features = datasets.Features({"img_id": datasets.Value("string"), "question": datasets.Value("string"), "answer": datasets.Value("string"), "type": datasets.Value("string")})
         elif self.config.schema == "seacrowd_imqa":
             features = schemas.imqa_features
-            features['meta'] = {"coco_img_id": datasets.Value("string")}
+            features["meta"] = {"coco_img_id": datasets.Value("string"),
+                                "type":datasets.Value("int")}
         else:
             raise ValueError(f"No schema matched for {self.config.schema}")
 
@@ -111,22 +108,20 @@ class VivQADataset(datasets.GeneratorBasedBuilder):
             exam_id, exam_quest, exam_answer, exam_img_id, exam_type = exam
 
             if self.config.schema == "source":
-                yield eid, {"img_id": str(exam_img_id),
-                            "question": exam_quest,
-                            "answer": exam_answer,
-                            "type": exam_type}
+                yield eid, {"img_id": str(exam_img_id), "question": exam_quest, "answer": exam_answer, "type": exam_type}
             elif self.config.schema == "seacrowd_imqa":
                 example = {
                     "id": str(eid),
                     "question_id": str(exam_id),
                     "document_id": str(eid),
                     "questions": [exam_quest],
-                    "type": exam_type,
+                    "type": None,
                     "choices": None,
-                    "context": str(exam_img_id),
+                    "context": None,
                     "answer": [exam_answer],
                     "image_paths": [exam_img_id],
-                    "meta": {"coco_img_id": str(exam_img_id)}
+                    "meta": {"coco_img_id": str(exam_img_id),
+                             "type": exam_type},
                 }
 
                 yield eid, example
