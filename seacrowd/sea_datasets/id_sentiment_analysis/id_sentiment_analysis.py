@@ -101,7 +101,7 @@ class IdSentimentAnalysis(datasets.GeneratorBasedBuilder):
             features = datasets.Features(
                 {
                     "sentimen": datasets.Value("int32"),
-                    "Tweet": datasets.Value("string"),
+                    "tweet": datasets.Value("string"),
                 }
             )
 
