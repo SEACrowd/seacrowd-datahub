@@ -122,7 +122,6 @@ class IndonesiaChineseMtRobustEval(datasets.GeneratorBasedBuilder):
             )
         ]
 
-    # method parameters are unpacked from `gen_kwargs` as given in `_split_generators`
 
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         if self.config.schema == "source":
