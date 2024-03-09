@@ -149,6 +149,3 @@ class IndonesiaChineseMtRobustEval(datasets.GeneratorBasedBuilder):
             for line in values:
                 writer.write(line)
 
-
-# This template is based on the following template from the datasets package:
-# https://github.com/huggingface/datasets/blob/master/templates/new_dataset_script.py
