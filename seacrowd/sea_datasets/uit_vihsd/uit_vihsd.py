@@ -119,7 +119,6 @@ class UiTVihsdDataset(datasets.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
-        # dl_manager not used since dataloader uses HF 'load_dataset'
         file_paths = dl_manager.download_and_extract(_URL)
 
         return [
