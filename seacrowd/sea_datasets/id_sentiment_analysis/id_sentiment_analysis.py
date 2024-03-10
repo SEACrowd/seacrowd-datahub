@@ -41,7 +41,7 @@ This dataset was developed in Cloud Experience Research Group, Gadjah Mada Unive
 There is no further explanation of the dataset. Contributor found this dataset after skimming through "Sentiment analysis of Indonesian datasets based on a hybrid deep-learning strategy" (Lin CH and Nuha U, 2023).
 """
 
-_HOMEPAGE = "https://github.com/ridife/dataset-idsa/blob/master/Indonesian%20Sentiment%20Twitter%20Dataset%20Labeled.csv"
+_HOMEPAGE = "https://ridi.staff.ugm.ac.id/2019/03/06/indonesia-sentiment-analysis-dataset/"
 
 _LANGUAGES = ["ind"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 
