@@ -78,7 +78,9 @@ class SREDFMDataset(datasets.GeneratorBasedBuilder):
     ]
 
     DEFAULT_CONFIG_NAME = "sredfm_source"
-    RELATIONS_URL = "https://huggingface.co/datasets/Babelscape/SREDFM/raw/main/relations.tsv"
+    RELATIONS_URL = (
+        "https://huggingface.co/datasets/Babelscape/SREDFM/raw/main/relations.tsv"
+    )
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -88,18 +90,22 @@ class SREDFMDataset(datasets.GeneratorBasedBuilder):
                     "title": datasets.Value("string"),
                     "uri": datasets.Value("string"),
                     "text": datasets.Value("string"),
-                    "entities": [{
-                        'uri': datasets.Value(dtype='string'), 
-                        'surfaceform': datasets.Value(dtype='string'), 
-                        'type': datasets.Value(dtype='string'), 
-                        'start': datasets.Value(dtype='int32'), 
-                        'end': datasets.Value(dtype='int32')
-                    }],
-                    "relations": [{
-                        'subject': datasets.Value(dtype='int32'),
-                        'predicate': datasets.Value(dtype='string'),
-                        'object': datasets.Value(dtype='int32')
-                    }],
+                    "entities": [
+                        {
+                            "uri": datasets.Value(dtype="string"),
+                            "surfaceform": datasets.Value(dtype="string"),
+                            "type": datasets.Value(dtype="string"),
+                            "start": datasets.Value(dtype="int32"),
+                            "end": datasets.Value(dtype="int32"),
+                        }
+                    ],
+                    "relations": [
+                        {
+                            "subject": datasets.Value(dtype="int32"),
+                            "predicate": datasets.Value(dtype="string"),
+                            "object": datasets.Value(dtype="int32"),
+                        }
+                    ],
                 }
             )
 
@@ -114,7 +120,9 @@ class SREDFMDataset(datasets.GeneratorBasedBuilder):
             citation=_CITATION,
         )
 
-    def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
+    def _split_generators(
+        self, dl_manager: datasets.DownloadManager
+    ) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
         urls = _URLS[_DATASETNAME]
         data_dir = dl_manager.download_and_extract(urls)
@@ -135,7 +143,7 @@ class SREDFMDataset(datasets.GeneratorBasedBuilder):
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
-                    "filepath":data_dir["dev"],
+                    "filepath": data_dir["dev"],
                 },
             ),
         ]
@@ -159,40 +167,57 @@ class SREDFMDataset(datasets.GeneratorBasedBuilder):
 
                     entities = []
                     for entity in example["entities"]:
-                        entities.append({
-                            "uri": entity["uri"],
-                            "surfaceform": entity["surfaceform"],
-                            "start": entity["boundaries"][0],
-                            "end": entity["boundaries"][1],
-                            "type": entity["type"],
-                        })
-                    
+                        entities.append(
+                            {
+                                "uri": entity["uri"],
+                                "surfaceform": entity["surfaceform"],
+                                "start": entity["boundaries"][0],
+                                "end": entity["boundaries"][1],
+                                "type": entity["type"],
+                            }
+                        )
+
                     relations = []
                     for relation in example["relations"]:
-                        if relation["predicate"]["uri"] not in relation_names or relation['confidence']<=0.75:
+                        if (
+                            relation["predicate"]["uri"] not in relation_names
+                            or relation["confidence"] <= 0.75
+                        ):
                             continue
 
-                        relations.append({
-                            "subject": entities.index({
-                                "uri": relation["subject"]["uri"],
-                                "surfaceform": relation["subject"]["surfaceform"],
-                                "start": relation["subject"]["boundaries"][0],
-                                "end": relation["subject"]["boundaries"][1],
-                                "type": relation["subject"]["type"],
-                            }),
-                            "predicate": relation_names[relation["predicate"]["uri"]],
-                            "object": entities.index({
-                                "uri": relation["object"]["uri"],
-                                "surfaceform": relation["object"]["surfaceform"],
-                                "start": relation["object"]["boundaries"][0],
-                                "end": relation["object"]["boundaries"][1],
-                                "type": relation["object"]["type"],
-                            }),
-                        })
+                        relations.append(
+                            {
+                                "subject": entities.index(
+                                    {
+                                        "uri": relation["subject"]["uri"],
+                                        "surfaceform": relation["subject"][
+                                            "surfaceform"
+                                        ],
+                                        "start": relation["subject"]["boundaries"][0],
+                                        "end": relation["subject"]["boundaries"][1],
+                                        "type": relation["subject"]["type"],
+                                    }
+                                ),
+                                "predicate": relation_names[
+                                    relation["predicate"]["uri"]
+                                ],
+                                "object": entities.index(
+                                    {
+                                        "uri": relation["object"]["uri"],
+                                        "surfaceform": relation["object"][
+                                            "surfaceform"
+                                        ],
+                                        "start": relation["object"]["boundaries"][0],
+                                        "end": relation["object"]["boundaries"][1],
+                                        "type": relation["object"]["type"],
+                                    }
+                                ),
+                            }
+                        )
 
                     if len(relations) == 0:
                         continue
-                    
+
                     yield example["docid"], {
                         "docid": example["docid"],
                         "title": example["title"],
@@ -205,64 +230,80 @@ class SREDFMDataset(datasets.GeneratorBasedBuilder):
         elif self.config.schema == "seacrowd_kb":
             with jsonlines.open(filepath) as f:
                 skip = set()
+                i = 0
                 for example in f.iter():
                     if example["docid"] in skip:
                         continue
                     skip.add(example["docid"])
 
-                    passages = [{
-                        "id": example["uri"],
-                        "type": "text",
-                        "text": [example["text"]],
-                        "offsets": [[0, len(example["text"])]]
-                    }]
-                    
+                    i += 1
+                    processed_text = example["text"].replace("\n", " ")
+                    passages = [
+                        {
+                            "id": f"{i}-{example['uri']}",
+                            "type": "text",
+                            "text": [processed_text],
+                            "offsets": [[0, len(processed_text)]],
+                        }
+                    ]
+
                     entities = []
                     for entity in example["entities"]:
-                        entities.append({
-                            "id": f'{entity["type"]}-{entity["boundaries"][0]}-{entity["boundaries"][1]}',
-                            "type": entity["type"],
-                            "text": [entity["surfaceform"]],
-                            "offsets": [entity["boundaries"]],
-                            "normalized": {
-                                "db_name": "",
-                                "db_id": ""
-                            },
-                        })
+                        entities.append(
+                            {
+                                "id": entity["uri"],
+                                "type": entity["type"],
+                                "text": [entity["surfaceform"]],
+                                "offsets": [entity["boundaries"]],
+                                "normalized": {"db_name": "", "db_id": ""},
+                            }
+                        )
 
                     relations = []
-                    for i, relation in enumerate(example["relations"]):
-                        if relation["predicate"]["uri"] not in relation_names or relation['confidence']<=0.75:
+                    for relation in example["relations"]:
+                        if (
+                            relation["predicate"]["uri"] not in relation_names
+                            or relation["confidence"] <= 0.75
+                        ):
                             continue
 
-                        relations.append({
-                            "id": str(i),
-                            "type": relation_names[relation["predicate"]["uri"]],
-                            "arg1_id": str(entities.index({
-                                "id": f'{relation["subject"]["type"]}-{relation["subject"]["boundaries"][0]}-{relation["subject"]["boundaries"][1]}',
-                                "type": relation["subject"]["type"],
-                                "text": [relation["subject"]["surfaceform"]],
-                                "offsets": [relation["subject"]["boundaries"]],
-                                "normalized": {
-                                    "db_name": "",
-                                    "db_id": ""
-                                },
-                            })),
-                            "arg2_id": str(entities.index({
-                                "id": f'{relation["object"]["type"]}-{relation["object"]["boundaries"][0]}-{relation["object"]["boundaries"][1]}',
-                                "type": relation["object"]["type"],
-                                "text": [relation["object"]["surfaceform"]],
-                                "offsets": [relation["object"]["boundaries"]],
-                                "normalized": {
-                                    "db_name": "",
-                                    "db_id": ""
-                                },
-                            })),
-                            "normalized": {
-                                "db_name": "",
-                                "db_id": ""
-                            },
-                        })
+                        i += 1
+                        sub = relation["subject"]
+                        pred = relation["predicate"]
+                        obj = relation["object"]
+                        relations.append(
+                            {
+                                "id": f"{i}-{sub['uri']}-{pred['uri']}-{obj['uri']}",
+                                "type": relation_names[pred["uri"]],
+                                "arg1_id": str(
+                                    entities.index(
+                                        {
+                                            "id": sub["uri"],
+                                            "type": sub["type"],
+                                            "text": [sub["surfaceform"]],
+                                            "offsets": [sub["boundaries"]],
+                                            "normalized": {"db_name": "", "db_id": ""},
+                                        }
+                                    )
+                                ),
+                                "arg2_id": str(
+                                    entities.index(
+                                        {
+                                            "id": obj["uri"],
+                                            "type": obj["type"],
+                                            "text": [obj["surfaceform"]],
+                                            "offsets": [obj["boundaries"]],
+                                            "normalized": {"db_name": "", "db_id": ""},
+                                        }
+                                    )
+                                ),
+                                "normalized": {"db_name": "", "db_id": ""},
+                            }
+                        )
+
+                    for entity in entities:
+                        i += 1
+                        entity["id"] = f"{i}-{entity['id']}"
 
                     if len(relations) == 0:
                         continue
@@ -270,13 +311,8 @@ class SREDFMDataset(datasets.GeneratorBasedBuilder):
                     yield example["docid"], {
                         "id": example["docid"],
                         "passages": passages,
-                        "entities": entities, 
+                        "entities": entities,
                         "relations": relations,
                         "events": [],
                         "coreferences": [],
                     }
-
-
-
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)
