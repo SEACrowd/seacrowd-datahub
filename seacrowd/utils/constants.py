@@ -131,6 +131,7 @@ class Tasks(Enum):
 
     # No seacrowd schema
     FACT_CHECKING = "FCT"
+    WORD_LIST = "WL"
 
 
 class Licenses(Enum):
@@ -279,6 +280,7 @@ TASK_TO_SCHEMA = {
     Tasks.VIDEO_CAPTIONING: "VIDTEXT",
     Tasks.VIDEO_TO_TEXT_RETRIEVAL: "VIDTEXT",
     Tasks.FACT_CHECKING: None,
+    Tasks.WORD_LIST: None,
     Tasks.MORALITY_CLASSIFICATION: "TEXT",
 }
 
