@@ -428,29 +428,25 @@ class Flores200(datasets.GeneratorBasedBuilder):
             # Extract all contents to the specified directory
             zip_ref.extractall(base_dir)
 
-        def _get_sentence_paths(split):
-            sentence_paths = [os.path.join(base_dir, _SENTENCES_PATHS[lang][split]) for lang in [self.config.first_language_name, self.config.second_language_name]]
-
-            return sentence_paths
-
         return [
             datasets.SplitGenerator(
                 name=split,
                 gen_kwargs={
-                    "sentence_paths": _get_sentence_paths(split),
+                    "first_sentence_path": os.path.join(base_dir, _SENTENCES_PATHS[self.config.first_language_name][split]),
+                    "second_sentence_path": os.path.join(base_dir, _SENTENCES_PATHS[self.config.second_language_name][split]),
                     "metadata_path": os.path.join(base_dir, _METADATA_PATHS[split]),
                 },
             )
             for split in _SPLITS
         ]
 
-    def _generate_examples(self, sentence_paths: list[str], metadata_path: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, first_sentence_path: str, second_sentence_path: str, metadata_path: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
         sentences = {}
         langs = [self.config.first_language_name, self.config.second_language_name]
 
-        for path, lang in zip(sentence_paths, langs):
+        for path, lang in zip([first_sentence_path, second_sentence_path], langs):
             with open(path, "r") as sent_file:
                 sentences[lang] = [line.strip() for line in sent_file.readlines()]
 
