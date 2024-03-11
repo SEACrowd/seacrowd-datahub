@@ -418,6 +418,7 @@ class Flores200(datasets.GeneratorBasedBuilder):
         dl_dir = dl_manager.download(_URLS[_DATASETNAME])
 
         base_dir = os.path.join(os.path.dirname(dl_dir), "flores200extracted")
+
         password = "multilingual machine translation"
 
         with zipfile.ZipFile(dl_dir, "r") as zip_ref:
@@ -428,7 +429,8 @@ class Flores200(datasets.GeneratorBasedBuilder):
             zip_ref.extractall(base_dir)
 
         def _get_sentence_paths(split):
-            sentence_paths = [os.path.join(base_dir, _SENTENCES_PATHS[lang][split]) for lang in _LANGUAGE_NAMES]
+            sentence_paths = [os.path.join(base_dir, _SENTENCES_PATHS[lang][split]) for lang in [self.config.first_language_name, self.config.second_language_name]]
+
             return sentence_paths
 
         return [
@@ -464,8 +466,7 @@ class Flores200(datasets.GeneratorBasedBuilder):
                 }
 
         elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.MACHINE_TRANSLATION]).lower()}":
-            for id_, metadata in enumerate(metadata_lines):
-                metadata = metadata.split("\t")
+            for id_, _ in enumerate(metadata_lines):
                 yield id_, {
                     "id": id_ + 1,
                     "text_1": sentences[self.config.first_language_name][id_],
