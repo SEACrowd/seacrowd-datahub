@@ -52,7 +52,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class WeathubDataset(datasets.GeneratorBasedBuilder):
+class WEATHubDataset(datasets.GeneratorBasedBuilder):
     """WEATHub is a dataset containing 24 languages. It contains words organized into groups of (target1, target2, attribute1, attribute2) to measure the association target1:target2 :: attribute1:attribute2. This dataset corresponds to the data described in the paper "Global Voices, Local Biases: Socio-Cultural Prejudices across Languages" accepted to EMNLP 2023."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
