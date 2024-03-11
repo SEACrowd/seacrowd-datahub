@@ -13,19 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 from pathlib import Path
 from typing import Dict, List, Tuple
 
 import datasets
-
-from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
-from seacrowd.utils import schemas
-
 import pandas as pd
 
-# TODO: Add BibTeX citation
+from seacrowd.utils import schemas
+from seacrowd.utils.configs import SEACrowdConfig
+from seacrowd.utils.constants import Licenses, Tasks
+
 _CITATION = """\
 @InProceedings{10.1007/978-981-16-8515-6_44,
 author="Juan, Sarah Samson
@@ -39,7 +36,11 @@ year="2022",
 publisher="Springer Singapore",
 address="Singapore",
 pages="577--589",
-abstract="The study presents an attempt to analyse how social media netizens in Malaysia responded to the calls for ``Social Distancing'' and ``Physical Distancing'' as the newly recommended social norm was introduced to the world as a response to the COVID-19 global pandemic. The pandemic drove a sharp increase in social media platforms' use as a public health communication platform since the first wave of the COVID-19 outbreak in Malaysia in April 2020. We analysed thousands of tweets posted by Malaysians daily between January 2020 and August 2021 to determine public perceptions and interactions patterns. The analysis focused on positive and negative reactions and the interchanges of uses of the recommended terminologies ``social distancing'' and ``physical distancing''. Using linguistic analysis and natural language processing, findings dominantly indicate influences from the multilingual and multicultural values held by Malaysian netizens, as they embrace the concept of distancing as a measure of global public health safety.",
+abstract="The study presents an attempt to analyse how social media netizens in Malaysia responded to the calls for ``Social Distancing'' and ``Physical Distancing'' as the newly recommended social norm was introduced to the world
+as a response to the COVID-19 global pandemic. The pandemic drove a sharp increase in social media platforms' use as a public health communication platform since the first wave of the COVID-19 outbreak in Malaysia in April 2020.
+We analysed thousands of tweets posted by Malaysians daily between January 2020 and August 2021 to determine public perceptions and interactions patterns. The analysis focused on positive and negative reactions
+and the interchanges of uses of the recommended terminologies ``social distancing'' and ``physical distancing''. Using linguistic analysis and natural language processing,
+findings dominantly indicate influences from the multilingual and multicultural values held by Malaysian netizens, as they embrace the concept of distancing as a measure of global public health safety.",
 isbn="978-981-16-8515-6"
 }
 """
@@ -56,9 +57,9 @@ automatically using Polyglot and MALAYA NLP tools due to multilingual data.
 
 _HOMEPAGE = "https://github.com/sarahjuan/malaysia-tweets-with-sentiment-labels"
 
-_LANGUAGES = ["zlm,","eng"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
+_LANGUAGES = ["zlm,", "eng"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 
-_LICENSE = Licenses.UNKNOWN.value # example: Licenses.MIT.value, Licenses.CC_BY_NC_SA_4_0.value, Licenses.UNLICENSE.value, Licenses.UNKNOWN.value
+_LICENSE = Licenses.UNKNOWN.value  # example: Licenses.MIT.value, Licenses.CC_BY_NC_SA_4_0.value, Licenses.UNLICENSE.value, Licenses.UNKNOWN.value
 
 _LOCAL = False
 
@@ -68,15 +69,12 @@ _URLS = {
 
 _SUPPORTED_TASKS = [Tasks.SENTIMENT_ANALYSIS]  # example: [Tasks.TRANSLATION, Tasks.NAMED_ENTITY_RECOGNITION, Tasks.RELATION_EXTRACTION]
 
-# TODO: set this to a version that is associated with the dataset. if none exists use "1.0.0"
-#  This version doesn't have to be consistent with semantic versioning. Anything that is
-#  provided by the original dataset as a version goes.
 _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
 
-class MalaysiaTweets(datasets.GeneratorBasedBuilder):
+class MalaysiaTweetsDataset(datasets.GeneratorBasedBuilder):
     """This tweet data was extracted from tweets in Malaysia based on keywords
     "social distancing" and "physical distancing" from January 2020 to July 2021."""
 
@@ -103,7 +101,7 @@ class MalaysiaTweets(datasets.GeneratorBasedBuilder):
     ]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
-    SENTIMENT_LABEL_CLASSES = ["POSITIVE", "NEGATIVE","NEUTRAL"]
+    SENTIMENT_LABEL_CLASSES = ["POSITIVE", "NEGATIVE", "NEUTRAL"]
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -134,7 +132,6 @@ class MalaysiaTweets(datasets.GeneratorBasedBuilder):
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
-                # Whatever you put in gen_kwargs will be passed to _generate_examples
                 gen_kwargs={
                     "filepath": data_dir,
                     "split": "train",
@@ -144,7 +141,7 @@ class MalaysiaTweets(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
-        
+
         df = pd.read_csv(filepath, encoding="utf-8")
         if self.config.schema == "source":
             for idx, row in df.iterrows():
@@ -153,12 +150,3 @@ class MalaysiaTweets(datasets.GeneratorBasedBuilder):
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             for idx, row in df.iterrows():
                 yield idx, {"id": idx, "text": row["Tweet"], "label": row["Sentiment"]}
-
-# This template is based on the following template from the datasets package:
-# https://github.com/huggingface/datasets/blob/master/templates/new_dataset_script.py
-
-
-# This allows you to run your dataloader with `python [dataset_name].py` during development
-# TODO: Remove this before making your PR
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)
