@@ -344,7 +344,7 @@ class Flores200(datasets.GeneratorBasedBuilder):
             if first_lang_name == second_lang_name or ((first_lang_name.split("_")[0] not in _LANGUAGES) and (second_lang_name.split("_")[0] not in _LANGUAGES)):
                 continue
 
-            subset_id = f"{_DATASETNAME}_{first_lang_name}_{second_lang_name}_seacrowd_t2t"
+            subset_id = f"{_DATASETNAME}_{first_lang_name}_{second_lang_name}"
 
             BUILDER_CONFIGS.append(
                 Flores200SeacrowdConfig(
