@@ -141,6 +141,8 @@ class IdSentimentAnalysis(datasets.GeneratorBasedBuilder):
         if self.config.schema == "source":
             df = pd.read_csv(path, delimiter="\t")
 
+            df.rename(columns={"Tweet": "tweet"}, inplace=True)
+
             for _, row in df.iterrows():
                 yield idx, row.to_dict()
                 idx += 1
