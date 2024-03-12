@@ -25,7 +25,7 @@ import pandas as pd
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
+from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @misc{singh2024aya,
@@ -91,9 +91,9 @@ class AyaDataset(datasets.GeneratorBasedBuilder):
         all_lang_source_config = SEACrowdConfig(
             name=f"{_DATASETNAME}_source",
             version=_SOURCE_VERSION,
-            description=f"Aya Dataset source schema",
+            description="Aya Dataset source schema",
             schema="source",
-            subset_id=f"Aya",
+            subset_id="Aya",
         )
 
         all_lang_t2t_config = SEACrowdConfig(
@@ -101,7 +101,7 @@ class AyaDataset(datasets.GeneratorBasedBuilder):
             version=_SEACROWD_VERSION,
             description=f"Aya Dataset {_SEACROWD_SCHEMA} schema",
             schema=_SEACROWD_SCHEMA,
-            subset_id=f"Aya",
+            subset_id="Aya",
         )
 
         configs.append(all_lang_source_config)
