@@ -1,3 +1,9 @@
+"""
+This new update refers to the this HF dataloader script
+https://huggingface.co/datasets/csebuetnlp/xlsum/blob/main/xlsum.py
+while conforming to SEACrowd schema
+"""
+
 import os
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -5,9 +11,9 @@ from typing import Dict, List, Tuple
 import json
 import datasets
 
+from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import TASK_TO_SCHEMA, Licenses, Tasks
-from seacrowd.utils import schemas
 
 
 _CITATION = """\
@@ -96,7 +102,7 @@ def construct_configs_on_langs() -> List[SEACrowdConfig]:
 
 
 class XLSum(datasets.GeneratorBasedBuilder):
-    """XL-Sum is a large-scale multilingual summarization dataset that covers 45 languages including Indonesian text summarization. The dataset is based on article-summary pairs from BBC, is highly abstractive, concise, and of high quality, as indicated by human and intrinsic evaluation."""
+    """XL-Sum is a large-scale multilingual summarization dataset that covers 45 languages including Indonesian text summarization."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
