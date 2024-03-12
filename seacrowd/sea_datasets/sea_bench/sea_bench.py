@@ -56,7 +56,7 @@ _LOCAL = False
 
 _URLS = "https://huggingface.co/datasets/SeaLLMs/Sea-bench/raw/main/question.jsonl"
 
-_SUPPORTED_TASKS = [Tasks.INSTRUCTION_TUNING, Tasks.MACHINE_TRANSLATION]
+_SUPPORTED_TASKS = [Tasks.INSTRUCTION_TUNING]
 
 _SOURCE_VERSION = "1.0.0"
 
