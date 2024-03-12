@@ -81,8 +81,22 @@ class MyParaphraseDataset(datasets.GeneratorBasedBuilder):
             name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd schema",
-            schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
-            subset_id=f"{_DATASETNAME}",
+            schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}_paraphrase",
+            subset_id=f"{_DATASETNAME}_paraphrase",
+        ),
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}_non_paraphrase",
+            version=SEACROWD_VERSION,
+            description=f"{_DATASETNAME} SEACrowd schema",
+            schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}_non_paraphrase",
+            subset_id=f"{_DATASETNAME}_non_paraphrase",
+        ),
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}_all",
+            version=SEACROWD_VERSION,
+            description=f"{_DATASETNAME} SEACrowd schema",
+            schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}_all",
+            subset_id=f"{_DATASETNAME}_all",
         ),
     ]
 
@@ -92,7 +106,13 @@ class MyParaphraseDataset(datasets.GeneratorBasedBuilder):
         if self.config.schema == "source":
             features = datasets.Features({"id": datasets.Value("int32"), "paraphrase1": datasets.Value("string"), "paraphrase2": datasets.Value("string"), "is_paraphrase": datasets.Value("int32")})
 
-        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
+        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}_paraphrase":
+            features = schemas.text2text_features
+
+        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}_non_paraphrase":
+            features = schemas.text2text_features
+
+        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}_all":
             features = schemas.text2text_features
 
         return datasets.DatasetInfo(
@@ -142,10 +162,20 @@ class MyParaphraseDataset(datasets.GeneratorBasedBuilder):
         dataset.columns = columns
         dataset = dataset.dropna()
 
+        dataset["is_paraphrase"] = dataset["is_paraphrase"].astype(int)
+
         if self.config.schema == "source":
             for i, row in dataset.iterrows():
                 yield i, {"id": i, "paraphrase1": row["paraphrase1"], "paraphrase2": row["paraphrase2"], "is_paraphrase": row["is_paraphrase"]}
 
-        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
+        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}_paraphrase":
+            for i, row in dataset[dataset["is_paraphrase"] == 1].iterrows():
+                yield i, {"id": i, "text_1": row["paraphrase1"], "text_2": row["paraphrase2"], "text_1_name": "anchor_text", "text_2_name": "paraphrased_text"}
+
+        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}_non_paraphrase":
+            for i, row in dataset[dataset["is_paraphrase"] == 0].iterrows():
+                yield i, {"id": i, "text_1": row["paraphrase1"], "text_2": row["paraphrase2"], "text_1_name": "anchor_text", "text_2_name": "non_paraphrased_text"}
+
+        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}_all":
             for i, row in dataset.iterrows():
                 yield i, {"id": i, "text_1": row["paraphrase1"], "text_2": row["paraphrase2"], "text_1_name": "anchor_text", "text_2_name": "paraphrased_text" if row["is_paraphrase"] else "non_paraphrased_text"}
