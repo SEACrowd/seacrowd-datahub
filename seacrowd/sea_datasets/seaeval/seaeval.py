@@ -158,10 +158,10 @@ class SeaEvalDataset(datasets.GeneratorBasedBuilder):
 
         return [
             datasets.SplitGenerator(
-                name=datasets.Split.TRAIN,
+                name=datasets.Split.TEST,
                 gen_kwargs={
                     "paths": paths,
-                    "split": "train",
+                    "split": "test",
                 },
             ),
         ]
