@@ -100,7 +100,7 @@ class MyParaphraseDataset(datasets.GeneratorBasedBuilder):
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}_paraphrase"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
