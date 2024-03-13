@@ -43,94 +43,19 @@ Multilingual Spoken Words Corpus is a large and growing audio dataset of spoken 
 _HOMEPAGE = "https://huggingface.co/datasets/MLCommons/ml_spoken_words"
 
 _LANGUAGES = ["cnh", "ind", "vie"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
+_LANGUAGE_NAME_MAP = {
+    "cnh": "cnh",
+    "ind": "id",
+    "vie": "vi",
+}
+
 _FORMATS = ["wav", "opus"]
 
 _LICENSE = Licenses.CC_BY_4_0.value
 
 _LOCAL = False
 
-_URLS = {
-    _DATASETNAME: {
-        "train": {
-            "cnh": {
-                "wav": [
-                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_wav/train/0000.parquet?download=true",
-                ],
-                "opus": [
-                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_opus/train/0000.parquet?download=true",
-                ],
-            },
-            "ind": {
-                "wav": [
-                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_wav/train/0000.parquet?download=true",
-                ],
-                "opus": [
-                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_opus/train/0000.parquet?download=true",
-                ],
-            },
-            "vie": {
-                "wav": [
-                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_wav/train/0000.parquet?download=true",
-                ],
-                "opus": [
-                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_opus/train/0000.parquet?download=true",
-                ],
-            },
-        },
-        "validation": {
-            "cnh": {
-                "wav": [
-                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_wav/validation/0000.parquet?download=true",
-                ],
-                "opus": [
-                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_opus/validation/0000.parquet?download=true",
-                ],
-            },
-            "ind": {
-                "wav": [
-                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_wav/validation/0000.parquet?download=true",
-                ],
-                "opus": [
-                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_opus/validation/0000.parquet?download=true",
-                ],
-            },
-            "vie": {
-                "wav": [
-                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_wav/validation/0000.parquet?download=true",
-                ],
-                "opus": [
-                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_opus/validation/0000.parquet?download=true",
-                ],
-            },
-        },
-        "test": {
-            "cnh": {
-                "wav": [
-                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_wav/test/0000.parquet?download=true",
-                ],
-                "opus": [
-                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/cnh_opus/test/0000.parquet?download=true",
-                ],
-            },
-            "ind": {
-                "wav": [
-                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_wav/test/0000.parquet?download=true",
-                ],
-                "opus": [
-                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/id_opus/test/0000.parquet?download=true",
-                ],
-            },
-            "vie": {
-                "wav": [
-                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_wav/test/0000.parquet?download=true",
-                ],
-                "opus": [
-                    "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/vi_opus/test/0000.parquet?download=true",
-                ],
-            },
-        },
-    },
-}
+_URLS = "https://huggingface.co/datasets/MLCommons/ml_spoken_words/resolve/refs%2Fconvert%2Fparquet/{lang}_{format}/{split}/0000.parquet?download=true"
 
 _SUPPORTED_TASKS = [Tasks.SPEECH_RECOGNITION]
 _SUPPORTED_SCHEMA_STRINGS = [f"seacrowd_{str(TASK_TO_SCHEMA[task]).lower()}" for task in _SUPPORTED_TASKS]
@@ -232,13 +157,13 @@ class MSWC(datasets.GeneratorBasedBuilder):
         result = []
 
         for split_name in split_names:
-            paths = dl_manager.download_and_extract(_URLS[_DATASETNAME][split_name][self.config.language][self.config.audio_format])
+            path = dl_manager.download_and_extract(_URLS.format(split=split_name, lang=_LANGUAGE_NAME_MAP[self.config.language], format=self.config.audio_format))
 
             result.append(
                 datasets.SplitGenerator(
                     name=split_name,
                     gen_kwargs={
-                        "paths": paths,
+                        "path": path,
                         "split": split_name,
                         "language": self.config.language,
                         "format": self.config.audio_format,
@@ -248,59 +173,55 @@ class MSWC(datasets.GeneratorBasedBuilder):
 
         return result
 
-    def _generate_examples(self, paths: list[Path], split: str, language: str, format: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, path: Path, split: str, language: str, format: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
         idx = 0
 
         if self.config.schema == "source":
+            df = pd.read_parquet(path)
 
-            for path in paths:
-                df = pd.read_parquet(path)
-
-                for _, row in df.iterrows():
-                    yield idx, row.to_dict()
-                    idx += 1
+            for _, row in df.iterrows():
+                yield idx, row.to_dict()
+                idx += 1
 
         elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SPEECH_RECOGNITION]).lower()}":
+            df = pd.read_parquet(path)
 
-            for path in paths:
-                df = pd.read_parquet(path)
+            base_folder = os.path.dirname(path)
+            base_folder = os.path.join(base_folder, _DATASETNAME, language, format, split)
 
-                base_folder = os.path.dirname(path)
-                base_folder = os.path.join(base_folder, _DATASETNAME, language, format, split)
+            if not os.path.exists(base_folder):
+                os.makedirs(base_folder)
 
-                if not os.path.exists(base_folder):
-                    os.makedirs(base_folder)
+            audio_paths = []
 
-                audio_paths = []
+            for _, row in df.iterrows():
+                audio_dict = row["audio"]
+                file_name = audio_dict["path"]
 
-                for _, row in df.iterrows():
-                    audio_dict = row["audio"]
-                    file_name = audio_dict["path"]
+                path = os.path.join(base_folder, file_name)
 
-                    path = os.path.join(base_folder, file_name)
+                audio_dict["path"] = path
 
-                    audio_dict["path"] = path
+                with open(path, "wb") as f:
+                    f.write(audio_dict["bytes"])
 
-                    with open(path, "wb") as f:
-                        f.write(audio_dict["bytes"])
+                audio_paths.append(path)
 
-                    audio_paths.append(path)
+            df.rename(columns={"label": "text"}, inplace=True)
 
-                df.rename(columns={"label": "text"}, inplace=True)
+            df["path"] = audio_paths
 
-                df["path"] = audio_paths
+            df["id"] = df.index + idx
+            df = df.assign(text="").astype({"text": "str"})
+            df = df.assign(metadata=[{"speaker_age": 0, "speaker_gender": gender} for gender in df["gender"]]).astype({"metadata": "object"})
 
-                df["id"] = df.index + idx
-                df = df.assign(text="").astype({"text": "str"})
-                df = df.assign(metadata=[{"speaker_age": 0, "speaker_gender": gender} for gender in df["gender"]]).astype({"metadata": "object"})
+            df.drop(columns=["file", "is_valid", "language", "gender", "keyword"], inplace=True)
 
-                df.drop(columns=["file", "is_valid", "language", "gender", "keyword"], inplace=True)
-
-                for _, row in df.iterrows():
-                    yield idx, row.to_dict()
-                    idx += 1
+            for _, row in df.iterrows():
+                yield idx, row.to_dict()
+                idx += 1
 
         else:
             raise ValueError(f"Invalid config: {self.config.name}")
