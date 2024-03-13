@@ -1,7 +1,8 @@
 # coding=utf-8
 from pathlib import Path
 from typing import Dict, List, Tuple
-
+import os
+import json
 import datasets
 import pandas as pd
 
@@ -67,11 +68,32 @@ class VivQADataset(datasets.GeneratorBasedBuilder):
     def _info(self) -> datasets.DatasetInfo:
 
         if self.config.schema == "source":
-            features = datasets.Features({"img_id": datasets.Value("string"), "question": datasets.Value("string"), "answer": datasets.Value("string"), "type": datasets.Value("string")})
+            features = datasets.Features({"img_id": datasets.Value("string"),
+                                          "question": datasets.Value("string"),
+                                          "answer": datasets.Value("string"),
+                                          "type": datasets.Value("string"),
+                                          "coco_url": datasets.Value("string"),
+                                          "flickr_url": datasets.Value("string"),
+                                          "img_name": datasets.Value("string"),
+                                          "coco_license": datasets.Value("int32"),
+                                          "coco_width": datasets.Value("int32"),
+                                          "coco_height": datasets.Value("int32"),
+                                          "coco_date_captured": datasets.Value("string"),
+                                          "image_path": datasets.Value("string")
+                                          })
         elif self.config.schema == "seacrowd_imqa":
             features = schemas.imqa_features
             features["meta"] = {"coco_img_id": datasets.Value("string"),
-                                "type":datasets.Value("int")}
+                                "type": datasets.Value("string"),
+                                "flickr_url": datasets.Value("string"),
+                                "coco_url": datasets.Value("string"),
+                                "img_name": datasets.Value("string"),
+                                "coco_license": datasets.Value("int32"),
+                                "coco_width": datasets.Value("int32"),
+                                "coco_height": datasets.Value("int32"),
+                                "coco_date_captured": datasets.Value("string"),
+                                "image_path": datasets.Value("string")
+                                }
         else:
             raise ValueError(f"No schema matched for {self.config.schema}")
 
@@ -89,12 +111,14 @@ class VivQADataset(datasets.GeneratorBasedBuilder):
         data_dir = dl_manager.download_and_extract(urls)
         cocodata = dl_manager.download_and_extract(_URLS["cocodata"])
         Coco_Dict = self._get_image_detail(cocodata)
+
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
                     "filepath": data_dir["train"],
                     "split": "train",
+                    "coco_dict": Coco_Dict,
                 },
             ),
             datasets.SplitGenerator(
@@ -102,24 +126,66 @@ class VivQADataset(datasets.GeneratorBasedBuilder):
                 gen_kwargs={
                     "filepath": data_dir["test"],
                     "split": "test",
+                    "coco_dict": Coco_Dict,
                 },
             ),
         ]
 
     def _get_image_detail(self, coco_dir) -> Dict:
-        print(coco_dir)
-        exit()
-    def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
+        coco2014_train_val_annots = os.path.join(coco_dir["coco2014_train_val_annots"], "annotations")
+        train_ann_2014_path = os.path.join(coco2014_train_val_annots, "captions_train2014.json")
+        val_ann_2014_path = os.path.join(coco2014_train_val_annots, "captions_val2014.json")
+        coco_dict_val = {itm["id"]: itm for itm in json.load(open(val_ann_2014_path, "r"))["images"]}
+        coco_dict_train = {itm["id"]: itm for itm in json.load(open(train_ann_2014_path, "r"))["images"]}
+        coco_train_path = os.path.join(coco_dir["coco2014_train_images"], "train2014")
+        coco_val_path = os.path.join(coco_dir["coco2014_val_images"], "val2014")
+        coco_dict = {"train": coco_dict_train,
+                     "val": coco_dict_val,
+                     "coco_train_path": coco_train_path,
+                     "coco_val_path": coco_val_path
+                     }
+
+        return coco_dict
+
+    def _generate_examples(self, filepath: Path, split: str, coco_dict: Dict = None) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
         raw_examples = pd.read_csv(filepath)
+        coco_train_ref = coco_dict["train"]
+        coco_val_ref = coco_dict["val"]
+        coco_ref = {**coco_train_ref, **coco_val_ref}
+        coco_train_path = coco_dict["coco_train_path"]
+        coco_val_path = coco_dict["coco_val_path"]
 
         for eid, exam in raw_examples.iterrows():
             assert len(exam) == 5
             exam_id, exam_quest, exam_answer, exam_img_id, exam_type = exam
+            coco_info = coco_ref[exam_img_id]
+            flickr_url = coco_info["flickr_url"]
+            img_name = coco_info["file_name"]
+            coco_url = coco_info["coco_url"]
+            coco_license = coco_info["license"]
+            coco_width = coco_info["width"]
+            coco_height = coco_info["height"]
+            coco_date_captured = coco_info["date_captured"]
+            coco_path = coco_train_path if exam_img_id in coco_train_ref else coco_val_path
+            image_path = os.path.join(coco_path, img_name)
 
             if self.config.schema == "source":
-                yield eid, {"img_id": str(exam_img_id), "question": exam_quest, "answer": exam_answer, "type": exam_type}
+                yield eid, {"img_id": str(exam_img_id),
+                            "question": exam_quest,
+                            "answer": exam_answer,
+                            "type": exam_type,
+                            "coco_url": coco_url,
+                            "flickr_url": flickr_url,
+                            "img_name": img_name,
+                            "coco_license": coco_license,
+                            "coco_width": coco_width,
+                            "coco_height": coco_height,
+                            "coco_date_captured": coco_date_captured,
+                            "image_path": image_path
+                            }
+
             elif self.config.schema == "seacrowd_imqa":
                 example = {
                     "id": str(eid),
@@ -130,9 +196,18 @@ class VivQADataset(datasets.GeneratorBasedBuilder):
                     "choices": None,
                     "context": None,
                     "answer": [exam_answer],
-                    "image_paths": [exam_img_id],
+                    "image_paths": [image_path],
                     "meta": {"coco_img_id": str(exam_img_id),
-                             "type": exam_type},
+                             "type": exam_type,
+                             "flickr_url": flickr_url,
+                             "coco_url": coco_url,
+                             "img_name": img_name,
+                             "coco_license": coco_license,
+                             "coco_width": coco_width,
+                             "coco_height": coco_height,
+                             "coco_date_captured": coco_date_captured,
+                             "image_path": image_path,
+                             },
                 }
 
                 yield eid, example
