@@ -29,7 +29,13 @@ _HOMEPAGE = "https://github.com/kh4nh12/ViVQA"
 _LANGUAGES = ["vie"]
 _LICENSE = Licenses.UNKNOWN.value
 _LOCAL = False
-_URLS = {"viviq": {"train": "https://raw.githubusercontent.com/kh4nh12/ViVQA/main/train.csv", "test": "https://raw.githubusercontent.com/kh4nh12/ViVQA/main/test.csv"}}
+_URLS = {"viviq": {"train": "https://raw.githubusercontent.com/kh4nh12/ViVQA/main/train.csv",
+                   "test": "https://raw.githubusercontent.com/kh4nh12/ViVQA/main/test.csv"},
+         "cocodata": {"coco2014_train_val_annots": "http://images.cocodataset.org/annotations/annotations_trainval2014.zip",
+                      "coco2014_train_images": "http://images.cocodataset.org/zips/train2014.zip",
+                      "coco2014_val_images": "http://images.cocodataset.org/zips/val2014.zip",
+                      }
+         }
 _SUPPORTED_TASKS = [Tasks.VISUAL_QUESTION_ANSWERING]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
@@ -81,6 +87,8 @@ class VivQADataset(datasets.GeneratorBasedBuilder):
         """Returns SplitGenerators."""
         urls = _URLS["viviq"]
         data_dir = dl_manager.download_and_extract(urls)
+        cocodata = dl_manager.download_and_extract(_URLS["cocodata"])
+        Coco_Dict = self._get_image_detail(cocodata)
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
@@ -98,6 +106,9 @@ class VivQADataset(datasets.GeneratorBasedBuilder):
             ),
         ]
 
+    def _get_image_detail(self, coco_dir) -> Dict:
+        print(coco_dir)
+        exit()
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
