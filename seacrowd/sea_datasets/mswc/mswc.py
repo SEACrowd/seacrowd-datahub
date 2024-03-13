@@ -304,5 +304,3 @@ class MSWC(datasets.GeneratorBasedBuilder):
 
         else:
             raise ValueError(f"Invalid config: {self.config.name}")
-
-
