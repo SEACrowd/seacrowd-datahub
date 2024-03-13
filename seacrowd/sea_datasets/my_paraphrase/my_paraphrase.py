@@ -71,31 +71,45 @@ class MyParaphraseDataset(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_source",
+            name=f"{_DATASETNAME}_source",  # source
             version=SOURCE_VERSION,
             description=f"{_DATASETNAME} source schema",
-            schema="source",
-            subset_id=f"{_DATASETNAME}",
-        ),
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",
-            version=SEACROWD_VERSION,
-            description=f"{_DATASETNAME} SEACrowd schema",
-            schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}_paraphrase",
+            schema="paraphrase_source",
             subset_id=f"{_DATASETNAME}_paraphrase",
         ),
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}_non_paraphrase",
+            name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",  # schema
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd schema",
-            schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}_non_paraphrase",
+            schema=f"seacrowd_paraphrase_{SEACROWD_SCHEMA_NAME}",
+            subset_id=f"{_DATASETNAME}_paraphrase",
+        ),
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_non_paraphrase_source",  # source
+            version=SEACROWD_VERSION,
+            description=f"{_DATASETNAME} SEACrowd schema",
+            schema="non_paraphrase_source",
             subset_id=f"{_DATASETNAME}_non_paraphrase",
         ),
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}_all",
+            name=f"{_DATASETNAME}_non_paraphrase_seacrowd_{SEACROWD_SCHEMA_NAME}",  # schema
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd schema",
-            schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}_all",
+            schema=f"seacrowd_non_paraphrase_{SEACROWD_SCHEMA_NAME}",
+            subset_id=f"{_DATASETNAME}_non_paraphrase",
+        ),
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_all_source",  # source
+            version=SOURCE_VERSION,
+            description=f"{_DATASETNAME} source schema",
+            schema="all_source",
+            subset_id=f"{_DATASETNAME}_all",
+        ),
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_all_seacrowd_{SEACROWD_SCHEMA_NAME}",  # schema
+            version=SEACROWD_VERSION,
+            description=f"{_DATASETNAME} SEACrowd schema",
+            schema=f"seacrowd_all_{SEACROWD_SCHEMA_NAME}",
             subset_id=f"{_DATASETNAME}_all",
         ),
     ]
@@ -103,16 +117,15 @@ class MyParaphraseDataset(datasets.GeneratorBasedBuilder):
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}_paraphrase"
 
     def _info(self) -> datasets.DatasetInfo:
-        if self.config.schema == "source":
+        if self.config.schema in [
+            "paraphrase_source",
+            "non_paraphrase_source",
+            "all_source",
+            # "source"
+        ]:
             features = datasets.Features({"id": datasets.Value("int32"), "paraphrase1": datasets.Value("string"), "paraphrase2": datasets.Value("string"), "is_paraphrase": datasets.Value("int32")})
 
-        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}_paraphrase":
-            features = schemas.text2text_features
-
-        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}_non_paraphrase":
-            features = schemas.text2text_features
-
-        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}_all":
+        elif self.config.schema in [f"seacrowd_paraphrase_{self.SEACROWD_SCHEMA_NAME}", f"seacrowd_non_paraphrase_{self.SEACROWD_SCHEMA_NAME}", f"seacrowd_all_{self.SEACROWD_SCHEMA_NAME}"]:
             features = schemas.text2text_features
 
         return datasets.DatasetInfo(
@@ -164,18 +177,23 @@ class MyParaphraseDataset(datasets.GeneratorBasedBuilder):
 
         dataset["is_paraphrase"] = dataset["is_paraphrase"].astype(int)
 
-        if self.config.schema == "source":
+        if self.config.schema in [
+            "paraphrase_source",
+            "non_paraphrase_source",
+            "all_source",
+            # "source"
+        ]:
             for i, row in dataset.iterrows():
                 yield i, {"id": i, "paraphrase1": row["paraphrase1"], "paraphrase2": row["paraphrase2"], "is_paraphrase": row["is_paraphrase"]}
 
-        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}_paraphrase":
+        elif self.config.schema == f"seacrowd_paraphrase_{self.SEACROWD_SCHEMA_NAME}":
             for i, row in dataset[dataset["is_paraphrase"] == 1].iterrows():
                 yield i, {"id": i, "text_1": row["paraphrase1"], "text_2": row["paraphrase2"], "text_1_name": "anchor_text", "text_2_name": "paraphrased_text"}
 
-        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}_non_paraphrase":
+        elif self.config.schema == f"seacrowd_non_paraphrase_{self.SEACROWD_SCHEMA_NAME}":
             for i, row in dataset[dataset["is_paraphrase"] == 0].iterrows():
                 yield i, {"id": i, "text_1": row["paraphrase1"], "text_2": row["paraphrase2"], "text_1_name": "anchor_text", "text_2_name": "non_paraphrased_text"}
 
-        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}_all":
+        elif self.config.schema == f"seacrowd_all_{self.SEACROWD_SCHEMA_NAME}":
             for i, row in dataset.iterrows():
                 yield i, {"id": i, "text_1": row["paraphrase1"], "text_2": row["paraphrase2"], "text_1_name": "anchor_text", "text_2_name": "paraphrased_text" if row["is_paraphrase"] else "non_paraphrased_text"}
