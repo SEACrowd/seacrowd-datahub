@@ -1,0 +1,43 @@
+# This workflow is a continuation of "Mark stale issues and pull requests" workflow, on adding customized comment.
+
+# You can adjust the behavior by modifying this file.
+# For more information, see:
+# https://github.com/peter-evans/create-or-update-comment
+name: Adding reminder comment on staled issues & PRs
+on:
+  issues:
+    types:
+      - labeled
+  # read these to see why it uses 'pull_request_target' instead of 'pull_request':
+  # 1. https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
+  # 2. https://github.com/peter-evans/create-or-update-comment?tab=readme-ov-file#action-inputs (note section)
+  pull_request_target:
+    types:
+      - labeled
+
+jobs:
+  add-comment-on-staled-issue:
+    if: github.event.label.name == 'staled-issue'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Remind assignee on staled Issue
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          issue-number: ${{github.event.issue.number}}
+          body: "Hi @${{github.event.issue.assignee.login}}, may I know if you are still working on this issue? Please let @holylovenia @SamuelCahyawijaya @sabilmakbar know if you need any help."
+
+  add-comment-on-staled-pr:
+    if: github.event.label.name == 'need-fu-pr'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Remind assignee and author on staled PR
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          issue-number: ${{github.event.pull_request.number}}
+          body: "Hi @${{join(github.event.pull_request.assignees.*.login, ', @')}} & @${{github.event.pull_request.user.login}}, may I know if you are still working on this PR?"

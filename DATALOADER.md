@@ -100,20 +100,21 @@ Make sure your `pip` package points to your environment's source.
 
 ### 3. Implement your dataloader
 
-Make a new directory within the `SEACrowd/seacrowd-datahub/sea_datasets` directory:
+Use this bash script to initialize your new dataloader folder along with template of your dataloader script under `SEACrowd/seacrowd-datahub/sea_datasets` directory using this:
 
-    mkdir seacrowd-datahub/sea_datasets/<dataset_name>
+    sh templates/initiate_seacrowd_dataloader.sh <YOUR_DATALOADER_NAME>
+The value of `<YOUR_DATALODER_NAME>` can be checked on the issue ticket that you were assigned to.
 
-Please use lowercase letters and underscores when choosing a `<dataset_name>`.
+i.e: for this [issue ticket](https://github.com/SEACrowd/seacrowd-datahub/issues/32), the dataloader name indicates `Dataloader name: xl_sum/xl_sum.py`, hence the value of `<YOUR_DATALOADER_NAME>` is `xl_sum`.
+
+Please use PascalCase when choosing a `<dataset_name>`.
 To implement your dataset, there are three key methods that are important:
 
   * `_info`: Specifies the schema of the expected dataloader
   * `_split_generators`: Downloads and extracts data for each split (e.g. train/val/test) or associate local data with each split.
   * `_generate_examples`: Create examples from data that conform to each schema defined in `_info`.
 
-To start, copy [templates/template.py](templates/template.py) to your `seacrowd/sea_datasets/<dataset_name>` directory with the name `<dataset_name>.py`. Within this file, fill out all the TODOs.
-
-    cp templates/template.py seacrowd/sea_datasets/<dataset_name>/<dataset_name>.py
+After the bash above has been executed, you'll have your `seacrowd/sea_datasets/<dataset_name>` directory existed with the name `<dataset_name>.py`. Within this file, fill out all the TODOs based on the template.
 
 For the `_info_` function, you will need to define `features` for your
 `DatasetInfo` object. For the `bigbio` config, choose the right schema from our list of examples. You can find a description of these in the [Task Schemas Document](task_schemas.md). You can find the actual schemas in the [schemas directory](seacrowd/utils/schemas).
@@ -133,7 +134,7 @@ To help you implement a dataset, you can see the implementation of [other datase
 
 #### Running & Debugging:
 You can run your data loader script during development by appending the following
-statement to your code ([templates/template.py](templates/template.py) already includes this):
+statement to your code (if you have your dataloader folder initialized using previous bash script, it already includes this, else you may add these by yourself):
 
 ```python
 if __name__ == "__main__":
@@ -157,7 +158,7 @@ from datasets import load_dataset
 data = load_dataset("seacrowd/sea_datasets/<dataset_name>/<dataset_name>.py", name="<dataset_name>_seacrowd_<schema>")
 ```
 
-Run these commands from the top level of the `nusa-crowd` repo (i.e. the same directory that contains the `requirements.txt` file).
+Run these commands from the top level of the `seacrowd/seacrowd-datahub` repo (i.e. the same directory that contains the `requirements.txt` file).
 
 Once this is done, please also check if your dataloader satisfies our unit tests as follows by using this command in the terminal:
 
@@ -195,6 +196,7 @@ Then, run the following commands to incorporate any new changes in the master br
 Or you can install the pre-commit hooks to automatically pre-check before commit by:
 
     pre-commit install
+
 **Run these commands in your custom branch**.
 
 Push these changes to **your fork** with the following command:
