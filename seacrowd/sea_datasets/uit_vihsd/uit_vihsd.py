@@ -57,7 +57,7 @@ Vietnamese language. Data is anonymized, and labeled as either HATE, OFFENSIVE, 
 """
 
 _HOMEPAGE = "https://github.com/sonlam1102/vihsd/"
-_LICENSE = Licenses.CC_BY_NC_4_0.value
+_LICENSE = Licenses.UNKNOWN.value
 _URL = "https://raw.githubusercontent.com/sonlam1102/vihsd/main/data/vihsd.zip"
 
 _Split_Path = {
