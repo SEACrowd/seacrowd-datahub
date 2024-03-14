@@ -141,7 +141,6 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
         # goldp source schema
         config_constructor(subset_id="goldp", schema="source", desc=_GOLDP_DESP, version=_SOURCE_VERSION_S),
         config_constructor(subset_id="goldp_indonesian", schema="source", desc=_GOLDP_DESP, version=_SOURCE_VERSION_S),
-        config_constructor(subset_id="goldp_thai", schema="source", desc=_GOLDP_DESP, version=_SOURCE_VERSION_S),
         # tydiqa_id source schema
         config_constructor(subset_id="id", schema="source", desc=_ID_DESP, version=_SOURCE_VERSION_P),
 
@@ -162,7 +161,6 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
         config_constructor(subset_id="goldp", schema="seacrowd_qa", desc=_GOLDP_DESP, version=_SEACROWD_VERSION),
         config_constructor(subset_id="goldp_indonesian", schema="seacrowd_qa", desc=_GOLDP_DESP,
                            version=_SEACROWD_VERSION),
-        config_constructor(subset_id="goldp_thai", schema="seacrowd_qa", desc=_GOLDP_DESP, version=_SEACROWD_VERSION),
         # tydiqa_id seacrowd schema
         config_constructor(subset_id="id", schema="seacrowd_qa", desc=_ID_DESP, version=_SEACROWD_VERSION),
     ]
