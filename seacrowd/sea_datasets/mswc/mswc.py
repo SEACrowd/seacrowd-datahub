@@ -14,7 +14,6 @@
 # limitations under the License.
 
 import os
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -72,14 +71,6 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-@dataclass
-class SMSASeacrowdConfig(SEACrowdConfig):
-    """BuilderConfig for Nusantara."""
-
-    language: str = None
-    audio_format: str = None
-
-
 class MSWC(datasets.GeneratorBasedBuilder):
     """
     Multilingual Spoken Words Corpus is a large and growing audio dataset of spoken words in 50 languages collectively spoken by over 5 billion people, for academic research and commercial applications in keyword spotting and spoken term search.
@@ -94,15 +85,7 @@ class MSWC(datasets.GeneratorBasedBuilder):
         for format in _FORMATS:
             subset_id = f"{language}_{format}"
             BUILDER_CONFIGS.append(
-                SMSASeacrowdConfig(
-                    name=f"{subset_id}_source",
-                    version=SOURCE_VERSION,
-                    description=f"{_DATASETNAME} source schema",
-                    schema="source",
-                    subset_id=subset_id,
-                    language=language,
-                    audio_format=format,
-                ),
+                SEACrowdConfig(name=f"{subset_id}_source", version=SOURCE_VERSION, description=f"{_DATASETNAME} source schema", schema="source", subset_id=subset_id),
             )
 
     seacrowd_schema_config: list[SEACrowdConfig] = []
@@ -112,14 +95,12 @@ class MSWC(datasets.GeneratorBasedBuilder):
             for format in _FORMATS:
                 subset_id = f"{language}_{format}"
                 seacrowd_schema_config.append(
-                    SMSASeacrowdConfig(
+                    SEACrowdConfig(
                         name=f"{subset_id}_{seacrowd_schema}",
                         version=SEACROWD_VERSION,
                         description=f"{_DATASETNAME} {seacrowd_schema} schema",
                         schema=f"{seacrowd_schema}",
                         subset_id=subset_id,
-                        language=language,
-                        audio_format=format,
                     )
                 )
 
@@ -128,6 +109,8 @@ class MSWC(datasets.GeneratorBasedBuilder):
     DEFAULT_CONFIG_NAME = f"{_LANGUAGES[0]}_{_FORMATS[0]}_source"
 
     def _info(self) -> datasets.DatasetInfo:
+
+        _, format = str(self.config.subset_id).split("_")
 
         if self.config.schema == "source":
             features = datasets.Features(
@@ -138,7 +121,7 @@ class MSWC(datasets.GeneratorBasedBuilder):
                     "speaker_id": datasets.Value("string"),
                     "gender": datasets.ClassLabel(num_classes=4),
                     "keyword": datasets.Value("string"),
-                    "audio": datasets.Audio(decode=False, sampling_rate=16000 if self.config.audio_format == "wav" else 48000),
+                    "audio": datasets.Audio(decode=False, sampling_rate=16000 if format == "wav" else 48000),
                 }
             )
 
@@ -163,8 +146,10 @@ class MSWC(datasets.GeneratorBasedBuilder):
 
         result = []
 
+        language, format = str(self.config.subset_id).split("_")
+
         for split_name in split_names:
-            path = dl_manager.download_and_extract(_URLS.format(split=split_name, lang=_LANGUAGE_NAME_MAP[self.config.language], format=self.config.audio_format))
+            path = dl_manager.download_and_extract(_URLS.format(split=split_name, lang=_LANGUAGE_NAME_MAP[language], format=format))
 
             result.append(
                 datasets.SplitGenerator(
@@ -172,8 +157,8 @@ class MSWC(datasets.GeneratorBasedBuilder):
                     gen_kwargs={
                         "path": path,
                         "split": split_name,
-                        "language": self.config.language,
-                        "format": self.config.audio_format,
+                        "language": language,
+                        "format": format,
                     },
                 ),
             )
