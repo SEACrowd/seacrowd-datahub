@@ -58,7 +58,7 @@ _CITATION = """\
 """
 
 # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
-_LANGUAGES = ["ind", "ara", "spa", "fra", "hin", "por", "rus", "zho", "eng"]
+_LANGUAGES = ["ind", "ara", "spa", "fra", "hin", "por", "rus", "zho", "eng", "khm", "zlm", "mya", "tgl", "tam"]
 _LOCAL = False
 _SUPPORTED_LANG_PAIRS = [
     ("ind", "ara"),
