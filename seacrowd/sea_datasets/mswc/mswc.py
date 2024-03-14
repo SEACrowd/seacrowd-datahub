@@ -26,11 +26,18 @@ from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import TASK_TO_SCHEMA, Licenses, Tasks
 
 _CITATION = """\
-@inproceedings{mazumder2021multilingual,
-  title={Multilingual Spoken Words Corpus},
-  author={Mazumder, Mark and Chitlangia, Sharad and Banbury, Colby and Kang, Yiping and Ciro, Juan Manuel and Achorn, Keith and Galvez, Daniel and Sabini, Mark and Mattson, Peter and Kanter, David and others},
-  booktitle={Thirty-fifth Conference on Neural Information Processing Systems Datasets and Benchmarks Track (Round 2)},
-  year={2021}
+@inproceedings{NEURIPS DATASETS AND BENCHMARKS2021_fe131d7f,
+    author = {Mazumder, Mark and Chitlangia, Sharad and Banbury, Colby and Kang, Yiping and Ciro, Juan and Achorn, Keith and Galvez,
+    Daniel and Sabini, Mark and Mattson, Peter and Kanter, David and Diamos, Greg and Warden, Pete and Meyer, Josh and Janapa Reddi,
+    Vijay},
+    booktitle = {Proceedings of the Neural Information Processing Systems Track on Datasets and Benchmarks},
+    editor = {J. Vanschoren and S. Yeung},
+    pages = {},
+    publisher = {Curran},
+    title = {Multilingual Spoken Words Corpus},
+    url = {https://datasets-benchmarks-proceedings.neurips.cc/paper_files/paper/2021/file/fe131d7f5a6b38b23cc967316c13dae2-Paper-round2.pdf},
+    volume = {1},
+    year = {2021}
 }
 """
 
