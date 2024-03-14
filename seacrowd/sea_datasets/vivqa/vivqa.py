@@ -1,8 +1,9 @@
 # coding=utf-8
+import json
+import os
 from pathlib import Path
 from typing import Dict, List, Tuple
-import os
-import json
+
 import datasets
 import pandas as pd
 
@@ -30,13 +31,15 @@ _HOMEPAGE = "https://github.com/kh4nh12/ViVQA"
 _LANGUAGES = ["vie"]
 _LICENSE = Licenses.UNKNOWN.value
 _LOCAL = False
-_URLS = {"viviq": {"train": "https://raw.githubusercontent.com/kh4nh12/ViVQA/main/train.csv",
-                   "test": "https://raw.githubusercontent.com/kh4nh12/ViVQA/main/test.csv"},
-         "cocodata": {"coco2014_train_val_annots": "http://images.cocodataset.org/annotations/annotations_trainval2014.zip",
-                      "coco2014_train_images": "http://images.cocodataset.org/zips/train2014.zip",
-                      "coco2014_val_images": "http://images.cocodataset.org/zips/val2014.zip",
-                      }
-         }
+_URLS = {
+    "viviq": {"train": "https://raw.githubusercontent.com/kh4nh12/ViVQA/main/train.csv",
+              "test": "https://raw.githubusercontent.com/kh4nh12/ViVQA/main/test.csv"},
+    "cocodata": {
+        "coco2014_train_val_annots": "http://images.cocodataset.org/annotations/annotations_trainval2014.zip",
+        "coco2014_train_images": "http://images.cocodataset.org/zips/train2014.zip",
+        "coco2014_val_images": "http://images.cocodataset.org/zips/val2014.zip",
+    },
+}
 _SUPPORTED_TASKS = [Tasks.VISUAL_QUESTION_ANSWERING]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
@@ -68,32 +71,36 @@ class VivQADataset(datasets.GeneratorBasedBuilder):
     def _info(self) -> datasets.DatasetInfo:
 
         if self.config.schema == "source":
-            features = datasets.Features({"img_id": datasets.Value("string"),
-                                          "question": datasets.Value("string"),
-                                          "answer": datasets.Value("string"),
-                                          "type": datasets.Value("string"),
-                                          "coco_url": datasets.Value("string"),
-                                          "flickr_url": datasets.Value("string"),
-                                          "img_name": datasets.Value("string"),
-                                          "coco_license": datasets.Value("int32"),
-                                          "coco_width": datasets.Value("int32"),
-                                          "coco_height": datasets.Value("int32"),
-                                          "coco_date_captured": datasets.Value("string"),
-                                          "image_path": datasets.Value("string")
-                                          })
+            features = datasets.Features(
+                {
+                    "img_id": datasets.Value("string"),
+                    "question": datasets.Value("string"),
+                    "answer": datasets.Value("string"),
+                    "type": datasets.Value("string"),
+                    "coco_url": datasets.Value("string"),
+                    "flickr_url": datasets.Value("string"),
+                    "img_name": datasets.Value("string"),
+                    "coco_license": datasets.Value("int32"),
+                    "coco_width": datasets.Value("int32"),
+                    "coco_height": datasets.Value("int32"),
+                    "coco_date_captured": datasets.Value("string"),
+                    "image_path": datasets.Value("string"),
+                }
+            )
         elif self.config.schema == "seacrowd_imqa":
             features = schemas.imqa_features
-            features["meta"] = {"coco_img_id": datasets.Value("string"),
-                                "type": datasets.Value("string"),
-                                "flickr_url": datasets.Value("string"),
-                                "coco_url": datasets.Value("string"),
-                                "img_name": datasets.Value("string"),
-                                "coco_license": datasets.Value("int32"),
-                                "coco_width": datasets.Value("int32"),
-                                "coco_height": datasets.Value("int32"),
-                                "coco_date_captured": datasets.Value("string"),
-                                "image_path": datasets.Value("string")
-                                }
+            features["meta"] = {
+                "coco_img_id": datasets.Value("string"),
+                "type": datasets.Value("string"),
+                "flickr_url": datasets.Value("string"),
+                "coco_url": datasets.Value("string"),
+                "img_name": datasets.Value("string"),
+                "coco_license": datasets.Value("int32"),
+                "coco_width": datasets.Value("int32"),
+                "coco_height": datasets.Value("int32"),
+                "coco_date_captured": datasets.Value("string"),
+                "image_path": datasets.Value("string"),
+            }
         else:
             raise ValueError(f"No schema matched for {self.config.schema}")
 
@@ -139,11 +146,7 @@ class VivQADataset(datasets.GeneratorBasedBuilder):
         coco_dict_train = {itm["id"]: itm for itm in json.load(open(train_ann_2014_path, "r"))["images"]}
         coco_train_path = os.path.join(coco_dir["coco2014_train_images"], "train2014")
         coco_val_path = os.path.join(coco_dir["coco2014_val_images"], "val2014")
-        coco_dict = {"train": coco_dict_train,
-                     "val": coco_dict_val,
-                     "coco_train_path": coco_train_path,
-                     "coco_val_path": coco_val_path
-                     }
+        coco_dict = {"train": coco_dict_train, "val": coco_dict_val, "coco_train_path": coco_train_path, "coco_val_path": coco_val_path}
 
         return coco_dict
 
@@ -172,19 +175,20 @@ class VivQADataset(datasets.GeneratorBasedBuilder):
             image_path = os.path.join(coco_path, img_name)
 
             if self.config.schema == "source":
-                yield eid, {"img_id": str(exam_img_id),
-                            "question": exam_quest,
-                            "answer": exam_answer,
-                            "type": exam_type,
-                            "coco_url": coco_url,
-                            "flickr_url": flickr_url,
-                            "img_name": img_name,
-                            "coco_license": coco_license,
-                            "coco_width": coco_width,
-                            "coco_height": coco_height,
-                            "coco_date_captured": coco_date_captured,
-                            "image_path": image_path
-                            }
+                yield eid, {
+                    "img_id": str(exam_img_id),
+                    "question": exam_quest,
+                    "answer": exam_answer,
+                    "type": exam_type,
+                    "coco_url": coco_url,
+                    "flickr_url": flickr_url,
+                    "img_name": img_name,
+                    "coco_license": coco_license,
+                    "coco_width": coco_width,
+                    "coco_height": coco_height,
+                    "coco_date_captured": coco_date_captured,
+                    "image_path": image_path,
+                }
 
             elif self.config.schema == "seacrowd_imqa":
                 example = {
@@ -197,17 +201,18 @@ class VivQADataset(datasets.GeneratorBasedBuilder):
                     "context": None,
                     "answer": [exam_answer],
                     "image_paths": [image_path],
-                    "meta": {"coco_img_id": str(exam_img_id),
-                             "type": exam_type,
-                             "flickr_url": flickr_url,
-                             "coco_url": coco_url,
-                             "img_name": img_name,
-                             "coco_license": coco_license,
-                             "coco_width": coco_width,
-                             "coco_height": coco_height,
-                             "coco_date_captured": coco_date_captured,
-                             "image_path": image_path,
-                             },
+                    "meta": {
+                        "coco_img_id": str(exam_img_id),
+                        "type": exam_type,
+                        "flickr_url": flickr_url,
+                        "coco_url": coco_url,
+                        "img_name": img_name,
+                        "coco_license": coco_license,
+                        "coco_width": coco_width,
+                        "coco_height": coco_height,
+                        "coco_date_captured": coco_date_captured,
+                        "image_path": image_path,
+                    },
                 }
 
                 yield eid, example
