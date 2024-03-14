@@ -57,8 +57,6 @@ _LICENSE = Licenses.UNKNOWN.value
 
 _LOCAL = False
 
-# TODO: Add links to the urls needed to download your dataset files.
-#  For local datasets, this variable can be an empty dictionary.
 
 
 _URLS = {
