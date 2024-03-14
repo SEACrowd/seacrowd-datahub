@@ -44,7 +44,6 @@ class Tasks(Enum):
     WORD_ANALOGY = "WA"
     WORD_SENSE_DISAMBIGUATION = "WSD"
     COREFERENCE_RESOLUTION = "COREF"
-    RELATION_EXTRACTION = "RE"
 
     # Tree
     CONSTITUENCY_PARSING = "CONST_PAR"
@@ -220,7 +219,6 @@ class Licenses(Enum):
 TASK_TO_SCHEMA = {
     Tasks.COREFERENCE_RESOLUTION: "KB",
     Tasks.DEPENDENCY_PARSING: "KB",
-    Tasks.RELATION_EXTRACTION: "KB",
     Tasks.CONSTITUENCY_PARSING: "TREE",
     Tasks.E2E_TASK_ORIENTED_DIALOGUE: "TOD",
     Tasks.DIALOGUE_SYSTEM: "T2T",
@@ -319,7 +317,6 @@ TASK_TO_FEATURES = {
     Tasks.NAMED_ENTITY_RECOGNITION: {"entities"},
     Tasks.DEPENDENCY_PARSING: {"relations", "entities"},
     Tasks.COREFERENCE_RESOLUTION: {"entities", "coreferences"},
-    Tasks.RELATION_EXTRACTION: {"relations", 'entities'},
     # Tasks.SPAN_BASED_ABSA: {"entities", "coreferences"},
     # Tasks.NAMED_ENTITY_DISAMBIGUATION: {"entities", "normalized"},
     # Tasks.EVENT_EXTRACTION: {"events"}
