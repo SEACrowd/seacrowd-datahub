@@ -113,14 +113,14 @@ class Indonglish(datasets.GeneratorBasedBuilder):
                 version=SOURCE_VERSION,
                 description=f"{_DATASETNAME} source schema",
                 schema="source",
-                subset_id=_DATASETNAME,
+                subset_id=f"{_DATASETNAME}_skenario{i}",
             ),
             SEACrowdConfig(
                 name=f"{_DATASETNAME}_skenario{i}_seacrowd_{SEACROWD_SCHEMA_NAME}",
                 version=SEACROWD_VERSION,
                 description=f"{_DATASETNAME} SEACrowd schema",
                 schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
-                subset_id=_DATASETNAME,
+                subset_id=f"{_DATASETNAME}_skenario{i}",
             ),
         ]
 
@@ -133,7 +133,7 @@ class Indonglish(datasets.GeneratorBasedBuilder):
                 {
                     "id": datasets.Value("string"),
                     "tweet": datasets.Value("string"),
-                    "label": datasets.Value("string"),
+                    "label": datasets.ClassLabel(names=self._LABELS),
                 }
             )
 
