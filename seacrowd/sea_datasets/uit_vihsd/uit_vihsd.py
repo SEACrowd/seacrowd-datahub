@@ -14,14 +14,13 @@
 # limitations under the License.
 import os
 from typing import Dict, List, Tuple
-
+import logging
 import datasets
 import pandas
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
-
 _CITATION = """
 @InProceedings{10.1007/978-3-030-79457-6_35,
 author="Luu, Son T.
@@ -76,8 +75,8 @@ class UiTVihsdDataset(datasets.GeneratorBasedBuilder):
     The SeaCrowd dataloader for the dataset Vietnamese Hate Speech Detection (UIT-ViHSD).
     """
 
-    CLASS_LABELS = [0, 1, 2]
-
+    CLASS_LABELS = [0, 1, 2]  # 0:CLEAN, 1:OFFENSIVE, 2:HATE
+    logging.info(f"📚 Dataset <{_DATASETNAME}> has three class labels: #CLEAN(0), #OFFENSIVE(1), and #HATE(2).")
     BUILDER_CONFIGS = [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_source",
