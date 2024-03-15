@@ -114,19 +114,17 @@ class MyParaphraseDataset(datasets.GeneratorBasedBuilder):
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}_paraphrase"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}"
 
     def _info(self) -> datasets.DatasetInfo:
-        if self.config.schema in [
-            "paraphrase_source",
-            "non_paraphrase_source",
-            "all_source",
-            # "source"
-        ]:
+        if self.config.schema.endswith("_source"):
             features = datasets.Features({"id": datasets.Value("int32"), "paraphrase1": datasets.Value("string"), "paraphrase2": datasets.Value("string"), "is_paraphrase": datasets.Value("int32")})
 
-        elif self.config.schema in [f"seacrowd_paraphrase_{self.SEACROWD_SCHEMA_NAME}", f"seacrowd_non_paraphrase_{self.SEACROWD_SCHEMA_NAME}", f"seacrowd_all_{self.SEACROWD_SCHEMA_NAME}"]:
+        elif self.config.schema.endswith(self.SEACROWD_SCHEMA_NAME):
             features = schemas.text2text_features
+        
+        else:
+            raise ValueError
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -197,3 +195,6 @@ class MyParaphraseDataset(datasets.GeneratorBasedBuilder):
         elif self.config.schema == f"seacrowd_all_{self.SEACROWD_SCHEMA_NAME}":
             for i, row in dataset.iterrows():
                 yield i, {"id": i, "text_1": row["paraphrase1"], "text_2": row["paraphrase2"], "text_1_name": "anchor_text", "text_2_name": "paraphrased_text" if row["is_paraphrase"] else "non_paraphrased_text"}
+
+        else:
+            raise ValueError
