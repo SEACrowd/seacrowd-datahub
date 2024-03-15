@@ -6,13 +6,9 @@ import pyreadr
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import (DEFAULT_SEACROWD_VIEW_NAME,
-                                      DEFAULT_SOURCE_VIEW_NAME, TASK_TO_SCHEMA,
-                                      Licenses, Tasks)
+from seacrowd.utils.constants import (TASK_TO_SCHEMA, Licenses, Tasks)
 
 _DATASETNAME = "iatf"
-_SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
-_UNIFIED_VIEW_NAME = DEFAULT_SEACROWD_VIEW_NAME
 
 _CITATION = """\
 @misc{
