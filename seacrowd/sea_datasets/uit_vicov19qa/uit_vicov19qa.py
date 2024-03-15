@@ -37,25 +37,23 @@ _LICENSE = Licenses.UNKNOWN.value
 _PAPER_URL = "https://aclanthology.org/2022.paclic-1.88"
 _LOCAL = False
 _URLS = {
-    "1_ans": {
-        "train": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/1_ans/UIT-ViCoV19QA_train.csv",
-        "val": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/1_ans/UIT-ViCoV19QA_val.csv",
-        "test": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/1_ans/UIT-ViCoV19QA_test.csv",
+    "train": {
+        "1_ans": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/1_ans/UIT-ViCoV19QA_train.csv",
+        "2_ans": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/2_ans/UIT-ViCoV19QA_train.csv",
+        "3_ans": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/3_ans/UIT-ViCoV19QA_train.csv",
+        "4_ans": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/4_ans/UIT-ViCoV19QA_train.csv",
     },
-    "2_ans": {
-        "train": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/2_ans/UIT-ViCoV19QA_train.csv",
-        "val": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/2_ans/UIT-ViCoV19QA_val.csv",
-        "test": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/2_ans/UIT-ViCoV19QA_test.csv",
+    "val": {
+        "1_ans": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/1_ans/UIT-ViCoV19QA_val.csv",
+        "2_ans": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/2_ans/UIT-ViCoV19QA_val.csv",
+        "3_ans": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/3_ans/UIT-ViCoV19QA_val.csv",
+        "4_ans": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/4_ans/UIT-ViCoV19QA_val.csv",
     },
-    "3_ans": {
-        "train": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/3_ans/UIT-ViCoV19QA_train.csv",
-        "val": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/3_ans/UIT-ViCoV19QA_val.csv",
-        "test": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/3_ans/UIT-ViCoV19QA_test.csv",
-    },
-    "4_ans": {
-        "train": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/4_ans/UIT-ViCoV19QA_train.csv",
-        "val": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/4_ans/UIT-ViCoV19QA_val.csv",
-        "test": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/4_ans/UIT-ViCoV19QA_test.csv",
+    "test": {
+        "1_ans": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/1_ans/UIT-ViCoV19QA_test.csv",
+        "2_ans": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/2_ans/UIT-ViCoV19QA_test.csv",
+        "3_ans": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/3_ans/UIT-ViCoV19QA_test.csv",
+        "4_ans": "https://raw.githubusercontent.com/triet2397/UIT-ViCoV19QA/main/dataset/4_ans/UIT-ViCoV19QA_test.csv",
     },
 }
 _SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
@@ -71,15 +69,20 @@ class ViHealthQADataset(datasets.GeneratorBasedBuilder):
 
     subsets = ["1_ans", "2_ans", "3_ans", "4_ans"]
 
-    BUILDER_CONFIGS = [SEACrowdConfig(name=f"{_DATASETNAME}_{sset}_source", version=datasets.Version(_SOURCE_VERSION), description=f"{_DATASETNAME} source schema", schema="source", subset_id=f"{sset}",) for sset in subsets] + [
+    BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_{sset}_seacrowd_qa",
+            name=f"{_DATASETNAME}_source",
+            version=datasets.Version(_SOURCE_VERSION),
+            description=f"{_DATASETNAME} source schema",
+            schema="source", subset_id=f"{_DATASETNAME}"),
+
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_seacrowd_qa",
             version=datasets.Version(_SEACROWD_VERSION),
             description=f"{_DATASETNAME} SEACrowd schema",
             schema="seacrowd_qa",
-            subset_id=f"{sset}",
+            subset_id=f"{_DATASETNAME}",
         )
-        for sset in subsets
     ]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
@@ -109,9 +112,8 @@ class ViHealthQADataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        subset_id = self.config.subset_id
-        urls = _URLS[subset_id]
-        data_dir = dl_manager.download_and_extract(urls)
+
+        data_dir = dl_manager.download_and_extract(_URLS)
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
@@ -136,25 +138,31 @@ class ViHealthQADataset(datasets.GeneratorBasedBuilder):
             ),
         ]
 
-    def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepath: Dict, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
-        raw_examples = pd.read_csv(filepath, na_filter=False, delimiter="|")
+        print(f"Generating examples for split {split}")
+        sample_id = -1
+        for path in filepath.values():
+            raw_examples = pd.read_csv(path, na_filter=False, delimiter="|")
+            for eid, exam in raw_examples.iterrows():
+                sample_id += 1
+                exam_id = exam[0]
+                exam_quest = exam[1]
+                exam_answers = exam[2:].values
+                if self.config.schema == "source":
+                    yield sample_id, {"id": str(exam_id),
+                                      "question": exam_quest,
+                                      "answers": exam_answers
+                                      }
 
-        for eid, exam in raw_examples.iterrows():
-            exam_id = exam[0]
-            exam_quest = exam[1]
-            exam_answers = exam[2:].values
-            if self.config.schema == "source":
-                yield eid, {"id": str(exam_id), "question": exam_quest, "answers": exam_answers}
-
-            elif self.config.schema == "seacrowd_qa":
-                yield eid, {"id": str(eid),
-                            "question_id": exam_id,
-                            "document_id": str(eid),
-                            "question": exam_quest,
-                            "type": None,
-                            "choices": [],
-                            "context": None,
-                            "answer": exam_answers,
-                            "meta": {}
-                            }
+                elif self.config.schema == "seacrowd_qa":
+                    yield sample_id, {"id": str(sample_id),
+                                      "question_id": exam_id,
+                                      "document_id": str(sample_id),
+                                      "question": exam_quest,
+                                      "type": None,
+                                      "choices": [],
+                                      "context": None,
+                                      "answer": exam_answers,
+                                      "meta": {}
+                                      }
