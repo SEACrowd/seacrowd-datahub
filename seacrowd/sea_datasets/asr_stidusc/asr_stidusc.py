@@ -40,14 +40,14 @@ _LOCAL = False
 _URLS = {
     _DATASETNAME: "https://magichub.com/df/df.php?file_name=Thai_Scripted_Speech_Corpus_Daily_Use_Sentence.zip",
 }
-_SUPPORTED_TASKS = [Tasks.TEXT_TO_SPEECH, Tasks.SPEECH_RECOGNITION]
+_SUPPORTED_TASKS = [Tasks.SPEECH_RECOGNITION]
 
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class ASRStidusc(datasets.GeneratorBasedBuilder):
-    """ASR-Stidusc consists transcribed Thai scripted speech focusing on daily use sentences"""
+class ASRSTIDuSCDataset(datasets.GeneratorBasedBuilder):
+    """ASR-STIDuSC consists transcribed Thai scripted speech focusing on daily use sentences"""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
@@ -148,33 +148,31 @@ class ASRStidusc(datasets.GeneratorBasedBuilder):
         # dictionary of metadata of each speaker
         spkinfo_dict = {s[1]: {"speaker_gender": s[2], "speaker_age": int(s[3]), "speaker_region": s[4], "speaker_device": s[5]} for s in spkinfo_data}
 
-        num_sample = len(uttransinfo_data)
-
-        for i in range(num_sample):
-            wav_path = os.path.join(filepath, "WAV", uttransinfo_data[i][2], uttransinfo_data[i][1])
+        for i, sample in enumerate(uttransinfo_data):
+            wav_path = os.path.join(filepath, "WAV", sample[2], sample[1])
 
             if self.config.schema == "source":
                 example = {
                     "id": str(i),
-                    "channel": uttransinfo_data[i][0],
-                    "uttrans_id": uttransinfo_data[i][1],
-                    "speaker_id": uttransinfo_data[i][2],
-                    "transcription": uttransinfo_data[i][4],
+                    "channel": sample[0],
+                    "uttrans_id": sample[1],
+                    "speaker_id": sample[2],
+                    "transcription": sample[4],
                     "path": wav_path,
                     "audio": wav_path,
-                    "speaker_gender": spkinfo_dict[uttransinfo_data[i][2]]["speaker_gender"],
-                    "speaker_age": spkinfo_dict[uttransinfo_data[i][2]]["speaker_age"],
-                    "speaker_region": spkinfo_dict[uttransinfo_data[i][2]]["speaker_region"],
-                    "speaker_device": spkinfo_dict[uttransinfo_data[i][2]]["speaker_device"],
+                    "speaker_gender": spkinfo_dict[sample[2]]["speaker_gender"],
+                    "speaker_age": spkinfo_dict[sample[2]]["speaker_age"],
+                    "speaker_region": spkinfo_dict[sample[2]]["speaker_region"],
+                    "speaker_device": spkinfo_dict[sample[2]]["speaker_device"],
                 }
             elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
                 example = {
                     "id": str(i),
-                    "speaker_id": uttransinfo_data[i][2],
+                    "speaker_id": sample[2],
                     "path": wav_path,
                     "audio": wav_path,
-                    "text": uttransinfo_data[i][4],
-                    "metadata": {"speaker_age": spkinfo_dict[uttransinfo_data[i][2]]["speaker_age"], "speaker_gender": spkinfo_dict[uttransinfo_data[i][2]]["speaker_gender"]},
+                    "text": sample[4],
+                    "metadata": {"speaker_age": spkinfo_dict[sample[2]]["speaker_age"], "speaker_gender": spkinfo_dict[sample[2]]["speaker_gender"]},
                 }
 
             yield i, example
