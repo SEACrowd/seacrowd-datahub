@@ -117,7 +117,7 @@ class PhoMT(datasets.GeneratorBasedBuilder):
         src_path = filepath.format(lang=src_lang)
         tgt_path = filepath.format(lang=tgt_lang)
 
-        with open(src_path, "r") as f:
+        with open(src_path, "r", encoding="utf8") as f:
             src_lines = f.readlines()
         with open(tgt_path, "r") as f:
             tgt_lines = f.readlines()
