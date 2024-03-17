@@ -122,18 +122,7 @@ class PhoMT(datasets.GeneratorBasedBuilder):
         with open(tgt_path, "r", encoding="utf8") as f:
             tgt_lines = f.readlines()
 
-        if self.config.schema == "source":
-            for idx, (src_line, tgt_line) in enumerate(zip(src_lines, tgt_lines)):
-                ex = {
-                    "id": str(idx),
-                    "text_1": src_line.strip(),
-                    "text_2": tgt_line.strip(),
-                    "text_1_name": src_lang,
-                    "text_2_name": tgt_lang,
-                }
-                yield idx, ex
-
-        elif self.config.schema == "seacrowd_t2t":
+        if self.config.schema in ("source", "seacrowd_t2t"):
             for idx, (src_line, tgt_line) in enumerate(zip(src_lines, tgt_lines)):
                 ex = {
                     "id": str(idx),
