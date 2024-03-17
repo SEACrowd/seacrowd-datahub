@@ -181,17 +181,27 @@ class CreoleRC(datasets.GeneratorBasedBuilder):
                 offset_entity1 = csv_data[i][0].find(csv_data[i][1])
                 offset_entity2 = csv_data[i][0].find(csv_data[i][2])
 
+                if (offset_entity1 == -1) or (offset_entity2 == -1):
+                    continue
+
                 example = {
                     "id": str(i),
-                    "document_id": str(i),
                     "passages": [{"id": f"passage-{i}", "type": "text", "text": [csv_data[i][0]], "offsets": [[0, len(csv_data[i][0])]]}],
                     "entities": [
-                        {"id": f"{i}-entity-{csv_data[i][3]}", "type": "text", "text": [csv_data[i][1]], "normalized": [], "offsets": [[offset_entity1, offset_entity1 + len(csv_data[i][1])]]},
-                        {"id": f"{i}-entity-{csv_data[i][4]}", "type": "text", "text": [csv_data[i][2]], "normalized": [], "offsets": [[offset_entity2, offset_entity2 + len(csv_data[i][2])]]},
+                        {"id": f"{i}-entity-{csv_data[i][3]}", "type": "text", "text": [csv_data[i][1]], "normalized": [{"db_name": csv_data[i][1], "db_id": csv_data[i][3]}], "offsets": [[offset_entity1, offset_entity1 + len(csv_data[i][1])]]},
+                        {"id": f"{i}-entity-{csv_data[i][4]}", "type": "text", "text": [csv_data[i][2]], "normalized": [{"db_name": csv_data[i][2], "db_id": csv_data[i][4]}], "offsets": [[offset_entity2, offset_entity2 + len(csv_data[i][2])]]},
                     ],
                     "events": [],
                     "coreferences": [],
-                    "relations": [{"id": f"{i}-relation-{csv_data[i][5]}", "type": properties_desc[csv_data[i][5]], "arg1_id": f"{i}-entity-{csv_data[i][3]}", "arg2_id": f"{i}-entity-{csv_data[i][4]}"}],
+                    "relations": [
+                        {
+                            "id": f"{i}-relation-{csv_data[i][5]}",
+                            "type": properties_desc[csv_data[i][5]],
+                            "arg1_id": f"{i}-entity-{csv_data[i][3]}",
+                            "arg2_id": f"{i}-entity-{csv_data[i][4]}",
+                            "normalized": [{"db_name": properties_desc[csv_data[i][5]], "db_id": csv_data[i][5]}],
+                        }
+                    ],
                 }
 
             yield i, example
