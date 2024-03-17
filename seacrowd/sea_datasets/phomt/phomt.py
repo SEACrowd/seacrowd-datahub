@@ -45,7 +45,7 @@ def seacrowd_config_constructor(src_lang, tgt_lang, schema, version):
     if src_lang == "" or tgt_lang == "":
         raise ValueError(f"Invalid src_lang {src_lang} or tgt_lang {tgt_lang}")
 
-    if schema not in ["source", "seacrowd_sptext", "seacrowd_t2t"]:
+    if schema not in ["source", "seacrowd_t2t"]:
         raise ValueError(f"Invalid schema: {schema}")
 
     return SEACrowdConfig(
