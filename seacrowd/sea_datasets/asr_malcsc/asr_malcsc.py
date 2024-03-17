@@ -40,13 +40,13 @@ _LOCAL = False
 _URLS = {
     _DATASETNAME: "https://magichub.com/df/df.php?file_name=Malay_Conversational_Speech_Corpus.zip",
 }
-_SUPPORTED_TASKS = [Tasks.TEXT_TO_SPEECH, Tasks.SPEECH_RECOGNITION]
+_SUPPORTED_TASKS = [Tasks.SPEECH_RECOGNITION]
 
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class ASRMalcsc(datasets.GeneratorBasedBuilder):
+class ASRMalcscDataset(datasets.GeneratorBasedBuilder):
     """ASR-Malcsc consists transcribed Malay conversational speech on certain topics"""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
@@ -160,7 +160,7 @@ class ASRMalcsc(datasets.GeneratorBasedBuilder):
                 transcription = transcription_file.readlines()
             # remove redundant speaker info from transcription file
             transcription = [s.strip("\n").split("\t") for s in transcription]
-            transcription = [" ".join((s[0], s[-1])) for s in transcription]
+            transcription = [s[-1] for s in transcription]
             text = " \n ".join(transcription)
 
             if self.config.schema == "source":
