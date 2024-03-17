@@ -74,9 +74,7 @@ class PhoMT(datasets.GeneratorBasedBuilder):
     DEFAULT_CONFIG_NAME = "phomt_en_vi_source"
 
     def _info(self) -> datasets.DatasetInfo:
-        if self.config.schema == "source":
-            features = schemas.text2text_features
-        elif self.config.schema == "seacrowd_t2t":
+        if self.config.schema in ("source", "seacrowd_t2t"):
             features = schemas.text2text_features
         else:
             raise ValueError(f"Invalid config schema: {self.config.schema}")
