@@ -95,14 +95,14 @@ class CodeSwitchRedditDataset(datasets.GeneratorBasedBuilder):
             if "cs" in self.config.subset_id:
                 features = datasets.Features(
                     {
-                        "Author": datasets.Value("string"),
-                        "Subreddit": datasets.Value("string"),
-                        "Country": datasets.Value("string"),
-                        "Date": datasets.Value("int32"),
+                        "author": datasets.Value("string"),
+                        "subreddit": datasets.Value("string"),
+                        "country": datasets.Value("string"),
+                        "date": datasets.Value("int32"),
                         "confidence": datasets.Value("int32"),
-                        "Lang1": datasets.Value("string"),
-                        "Lang2": datasets.Value("string"),
-                        "Text": datasets.Value("string"),
+                        "lang1": datasets.Value("string"),
+                        "lang2": datasets.Value("string"),
+                        "text": datasets.Value("string"),
                         "id": datasets.Value("string"),
                         "link_id": datasets.Value("string"),
                         "parent_id": datasets.Value("string"),
@@ -111,13 +111,13 @@ class CodeSwitchRedditDataset(datasets.GeneratorBasedBuilder):
             elif "eng_monolingual" in self.config.subset_id:
                 features = datasets.Features(
                     {
-                        "Author": datasets.Value("string"),
-                        "Subreddit": datasets.Value("string"),
-                        "Country": datasets.Value("string"),
-                        "Date": datasets.Value("int32"),
+                        "author": datasets.Value("string"),
+                        "subreddit": datasets.Value("string"),
+                        "country": datasets.Value("string"),
+                        "date": datasets.Value("int32"),
                         "confidence": datasets.Value("int32"),
-                        "Lang": datasets.Value("string"),
-                        "Text": datasets.Value("string"),
+                        "lang": datasets.Value("string"),
+                        "text": datasets.Value("string"),
                     }
                 )
 
@@ -165,14 +165,14 @@ class CodeSwitchRedditDataset(datasets.GeneratorBasedBuilder):
                 parsed_text = html.unescape(row["Text"])
                 if self.config.schema == "source":
                     example = {
-                        "Author": row["Author"],
-                        "Subreddit": row["Subreddit"],
-                        "Country": row["Country"],
-                        "Date": row["Date"],
+                        "author": row["Author"],
+                        "subreddit": row["Subreddit"],
+                        "country": row["Country"],
+                        "date": row["Date"],
                         "confidence": row["confidence"],
-                        "Lang1": row["Lang1"],
-                        "Lang2": row["Lang2"],
-                        "Text": parsed_text,
+                        "lang1": row["Lang1"],
+                        "lang2": row["Lang2"],
+                        "text": parsed_text,
                         "id": row["id"],
                         "link_id": row["link_id"],
                         "parent_id": row["parent_id"],
@@ -186,19 +186,20 @@ class CodeSwitchRedditDataset(datasets.GeneratorBasedBuilder):
                         "labels": list(sorted([lang_one, lang_two])),  # Language order doesn't matter in original dataset; just arrange alphabetically for consistency
                     }
                 yield index, example
+
         else:
             df.reset_index(drop=True, inplace=True)
             for index, row in df.iterrows():
                 parsed_text = html.unescape(row["Text"])
                 if self.config.schema == "source":
                     example = {
-                        "Author": row["Author"],
-                        "Subreddit": row["Subreddit"],
-                        "Country": row["Country"],
-                        "Date": row["Date"],
+                        "author": row["Author"],
+                        "subreddit": row["Subreddit"],
+                        "country": row["Country"],
+                        "date": row["Date"],
                         "confidence": row["confidence"],
-                        "Lang": row["Lang"],
-                        "Text": parsed_text,
+                        "lang": row["Lang"],
+                        "text": parsed_text,
                     }
                 elif self.config.schema == "seacrowd_ssp":
                     example = {
