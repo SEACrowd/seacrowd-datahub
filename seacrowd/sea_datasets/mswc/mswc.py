@@ -25,7 +25,7 @@ from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import TASK_TO_SCHEMA, Licenses, Tasks
 
 _CITATION = """\
-@inproceedings{NEURIPS DATASETS AND BENCHMARKS2021_fe131d7f,
+@inproceedings{mazumder2021mswc,
     author = {Mazumder, Mark and Chitlangia, Sharad and Banbury, Colby and Kang, Yiping and Ciro, Juan and Achorn, Keith and Galvez,
     Daniel and Sabini, Mark and Mattson, Peter and Kanter, David and Diamos, Greg and Warden, Pete and Meyer, Josh and Janapa Reddi,
     Vijay},
