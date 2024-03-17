@@ -83,7 +83,7 @@ class MSWC(datasets.GeneratorBasedBuilder):
 
     for language in _LANGUAGES:
         for format in _FORMATS:
-            subset_id = f"{language}_{format}"
+            subset_id = f"{_DATASETNAME}_{language}_{format}"
             BUILDER_CONFIGS.append(
                 SEACrowdConfig(name=f"{subset_id}_source", version=SOURCE_VERSION, description=f"{_DATASETNAME} source schema", schema="source", subset_id=subset_id),
             )
@@ -93,7 +93,7 @@ class MSWC(datasets.GeneratorBasedBuilder):
     for seacrowd_schema in _SUPPORTED_SCHEMA_STRINGS:
         for language in _LANGUAGES:
             for format in _FORMATS:
-                subset_id = f"{language}_{format}"
+                subset_id = f"{_DATASETNAME}_{language}_{format}"
                 seacrowd_schema_config.append(
                     SEACrowdConfig(
                         name=f"{subset_id}_{seacrowd_schema}",
@@ -110,7 +110,7 @@ class MSWC(datasets.GeneratorBasedBuilder):
 
     def _info(self) -> datasets.DatasetInfo:
 
-        _, format = str(self.config.subset_id).split("_")
+        _, _, format = str(self.config.subset_id).split("_")
 
         if self.config.schema == "source":
             features = datasets.Features(
@@ -146,7 +146,7 @@ class MSWC(datasets.GeneratorBasedBuilder):
 
         result = []
 
-        language, format = str(self.config.subset_id).split("_")
+        _, language, format = str(self.config.subset_id).split("_")
 
         for split_name in split_names:
             path = dl_manager.download_and_extract(_URLS.format(split=split_name, lang=_LANGUAGE_NAME_MAP[language], format=format))
