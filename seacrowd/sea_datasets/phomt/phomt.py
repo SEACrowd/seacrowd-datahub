@@ -119,7 +119,7 @@ class PhoMT(datasets.GeneratorBasedBuilder):
 
         with open(src_path, "r", encoding="utf8") as f:
             src_lines = f.readlines()
-        with open(tgt_path, "r") as f:
+        with open(tgt_path, "r", encoding="utf8") as f:
             tgt_lines = f.readlines()
 
         if self.config.schema == "source":
