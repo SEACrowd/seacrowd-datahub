@@ -55,7 +55,10 @@ _URLS = {}
 for k,v in _URLS_DICT.items():
     _URLS[k] = v["text_path"]
 
-_SUPPORTED_TASKS = [Tasks.SPEECH_RECOGNITION, Tasks.MACHINE_TRANSLATION] 
+_SUPPORTED_TASKS = [
+    # Tasks.SPEECH_RECOGNITION, 
+    Tasks.MACHINE_TRANSLATION
+] 
 
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
@@ -66,7 +69,7 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    SEACROWD_SCHEMA_NAME = TASK_TO_SCHEMA[_SUPPORTED_TASKS[1]].lower()
+    SEACROWD_SCHEMA_NAME = TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]].lower()
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
