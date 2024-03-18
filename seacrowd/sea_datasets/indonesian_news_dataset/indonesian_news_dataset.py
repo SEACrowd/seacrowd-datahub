@@ -1,12 +1,12 @@
 import pickle
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import List
 
 import datasets
 
-from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
 from seacrowd.utils import schemas
+from seacrowd.utils.configs import SEACrowdConfig
+from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @misc{andreaschandra2020,
@@ -21,10 +21,9 @@ _CITATION = """\
 
 _DATASETNAME = "indonesian_news_dataset"
 
-_DESCRIPTION = """\
-An imbalanced dataset to classify Indonesian News articles. 
-The dataset contains 5 class labels: bola, news, bisnis, tekno, and otomotif. 
-The dataset comprises of around 6k train and 2.5k test examples, with the more prevalent classes 
+_DESCRIPTION = """An imbalanced dataset to classify Indonesian News articles.
+The dataset contains 5 class labels: bola, news, bisnis, tekno, and otomotif.
+The dataset comprises of around 6k train and 2.5k test examples, with the more prevalent classes
 (bola and news) having roughly 10x the number of train and test examples than the least prevalent class (otomotif).
 """
 
@@ -48,6 +47,7 @@ _TAGS = ["bola", "news", "bisnis", "tekno", "otomotif"]
 
 class IndonesianNewsDataset(datasets.GeneratorBasedBuilder):
     """The dataset contains 5 Indonesian News articles with imbalanced classes"""
+
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
     SEACROWD_SCHEMA_NAME = "text"
@@ -73,13 +73,7 @@ class IndonesianNewsDataset(datasets.GeneratorBasedBuilder):
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
-            features = datasets.Features(
-                {
-                    "index": datasets.Value("string"),
-                    "news": datasets.Value("string"),
-                    "label": datasets.Value("string")
-                }
-            )
+            features = datasets.Features({"index": datasets.Value("string"), "news": datasets.Value("string"), "label": datasets.Value("string")})
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             features = schemas.text_features(_TAGS)
 
@@ -110,10 +104,10 @@ class IndonesianNewsDataset(datasets.GeneratorBasedBuilder):
                     "filepath": test_dir,
                     "split": "test",
                 },
-            )
+            ),
         ]
 
-    def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepath: Path, split: str):
         """Yields examples as (key, example) tuples."""
 
         with open(filepath, "rb") as file:
@@ -121,22 +115,14 @@ class IndonesianNewsDataset(datasets.GeneratorBasedBuilder):
 
         news_list = news_file[0]
         label_list = news_file[1]
-        
+
         if self.config.schema == "source":
             for idx, (news, label) in enumerate(zip(news_list, label_list)):
-                example = {
-                    "index": str(idx),
-                    "news": news,
-                    "label": label
-                }
+                example = {"index": str(idx), "news": news, "label": label}
                 yield idx, example
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             for idx, (news, label) in enumerate(zip(news_list, label_list)):
-                example = {
-                    "id": str(idx),
-                    "text": news,
-                    "label": label
-                }
+                example = {"id": str(idx), "text": news, "label": label}
                 yield idx, example
         else:
             raise ValueError(f"Invalid config: {self.config.name}")
