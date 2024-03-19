@@ -68,13 +68,12 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
             SEACrowdConfig(
-                name=f"{_DATASETNAME}_source_{subset}",
+                name=f"{_DATASETNAME}_source",
                 version=datasets.Version(_SOURCE_VERSION),
-                description=f"{_DATASETNAME} source schema for {subset} subset",
+                description=f"{_DATASETNAME} source schema",
                 schema="source",
-                subset_id=f"{_DATASETNAME}_{subset}",
+                subset_id=f"{_DATASETNAME}",
             )
-            for subset in SUBSETS
         ] + [
             SEACrowdConfig(
                 name=f"{_DATASETNAME}_seacrowd_{subset}",
@@ -86,39 +85,24 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
             for subset in SUBSETS
         ]
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source_{SUBSETS[0]}"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
 
         if self.config.schema == "source":
-            if "t2t" in self.config.subset_id:
-                features = datasets.Features(
-                    {
-                        "nr": datasets.Value("int64"),
-                        "media_id": datasets.Value("string"),
-                        "annotation_aol": datasets.Value("string"),
-                        "annotation_ind": datasets.Value("string"),
-                        "begin_time": datasets.Value("int64"),
-                        "end_time": datasets.Value("int64"),
-                    }
-                )
-            elif "sptext" in self.config.subset_id:
-                features = datasets.Features(
-                    {
-                        "media_id": datasets.Value("string"),
-                        "audio_path": datasets.Value("string"),
-                        "annotation_aol": datasets.Value("string"),
-                    }
-                )
-            elif "sptext_trans" in self.config.subset_id:
-                features = datasets.Features(
-                    {
-                        "media_id": datasets.Value("string"),
-                        "audio_path": datasets.Value("string"),
-                        "annotation_ind": datasets.Value("string"),
-                    }
-                )
-        elif self.config.schema == "seacrowd_sptext" or self.config.schema == "seacrowd_sptext_trans":
+            features = datasets.Features(
+                {
+                    "nr": datasets.Value("int64"),
+                    "media_id": datasets.Value("string"),
+                    "audio_path": datasets.Value("string"),
+                    "annotation_aol": datasets.Value("string"),
+                    "annotation_ind": datasets.Value("string"),
+                    "begin_time": datasets.Value("int64"),
+                    "end_time": datasets.Value("int64"),
+                }
+            )
+
+        elif "seacrowd_sptext" in self.config.schema:
             features = schemas.speech_text_features
 
         elif self.config.schema == "seacrowd_t2t":
@@ -137,7 +121,7 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
             filepath = {k:v["text_path"] for k,v in _URLS.items()}
             paths = dl_manager.download(filepath)
 
-        elif "sptext" in self.config.subset_id:
+        else:
             paths = dl_manager.download(_URLS)
 
         return [
@@ -145,77 +129,48 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
                     "filepath": paths,
-                    "split": "train",
                 },
             ),
         ]
 
-    def _generate_examples(self, filepath, split: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepath) -> Tuple[int, Dict]:
 
-        if self.config.subset_id == f"{_DATASETNAME}_t2t":
-            caption_df = self._merge_text_dfs(filepath)
+        if self.config.schema == "source":
+            source_df = self._get_source_df(filepath)
+            
+            for k, row in source_df.iterrows():
+                yield k, {
+                    "nr": k + 1,
+                    "media_id": row["media_id"],
+                    "audio_path": row["audio_path"],
+                    "annotation_aol": row["annotation_aol"],
+                    "annotation_ind": row["annotation_ind"],
+                    "begin_time": row["begin_time"],
+                    "end_time": row["end_time"],
+                }
 
-            if self.config.schema == "source":
+        elif "seacrowd" in self.config.schema:
+            if "t2t" in self.config.subset_id:
+                caption_df = self._merge_text_dfs(filepath)
+
                 for k, row in caption_df.iterrows():
                     yield k, {
-                        "nr": k + 1,
-                        "media_id": row["media_id"],
-                        "annotation_aol": row["annotation_aol"],
-                        "annotation_ind": row["annotation_ind"],
-                        "begin_time": row["begin_time"],
-                        "end_time": row["end_time"],
-                    }
-            elif self.config.schema == f"seacrowd_t2t":
-                for k, row in caption_df.iterrows():
-                    yield k, {
-                        "id": row["media_id"],
+                        "id": k + 1,
                         "text_1": row["annotation_aol"],
                         "text_2": row["annotation_ind"],
                         "text_1_name": _LANGUAGES[0],
                         "text_2_name": _LANGUAGES[1],
                     }
-    
-        elif self.config.subset_id == f"{_DATASETNAME}_sptext":
-            sptext_df = self._get_sptext_df(filepath)
+            elif "sptext" in self.config.subset_id:
+                annot_lang = "annotation_aol" if self.config.subset_id.split("_")[-1] == "sptext" else "annotation_ind"
+                sptext_df = self._get_sptext_df(filepath)
 
-            if self.config.schema == "source":
                 for k, row in sptext_df.iterrows():
                     yield k, {
-                        "media_id": row["media_id"],
-                        "audio_path": row["audio_path"],
-                        "annotation_aol": row["annotation_aol"],
-                    }
-            elif self.config.schema == "seacrowd_sptext":
-                for k, row in sptext_df.iterrows():
-                    yield k, {
-                        "id": row["media_id"],
+                        "id": k + 1,
                         "path": row["audio_path"],
                         "audio": row["audio_path"],
-                        "text": row["annotation_aol"],
-                        "speaker_id": row["speaker_id"],
-                        "metadata": {
-                            "speaker_age": None,
-                            "speaker_gender": None
-                        }
-                    }
-        
-        elif self.config.subset_id == f"{_DATASETNAME}_sptext_trans":
-            sptext_df = self._get_sptext_df(filepath)
-
-            if self.config.schema == "source":
-                for k, row in sptext_df.iterrows():
-                    yield k, {
-                        "media_id": row["media_id"],
-                        "audio_path": row["audio_path"],
-                        "annotation_ind": row["annotation_ind"],
-                    }
-            elif self.config.schema == "seacrowd_sptext":
-                for k, row in sptext_df.iterrows():
-                    yield k, {
-                        "id": row["media_id"],
-                        "path": row["audio_path"],
-                        "audio": row["audio_path"],
-                        "text": row["annotation_ind"],
+                        "text": row[annot_lang],
                         "speaker_id": row["speaker_id"],
                         "metadata": {
                             "speaker_age": None,
@@ -297,14 +252,16 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
 
     def _groupby_caption_by_media_ids(self, caption_df: pd.DataFrame) -> pd.DataFrame:
         caption_df = caption_df.groupby("media_id").agg({
-            "annotation_aol": " ".join, "annotation_ind": " ".join}).reset_index()
+            "annotation_aol": lambda x: " ".join([value if value is not None else "<NONE>" for value in x]),
+            "annotation_ind": lambda x: " ".join([value if value is not None else "<NONE>" for value in x])
+        }).reset_index()
         return caption_df
 
     def _get_sptext_df(self, complete_dict) -> pd.DataFrame:
         xml_dict = {k:v["text_path"] for k,v in complete_dict.items()}
         
         audio_df = pd.DataFrame({
-            'id': [k for k in complete_dict.keys()],
+            'media_id': [k for k in complete_dict.keys()],
             'speaker_id': [k.split("_")[-1] for k in complete_dict.keys()],
             'audio_path': [v["audio_path"] for v in complete_dict.values()]
         })
@@ -313,6 +270,19 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
         df = caption_df.merge(audio_df, on="media_id", how="inner")
 
         return df[['media_id', 'speaker_id', 'audio_path', 'annotation_aol', 'annotation_ind']]
+
+    def _get_source_df(self, complete_dict) -> pd.DataFrame:
+        xml_dict = {k:v["text_path"] for k,v in complete_dict.items()}
+        
+        audio_df = pd.DataFrame({
+            'media_id': [k for k in complete_dict.keys()],
+            'audio_path': [v["audio_path"] for v in complete_dict.values()]
+        })
+        text_df = self._merge_text_dfs(xml_dict)
+
+        df = text_df.merge(audio_df, on="media_id", how="inner")
+
+        return df[['media_id', 'audio_path', 'annotation_aol', 'annotation_ind', 'begin_time', 'end_time']]
 
 # This allows you to run your dataloader with `python [dataset_name].py` during development
 # TODO: Remove this before making your PR
