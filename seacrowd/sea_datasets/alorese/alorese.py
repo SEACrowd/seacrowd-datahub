@@ -68,17 +68,18 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
             SEACrowdConfig(
-                name=f"{_DATASETNAME}_source",
+                name=f"{_DATASETNAME}_{subset}_source",
                 version=datasets.Version(_SOURCE_VERSION),
-                description=f"{_DATASETNAME} source schema",
+                description=f"{_DATASETNAME} source schema for {subset} subset",
                 schema="source",
-                subset_id=f"{_DATASETNAME}",
+                subset_id=f"{_DATASETNAME}_{subset}",
             )
+            for subset in SUBSETS
         ] + [
             SEACrowdConfig(
-                name=f"{_DATASETNAME}_seacrowd_{subset}",
+                name=f"{_DATASETNAME}_{subset}_seacrowd_{subset}",
                 version=datasets.Version(_SEACROWD_VERSION),
-                description=f"{_DATASETNAME} SEACrowd schema",
+                description=f"{_DATASETNAME} SEACrowd schema for {subset} subset",
                 schema=f"seacrowd_{subset}",
                 subset_id=f"{_DATASETNAME}_{subset}",
             )
@@ -117,12 +118,14 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
-        if "t2t" in self.config.subset_id:
-            filepath = {k:v["text_path"] for k,v in _URLS.items()}
-            paths = dl_manager.download(filepath)
-
-        else:
+        if self.config.schema == "source":
             paths = dl_manager.download(_URLS)
+        else:
+            if "t2t" in self.config.subset_id:
+                filepath = {k:v["text_path"] for k,v in _URLS.items()}
+                paths = dl_manager.download(filepath)
+            else:
+                paths = dl_manager.download(_URLS)
 
         return [
             datasets.SplitGenerator(
@@ -273,7 +276,7 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
 
     def _get_source_df(self, complete_dict) -> pd.DataFrame:
         xml_dict = {k:v["text_path"] for k,v in complete_dict.items()}
-        
+
         audio_df = pd.DataFrame({
             'media_id': [k for k in complete_dict.keys()],
             'audio_path': [v["audio_path"] for v in complete_dict.values()]
