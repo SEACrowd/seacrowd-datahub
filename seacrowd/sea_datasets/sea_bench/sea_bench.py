@@ -48,7 +48,7 @@ instructions and questions themselves. The Sea-bench test set contains 20 questi
 
 _HOMEPAGE = "https://huggingface.co/datasets/SeaLLMs/Sea-bench"
 
-_LANGUAGES = {"tgl": "tl", "khm": "km", "vie": "vi", "tha": "th", "lao": "lo", "mya": "my", "ind": "id", "zlm": "ms", "eng": "en"}
+_LANGUAGES = ["eng", "ind", "khm", "lao", "mya", "tgl", "tha", "vie", "zlm"]
 
 _LICENSE = Licenses.APACHE_2_0.value
 
@@ -63,13 +63,14 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class WITDataset(datasets.GeneratorBasedBuilder):
+class SeaBenchDataset(datasets.GeneratorBasedBuilder):
     """
     Sea-bench is a multilingual benchmark from https://huggingface.co/datasets/SeaLLMs/Sea-bench.
     """
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
+    LANGUAGES_DICT = {"tgl": "tl", "khm": "km", "vie": "vi", "tha": "th", "lao": "lo", "mya": "my", "ind": "id", "zlm": "ms", "eng": "en"}
 
     BUILDER_CONFIGS = (
         [
@@ -89,7 +90,7 @@ class WITDataset(datasets.GeneratorBasedBuilder):
                 schema="source",
                 subset_id=f"{_DATASETNAME}_{lang}",
             )
-            for lang in _LANGUAGES
+            for lang in LANGUAGES_DICT
         ]
         + [
             SEACrowdConfig(
@@ -108,7 +109,7 @@ class WITDataset(datasets.GeneratorBasedBuilder):
                 schema="seacrowd_t2t",
                 subset_id=f"{_DATASETNAME}_{lang}",
             )
-            for lang in _LANGUAGES
+            for lang in LANGUAGES_DICT
         ]
     )
 
@@ -160,10 +161,10 @@ class WITDataset(datasets.GeneratorBasedBuilder):
         subset_id = self.config.subset_id.split("_")
         if len(subset_id) > 2:
             language_list = subset_id[2]
-            if language_list in _LANGUAGES:
-                language_list = [_LANGUAGES[language_list]]
+            if language_list in self.LANGUAGES_DICT:
+                language_list = [self.LANGUAGES_DICT[language_list]]
         else:
-            language_list = list(_LANGUAGES.values())
+            language_list = list(self.LANGUAGES_DICT.values())
 
         idx = 0
         with open(filepath, "r") as f:
@@ -173,7 +174,7 @@ class WITDataset(datasets.GeneratorBasedBuilder):
                     if d["lang"] in language_list:
                         x = {k: v if v != "" and k in self.info.features else None for k, v in d.items()}
                         if "chatgpt_response" not in x:
-                            x["chatgpt_response"] = None
+                            x["chatgpt_response"] = ""
                         yield idx, x
                         idx += 1
             elif self.config.schema == "seacrowd_t2t":
@@ -181,8 +182,8 @@ class WITDataset(datasets.GeneratorBasedBuilder):
                     if d["lang"] in language_list:
                         x = {
                             "id": idx,
-                            "text_1": d["turns"] if "turns" in d else None,
-                            "text_2": d["chatgpt_response"] if "chatgpt_response" in d else None,
+                            "text_1": d["turns"][0] if "turns" in d else "",
+                            "text_2": d["chatgpt_response"] if "chatgpt_response" in d else "",
                             "text_1_name": "turns",
                             "text_2_name": "chatgpt_response",
                         }
