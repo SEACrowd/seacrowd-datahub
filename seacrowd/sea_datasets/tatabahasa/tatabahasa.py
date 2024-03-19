@@ -16,7 +16,6 @@
 """
 This test is a general test for Malay grammar. Contains 349 questions that may be reinforced with instructions.
 """
-import os
 import json
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -25,7 +24,7 @@ import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses, TASK_TO_SCHEMA, TASK_TO_FEATURES
+from seacrowd.utils.constants import Tasks, Licenses, TASK_TO_SCHEMA
 
 _CITATION = None
 
