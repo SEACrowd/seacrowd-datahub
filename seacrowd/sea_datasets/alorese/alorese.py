@@ -24,7 +24,7 @@ import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses, TASK_TO_SCHEMA, SCHEMA_TO_FEATURES
+from seacrowd.utils.constants import Tasks, Licenses
 from .alorese_url import _URLS_DICT
 
 _CITATION = """\
@@ -94,7 +94,7 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
                 {
                     "nr": datasets.Value("int64"),
                     "media_id": datasets.Value("string"),
-                    "audio_path": datasets.Value("string"),
+                    "audio": datasets.Audio(sampling_rate=16000),
                     "annotation_aol": datasets.Value("string"),
                     "annotation_ind": datasets.Value("string"),
                     "begin_time": datasets.Value("int64"),
@@ -142,7 +142,7 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
                 yield k, {
                     "nr": k + 1,
                     "media_id": row["media_id"],
-                    "audio_path": row["audio_path"],
+                    "audio": row["audio_path"],
                     "annotation_aol": row["annotation_aol"],
                     "annotation_ind": row["annotation_ind"],
                     "begin_time": row["begin_time"],
@@ -283,8 +283,3 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
         df = text_df.merge(audio_df, on="media_id", how="inner")
 
         return df[['media_id', 'audio_path', 'annotation_aol', 'annotation_ind', 'begin_time', 'end_time']]
-
-# This allows you to run your dataloader with `python [dataset_name].py` during development
-# TODO: Remove this before making your PR
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)
