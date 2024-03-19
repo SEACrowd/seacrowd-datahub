@@ -44,6 +44,7 @@ class Tasks(Enum):
     WORD_ANALOGY = "WA"
     WORD_SENSE_DISAMBIGUATION = "WSD"
     COREFERENCE_RESOLUTION = "COREF"
+    RELATION_EXTRACTION = "RE"
 
     # Tree
     CONSTITUENCY_PARSING = "CONST_PAR"
@@ -68,6 +69,7 @@ class Tasks(Enum):
     # Single Text Classification (multi-label)
     ASPECT_BASED_SENTIMENT_ANALYSIS = "ABSA"
     DOMAIN_KNOWLEDGE_MULTICLASSIFICATION = "DKM" # multi-classification for non NLP-oriented label
+    CODE_SWITCHING_IDENTIFICATION = "CSI"
 
     # Single Text Sequence Labeling
     KEYWORD_TAGGING = "KT"
@@ -220,6 +222,7 @@ class Licenses(Enum):
 TASK_TO_SCHEMA = {
     Tasks.COREFERENCE_RESOLUTION: "KB",
     Tasks.DEPENDENCY_PARSING: "KB",
+    Tasks.RELATION_EXTRACTION: "KB",
     Tasks.CONSTITUENCY_PARSING: "TREE",
     Tasks.E2E_TASK_ORIENTED_DIALOGUE: "TOD",
     Tasks.DIALOGUE_SYSTEM: "T2T",
@@ -251,6 +254,7 @@ TASK_TO_SCHEMA = {
     Tasks.TRANSLITERATION: "T2T",
     Tasks.ASPECT_BASED_SENTIMENT_ANALYSIS: "TEXT_MULTI",
     Tasks.DOMAIN_KNOWLEDGE_MULTICLASSIFICATION: "TEXT_MULTI",
+    Tasks.CODE_SWITCHING_IDENTIFICATION: "TEXT_MULTI",
     Tasks.ABUSIVE_LANGUAGE_PREDICTION: "TEXT",
     Tasks.COMPLAINT_DETECTION: "TEXT",
     Tasks.DOMAIN_KNOWLEDGE_CLASSIFICATION: "TEXT",
@@ -319,6 +323,7 @@ TASK_TO_FEATURES = {
     Tasks.NAMED_ENTITY_RECOGNITION: {"entities"},
     Tasks.DEPENDENCY_PARSING: {"relations", "entities"},
     Tasks.COREFERENCE_RESOLUTION: {"entities", "coreferences"},
+    Tasks.RELATION_EXTRACTION: {"relations", 'entities'},
     # Tasks.SPAN_BASED_ABSA: {"entities", "coreferences"},
     # Tasks.NAMED_ENTITY_DISAMBIGUATION: {"entities", "normalized"},
     # Tasks.EVENT_EXTRACTION: {"events"}
