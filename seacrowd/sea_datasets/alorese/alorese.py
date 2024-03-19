@@ -56,7 +56,7 @@ for k,v in _URLS_DICT.items():
     _URLS[k] = v["text_path"]
 
 _SUPPORTED_TASKS = [
-    # Tasks.SPEECH_RECOGNITION, 
+    Tasks.SPEECH_RECOGNITION,
     Tasks.MACHINE_TRANSLATION
 ] 
 
@@ -199,9 +199,9 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
         aol_df = self._get_aol_annotations(xml_tree)
         ind_df = self._get_ind_annotations(xml_tree)
 
-        df1 = aol_df.merge(time_df, left_on="time_slot_ref1", right_on="time_slot_id", how="inner").rename(columns={"time_value": "begin_time", "annotation_value": "annotation_aol"}).drop(columns=["time_slot_ref1", "time_slot_id"])
-        df2 = df1.merge(time_df, left_on="time_slot_ref2", right_on="time_slot_id", how="inner").rename(columns={"time_value": "end_time"}).drop(columns=["time_slot_ref2", "time_slot_id"])
-        final_df = df2.merge(ind_df, left_on="annotation_id", right_on="annotation_ref_id", how="inner").rename(columns={"annotation_value": "annotation_ind"}).drop(columns=["annotation_ref_id", "annotation_id_y","annotation_id_x"])
+        df1 = aol_df.merge(time_df, left_on="time_slot_ref1", right_on="time_slot_id", how="left").rename(columns={"time_value": "begin_time", "annotation_value": "annotation_aol"}).drop(columns=["time_slot_ref1", "time_slot_id"])
+        df2 = df1.merge(time_df, left_on="time_slot_ref2", right_on="time_slot_id", how="left").rename(columns={"time_value": "end_time"}).drop(columns=["time_slot_ref2", "time_slot_id"])
+        final_df = df2.merge(ind_df, left_on="annotation_id", right_on="annotation_ref_id", how="left").rename(columns={"annotation_value": "annotation_ind"}).drop(columns=["annotation_ref_id", "annotation_id_y","annotation_id_x"])
         
         return final_df[['annotation_aol', 'annotation_ind', 'begin_time', 'end_time']]
     
