@@ -40,6 +40,8 @@ _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
+MAP_LANG = {"en": "eng", "vi": "vie"}
+
 
 def seacrowd_config_constructor(src_lang, tgt_lang, schema, version):
     if src_lang == "" or tgt_lang == "":
@@ -128,8 +130,8 @@ class PhoMT(datasets.GeneratorBasedBuilder):
                     "id": str(idx),
                     "text_1": src_line.strip(),
                     "text_2": tgt_line.strip(),
-                    "text_1_name": src_lang,
-                    "text_2_name": tgt_lang,
+                    "text_1_name": MAP_LANG[src_lang],
+                    "text_2_name": MAP_LANG[tgt_lang],
                 }
                 yield idx, ex
 
