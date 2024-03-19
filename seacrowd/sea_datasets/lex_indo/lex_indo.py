@@ -89,7 +89,7 @@ class LexIndo(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath: Path, split: str):
         """Yields examples as (key, example) tuples."""
 
-        with open("Indonesian_dic.txt", "r") as f:
+        with open(f"{filepath}/Indonesian_dic.txt", "r") as f:
             data = f.readlines()
 
         if self.config.schema == "source":
