@@ -77,13 +77,26 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
             for subset in SUBSETS
         ] + [
             SEACrowdConfig(
-                name=f"{_DATASETNAME}_{subset}_seacrowd_{subset}",
+                name=f"{_DATASETNAME}_t2t_seacrowd_t2t",
                 version=datasets.Version(_SEACROWD_VERSION),
-                description=f"{_DATASETNAME} SEACrowd schema for {subset} subset",
-                schema=f"seacrowd_{subset}",
-                subset_id=f"{_DATASETNAME}_{subset}",
-            )
-            for subset in SUBSETS
+                description=f"{_DATASETNAME} SEACrowd schema for t2t subset",
+                schema=f"seacrowd_t2t",
+                subset_id=f"{_DATASETNAME}_t2t",
+            ),
+            SEACrowdConfig(
+                name=f"{_DATASETNAME}_sptext_seacrowd_sptext",
+                version=datasets.Version(_SEACROWD_VERSION),
+                description=f"{_DATASETNAME} SEACrowd schema for sptext subset",
+                schema=f"seacrowd_sptext",
+                subset_id=f"{_DATASETNAME}_sptext",
+            ),
+            SEACrowdConfig(
+                name=f"{_DATASETNAME}_sptext_trans_seacrowd_sptext",
+                version=datasets.Version(_SEACROWD_VERSION),
+                description=f"{_DATASETNAME} SEACrowd schema for sptext_trans subset",
+                schema=f"seacrowd_sptext",
+                subset_id=f"{_DATASETNAME}_sptext_trans",
+            ),
         ]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
