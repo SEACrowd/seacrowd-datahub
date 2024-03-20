@@ -39,7 +39,7 @@ _LOCAL = False
 
 _URLS = {_DATASETNAME: "https://s3.us-east-2.amazonaws.com/blaisecruz.com/datasets/hatenonhate/hatespeech_raw.zip"}
 
-_SUPPORTED_TASKS = [Tasks.SENTIMENT_ANALYSIS]
+_SUPPORTED_TASKS = [Tasks.ABUSIVE_LANGUAGE_PREDICTION]
 
 _SOURCE_VERSION = "1.0.0"
 
