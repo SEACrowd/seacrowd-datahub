@@ -35,54 +35,6 @@ _CITATION = """\
     month = feb,
     year = {2021},
 }
-
-@article{leimgruber_ethnic_2020,
-    title = {Ethnic and gender variation in the use of {Colloquial} {Singapore} {English} discourse particles},
-    copyright = {CC0 1.0 Universal Public Domain Dedication},
-    journal = {English Language and Linguistics},
-    author = {Leimgruber, Jakob and Lim, Jun Jie and Gonzales, Wilkinson Daniel Wong and Hiramoto, Mie},
-    year = {2020},
-}
-
-@incollection{hiramoto_malay_2022,
-    series = {{LINCOM} {Studies} in {English} {Linguistics} 24},
-    title = {From {Malay} to {Colloquial} {Singapore} {English}: {A} case study of sentence-final particle sia},
-    booktitle = {World {Englishes} and creole languages today existing paradigms and current trends in action},
-    publisher = {Lincom Europa},
-    author = {Hiramoto, Mie and Gonzales, Wilkinson Daniel Wong and Leimgruber, Jakob and Lim, Jun Jie and Choo, Jessica Xue Ming},
-    editor = {Ngefac, Aloysius and Wolf, Hans-Georg and Hoffman, Thomas},
-    year = {2022},
-    pages = {117--130},
-    file = {Hiramoto et al. - 2022 - From Malay to Colloquial Singapore English A case.pdf:/Users/wdwg/Zotero/storage/753EKVDX/Hiramoto et al. - 2022 - From Malay to Colloquial Singapore English A case.pdf:application/pdf},
-}
-
-@article{gonzales_is_2022,
-    title = {\textit{{Is} it} in {Colloquial} {Singapore} {English}: {What} variation can tell us about its conventions and
-    development},
-    copyright = {CC0 1.0 Universal Public Domain Dedication},
-    issn = {0266-0784, 1474-0567},
-    shorttitle = {\textit{{Is} it} in {Colloquial} {Singapore} {English}},
-    url = {https://www.cambridge.org/core/product/identifier/S0266078422000141/type/journal_article},
-    doi = {10.1017/S0266078422000141},
-    abstract = {Colloquial Singapore English (CSE, commonly known as Singlish) is a linguistic variety used in Singapore, a Southeast
-    Asian nation home to three major ethnic groups: the Chinese (74.35% of the citizen and permanent resident population), the
-    Malays (13.43%), and the Indians (9%) (Singapore Department of Statistics, 2019). It is one of the best known post-colonial
-    varieties of English and has been documented since the emergence of the field of world Englishes (e.g., Greenbaum, 1988; Richards
-    & Tay, 1977). Linguistically, the grammar and lexicon of CSE are systematically imported from other non-English languages used
-    in the island nation (Leimgruber, 2011). From a creolist perspective, it can be viewed as an English-lexifier creole that
-    contains influences from Sinitic languages such as Hokkien, Cantonese and Mandarin, as well as Malay, Tamil and other varieties
-    in the Singapore language ecology (McWhorter, 2007; Platt, 1975). Several distinct features across various levels of language
-    have been investigated in CSE, including phonetics (Starr & Balasubramaniam, 2019), morphosyntax (Bao, 2010; Bao & Wee, 1999
-    semantics (Hiramoto & Sato, 2012), and pragmatics (Hiramoto, 2012; Leimgruber, 2016; Lim, 2007).},
-    language = {en},
-    urldate = {2022-08-08},
-    journal = {English Today},
-    author = {Gonzales, Wilkinson Daniel Wong and Hiramoto, Mie and Leimgruber, Jakob R. E. and Lim, Jun Jie},
-    month = jun,
-    year = {2022},
-    pages = {1--14},
-    file = {Gonzales et al. - 2022 - Is it in Colloquial Singapore English What.pdf:/Users/wdwg/Zotero/storage/59E8FXJT/Gonzales et al. - 2022 - Is it in Colloquial Singapore English What.pdf:application/pdf},
-}
 """
 
 _DATASETNAME = "cosem"
