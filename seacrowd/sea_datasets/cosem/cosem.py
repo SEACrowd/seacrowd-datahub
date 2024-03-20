@@ -64,7 +64,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class MyWsl2023(datasets.GeneratorBasedBuilder):
+class CoSEMDataset(datasets.GeneratorBasedBuilder):
     """The CoSEM dataset consists of over 900,000 lines of online messages from the messaging platform WhatsApp collected from
     personal chat logs of students enrolled in an advanced sociolinguistics class from the National University of Singapore."""
 
