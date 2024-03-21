@@ -71,7 +71,7 @@ class WEATHubDataset(datasets.GeneratorBasedBuilder):
             version=datasets.Version(_SOURCE_VERSION),
             description=f"{sub} source schema",
             schema="source",
-            subset_id=f"{sub}",
+            subset_id=sub,
         )
         for sub in subsets
     ]
@@ -94,8 +94,10 @@ class WEATHubDataset(datasets.GeneratorBasedBuilder):
                     "targ2.examples": [datasets.Value("string")],
                 }
             )
+        elif "seacrowd" in self.config.schema:
+            raise NotImplementedError("No seacrowd schema for word list tasks")
         else:
-            raise NotImplementedError()
+            raise ValueError("Invalid schema name")
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
