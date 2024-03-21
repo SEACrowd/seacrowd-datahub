@@ -82,6 +82,7 @@ class ASRSmaldusc(datasets.GeneratorBasedBuilder):
                     "channel": datasets.Value("string"),
                     "uttrans_id": datasets.Value("string"),
                     "speaker_id": datasets.Value("string"),
+                    "prompt": datasets.Value("string"),
                     "transcription": datasets.Value("string"),
                     "path": datasets.Value("string"),
                     "audio": datasets.Audio(sampling_rate=16_000),
@@ -124,7 +125,7 @@ class ASRSmaldusc(datasets.GeneratorBasedBuilder):
         """Yields examples as (key, example) tuples."""
 
         # read UTTRANSINFO file
-        # columns: channel, uttrans_id, speaker_id, prompt (empty field), transcription
+        # columns: channel, uttrans_id, speaker_id, prompt, transcription
         uttransinfo_filepath = os.path.join(filepath, "UTTRANSINFO.txt")
         with open(uttransinfo_filepath, "r", encoding="utf-8") as uttransinfo_file:
             uttransinfo_data = uttransinfo_file.readlines()
@@ -159,6 +160,7 @@ class ASRSmaldusc(datasets.GeneratorBasedBuilder):
                     "channel": uttransinfo_data[i][0],
                     "uttrans_id": uttransinfo_data[i][1],
                     "speaker_id": uttransinfo_data[i][2],
+                    "prompt": uttransinfo_data[i][3],
                     "transcription": uttransinfo_data[i][4],
                     "path": wav_path,
                     "audio": wav_path,
