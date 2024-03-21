@@ -14,7 +14,6 @@
 # limitations under the License.
 import os
 from typing import Dict, List, Tuple
-import logging
 import datasets
 import pandas
 
@@ -75,8 +74,7 @@ class UiTVihsdDataset(datasets.GeneratorBasedBuilder):
     The SeaCrowd dataloader for the dataset Vietnamese Hate Speech Detection (UIT-ViHSD).
     """
 
-    CLASS_LABELS = [0, 1, 2]  # 0:CLEAN, 1:OFFENSIVE, 2:HATE
-    logging.info(f"📚 Dataset <{_DATASETNAME}> has three class labels: #CLEAN(0), #OFFENSIVE(1), and #HATE(2).")
+    CLASS_LABELS = ["CLEAN", "OFFENSIVE", "HATE"]  # 0:CLEAN, 1:OFFENSIVE, 2:HATE
     BUILDER_CONFIGS = [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_source",
@@ -139,5 +137,9 @@ class UiTVihsdDataset(datasets.GeneratorBasedBuilder):
         """Yields examples as (key, example) tuples."""
         data_lines = pandas.read_csv(filepath)
         for row in data_lines.itertuples():
-            example = {"id": str(row.Index), "text": row.free_text, "label": row.label_id}
+            if self.config.schema == "source":
+                example = {"id": str(row.Index), "text": row.free_text, "label": row.label_id}
+            if self.config.schema == "seacrowd_text":
+                example = {"id": str(row.Index), "text": row.free_text, "label": self.CLASS_LABELS[int(row.label_id)]}
             yield row.Index, example
+
