@@ -108,14 +108,7 @@ class ViSoBERTDataset(datasets.GeneratorBasedBuilder):
     ]
 
     def _info(self) -> datasets.DatasetInfo:
-        if self.config.schema == "source":
-            features = datasets.Features(
-                {
-                    "id": datasets.Value("string"),
-                    "text": datasets.Value("string"),
-                }
-            )
-        elif self.config.schema == "seacrowd_ssp":
+        if self.config.schema == "source" or self.config.schema == "seacrowd_ssp":
             features = schemas.self_supervised_pretraining.features
         else:
             raise ValueError(f"Invalid schema: '{self.config.schema}'")
@@ -151,17 +144,7 @@ class ViSoBERTDataset(datasets.GeneratorBasedBuilder):
         """
 
         with open(filepath, "r", encoding="utf-8") as f:
-            if self.config.schema == "source":
-                for idx, row in enumerate(f):
-                    if row.strip() != "":
-                        yield (
-                            idx,
-                            {
-                                "id": str(idx),
-                                "text": row.strip(),
-                            },
-                        )
-            elif self.config.schema == "seacrowd_ssp":
+            if self.config.schema == "source" or self.config.schema == "seacrowd_ssp":
                 for idx, row in enumerate(f):
                     if row.strip() != "":
                         yield (
