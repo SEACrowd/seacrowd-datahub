@@ -67,8 +67,6 @@ _LOCAL = False
 
 _FILE = "CCMatrix.{}.{}"  # E.g. CCMatrix.en-nl.nl
 
-_WEBPAGE_URL = "https://opus.nlpl.eu/CCMatrix.php"
-
 _URLS = "https://object.pouta.csc.fi/OPUS-CCMatrix/v1/moses/{}.txt.zip"
 
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
@@ -98,7 +96,6 @@ class CCMatrixDataset(datasets.GeneratorBasedBuilder):
         ("id", "ms"),
         ("ms", "tl")
     ]
-
 
 
     BUILDER_CONFIGS = [
