@@ -25,7 +25,6 @@ import datasets
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Tasks, Licenses, TASK_TO_SCHEMA
-from .language_pair_cache import language_pairs
 
 _CITATION = """\
 @inproceedings{schwenk-etal-2021-ccmatrix,
