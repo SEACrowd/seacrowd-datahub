@@ -85,7 +85,7 @@ class VLSP2016SADataset(datasets.GeneratorBasedBuilder):
             subset_id=f"{_DATASETNAME}",
         ),
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}_tokenized",
+            name=f"{_DATASETNAME}_tokenized_seacrowd_{SEACROWD_SCHEMA_NAME}",
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd schema",
             schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
