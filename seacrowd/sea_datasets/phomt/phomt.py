@@ -40,7 +40,7 @@ _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
-MAP_LANG = {"en": "eng", "vi": "vie"}
+MAP_LANG = {"eng": "en", "vie": "vi"}
 
 
 def seacrowd_config_constructor(src_lang, tgt_lang, schema, version):
@@ -69,11 +69,11 @@ class PhoMT(datasets.GeneratorBasedBuilder):
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
     BUILDER_CONFIGS = [
-        seacrowd_config_constructor("en", "vi", "source", _SOURCE_VERSION),
-        seacrowd_config_constructor("en", "vi", "seacrowd_t2t", _SEACROWD_VERSION),
+        seacrowd_config_constructor("eng", "vie", "source", _SOURCE_VERSION),
+        seacrowd_config_constructor("eng", "vie", "seacrowd_t2t", _SEACROWD_VERSION),
     ]
 
-    DEFAULT_CONFIG_NAME = "phomt_en_vi_source"
+    DEFAULT_CONFIG_NAME = "phomt_eng_vie_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema in ("source", "seacrowd_t2t"):
@@ -116,8 +116,8 @@ class PhoMT(datasets.GeneratorBasedBuilder):
         src_lang = config_names_split[1]
         tgt_lang = config_names_split[2]
 
-        src_path = filepath.format(lang=src_lang)
-        tgt_path = filepath.format(lang=tgt_lang)
+        src_path = filepath.format(lang=MAP_LANG[src_lang])
+        tgt_path = filepath.format(lang=MAP_LANG[tgt_lang])
 
         with open(src_path, "r", encoding="utf8") as f:
             src_lines = f.readlines()
@@ -130,8 +130,8 @@ class PhoMT(datasets.GeneratorBasedBuilder):
                     "id": str(idx),
                     "text_1": src_line.strip(),
                     "text_2": tgt_line.strip(),
-                    "text_1_name": MAP_LANG[src_lang],
-                    "text_2_name": MAP_LANG[tgt_lang],
+                    "text_1_name": src_lang,
+                    "text_2_name": tgt_lang,
                 }
                 yield idx, ex
 
