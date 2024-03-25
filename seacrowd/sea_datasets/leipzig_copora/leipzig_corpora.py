@@ -23,7 +23,7 @@ _CITATION = """\
 }
 """
 
-_DATASETNAME = "leipzig_copora"
+_DATASETNAME = "leipzig_corpora"
 
 _DESCRIPTION = """\
 This is a collection of corpora in different languages, all built by randomly selecting sentences from web and newspaper sources.
@@ -174,7 +174,7 @@ class NewDataset(datasets.GeneratorBasedBuilder):
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = "leipzig_copora_source"
+    DEFAULT_CONFIG_NAME = "leipzig_corpora_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
