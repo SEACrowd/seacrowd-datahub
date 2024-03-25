@@ -71,7 +71,7 @@ _FILE = "QED.{}.{}"  # E.g. QED.en-id.id
 
 _URLS = "https://object.pouta.csc.fi/OPUS-QED/v2.0a/moses/{}.txt.zip"
 
-_SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
+_SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION, Tasks.SELF_SUPERVISED_PRETRAINING]
 
 _SOURCE_VERSION = "2.0.0"
 
@@ -125,11 +125,47 @@ class QEDDataset(datasets.GeneratorBasedBuilder):
         for lang1, lang2 in LANG_PAIRS
     ] + [
         SEACrowdConfig(
+            name=f"{_DATASETNAME}_{lang1}-{lang2}_{lang1}_source",
+            version=datasets.Version(_SEACROWD_VERSION),
+            description=f"{_DATASETNAME} source schema {lang1} for translation from {lang1} to {lang2}",
+            schema=f"source",
+            subset_id=f"{_DATASETNAME}_{lang1}-{lang2}_{lang1}",
+        )
+        for lang1, lang2 in LANG_PAIRS
+    ] + [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{lang1}-{lang2}_{lang2}_source",
+            version=datasets.Version(_SEACROWD_VERSION),
+            description=f"{_DATASETNAME} source schema {lang2} for translation from {lang1} to {lang2}",
+            schema=f"source",
+            subset_id=f"{_DATASETNAME}_{lang1}-{lang2}_{lang2}",
+        )
+        for lang1, lang2 in LANG_PAIRS
+    ] + [
+        SEACrowdConfig(
             name=f"{_DATASETNAME}_{lang1}-{lang2}_seacrowd_t2t",
             version=datasets.Version(_SEACROWD_VERSION),
-            description=f"{_DATASETNAME} SEACrowd schema",
+            description=f"{_DATASETNAME} SEACrowd schema for translation from {lang1} to {lang2} for Machine Translation task",
             schema=f"seacrowd_t2t",
             subset_id=f"{_DATASETNAME}_{lang1}-{lang2}",
+        )
+        for lang1, lang2 in LANG_PAIRS
+    ] + [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{lang1}-{lang2}_{lang1}_seacrowd_ssp",
+            version=datasets.Version(_SEACROWD_VERSION),
+            description=f"{_DATASETNAME} SEACrowd schema {lang1} for translation from {lang1} to {lang2} for Self-supervised Pretraining task",
+            schema=f"seacrowd_ssp",
+            subset_id=f"{_DATASETNAME}_{lang1}-{lang2}_{lang1}",
+        )
+        for lang1, lang2 in LANG_PAIRS
+    ] + [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{lang1}-{lang2}_{lang2}_seacrowd_ssp",
+            version=datasets.Version(_SEACROWD_VERSION),
+            description=f"{_DATASETNAME} SEACrowd schema {lang2} for translation from {lang1} to {lang2} for Self-supervised Pretraining task",
+            schema=f"seacrowd_ssp",
+            subset_id=f"{_DATASETNAME}_{lang1}-{lang2}_{lang2}",
         )
         for lang1, lang2 in LANG_PAIRS
     ]
@@ -137,19 +173,30 @@ class QEDDataset(datasets.GeneratorBasedBuilder):
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_en-id_source"
 
     def _info(self) -> datasets.DatasetInfo:
-        lang1, lang2 = self.config.subset_id.split("_")[-1].split("-")
 
         if self.config.schema == "source":
-            features = datasets.Features(
-                {
-                    "id": datasets.Value("int32"),
-                    "score": datasets.Value("float"),
-                    "translation": datasets.Translation(languages=(lang1, lang2)),
-                }
-            )
+            if len(self.config.subset_id.split("_")) == 2: # MT TASK
+                lang1, lang2 = self.config.subset_id.split("_")[-1].split("-")
+                features = datasets.Features(
+                    {
+                        "id": datasets.Value("int32"),
+                        "translation": datasets.Translation(languages=(lang1, lang2)),
+                    }
+                )
+            elif len(self.config.subset_id.split("_")) == 3: # ssp task
+                lang = self.config.subset_id.split("_")[-1]
+                features = datasets.Features(
+                    {
+                        "id": datasets.Value("int32"),
+                        "text": datasets.Value("string"),
+                    }
+                )
 
-        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA}":
+        elif self.config.schema == "seacrowd_t2t":
             features = schemas.text2text_features
+        
+        elif self.config.schema == "seacrowd_ssp":
+            features = schemas.ssp_features
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -161,7 +208,12 @@ class QEDDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        lang_pair = self.config.subset_id.split("_")[-1]
+        
+        if len(self.config.subset_id.split("_")) == 2:
+            lang_pair = self.config.subset_id.split("_")[-1]
+        elif len(self.config.subset_id.split("_")) == 3:
+            lang_pair = self.config.subset_id.split("_")[-2]
+
         url = _URLS.format(lang_pair)
         data_dir = dl_manager.download_and_extract(url)
 
@@ -176,30 +228,58 @@ class QEDDataset(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
-        lang_pair = self.config.subset_id.split("_")[-1]
-        lang1, lang2 = lang_pair.split("-")
 
-        l1_path = os.path.join(filepath, _FILE.format(lang_pair, lang1))
-        l2_path = os.path.join(filepath, _FILE.format(lang_pair, lang2))
+        if len(self.config.subset_id.split("_")) == 2: # MT Task
 
-        if self.config.schema == "source":
-            with open(l1_path, encoding="utf-8") as f1, open(l2_path, encoding="utf-8") as f2:
-                for i, (x, y) in enumerate(zip(f1, f2)):
-                    yield i, {
-                        "id": i,
-                        "translation": {
-                            lang1: x.strip(),
-                            lang2: y.strip(),
+            lang_pair = self.config.subset_id.split("_")[-1]
+            lang1, lang2 = lang_pair.split("-")
+
+            l1_path = os.path.join(filepath, _FILE.format(lang_pair, lang1))
+            l2_path = os.path.join(filepath, _FILE.format(lang_pair, lang2))
+
+            if self.config.schema == "source":
+                with open(l1_path, encoding="utf-8") as f1, open(l2_path, encoding="utf-8") as f2:
+                    for i, (x, y) in enumerate(zip(f1, f2)):
+                        yield i, {
+                            "id": i,
+                            "translation": {
+                                lang1: x.strip(),
+                                lang2: y.strip(),
+                            },
+                        }
+
+            elif self.config.schema == "seacrowd_t2t":
+                with open(l1_path, encoding="utf-8") as f1, open(l2_path, encoding="utf-8") as f2:
+                    for i, (x, y) in enumerate(zip(f1, f2)):
+                        yield i, {
+                            "id": str(i),
+                            "text_1": x.strip(),
+                            "text_2": y.strip(),
+                            "text_1_name": lang1,
+                            "text_2_name": lang2,
                         },
-                    },
+            
 
-        elif self.config.schema == "seacrowd_t2t":
-            with open(l1_path, encoding="utf-8") as f1, open(l2_path, encoding="utf-8") as f2:
-                for i, (x, y) in enumerate(zip(f1, f2)):
-                    yield i, {
-                        "id": str(i),
-                        "text_1": x.strip(),
-                        "text_2": y.strip(),
-                        "text_1_name": lang1,
-                        "text_2_name": lang2,
-                    },
+        elif len(self.config.subset_id.split("_")) == 3: # SSP Task
+
+            lang_pair = self.config.subset_id.split("_")[-2]
+            lang = self.config.subset_id.split("_")[-1]
+
+            l_path = os.path.join(filepath, _FILE.format(lang_pair, lang))
+
+            if self.config.schema == "source":            
+                with open(l_path, encoding="utf-8") as f:
+                    for i, x in enumerate(f.readlines()):
+                        yield i, {
+                            "id": i,
+                            "text": x.strip(), 
+                        }
+
+
+            elif self.config.schema == "seacrowd_ssp":
+                with open(l_path, encoding="utf-8") as f:
+                    for i, x in enumerate(f.readlines()):
+                        yield i, {
+                            "id": str(i),
+                            "text": x.strip(),
+                        }
