@@ -46,9 +46,7 @@ CoNLL format.
 
 _HOMEPAGE = "https://github.com/ir-nlp-csui/etos"
 
-_LANGUAGES = {"ind": "id"}
-
-_LANGUAGE_CODES = list(_LANGUAGES.values())
+_LANGUAGES = ["ind"]
 
 _LICENSE = Licenses.AGPL_3_0.value
 
@@ -61,8 +59,6 @@ _SUPPORTED_TASKS = [Tasks.POS_TAGGING]
 _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
-
-logger = datasets.logging.get_logger(__name__)
 
 
 class ETOSDataset(datasets.GeneratorBasedBuilder):
@@ -133,7 +129,7 @@ class ETOSDataset(datasets.GeneratorBasedBuilder):
             features = schemas.seq_label_features(self.UPOS_TAGS)
 
         else:
-            raise NotImplementedError(f"Schema '{self.config.schema}' is not defined.")
+            raise ValueError(f"Invalid schema: '{self.config.schema}'")
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -165,42 +161,43 @@ class ETOSDataset(datasets.GeneratorBasedBuilder):
         Yields examples as (key, example) tuples.
         """
 
-        idx = 0
         with open(filepath, "r", encoding="utf-8") as data_file:
             tokenlist = list(conllu.parse_incr(data_file))
-            for sent in tokenlist:
-                if "sent_id" in sent.metadata:
-                    sent_id = sent.metadata["sent_id"]
-                else:
-                    sent_id = idx
 
-                tokens = [token["form"] for token in sent]
+        for idx, sent in enumerate(tokenlist):
+            if "sent_id" in sent.metadata:
+                sent_id = sent.metadata["sent_id"]
+            else:
+                sent_id = idx
 
-                if "text" in sent.metadata:
-                    txt = sent.metadata["text"]
-                else:
-                    txt = " ".join(tokens)
+            tokens = [token["form"] for token in sent]
 
-                if self.config.schema == "source":
-                    yield idx, {
-                        "sent_id": str(sent_id),
-                        "text": txt,
-                        "tokens": [token["form"] for token in sent],
-                        "lemmas": [token["lemma"] for token in sent],
-                        "upos": [token["upos"] for token in sent],
-                        "xpos": [token["xpos"] for token in sent],
-                        "feats": [str(token["feats"]) for token in sent],
-                        "head": [str(token["head"]) for token in sent],
-                        "deprel": [str(token["deprel"]) for token in sent],
-                        "deps": [str(token["deps"]) for token in sent],
-                        "misc": [str(token["misc"]) for token in sent],
-                    }
+            if "text" in sent.metadata:
+                txt = sent.metadata["text"]
+            else:
+                txt = " ".join(tokens)
 
-                elif self.config.schema == "seacrowd_seq_label":
-                    yield idx, {
-                        "id": str(sent_id),
-                        "tokens": [token["form"] for token in sent],
-                        "labels": [token["upos"] for token in sent],
-                    }
+            if self.config.schema == "source":
+                yield idx, {
+                    "sent_id": str(sent_id),
+                    "text": txt,
+                    "tokens": tokens,
+                    "lemmas": [token["lemma"] for token in sent],
+                    "upos": [token["upos"] for token in sent],
+                    "xpos": [token["xpos"] for token in sent],
+                    "feats": [str(token["feats"]) for token in sent],
+                    "head": [str(token["head"]) for token in sent],
+                    "deprel": [str(token["deprel"]) for token in sent],
+                    "deps": [str(token["deps"]) for token in sent],
+                    "misc": [str(token["misc"]) for token in sent],
+                }
 
-                idx += 1
+            elif self.config.schema == "seacrowd_seq_label":
+                yield idx, {
+                    "id": str(sent_id),
+                    "tokens": tokens,
+                    "labels": [token["upos"] for token in sent],
+                }
+
+            else:
+                raise ValueError(f"Invalid schema: '{self.config.schema}'")
