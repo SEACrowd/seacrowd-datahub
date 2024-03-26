@@ -84,7 +84,7 @@ class ViSpamReviewsDataset(datasets.GeneratorBasedBuilder):
     """
 
     CLASS_LABELS = [0, 1]
-    SPAM_LABELS = [0, 1, 2, 3]
+    SPAM_TYPE_LABELS = [0, 1, 2, 3]
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
@@ -101,16 +101,35 @@ class ViSpamReviewsDataset(datasets.GeneratorBasedBuilder):
             schema="seacrowd_text",
             subset_id=f"{_DATASETNAME}",
         ),
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_spam_seacrowd_text",
+            version=datasets.Version(_SEACROWD_VERSION),
+            description=f"{_DATASETNAME} SEACrowd schema ",
+            schema="seacrowd_text",
+            subset_id=f"{_DATASETNAME}_spam",
+        ),
     ]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
-            features = datasets.Features({"id": datasets.Value("int32"), "text": datasets.Value("string"), "label": datasets.Value("string"), "spam_label": datasets.Value("string"), "rating": datasets.Value("int32")})
+            features = (datasets.Features
+                (
+                {"id": datasets.Value("int32"),
+                 "text": datasets.Value("string"),
+                 "label": datasets.Value("string"),
+                 "spam_label": datasets.Value("string"),
+                 "rating": datasets.Value("int32")
+                 }
+            ))
 
-        elif self.config.schema == "seacrowd_text":
+        elif self.config.name == "vispamreviews_seacrowd_text":
             features = schemas.text_features(label_names=self.CLASS_LABELS)
+        elif self.config.name == "vispamreviews_spam_seacrowd_text":
+            features = schemas.text_features(label_names=self.SPAM_TYPE_LABELS)
+        else:
+            raise ValueError("Invalid schema")
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -140,11 +159,14 @@ class ViSpamReviewsDataset(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         data_lines = pandas.read_csv(filepath)
-        if self.config.schema == "source":
-            for rid, row in enumerate(data_lines.itertuples()):
-                example = {"id": str(rid), "text": row.Comment, "label": row.Label, "spam_label": row.SpamLabel, "rating": row.Rating}
-                yield rid, example
-        elif self.config.schema == "seacrowd_text":
-            for rid, row in enumerate(data_lines.itertuples()):
+        for rid, row in enumerate(data_lines.itertuples()):
+            if self.config.schema == "source":
+                example = {"id": str(rid), "text": row.Comment, "label": row.Label, "spam_label": row.SpamLabel,
+                           "rating": row.Rating}
+            elif self.config.name == "vispamreviews_seacrowd_text":
                 example = {"id": str(rid), "text": row.Comment, "label": row.Label}
-                yield rid, example
+            elif self.config.schema == "vispamreviews_spam_seacrowd_text":
+                example = {"id": str(rid), "text": row.Comment, "label": row.SpamLabel}
+            else:
+                raise ValueError("Invalid schema")
+            yield rid, example
