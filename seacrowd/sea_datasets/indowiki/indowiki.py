@@ -19,7 +19,6 @@ from typing import Dict, List, Tuple
 
 import datasets
 
-from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses
 
@@ -72,8 +71,6 @@ class IndoWiki(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    SEACROWD_SCHEMA_NAME = "kb"
-
     BUILDER_CONFIGS = [
         # inductive setting
         SEACrowdConfig(
@@ -83,26 +80,12 @@ class IndoWiki(datasets.GeneratorBasedBuilder):
             schema="source",
             subset_id=_DATASETNAME,
         ),
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_inductive_seacrowd_{SEACROWD_SCHEMA_NAME}",
-            version=SEACROWD_VERSION,
-            description=f"{_DATASETNAME} SEACrowd schema",
-            schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
-            subset_id=_DATASETNAME,
-        ),
         # transductive setting
         SEACrowdConfig(
             name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
             description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id=_DATASETNAME,
-        ),
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",
-            version=SEACROWD_VERSION,
-            description=f"{_DATASETNAME} SEACrowd schema",
-            schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
             subset_id=_DATASETNAME,
         ),
     ]
@@ -123,8 +106,8 @@ class IndoWiki(datasets.GeneratorBasedBuilder):
                 }
             )
 
-        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
-            features = schemas.kb_features
+        else:
+            raise NotImplementedError()
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -210,19 +193,6 @@ class IndoWiki(datasets.GeneratorBasedBuilder):
                     "ent1_text": text_dict[triplets_data[i][0]],
                     "ent2_text": text_dict[triplets_data[i][2]],
                     "relation": triplets_data[i][1],
-                }
-            elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
-
-                example = {
-                    "id": str(i),
-                    "document_id": str(i),
-                    "entities": [
-                        {"id": triplets_data[i][0], "type": "text", "text": [text_dict[triplets_data[i][0]]]},
-                        {"id": triplets_data[i][2], "type": "text", "text": [text_dict[triplets_data[i][2]]]},
-                    ],
-                    "events": [],
-                    "coreferences": [],
-                    "relations": [{"id": triplets_data[i][1], "type": triplets_data[i][1], "arg1_id": triplets_data[i][0], "arg2_id": triplets_data[i][2]}],
                 }
 
             yield i, example
