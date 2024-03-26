@@ -107,6 +107,8 @@ class ETOSDataset(datasets.GeneratorBasedBuilder):
         ),
     ]
 
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
+
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
             features = datasets.Features(
