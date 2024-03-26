@@ -44,7 +44,20 @@ _CITATION = """\
     url = "https://aclanthology.org/2022.findings-acl.116",
     doi = "10.18653/v1/2022.findings-acl.116",
     pages = "1473--1486",
-    abstract = "This paper presents the first Thai Nested Named Entity Recognition (N-NER) dataset. Thai N-NER consists of 264,798 mentions, 104 classes, and a maximum depth of 8 layers obtained from 4,894 documents in the domains of news articles and restaurant reviews. Our work, to the best of our knowledge, presents the largest non-English N-NER dataset and the first non-English one with fine-grained classes. To understand the new challenges our proposed dataset brings to the field, we conduct an experimental study on (i) cutting edge N-NER models with the state-of-the-art accuracy in English and (ii) baseline methods based on well-known language model architectures. From the experimental results, we obtained two key findings. First, all models produced poor F1 scores in the tail region of the class distribution. There is little or no performance improvement provided by these models with respect to the baseline methods with our Thai dataset. These findings suggest that further investigation is required to make a multilingual N-NER solution that works well across different languages.",
+    abstract = "This paper presents the first Thai Nested Named Entity Recognition (N-NER) dataset.\
+Thai N-NER consists of 264,798 mentions, 104 classes,\
+and a maximum depth of 8 layers obtained from 4,894 documents in the domains of news articles and restaurant reviews.\
+Our work, to the best of our knowledge, presents the largest non-English N-NER dataset and\
+the first non-English one with fine-grained classes.\
+To understand the new challenges our proposed dataset brings to the field,\
+we conduct an experimental study on (i) cutting edge N-NER models with the state-of-the-art accuracy in English and\
+(ii) baseline methods based on well-known language model architectures.\
+From the experimental results, we obtained two key findings.\
+First, all models produced poor F1 scores in the tail region of the class distribution.\
+There is little or no performance improvement provided by these models with respect to the baseline methods with\
+our Thai dataset.\
+These findings suggest that further investigation is required to make\
+a multilingual N-NER solution that works well across different languages.",
 }
 """
 
@@ -53,14 +66,18 @@ _DATASETNAME = "thai_nner"
 
 
 _DESCRIPTION = """\
-Thai N-NER consists of 264,798 mentions, 104 classes, and a maximum depth of 8 layers obtained from 4,894 documents in the domains of news articles and restaurant reviews. 
-To create the dataset, the authors gather 4,894 documents from two different domains: news articles and restaurant reviews. In particular, we obtain 4,396 news articles from Prachathai, a news website, and 498 restaurant reviews from Wongnai, a crowd-sourced restaurant review platform."""
+Thai N-NER consists of 264,798 mentions, 104 classes,\
+and a maximum depth of 8 layers obtained from 4,894 documents in the domains of news articles and restaurant reviews.\
+To create the dataset,\
+the authors gather 4,894 documents from two different domains: news articles and restaurant reviews.
+In particular, \
+we obtain 4,396 news articles from Prachathai, a news website, and 498 restaurant reviews from Wongnai, a crowd-sourced restaurant review platform."""
 
 
 _HOMEPAGE = "https://github.com/vistec-AI/Thai-NNER"
 
 
-_LANGUAGES = ["tha"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
+_LANGUAGES = ["tha"]
 
 
 _LICENSE = Licenses.CC_BY_SA_3_0.value
@@ -548,6 +565,10 @@ class ThaiNnerDataset(datasets.GeneratorBasedBuilder):
                     # Handle lines with a single field
                     if "\t" in line:
                         token, label = line[:-1].split("\t")
+                    elif "\t" not in line and " " in line:
+                        line_split = line.split()
+                        token = line_split[0]
+                        label = line_split[1:]
                     else:
                         token, label = line.strip(), "O"  # Default label if not provided
 
@@ -571,7 +592,3 @@ class ThaiNnerDataset(datasets.GeneratorBasedBuilder):
                 yield index, ex
         else:
             raise ValueError(f"Invalid config: {self.config.name}")
-
-
-# if __name__ == "__main__":
-#     datasets.load_dataset(__file__)
