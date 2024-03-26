@@ -95,6 +95,13 @@ class ViSpamReviewsDataset(datasets.GeneratorBasedBuilder):
             subset_id=f"{_DATASETNAME}",
         ),
         SEACrowdConfig(
+            name=f"{_DATASETNAME}_spam_source",
+            version=datasets.Version(_SOURCE_VERSION),
+            description=f"{_DATASETNAME} source schema",
+            schema="source",
+            subset_id=f"{_DATASETNAME}",
+        ),
+        SEACrowdConfig(
             name=f"{_DATASETNAME}_seacrowd_text",
             version=datasets.Version(_SEACROWD_VERSION),
             description=f"{_DATASETNAME} SEACrowd schema ",
@@ -113,7 +120,7 @@ class ViSpamReviewsDataset(datasets.GeneratorBasedBuilder):
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
-        if self.config.schema == "source":
+        if self.config.name.endswith("source"):
             features = (datasets.Features
                 (
                 {"id": datasets.Value("int32"),
@@ -129,7 +136,7 @@ class ViSpamReviewsDataset(datasets.GeneratorBasedBuilder):
         elif self.config.name == "vispamreviews_spam_seacrowd_text":
             features = schemas.text_features(label_names=self.SPAM_TYPE_LABELS)
         else:
-            raise ValueError("Invalid schema")
+            raise ValueError(f"Invalid schema {self.config.name}")
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -160,13 +167,13 @@ class ViSpamReviewsDataset(datasets.GeneratorBasedBuilder):
         """Yields examples as (key, example) tuples."""
         data_lines = pandas.read_csv(filepath)
         for rid, row in enumerate(data_lines.itertuples()):
-            if self.config.schema == "source":
+            if self.config.name.endswith("source"):
                 example = {"id": str(rid), "text": row.Comment, "label": row.Label, "spam_label": row.SpamLabel,
                            "rating": row.Rating}
             elif self.config.name == "vispamreviews_seacrowd_text":
                 example = {"id": str(rid), "text": row.Comment, "label": row.Label}
-            elif self.config.schema == "vispamreviews_spam_seacrowd_text":
+            elif self.config.name == "vispamreviews_spam_seacrowd_text":
                 example = {"id": str(rid), "text": row.Comment, "label": row.SpamLabel}
             else:
-                raise ValueError("Invalid schema")
+                raise ValueError(f"Invalid schema {self.config.schema}")
             yield rid, example
