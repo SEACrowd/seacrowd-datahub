@@ -114,7 +114,7 @@ class StructAmbInd(datasets.GeneratorBasedBuilder):
             data_dir = self.config.data_dir
 
         # load the local audio folders
-        audio_urls = [data_dir + f"{gender}{_id:02}.zip" for gender in ["F", "M"] for _id in range(1, 12, 1)]
+        audio_urls = [data_dir + "/" + f"{gender}{_id:02}.zip" for gender in ["F", "M"] for _id in range(1, 12, 1)]
         audio_files_dir = [Path(dl_manager.extract(audio_url)) / audio_url.split("/")[-1][:-4] for audio_url in audio_urls]
         # load the speaker splits and transcript
         split_train = Path(dl_manager.download(_URLS["split_train"]))
