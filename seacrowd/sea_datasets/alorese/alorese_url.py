@@ -1,3 +1,16 @@
+"""Data Scraping for Alorese Audio-Visual Dataset
+
+This docstring outlines the process for scraping audio-visual data (WAV and XML files) for the Alorese language from a specific source. The scraping approach involves the following steps:
+
+1. Pagination and BLOB URL Extraction An automated process iterates through paginated content on the source website. The goal is to extract Blob URLs that point to individual detail pages containing the desired data.
+2. Detail Page Processing and WAV URL Collection: From each extracted detail page, a mechanism is implemented to target and collect URLs ending with the `.wav` extension. These URLs point directly to the audio files.
+3. WAV-XML Matching (Heuristic Approach): Due to potential inconsistencies in file naming conventions between audio (WAV) and caption (XML) files, a heuristic matching strategy is employed. This strategy involves searching within the detail page content (potentially metadata or filenames) for XML files with names that most closely resemble the corresponding WAV filenames.
+4. Manual Verification and Handling of Discrepancies:  It is acknowledged that the heuristic matching approach might not always be perfect. Therefore, manual verification of the pairings between WAV and XML files is recommended. Additionally, the process should account for the possibility of WAV files lacking corresponding XML captions.
+
+In summary, this scraping approach automates the acquisition of WAV and XML data from the Alorese language source.
+"""
+
+
 _URLS_DICT = {
     "AOLFM_2016_05_02_frogstory_Basrudin": {
         "audio_path": "https://archive.mpi.nl/tla/islandora/object/tla%3A1839_5db33109_854a_47ac_90c9_4e48a6d29643/datastream/OBJ/download",
