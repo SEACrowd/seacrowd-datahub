@@ -44,7 +44,8 @@ _URLS = {
         "train": "https://huggingface.co/datasets/Babelscape/SREDFM/resolve/main/data/train.vi.jsonl",
         "dev": "https://huggingface.co/datasets/Babelscape/SREDFM/resolve/main/data/dev.vi.jsonl",
         "test": "https://huggingface.co/datasets/Babelscape/SREDFM/resolve/main/data/test.vi.jsonl",
-    }
+    },
+    "relations_url": "https://huggingface.co/datasets/Babelscape/SREDFM/raw/main/relations.tsv",
 }
 
 _SUPPORTED_TASKS = [Tasks.RELATION_EXTRACTION]
@@ -78,9 +79,6 @@ class SREDFMDataset(datasets.GeneratorBasedBuilder):
     ]
 
     DEFAULT_CONFIG_NAME = "sredfm_source"
-    RELATIONS_URL = (
-        "https://huggingface.co/datasets/Babelscape/SREDFM/raw/main/relations.tsv"
-    )
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -120,42 +118,34 @@ class SREDFMDataset(datasets.GeneratorBasedBuilder):
             citation=_CITATION,
         )
 
-    def _split_generators(
-        self, dl_manager: datasets.DownloadManager
-    ) -> List[datasets.SplitGenerator]:
+    def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
         urls = _URLS[_DATASETNAME]
         data_dir = dl_manager.download_and_extract(urls)
 
-        return [
-            datasets.SplitGenerator(
-                name=datasets.Split.TRAIN,
-                gen_kwargs={
-                    "filepath": data_dir["train"],
-                },
-            ),
-            datasets.SplitGenerator(
-                name=datasets.Split.TEST,
-                gen_kwargs={
-                    "filepath": data_dir["test"],
-                },
-            ),
-            datasets.SplitGenerator(
-                name=datasets.Split.VALIDATION,
-                gen_kwargs={
-                    "filepath": data_dir["dev"],
-                },
-            ),
-        ]
-
-    def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
-        """Yields examples as (key, example) tuples."""
-
         relation_names = dict()
-        with open(self.RELATIONS_URL, encoding="utf-8") as f:
+        with open(_URLS["relations_url"], encoding="utf-8") as f:
             for row in f:
                 rel_code, rel_name, _, _ = row.strip().split("\t")
                 relation_names[rel_code] = rel_name
+
+        return [
+            datasets.SplitGenerator(
+                name=datasets.Split.TRAIN,
+                gen_kwargs={"filepath": data_dir["train"], "relation_names": relation_names},
+            ),
+            datasets.SplitGenerator(
+                name=datasets.Split.TEST,
+                gen_kwargs={"filepath": data_dir["test"], "relation_names": relation_names},
+            ),
+            datasets.SplitGenerator(
+                name=datasets.Split.VALIDATION,
+                gen_kwargs={"filepath": data_dir["dev"], "relation_names": relation_names},
+            ),
+        ]
+
+    def _generate_examples(self, filepath: Path, relation_names: dict) -> Tuple[int, Dict]:
+        """Yields examples as (key, example) tuples."""
 
         if self.config.schema == "source":
             with jsonlines.open(filepath) as f:
@@ -179,10 +169,7 @@ class SREDFMDataset(datasets.GeneratorBasedBuilder):
 
                     relations = []
                     for relation in example["relations"]:
-                        if (
-                            relation["predicate"]["uri"] not in relation_names
-                            or relation["confidence"] <= 0.75
-                        ):
+                        if relation["predicate"]["uri"] not in relation_names or relation["confidence"] <= 0.75:
                             continue
 
                         relations.append(
@@ -190,23 +177,17 @@ class SREDFMDataset(datasets.GeneratorBasedBuilder):
                                 "subject": entities.index(
                                     {
                                         "uri": relation["subject"]["uri"],
-                                        "surfaceform": relation["subject"][
-                                            "surfaceform"
-                                        ],
+                                        "surfaceform": relation["subject"]["surfaceform"],
                                         "start": relation["subject"]["boundaries"][0],
                                         "end": relation["subject"]["boundaries"][1],
                                         "type": relation["subject"]["type"],
                                     }
                                 ),
-                                "predicate": relation_names[
-                                    relation["predicate"]["uri"]
-                                ],
+                                "predicate": relation_names[relation["predicate"]["uri"]],
                                 "object": entities.index(
                                     {
                                         "uri": relation["object"]["uri"],
-                                        "surfaceform": relation["object"][
-                                            "surfaceform"
-                                        ],
+                                        "surfaceform": relation["object"]["surfaceform"],
                                         "start": relation["object"]["boundaries"][0],
                                         "end": relation["object"]["boundaries"][1],
                                         "type": relation["object"]["type"],
@@ -261,10 +242,7 @@ class SREDFMDataset(datasets.GeneratorBasedBuilder):
 
                     relations = []
                     for relation in example["relations"]:
-                        if (
-                            relation["predicate"]["uri"] not in relation_names
-                            or relation["confidence"] <= 0.75
-                        ):
+                        if relation["predicate"]["uri"] not in relation_names or relation["confidence"] <= 0.75:
                             continue
 
                         i += 1
