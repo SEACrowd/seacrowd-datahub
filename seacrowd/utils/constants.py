@@ -44,14 +44,15 @@ class Tasks(Enum):
     WORD_ANALOGY = "WA"
     WORD_SENSE_DISAMBIGUATION = "WSD"
     COREFERENCE_RESOLUTION = "COREF"
+    RELATION_EXTRACTION = "RE"
 
     # Tree
     CONSTITUENCY_PARSING = "CONST_PAR"
 
     # Single Text Classification (single-label)
     ABUSIVE_LANGUAGE_PREDICTION = "ABL"
+    COMPLAINT_DETECTION = "CD"
     DOMAIN_KNOWLEDGE_CLASSIFICATION = "DKC" # classification for non NLP-oriented label
-
     EMOTION_CLASSIFICATION = "EC"
     LANGUAGE_IDENTIFICATION = "LI"
     HOAX_NEWS_CLASSIFICATION = "HNC"
@@ -68,6 +69,7 @@ class Tasks(Enum):
     # Single Text Classification (multi-label)
     ASPECT_BASED_SENTIMENT_ANALYSIS = "ABSA"
     DOMAIN_KNOWLEDGE_MULTICLASSIFICATION = "DKM" # multi-classification for non NLP-oriented label
+    CODE_SWITCHING_IDENTIFICATION = "CSI"
 
     # Single Text Sequence Labeling
     KEYWORD_TAGGING = "KT"
@@ -90,6 +92,7 @@ class Tasks(Enum):
     CONCEPT_ALIGNMENT_CLASSIFICATION = "CAC"
 
     # Single Text Generation
+    CROSS_LINGUAL_SUMMARIZATION = "X-SUM"
     INSTRUCTION_TUNING = "ITT"
     MACHINE_TRANSLATION = "MT"
     MULTILEXNORM = "MLN"
@@ -131,6 +134,7 @@ class Tasks(Enum):
 
     # No seacrowd schema
     FACT_CHECKING = "FCT"
+    WORD_LIST = "WL"
 
 
 class Licenses(Enum):
@@ -219,6 +223,7 @@ class Licenses(Enum):
 TASK_TO_SCHEMA = {
     Tasks.COREFERENCE_RESOLUTION: "KB",
     Tasks.DEPENDENCY_PARSING: "KB",
+    Tasks.RELATION_EXTRACTION: "KB",
     Tasks.CONSTITUENCY_PARSING: "TREE",
     Tasks.E2E_TASK_ORIENTED_DIALOGUE: "TOD",
     Tasks.DIALOGUE_SYSTEM: "T2T",
@@ -241,6 +246,7 @@ TASK_TO_SCHEMA = {
     Tasks.SEMANTIC_SIMILARITY: "PAIRS_SCORE",
     Tasks.SHORT_ANSWER_GRADING: "PAIRS_SCORE",
     Tasks.MORPHOLOGICAL_INFLECTION: "PAIRS_MULTI",
+    Tasks.CROSS_LINGUAL_SUMMARIZATION: "T2T",
     Tasks.INSTRUCTION_TUNING: "T2T",
     Tasks.PARAPHRASING: "T2T",
     Tasks.MACHINE_TRANSLATION: "T2T",
@@ -249,7 +255,9 @@ TASK_TO_SCHEMA = {
     Tasks.TRANSLITERATION: "T2T",
     Tasks.ASPECT_BASED_SENTIMENT_ANALYSIS: "TEXT_MULTI",
     Tasks.DOMAIN_KNOWLEDGE_MULTICLASSIFICATION: "TEXT_MULTI",
+    Tasks.CODE_SWITCHING_IDENTIFICATION: "TEXT_MULTI",
     Tasks.ABUSIVE_LANGUAGE_PREDICTION: "TEXT",
+    Tasks.COMPLAINT_DETECTION: "TEXT",
     Tasks.DOMAIN_KNOWLEDGE_CLASSIFICATION: "TEXT",
     Tasks.SENTIMENT_ANALYSIS: "TEXT",
     Tasks.TAX_COURT_VERDICT: "TEXT",
@@ -279,6 +287,7 @@ TASK_TO_SCHEMA = {
     Tasks.VIDEO_CAPTIONING: "VIDTEXT",
     Tasks.VIDEO_TO_TEXT_RETRIEVAL: "VIDTEXT",
     Tasks.FACT_CHECKING: None,
+    Tasks.WORD_LIST: None,
     Tasks.MORALITY_CLASSIFICATION: "TEXT",
 }
 
@@ -316,6 +325,7 @@ TASK_TO_FEATURES = {
     Tasks.NAMED_ENTITY_RECOGNITION: {"entities"},
     Tasks.DEPENDENCY_PARSING: {"relations", "entities"},
     Tasks.COREFERENCE_RESOLUTION: {"entities", "coreferences"},
+    Tasks.RELATION_EXTRACTION: {"relations", 'entities'},
     # Tasks.SPAN_BASED_ABSA: {"entities", "coreferences"},
     # Tasks.NAMED_ENTITY_DISAMBIGUATION: {"entities", "normalized"},
     # Tasks.EVENT_EXTRACTION: {"events"}
