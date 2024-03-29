@@ -106,7 +106,7 @@ def construct_configs() -> List[SEACrowdConfig]:
     return config_list
 
 
-class VoxLingua(datasets.GeneratorBasedBuilder):
+class VoxLinguaDataset(datasets.GeneratorBasedBuilder):
     """Speech Lang ID on dataset VoxLingua."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
