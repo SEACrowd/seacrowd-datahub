@@ -45,7 +45,7 @@ _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
-_CLASSES = ["0", "1"]
+_CLASSES = ["0", "1"]  # corresponds to  ["non-hate-containing", "hate-containing"]
 
 
 class FilipinoHatespeechElectionDataset(datasets.GeneratorBasedBuilder):
