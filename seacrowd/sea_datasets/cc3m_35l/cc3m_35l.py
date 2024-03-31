@@ -56,7 +56,7 @@ _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
-_LANGS = ["fil", "id", "th", "vi"]
+_LANGUAGES = ["fil", "ind", "tha", "vie"]
 
 _LOCAL = True
 
