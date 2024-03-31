@@ -72,7 +72,7 @@ class CC3M35L(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [SEACrowdConfig(name=f"cc3m_35l_{lang}_source", version=datasets.Version(_SOURCE_VERSION), description=f"cc3m_35l_{lang} source schema", schema="source", subset_id=f"cc3m_35l_{lang}",) for lang in _LANGS] + [
         SEACrowdConfig(
-            name=f"cc3m_35l_{lang}_seacrowd_imtext",
+            name=f"{_DATASETNAME}_{lang}_seacrowd_imtext",
             version=datasets.Version(_SEACROWD_VERSION),
             description=f"{_DATASETNAME}_{lang} SEACrowd schema",
             schema="seacrowd_imtext",
