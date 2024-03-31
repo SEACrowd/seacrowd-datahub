@@ -70,7 +70,7 @@ class CC3M35L(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    BUILDER_CONFIGS = [SEACrowdConfig(name=f"cc3m_35l_{lang}_source", version=datasets.Version(_SOURCE_VERSION), description=f"cc3m_35l_{lang} source schema", schema="source", subset_id=f"cc3m_35l_{lang}",) for lang in _LANGS] + [
+    BUILDER_CONFIGS = [SEACrowdConfig(name=f"cc3m_35l_{lang}_source", version=datasets.Version(_SOURCE_VERSION), description=f"cc3m_35l_{lang} source schema", schema="source", subset_id=f"cc3m_35l_{lang}",) for lang in _LANGUAGES] + [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_{lang}_seacrowd_imtext",
             version=datasets.Version(_SEACROWD_VERSION),
@@ -78,7 +78,7 @@ class CC3M35L(datasets.GeneratorBasedBuilder):
             schema="seacrowd_imtext",
             subset_id=f"{_DATASETNAME}_{lang}",
         )
-        for lang in _LANGS
+        for lang in _LANGUAGES
     ]
 
     DEFAULT_CONFIG_NAME = "cc3m_35l_id_source"
