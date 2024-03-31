@@ -22,3 +22,4 @@ openpyxl
 translate-toolkit==3.7.3
 typing_extensions
 scikit-learn==1.1.2
+beautifulsoup4
