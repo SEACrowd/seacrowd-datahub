@@ -76,7 +76,7 @@ class CC3M35L(datasets.GeneratorBasedBuilder):
             version=datasets.Version(_SEACROWD_VERSION),
             description=f"{_DATASETNAME}_{lang} SEACrowd schema",
             schema="seacrowd_imtext",
-            subset_id=f"cc3m_35l_{lang}",
+            subset_id=f"{_DATASETNAME}_{lang}",
         )
         for lang in _LANGS
     ]
