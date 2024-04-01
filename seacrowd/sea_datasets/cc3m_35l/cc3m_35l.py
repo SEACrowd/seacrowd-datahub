@@ -212,7 +212,7 @@ class CC3M35L(datasets.GeneratorBasedBuilder):
             ),
         ]
 
-    def _generate_examples(self, filepath: dict, exceptions: list, split: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepath: dict, exceptions: list) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         for idx, row in filepath.iterrows():
             if idx not in exceptions:
