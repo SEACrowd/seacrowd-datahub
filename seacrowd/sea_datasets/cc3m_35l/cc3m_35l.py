@@ -208,7 +208,6 @@ class CC3M35L(datasets.GeneratorBasedBuilder):
                 gen_kwargs={
                     "filepath": gcc_val_df,
                     "exceptions": val_exceptions,
-                    "split": "dev",
                 },
             ),
         ]
