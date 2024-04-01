@@ -201,7 +201,6 @@ class CC3M35L(datasets.GeneratorBasedBuilder):
                 gen_kwargs={
                     "filepath": gcc_train_df,
                     "exceptions": train_exceptions,
-                    "split": "train",
                 },
             ),
             datasets.SplitGenerator(
