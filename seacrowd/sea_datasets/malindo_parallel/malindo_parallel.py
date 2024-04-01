@@ -67,7 +67,7 @@ _LOCAL = False
 
 
 _URLS = {
-    _DATASETNAME: "https://github.com/matbahasa/MALINDO_Parallel/blob/master/OpenCampusTUFS/OCTUFS2020.txt",
+    _DATASETNAME: "https://raw.githubusercontent.com/matbahasa/MALINDO_Parallel/master/OpenCampusTUFS/OCTUFS2020.txt",
 }
 
 
@@ -141,10 +141,25 @@ class MalindoParallelDataset(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
 
-
-        data = json.load(open(filepath, "r"))
-
-        rows = data["payload"]["blob"]["rawLines"]
+        rows = []
+        temp_cols = None
+        with open(filepath) as file:
+            while line := file.readline():
+                if temp_cols is None:
+                    cols = []
+                    for col in line.split('\t'):
+                        if len(col.strip('\n'))>0:
+                            cols.append(col)
+                    if len(cols) > 2:
+                        correct_line = line.rstrip()
+                        rows.append(correct_line)
+                    else:
+                        temp_cols = cols
+                else:
+                    temp_cols.append(line)
+                    correct_line = "\t".join(temp_cols).rstrip()
+                    temp_cols = None
+                    rows.append(correct_line)
 
         if self.config.schema == "source":
 
@@ -154,11 +169,11 @@ class MalindoParallelDataset(datasets.GeneratorBasedBuilder):
                 row_id = row[:t1idx]
                 row_melayu = row[t1idx : t1idx + t2idx]
                 row_japanese = row[t1idx + t2idx + 1 : -1]
-                ex = {"id": i, "text": row_melayu + "\t" + row_japanese}
+                ex = {"id": row_id.rstrip(),
+                      "text": row_melayu + "\t" + row_japanese}
                 yield i, ex
 
         elif self.config.schema == "seacrowd_t2t":
-
 
             for i, row in enumerate(rows):
                 t1idx = row.find("\t") + 1
@@ -167,7 +182,7 @@ class MalindoParallelDataset(datasets.GeneratorBasedBuilder):
                 row_melayu = row[t1idx : t1idx + t2idx]
                 row_japanese = row[t1idx + t2idx + 1 : -1]
                 ex = {
-                    "id": i,
+                    "id": row_id.rstrip(),
                     "text_1": row_melayu,
                     "text_2": row_japanese,
                     "text_1_name": "zlm",
