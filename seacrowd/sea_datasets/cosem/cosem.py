@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import os
+import re
 from typing import Dict, List, Tuple
 
 import datasets
@@ -149,24 +150,45 @@ class CoSEMDataset(datasets.GeneratorBasedBuilder):
         idx = 0
         files = os.listdir(path)
         file_paths = [os.path.join(path, file) for file in files]
+        id_pattern = r"<COSEM:[^>]+>"
 
         for file_path in file_paths:
-            with open(file_path, "r", encoding="utf-8") as file:
-                for line in file:
-                    blocks = line.split("\t")
 
-                    if len(blocks) < 2:
+            with open(file_path, "r", encoding="utf-8") as file:
+
+                blocks: List[str] = []
+
+                for line in file:
+
+                    new_blocks = line.split("\t")
+
+                    if len(new_blocks) == 0:
                         continue
 
-                    id = idx
-                    text = blocks[1]
+                    if re.match(id_pattern, new_blocks[0]):
 
-                    if self.config.schema == "source" or self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SELF_SUPERVISED_PRETRAINING]).lower()}":
-                        yield idx, {
-                            "id": id,
-                            "text": text,
-                        }
-                        idx += 1
+                        if len(blocks) > 0:
 
-                    else:
-                        raise ValueError(f"Invalid config: {self.config.name}")
+                            if self.config.schema == "source" or self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SELF_SUPERVISED_PRETRAINING]).lower()}":
+                                yield idx, {
+                                    "id": blocks[0],
+                                    "text": blocks[1],
+                                }
+
+                                idx += 1
+
+                            else:
+                                raise ValueError(f"Invalid config: {self.config.name}")
+
+                        blocks = new_blocks
+
+                    elif len(blocks) > 0:
+                        blocks[1] += new_blocks[0]
+
+                if len(blocks) > 0 and (self.config.schema == "source" or self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SELF_SUPERVISED_PRETRAINING]).lower()}"):
+                    yield idx, {
+                        "id": blocks[0],
+                        "text": blocks[1],
+                    }
+
+                    idx += 1
