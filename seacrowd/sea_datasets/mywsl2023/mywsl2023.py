@@ -64,6 +64,8 @@ _SPLIT_NAMES = {
     datasets.Split.TEST: "test",
 }
 
+_LABELS = ["air", "demam", "dengar", "makan", "minum", "salah", "saya", "senyap", "tidur", "waktu"]
+
 _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
@@ -116,7 +118,7 @@ class MyWsl2023(datasets.GeneratorBasedBuilder):
             )
 
         elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SIGN_LANGUAGE_RECOGNITION]).lower()}":
-            features = schemas.image_text_features(label_names=[])
+            features = schemas.image_text_features(label_names=_LABELS)
 
         else:
             raise ValueError(f"Invalid config: {self.config.name}")
@@ -170,7 +172,7 @@ class MyWsl2023(datasets.GeneratorBasedBuilder):
                     "texts": os.path.basename(image_folder_path),
                     "metadata": {
                         "context": "Malaysian Sign Language (XML)",
-                        "labels": [],
+                        "labels": [os.path.basename(image_folder_path)],
                     },
                 }
                 idx += 1
