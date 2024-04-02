@@ -45,6 +45,7 @@ class Tasks(Enum):
     WORD_ANALOGY = "WA"
     WORD_SENSE_DISAMBIGUATION = "WSD"
     COREFERENCE_RESOLUTION = "COREF"
+    RELATION_EXTRACTION = "RE"
 
     # Tree
     CONSTITUENCY_PARSING = "CONST_PAR"
@@ -125,6 +126,7 @@ class Tasks(Enum):
     IMAGE_CAPTIONING = "IC"
     VISUAL_QUESTION_ANSWERING = "VQA"
     SIGN_LANGUAGE_RECOGNITION = "SLR"
+    OPTICAL_CHARACTER_RECOGNITION = "OCR"
     STYLIZED_IMAGE_CAPTIONING = "SIC"
     VISUALLY_GROUNDED_REASONING = "VGR"
 
@@ -134,6 +136,7 @@ class Tasks(Enum):
 
     # No seacrowd schema
     FACT_CHECKING = "FCT"
+    WORD_LIST = "WL"
 
 
 class Licenses(Enum):
@@ -281,11 +284,13 @@ TASK_TO_SCHEMA = {
     Tasks.VISUAL_QUESTION_ANSWERING: "IMQA",
     Tasks.IMAGE_CAPTIONING: "IMTEXT",
     Tasks.SIGN_LANGUAGE_RECOGNITION: "IMTEXT",
+    Tasks.OPTICAL_CHARACTER_RECOGNITION: "IMTEXT",
     Tasks.STYLIZED_IMAGE_CAPTIONING: "IMTEXT",
     Tasks.VISUALLY_GROUNDED_REASONING: "IMTEXT",
     Tasks.VIDEO_CAPTIONING: "VIDTEXT",
     Tasks.VIDEO_TO_TEXT_RETRIEVAL: "VIDTEXT",
     Tasks.FACT_CHECKING: None,
+    Tasks.WORD_LIST: None,
     Tasks.MORALITY_CLASSIFICATION: "TEXT",
 }
 
@@ -324,6 +329,7 @@ TASK_TO_FEATURES = {
     Tasks.DEPENDENCY_PARSING: {"relations", "entities"},
     Tasks.RELATION_EXTRACTION: {"relations", "entities"},
     Tasks.COREFERENCE_RESOLUTION: {"entities", "coreferences"},
+    Tasks.RELATION_EXTRACTION: {"relations", 'entities'},
     # Tasks.SPAN_BASED_ABSA: {"entities", "coreferences"},
     # Tasks.NAMED_ENTITY_DISAMBIGUATION: {"entities", "normalized"},
     # Tasks.EVENT_EXTRACTION: {"events"}
