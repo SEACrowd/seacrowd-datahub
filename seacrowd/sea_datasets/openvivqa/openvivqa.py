@@ -75,10 +75,13 @@ class OpenViVQADataset(datasets.GeneratorBasedBuilder):
     def _info(self) -> datasets.DatasetInfo:
 
         if self.config.schema == "source":
-            features = datasets.Features({"img_path": datasets.Value("string"), "question": datasets.Value("string"), "answer": datasets.Value("string"), "id": datasets.Value("string")})
+            features = datasets.Features({"img_path": datasets.Value("string"),
+                                          "question": datasets.Value("string"),
+                                          "answer": datasets.Value("string"),
+                                          "id": datasets.Value("string")})
         elif self.config.schema == "seacrowd_imqa":
             features = schemas.imqa_features
-            features["meta"] = {"image_path": datasets.Value("string")}
+            # features["meta"] = {"image_path": datasets.Value("string")}
         else:
             raise ValueError(f"No schema matched for {self.config.schema}")
 
@@ -129,7 +132,6 @@ class OpenViVQADataset(datasets.GeneratorBasedBuilder):
         images = raw_examples["images"]
         data_annotations = raw_examples["annotations"]
         for sample_id, q_key in enumerate(list(data_annotations.keys())):
-            # '12746': {'image_id': 6860, 'question': 'vị trí cô gái ngồi như thế nào ?', 'answer': 'khá nguy hiểm'}
             quest_id = q_key
             sample = data_annotations[q_key]
             sample_img_id = sample["image_id"]
@@ -138,7 +140,12 @@ class OpenViVQADataset(datasets.GeneratorBasedBuilder):
             sample_question = sample["question"]
             sample_answer = sample["answer"]
             if self.config.schema == "source":
-                yield sample_id, {"img_path": sample_img_path, "question": sample_question, "answer": sample_answer, "id": quest_id}
+                example = {
+                    "img_path": sample_img_path,
+                    "question": sample_question,
+                    "answer": sample_answer,
+                    "id": quest_id,
+                }
             elif self.config.schema == "seacrowd_imqa":
                 example = {
                     "id": q_key,
@@ -150,7 +157,6 @@ class OpenViVQADataset(datasets.GeneratorBasedBuilder):
                     "context": sample_img_id,
                     "answer": [sample_answer],
                     "image_paths": [sample_img_path],
-                    "meta": {"image_path": sample_img_path},
+                    "meta": {},
                 }
-
-                yield sample_id, example
+            yield sample_id, example
