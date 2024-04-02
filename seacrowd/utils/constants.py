@@ -40,7 +40,6 @@ DEFAULT_SEACROWD_VIEW_NAME = "seacrowd"
 class Tasks(Enum):
     # Knowledge Base
     DEPENDENCY_PARSING = "DEP"
-    RELATION_EXTRACTION = "RE"
     KEYWORD_EXTRACTION = "KE"
     WORD_ANALOGY = "WA"
     WORD_SENSE_DISAMBIGUATION = "WSD"
@@ -327,7 +326,6 @@ SCHEMA_TO_FEATURES = {
 TASK_TO_FEATURES = {
     Tasks.NAMED_ENTITY_RECOGNITION: {"entities"},
     Tasks.DEPENDENCY_PARSING: {"relations", "entities"},
-    Tasks.RELATION_EXTRACTION: {"relations", "entities"},
     Tasks.COREFERENCE_RESOLUTION: {"entities", "coreferences"},
     Tasks.RELATION_EXTRACTION: {"relations", 'entities'},
     # Tasks.SPAN_BASED_ABSA: {"entities", "coreferences"},
