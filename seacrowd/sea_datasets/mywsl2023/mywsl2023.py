@@ -68,7 +68,11 @@ _URLS = {_DATASETNAME: "https://data.mendeley.com/public-files/datasets/zvk55p7k
 _SUPPORTED_TASKS = [Tasks.SIGN_LANGUAGE_RECOGNITION]
 _SUPPORTED_SCHEMA_STRINGS = [f"seacrowd_{str(TASK_TO_SCHEMA[task]).lower()}" for task in _SUPPORTED_TASKS]
 
-_SPLITS = ["train", "test"]
+_SPLITS = [datasets.Split.TRAIN, datasets.Split.TEST]
+_SPLIT_NAMES = {
+    datasets.Split.TRAIN: "train",
+    datasets.Split.TEST: "test",
+}
 
 _SOURCE_VERSION = "1.0.0"
 
@@ -147,7 +151,7 @@ class MyWsl2023(datasets.GeneratorBasedBuilder):
                 datasets.SplitGenerator(
                     name=split,
                     gen_kwargs={
-                        "path": os.path.join(path, "MyWSL2023 RAW DATA", split),
+                        "path": os.path.join(path, "MyWSL2023 RAW DATA", _SPLIT_NAMES[split]),
                     },
                 )
             )
