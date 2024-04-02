@@ -129,29 +129,29 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
         # source schema
         # selectp source schema
         config_constructor(subset_id="selectp", schema="source", desc=_SELECTP_DESP, version=_SOURCE_VERSION_P),
-        config_constructor(subset_id="selectp_indonesian", schema="source", desc=_SELECTP_DESP, version=_SOURCE_VERSION_P),
-        config_constructor(subset_id="selectp_thai", schema="source", desc=_SELECTP_DESP, version=_SOURCE_VERSION_P),
+        config_constructor(subset_id="selectp_ind", schema="source", desc=_SELECTP_DESP, version=_SOURCE_VERSION_P),
+        config_constructor(subset_id="selectp_tha", schema="source", desc=_SELECTP_DESP, version=_SOURCE_VERSION_P),
         # minspan source schema
         config_constructor(subset_id="minspan", schema="source", desc=_MINSPAN_DESP, version=_SOURCE_VERSION_P),
-        config_constructor(subset_id="minspan_indonesian", schema="source", desc=_MINSPAN_DESP, version=_SOURCE_VERSION_P),
-        config_constructor(subset_id="minspan_thai", schema="source", desc=_MINSPAN_DESP, version=_SOURCE_VERSION_P),
+        config_constructor(subset_id="minspan_ind", schema="source", desc=_MINSPAN_DESP, version=_SOURCE_VERSION_P),
+        config_constructor(subset_id="minspan_tha", schema="source", desc=_MINSPAN_DESP, version=_SOURCE_VERSION_P),
         # goldp source schema
         config_constructor(subset_id="goldp", schema="source", desc=_GOLDP_DESP, version=_SOURCE_VERSION_S),
-        config_constructor(subset_id="goldp_indonesian", schema="source", desc=_GOLDP_DESP, version=_SOURCE_VERSION_S),
+        config_constructor(subset_id="goldp_ind", schema="source", desc=_GOLDP_DESP, version=_SOURCE_VERSION_S),
         # tydiqa_id source schema
         config_constructor(subset_id="id", schema="source", desc=_ID_DESP, version=_SOURCE_VERSION_P),
         # seacrowd schema
         # selectp seacrowd schema
         config_constructor(subset_id="selectp", schema="seacrowd_qa", desc=_SELECTP_DESP, version=_SEACROWD_VERSION),
-        config_constructor(subset_id="selectp_indonesian", schema="seacrowd_qa", desc=_SELECTP_DESP, version=_SEACROWD_VERSION),
-        config_constructor(subset_id="selectp_thai", schema="seacrowd_qa", desc=_SELECTP_DESP, version=_SEACROWD_VERSION),
+        config_constructor(subset_id="selectp_ind", schema="seacrowd_qa", desc=_SELECTP_DESP, version=_SEACROWD_VERSION),
+        config_constructor(subset_id="selectp_tha", schema="seacrowd_qa", desc=_SELECTP_DESP, version=_SEACROWD_VERSION),
         # minspan seacrowd schema
         config_constructor(subset_id="minspan", schema="seacrowd_qa", desc=_MINSPAN_DESP, version=_SEACROWD_VERSION),
-        config_constructor(subset_id="minspan_indonesian", schema="seacrowd_qa", desc=_MINSPAN_DESP, version=_SEACROWD_VERSION),
-        config_constructor(subset_id="minspan_thai", schema="seacrowd_qa", desc=_MINSPAN_DESP, version=_SEACROWD_VERSION),
+        config_constructor(subset_id="minspan_ind", schema="seacrowd_qa", desc=_MINSPAN_DESP, version=_SEACROWD_VERSION),
+        config_constructor(subset_id="minspan_tha", schema="seacrowd_qa", desc=_MINSPAN_DESP, version=_SEACROWD_VERSION),
         # goldp seacrowd schema
         config_constructor(subset_id="goldp", schema="seacrowd_qa", desc=_GOLDP_DESP, version=_SEACROWD_VERSION),
-        config_constructor(subset_id="goldp_indonesian", schema="seacrowd_qa", desc=_GOLDP_DESP, version=_SEACROWD_VERSION),
+        config_constructor(subset_id="goldp_ind", schema="seacrowd_qa", desc=_GOLDP_DESP, version=_SEACROWD_VERSION),
         # tydiqa_id seacrowd schema
         config_constructor(subset_id="id", schema="seacrowd_qa", desc=_ID_DESP, version=_SEACROWD_VERSION),
     ]
@@ -298,19 +298,19 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
                     url = data["document_url"]
                     if (self.config.name == "tydiqa_selectp_source") or (self.config.name == "tydiqa_minspan_source"):
                         yield id_, primary_source_helper(id_, start_byte, end_byte, question, title, lang, passage_cand_answers, min_answers_start_byte, min_answers_end_byte, yes_no_answers, doc, url)
-                    elif (self.config.name == "tydiqa_selectp_indonesian_source") or (self.config.name == "tydiqa_minspan_indonesian_source"):
+                    elif (self.config.name == "tydiqa_selectp_ind_source") or (self.config.name == "tydiqa_minspan_ind_source"):
                         if lang == "indonesian":
                             yield id_, primary_source_helper(id_, start_byte, end_byte, question, title, lang, passage_cand_answers, min_answers_start_byte, min_answers_end_byte, yes_no_answers, doc, url)
-                    elif (self.config.name == "tydiqa_selectp_thai_source") or (self.config.name == "tydiqa_minspan_thai_source"):
+                    elif (self.config.name == "tydiqa_selectp_tha_source") or (self.config.name == "tydiqa_minspan_tha_source"):
                         if lang == "thai":
                             yield id_, primary_source_helper(id_, start_byte, end_byte, question, title, lang, passage_cand_answers, min_answers_start_byte, min_answers_end_byte, yes_no_answers, doc, url)
                     # seacrowd
                     elif (self.config.name == "tydiqa_selectp_seacrowd_qa") or (self.config.name == "tydiqa_minspan_seacrowd_qa"):
                         yield id_, primary_seacrowd_helper(id_, title, question, doc, start_byte, end_byte, passage_cand_answers, min_answers_start_byte, min_answers_end_byte, yes_no_answers, lang)
-                    elif (self.config.name == "tydiqa_selectp_indonesian_seacrowd_qa") or (self.config.name == "tydiqa_minspan_indonesian_seacrowd_qa"):
+                    elif (self.config.name == "tydiqa_selectp_ind_seacrowd_qa") or (self.config.name == "tydiqa_minspan_ind_seacrowd_qa"):
                         if lang == "indonesian":
                             yield id_, primary_seacrowd_helper(id_, title, question, doc, start_byte, end_byte, passage_cand_answers, min_answers_start_byte, min_answers_end_byte, yes_no_answers, lang)
-                    elif (self.config.name == "tydiqa_selectp_thai_seacrowd_qa") or (self.config.name == "tydiqa_minspan_thai_seacrowd_qa"):
+                    elif (self.config.name == "tydiqa_selectp_tha_seacrowd_qa") or (self.config.name == "tydiqa_minspan_tha_seacrowd_qa"):
                         if lang == "thai":
                             yield id_, primary_seacrowd_helper(id_, title, question, doc, start_byte, end_byte, passage_cand_answers, min_answers_start_byte, min_answers_end_byte, yes_no_answers, lang)
                     else:
@@ -332,7 +332,7 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
                             if self.config.name == "tydiqa_goldp_source":
                                 yield id_, second_source_helper(id_, title, context, question, answer_starts, answers)
 
-                            elif self.config.name == "tydiqa_goldp_indonesian_source":
+                            elif self.config.name == "tydiqa_goldp_ind_source":
                                 if id_.startswith("indonesian"):
                                     yield id_, second_source_helper(id_, title, context, question, answer_starts, answers)
                             elif self.config.name == "tydiqa_id_source":
@@ -347,7 +347,7 @@ class TydiqaDataset(datasets.GeneratorBasedBuilder):
 
                             elif self.config.name == "tydiqa_goldp_seacrowd_qa":
                                 yield id_, second_seacrowd_helper(id_, question, context, answers, answer_starts)
-                            elif self.config.name == "tydiqa_goldp_indonesian_seacrowd_qa":
+                            elif self.config.name == "tydiqa_goldp_ind_seacrowd_qa":
                                 if id_.startswith("indonesian"):
                                     yield id_, second_seacrowd_helper(id_, question, context, answers, answer_starts)
                             elif self.config.name == "tydiqa_id_seacrowd_qa":
