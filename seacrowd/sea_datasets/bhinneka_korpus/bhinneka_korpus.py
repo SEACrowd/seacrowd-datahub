@@ -9,14 +9,13 @@ from seacrowd.utils.constants import Licenses, Tasks
 from seacrowd.utils import schemas
 
 _CITATION = """\
-@misc{beayelexicon2024,
-  author    = {Lopo, Joanito Agili and Moeljadi, David and Cahyawijaya, Samuel and Aji, Alham Fikri and Sommerlot, 
-  Carly J. and Jacob, June},
-  title     = {Penyusunan Korpus Paralel Bahasa Indonesia–Bahasa Melayu Ambon, Melayu Kupang, Beaye, dan Uab Meto},
-  year      = {2024},
-  howpublished = {Online},
-  url       = {https://github.com/joanitolopo/makalah-kongresxii},
-  note      = {Manuscript in preparation},
+@misc{lopo2024constructing,
+      title={Constructing and Expanding Low-Resource and Underrepresented Parallel Datasets for Indonesian Local Languages}, 
+      author={Joanito Agili Lopo and Radius Tanone},
+      year={2024},
+      eprint={2404.01009},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
 }
 """
 
