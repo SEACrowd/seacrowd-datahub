@@ -171,7 +171,7 @@ class CoSEMDataset(datasets.GeneratorBasedBuilder):
 
                             if self.config.schema == "source" or self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SELF_SUPERVISED_PRETRAINING]).lower()}":
                                 yield idx, {
-                                    "id": blocks[0],
+                                    "id": blocks[0][1:-1],
                                     "text": blocks[1],
                                 }
 
@@ -187,7 +187,7 @@ class CoSEMDataset(datasets.GeneratorBasedBuilder):
 
                 if len(blocks) > 0 and (self.config.schema == "source" or self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SELF_SUPERVISED_PRETRAINING]).lower()}"):
                     yield idx, {
-                        "id": blocks[0],
+                        "id": blocks[0][1:-1],
                         "text": blocks[1],
                     }
 
