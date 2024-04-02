@@ -161,10 +161,9 @@ class MyWsl2023(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, path: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
-        idx = 0
         image_folder_paths = [os.path.join(path, folder) for folder in os.listdir(path)]
 
-        for image_folder_path in image_folder_paths:
+        for idx, image_folder_path in enumerate(image_folder_paths):
             image_paths = os.listdir(image_folder_path)
 
             if self.config.schema == "source":
