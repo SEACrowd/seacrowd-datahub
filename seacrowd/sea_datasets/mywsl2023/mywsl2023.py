@@ -34,16 +34,6 @@ doi = {https://doi.org/10.1016/j.dib.2023.109338},
 url = {https://www.sciencedirect.com/science/article/pii/S2352340923004560},
 author = {Rina Tasia Johari and Rizauddin Ramli and Zuliani Zulkoffli and Nizaroyani Saibani},
 keywords = {Dataset, Hand gestures, Sign language, Image data},
-abstract = {Deaf and hard-of-hearing individuals use sign language as a means of communication. However, those around them,
-especially family members like the children of deaf adults, may face communication challenges if they are unfamiliar with sign
-language. This issue has prompted numerous researchers to conduct studies on sign language translation and recognition. However,
-there is currently no publicly available dataset specifically for Malaysian sign language. This article introduces an image dataset
-of the Malaysian Sign Language (MySL) hand gestures used in everyday situations. The dataset, named MyWSL2023, comprises 3,500 images
-of ten static Malaysian sign language words collected from five participants (two males and three females) aged between 20 and 21
-years old. The data collection took place indoors under normal lighting conditions. The MyWSL2023 dataset, which has been made freely
-accessible to all researchers, serves as a valuable resource for not only investigating and developing automated systems for
-hearing-impaired and deaf individuals but also gesture and sign language recognition using vision-based methods. The dataset can be
-accessed for free at https://data.mendeley.com/datasets/zvk55p7ktd.}
 }
 """
 
