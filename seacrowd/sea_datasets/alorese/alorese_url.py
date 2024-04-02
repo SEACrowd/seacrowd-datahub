@@ -1,5 +1,7 @@
 """Data Scraping for Alorese Audio-Visual Dataset
 
+Timestamp of Creation: 2021-03-19 (YYYY-MM-DD)
+
 This docstring outlines the process for scraping audio-visual data (WAV and XML files) for the Alorese language from a specific source. The scraping approach involves the following steps:
 
 1. Pagination and BLOB URL Extraction An automated process iterates through paginated content on the source website. The goal is to extract Blob URLs that point to individual detail pages containing the desired data.

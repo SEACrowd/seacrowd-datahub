@@ -32,8 +32,8 @@ _CITATION = """\
   title     = "The plural word hire in alorese: Contact-induced change from
                neighboring Alor-pantar languages",
   author    = "Moro, Francesca R",
-  journal   = "Ocean. Linguist.",
-  publisher = "Project MUSE",
+  journal   = "Oceanic Linguistics",
+  publisher = "University of Hawai'i Press",
   volume    =  57,
   number    =  1,
   pages     = "177--198",
@@ -183,7 +183,17 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
                 sptext_df = self._get_sptext_df(filepath)
 
                 for k, row in sptext_df.iterrows():
-                    yield k, {"id": k + 1, "path": row["audio_path"], "audio": row["audio_path"], "text": row[annot_lang], "speaker_id": row["speaker_id"], "metadata": {"speaker_age": None, "speaker_gender": None}}
+                    yield k, {
+                        "id": k + 1, 
+                        "path": row["audio_path"], 
+                        "audio": row["audio_path"], 
+                        "text": row[annot_lang], 
+                        "speaker_id": row["speaker_id"], 
+                        "metadata": {
+                            "speaker_age": None, 
+                            "speaker_gender": None
+                        }
+                    }
 
     def _get_time_df(self, xml_tree) -> pd.DataFrame:
         time_slot_values = [(time_slot.attrib["TIME_SLOT_ID"], int(time_slot.attrib["TIME_VALUE"])) for time_slot in xml_tree.iter(tag="TIME_SLOT")]
