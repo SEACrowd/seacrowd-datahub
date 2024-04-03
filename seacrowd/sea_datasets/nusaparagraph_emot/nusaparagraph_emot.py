@@ -11,7 +11,7 @@ _DATASETNAME = "nusaparagraph_emot"
 _SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
 _UNIFIED_VIEW_NAME = DEFAULT_SEACROWD_VIEW_NAME
 _LANGUAGES = [
-    "btx", "bew", "bug", "jav", "mad", "mak", "min", "mui", "rej", "sun"
+    "btk", "bew", "bug", "jav", "mad", "mak", "min", "mui", "rej", "sun"
 ]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 _CITATION = """\
 @unpublished{anonymous2023nusawrites:,        
@@ -66,7 +66,7 @@ def seacrowd_config_constructor(lang, schema, version):
             subset_id="nusaparagraph_emot",
         )
 LANGUAGES_MAP = {
-    "btx": "batak",
+    "btk": "batak",
     "bew": "betawi",
     "bug": "buginese",
     "jav": "javanese",
