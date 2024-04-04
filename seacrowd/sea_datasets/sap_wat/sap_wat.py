@@ -74,6 +74,8 @@ _SEACROWD_VERSION = "1.0.0"
 
 _SUBSET = ["id", "ms", "th", "vi"]
 
+_LOCAL = False
+
 class SapWatDataset(datasets.GeneratorBasedBuilder):
     """SAP WAT is a software documentation dataset for machine translation. The current language scope is English to Hindi, 
     Indonesian, Japanese, Korean, Malay, Thai, Vietnamese, Simplified Chinese and Traditional Chinese. Here, we only consider 

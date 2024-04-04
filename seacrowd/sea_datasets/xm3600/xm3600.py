@@ -58,6 +58,8 @@ _SEACROWD_VERSION = "1.0.0"
 
 _LANGUAGES = ["fil", "id", "th", "vi"]
 
+_LOCAL = False
+
 
 class XM3600Dataset(datasets.GeneratorBasedBuilder):
     """

@@ -74,42 +74,42 @@ class MyParaphraseDataset(datasets.GeneratorBasedBuilder):
             name=f"{_DATASETNAME}_source",  # source
             version=SOURCE_VERSION,
             description=f"{_DATASETNAME} source schema",
-            schema="paraphrase_source",
+            schema="source",
             subset_id=f"{_DATASETNAME}_paraphrase",
         ),
         SEACrowdConfig(
             name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",  # schema
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd schema",
-            schema=f"seacrowd_paraphrase_{SEACROWD_SCHEMA_NAME}",
+            schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
             subset_id=f"{_DATASETNAME}_paraphrase",
         ),
         SEACrowdConfig(
             name=f"{_DATASETNAME}_non_paraphrase_source",  # source
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd schema",
-            schema="non_paraphrase_source",
+            schema="source",
             subset_id=f"{_DATASETNAME}_non_paraphrase",
         ),
         SEACrowdConfig(
             name=f"{_DATASETNAME}_non_paraphrase_seacrowd_{SEACROWD_SCHEMA_NAME}",  # schema
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd schema",
-            schema=f"seacrowd_non_paraphrase_{SEACROWD_SCHEMA_NAME}",
+            schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
             subset_id=f"{_DATASETNAME}_non_paraphrase",
         ),
         SEACrowdConfig(
             name=f"{_DATASETNAME}_all_source",  # source
             version=SOURCE_VERSION,
             description=f"{_DATASETNAME} source schema",
-            schema="all_source",
+            schema="source",
             subset_id=f"{_DATASETNAME}_all",
         ),
         SEACrowdConfig(
             name=f"{_DATASETNAME}_all_seacrowd_{SEACROWD_SCHEMA_NAME}",  # schema
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd schema",
-            schema=f"seacrowd_all_{SEACROWD_SCHEMA_NAME}",
+            schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
             subset_id=f"{_DATASETNAME}_all",
         ),
     ]

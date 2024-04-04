@@ -54,6 +54,8 @@ _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
+_LOCAL = False
+
 
 def construct_label_classes():
     IOB_tag = ["I", "O", "B"]

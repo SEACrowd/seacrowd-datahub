@@ -36,6 +36,8 @@ _SUPPORTED_TASKS = [Tasks.VIDEO_TO_TEXT_RETRIEVAL]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
+_LOCAL = False
+
 
 class IdMsvdDataset(datasets.GeneratorBasedBuilder):
     """MSVD dataset with Indonesian translation."""

@@ -44,6 +44,8 @@ LANGUAGES_TO_FILENAME_MAP = {
     "mkn": "kupang-malay",
 }
 
+_LOCAL = False
+
 
 class BhinnekaKorpusDataset(datasets.GeneratorBasedBuilder):
     """A Collection of Multilingual Parallel Datasets for 5 Indonesian Local Languages."""
