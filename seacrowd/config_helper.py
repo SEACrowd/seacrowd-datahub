@@ -849,7 +849,7 @@ class SEACrowdConfigHelper:
             )
        }
     
-    def load_config_name(self, config_name, schema='seacrowd'):
+    def load_dataset_by_config_name(self, config_name, schema='seacrowd'):
         try:        
             for helper in sorted(self.filtered(
                     lambda x: (
@@ -861,7 +861,7 @@ class SEACrowdConfigHelper:
         except:
             raise ValueError(f"Couldn't find dataset with config.name=`{config_name}` and schema=`{schema}`")
 
-    def load_config_names(self, config_names, schema='seacrowd'):
+    def load_datasets_by_config_names(self, config_names, schema='seacrowd'):
         return {
             helper.config.name: helper.load_dataset()
             for helper in self.filtered(
