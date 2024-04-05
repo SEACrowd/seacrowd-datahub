@@ -67,8 +67,15 @@ _CITATION = """\
 _DATASETNAME = "idner_news_2k"
 
 _DESCRIPTION = """\
-This dataset is designed for Named-Entity Recognition NLP task in Indonesian,
-  consisting of train, dev, and test files in CoNLL format. The NER tag in IOB format.
+A dataset of Indonesian News for Named-Entity Recognition task.
+  This dataset re-annotated the dataset previously provided by Syaifudin & Nurwidyantoro (2016)
+  (https://github.com/yusufsyaifudin/Indonesia-ner) with a more standardized NER tags.
+  There are three subsets, namely train.txt, dev.txt, and test.txt.
+  Each file consists of three columns which are Tokens, PoS Tag, and NER Tag respectively.
+  The format is following CoNLL dataset. The NER tag use the IOB format.
+  The PoS tag using UDPipe (http://ufal.mff.cuni.cz/udpipe),
+  a pipeline for tokenization, tagging, lemmatization and dependency parsing
+  whose model is trained on UD Treebanks.
 """
 
 _HOMEPAGE = "https://github.com/khairunnisaor/idner-news-2k"
@@ -138,6 +145,9 @@ class IdNerNews2kDataset(datasets.GeneratorBasedBuilder):
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             features = schemas.seq_label.features(NAMED_ENTITIES)
 
+        else:
+            raise ValueError(f"Invalid config: {self.config.name}")
+
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
             features=features,
@@ -147,15 +157,11 @@ class IdNerNews2kDataset(datasets.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
-        """Returns SplitGenerators."""
 
         urls = _URLS[_DATASETNAME]
         train_path = dl_manager.download_and_extract(urls["train"])
         dev_path = dl_manager.download_and_extract(urls["dev"])
         test_path = dl_manager.download_and_extract(urls["test"])
-
-        # Not all datasets have predefined canonical train/val/test splits.
-        # If your dataset has no predefined splits, use datasets.Split.TRAIN for all of the data.
 
         return [
             datasets.SplitGenerator(
@@ -209,6 +215,5 @@ class IdNerNews2kDataset(datasets.GeneratorBasedBuilder):
                 else:
                     tokens.append(row[0])
                     ner_tags.append(row[2])
-
-# This template is based on the following template from the datasets package:
-# https://github.com/huggingface/datasets/blob/master/templates/new_dataset_script.py
+        else:
+            raise ValueError(f"Invalid config: {self.config.name}")
