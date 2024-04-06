@@ -147,48 +147,21 @@ class CoSEMDataset(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, path: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
-        idx = 0
         files = os.listdir(path)
         file_paths = [os.path.join(path, file) for file in files]
-        id_pattern = r"<COSEM:[^>]+>"
+        pattern = r"<(COSEM:.*?)>(.*?)(?=<COSEM:|$)"
 
         for file_path in file_paths:
-
             with open(file_path, "r", encoding="utf-8") as file:
+                text = file.read()
 
-                blocks: List[str] = []
+                matches = re.findall(pattern, text, re.DOTALL)
+                for match in matches:
+                    key = match[0].strip()
+                    value = match[1].strip()
 
-                for line in file:
+                    if self.config.schema == "source" or self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SELF_SUPERVISED_PRETRAINING]).lower()}":
+                        yield key, {"id": key, "text": value}
 
-                    new_blocks = line.split("\t")
-
-                    if len(new_blocks) == 0:
-                        continue
-
-                    if re.match(id_pattern, new_blocks[0]):
-
-                        if len(blocks) > 0:
-
-                            if self.config.schema == "source" or self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SELF_SUPERVISED_PRETRAINING]).lower()}":
-                                yield idx, {
-                                    "id": blocks[0][1:-1],
-                                    "text": blocks[1],
-                                }
-
-                                idx += 1
-
-                            else:
-                                raise ValueError(f"Invalid config: {self.config.name}")
-
-                        blocks = new_blocks
-
-                    elif len(blocks) > 0:
-                        blocks[1] += new_blocks[0]
-
-                if len(blocks) > 0 and (self.config.schema == "source" or self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SELF_SUPERVISED_PRETRAINING]).lower()}"):
-                    yield idx, {
-                        "id": blocks[0][1:-1],
-                        "text": blocks[1],
-                    }
-
-                    idx += 1
+                    else:
+                        raise ValueError(f"Invalid config: {self.config.name}")
