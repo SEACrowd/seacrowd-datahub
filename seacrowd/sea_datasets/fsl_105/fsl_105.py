@@ -95,7 +95,7 @@ class FSL105Dataset(datasets.GeneratorBasedBuilder):
                 {
                     "id": datasets.Value("string"),
                     "video_path": datasets.Value("string"),
-                    "texts": datasets.Value("string"),
+                    "text": datasets.Value("string"),
                     "labels": datasets.ClassLabel(names=self.category),
                     "metadata": {
                         "resolution": {
@@ -164,7 +164,7 @@ class FSL105Dataset(datasets.GeneratorBasedBuilder):
                 yield key, {
                     "id": str(key),
                     "video_path": os.path.join(filepath["clips"], example["vid_path"]),
-                    "texts": example["label"],
+                    "text": example["label"],
                     "labels": example["category"],
                     "metadata": {
                         "resolution": {
@@ -179,7 +179,7 @@ class FSL105Dataset(datasets.GeneratorBasedBuilder):
                 yield key, {
                     "id": str(key),
                     "video_path": os.path.join(filepath["clips"], example["vid_path"]),
-                    "texts": example["label"],
+                    "text": example["label"],
                     "metadata": {
                         "resolution": {
                             "width": vid_width,

@@ -31,7 +31,7 @@ _CITATION = """\
 _LANGUAGES = ["ind"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 _LOCAL = False
 
-_DATASETNAME = "indonesian_wsd"
+_DATASETNAME = "id_wsd"
 
 _DESCRIPTION = """\
 Word Sense Disambiguation (WSD) is a task to determine the correct sense of an ambiguous word.
@@ -88,18 +88,18 @@ class IndonesianWSD(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="indonesian_wsd_source",
+            name="id_wsd_source",
             version=SOURCE_VERSION,
             description="Indonesian WSD source schema",
             schema="source",
-            subset_id="indonesian_wsd",
+            subset_id="id_wsd",
         ),
         SEACrowdConfig(
-            name="indonesian_wsd_seacrowd_t2t",
+            name="id_wsd_seacrowd_t2t",
             version=SEACROWD_VERSION,
             description="Indonesian WSD Nusantara schema",
             schema="seacrowd_t2t",
-            subset_id="indonesian_wsd",
+            subset_id="id_wsd",
         ),
     ]
 
