@@ -76,11 +76,11 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class ViConDataset(datasets.GeneratorBasedBuilder):
+class ViSim400Dataset(datasets.GeneratorBasedBuilder):
     """
-    ViCon, comprises pairs of synonyms and antonymys across \
-    noun, verb, and adjective classes, offerring data to \
-    distinguish between similarity and dissimilarity.
+    ViSim-400 is a Vietnamese dataset of semantic relation \
+    pairs for evaluation of models that reflect the \
+    continuum between similarity and relatedness.
     """
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
