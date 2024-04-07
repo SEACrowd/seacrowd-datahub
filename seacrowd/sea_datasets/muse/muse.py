@@ -47,7 +47,7 @@ It comprises of Europeans languages in every direction, and SEA languages to and
 
 _HOMEPAGE = "https://github.com/facebookresearch/MUSE#ground-truth-bilingual-dictionaries"
 
-_LANGUAGES = ["fil", "ind", "zlm", "tha", "vie"]
+_LANGUAGES = ["tgl", "ind", "zlm", "tha", "vie"]
 
 _LICENSE = Licenses.CC_BY_NC_ND_4_0.value
 
@@ -61,7 +61,23 @@ _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
-configs = {"tl": ["en"], "id": ["en"], "ms": ["en"], "th": ["en"], "vi": ["en"], "en": ["th", "vi", "tl", "ms", "id"]}
+configs = {
+    "tgl": ["eng"],
+    "ind": ["eng"],
+    "zlm": ["eng"],
+    "tha": ["eng"],
+    "vie": ["eng"],
+    "eng": ["tha", "vie", "tgl", "zlm", "ind"],
+}
+
+langid_dict = {
+    "eng": "en",
+    "tgl": "tl",
+    "ind": "id",
+    "zlm": "ms",
+    "tha": "th",
+    "vie": "vi",
+}
 
 
 class MUSEDataset(datasets.GeneratorBasedBuilder):
@@ -77,14 +93,14 @@ class MUSEDataset(datasets.GeneratorBasedBuilder):
                 version=SOURCE_VERSION,
                 description=f"{_DATASETNAME} source schema",
                 schema="source",
-                subset_id=f"{_DATASETNAME}_tl_en",
+                subset_id=f"{_DATASETNAME}_tgl_eng",
             ),
             SEACrowdConfig(
                 name=f"{_DATASETNAME}_seacrowd_t2t",
                 version=SEACROWD_VERSION,
                 description=f"{_DATASETNAME} SEACrowd schema",
                 schema="seacrowd_t2t",
-                subset_id=f"{_DATASETNAME}_tl_en",
+                subset_id=f"{_DATASETNAME}_tgl_eng",
             ),
         ]
         + [
@@ -116,7 +132,13 @@ class MUSEDataset(datasets.GeneratorBasedBuilder):
     def _info(self) -> datasets.DatasetInfo:
 
         if self.config.schema == "source":
-            features = datasets.Features({"id": datasets.Value("string"), "src_text": datasets.Value("string"), "tgt_text": datasets.Value("string")})
+            features = datasets.Features(
+                {
+                    "id": datasets.Value("string"),
+                    "src_text": datasets.Value("string"),
+                    "tgt_text": datasets.Value("string"),
+                }
+            )
 
         elif self.config.schema == "seacrowd_t2t":
             features = schemas.text2text_features
@@ -132,8 +154,8 @@ class MUSEDataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
 
         _, src_lang, tgt_lang = self.config.subset_id.split("_")
-        train_url = _TRAIN_URL_TEMPLATE.format(src=src_lang, tgt=tgt_lang)
-        test_url = _TEST_URL_TEMPLATE.format(src=src_lang, tgt=tgt_lang)
+        train_url = _TRAIN_URL_TEMPLATE.format(src=langid_dict[src_lang], tgt=langid_dict[tgt_lang])
+        test_url = _TEST_URL_TEMPLATE.format(src=langid_dict[src_lang], tgt=langid_dict[tgt_lang])
 
         train_file = dl_manager.download_and_extract(train_url)
         test_file = dl_manager.download_and_extract(test_url)
@@ -141,11 +163,19 @@ class MUSEDataset(datasets.GeneratorBasedBuilder):
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
-                gen_kwargs={"src_lang": src_lang, "tgt_lang": tgt_lang, "filepath": train_file},
+                gen_kwargs={
+                    "src_lang": src_lang,
+                    "tgt_lang": tgt_lang,
+                    "filepath": train_file,
+                },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
-                gen_kwargs={"src_lang": src_lang, "tgt_lang": tgt_lang, "filepath": test_file},
+                gen_kwargs={
+                    "src_lang": src_lang,
+                    "tgt_lang": tgt_lang,
+                    "filepath": test_file,
+                },
             ),
         ]
 
@@ -158,4 +188,10 @@ class MUSEDataset(datasets.GeneratorBasedBuilder):
         elif self.config.schema == "seacrowd_t2t":
             for row_id, line in enumerate(open(filepath)):
                 src_text, tgt_text = line.strip().split("\t")
-                yield row_id, {"id": row_id, "text_1": src_text, "text_2": tgt_text, "text_1_name": src_lang, "text_2_name": tgt_lang}
+                yield row_id, {
+                    "id": row_id,
+                    "text_1": src_text,
+                    "text_2": tgt_text,
+                    "text_1_name": src_lang,
+                    "text_2_name": tgt_lang,
+                }
