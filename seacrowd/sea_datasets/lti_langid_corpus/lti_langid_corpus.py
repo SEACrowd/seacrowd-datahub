@@ -48,7 +48,6 @@ The most recent version, v5, contains training data for 1266 languages, and some
 
 _HOMEPAGE = "https://www.cs.cmu.edu/~ralf/langid.html"
 
-# TODO: Add languages related to this dataset
 _LANGUAGES = [
     "ifa",
     "ace",
@@ -190,50 +189,27 @@ _SEACROWD_VERSION = "1.0.0"
 class LTILangIDDataset(datasets.GeneratorBasedBuilder):
     """LTI LangID corpus is a dataset for language identification for 1266 languages."""
 
-    BUILDER_CONFIGS = (
-        [
-            SEACrowdConfig(
-                name=f"{_DATASETNAME}_source",
-                version=datasets.Version(_SOURCE_VERSION),
-                description=f"{_DATASETNAME} source schema",
-                schema="source",
-                subset_id=f"{_DATASETNAME}_ifa",
-            ),
-            SEACrowdConfig(
-                name=f"{_DATASETNAME}_seacrowd_text",
-                version=datasets.Version(_SEACROWD_VERSION),
-                description=f"{_DATASETNAME} SEACrowd schema",
-                schema="seacrowd_text",
-                subset_id=f"{_DATASETNAME}_ifa",
-            ),
-        ]
-        + [
-            SEACrowdConfig(
-                name=f"{_DATASETNAME}_{LANG}_source",
-                version=datasets.Version(_SOURCE_VERSION),
-                description=f"{_DATASETNAME} source schema",
-                schema="source",
-                subset_id=f"{_DATASETNAME}_{LANG}",
-            )
-            for LANG in _LANGUAGES
-        ]
-        + [
-            SEACrowdConfig(
-                name=f"{_DATASETNAME}_{LANG}_seacrowd_text",
-                version=datasets.Version(_SEACROWD_VERSION),
-                description=f"{_DATASETNAME} SEACrowd schema",
-                schema="seacrowd_text",
-                subset_id=f"{_DATASETNAME}_{LANG}",
-            )
-            for LANG in _LANGUAGES
-        ]
-    )
+    BUILDER_CONFIGS = [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_source",
+            version=datasets.Version(_SOURCE_VERSION),
+            description=f"{_DATASETNAME} source schema",
+            schema="source",
+            subset_id=f"{_DATASETNAME}",
+        ),
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_seacrowd_text",
+            version=datasets.Version(_SEACROWD_VERSION),
+            description=f"{_DATASETNAME} SEACrowd schema",
+            schema="seacrowd_text",
+            subset_id=f"{_DATASETNAME}",
+        ),
+    ]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
-
             features = datasets.Features({"text": datasets.Value("string"), "language": datasets.Value("string")})
 
         elif self.config.schema == "seacrowd_text":
@@ -252,59 +228,81 @@ class LTILangIDDataset(datasets.GeneratorBasedBuilder):
         data_dir = dl_manager.download_and_extract(_URL)
         data_dir = os.path.join(data_dir, "MIL-TALE", "5")
 
-        lang_id = self.config.subset_id.split("_")[-1]
-
         datasplits_dir = os.path.join(data_dir, "datasplits")
-
         if not Path(datasplits_dir).exists() or not Path(os.path.join(datasplits_dir, "DONE")).exists():
             # Run provided install.sh to generate train/dev/test splits in "datasplits" folder
             subprocess.call([os.path.join(data_dir, "code", "install.sh"), datasplits_dir])
             with open(os.path.join(datasplits_dir, "DONE"), "w"):
                 pass
 
-        train_filepaths = glob(os.path.join(data_dir, "dataset", "train", f"{lang_id}*"))
-        dev_filepaths = glob(os.path.join(data_dir, "dataset", "devtest", f"{lang_id}*"))
-        test_filepaths = glob(os.path.join(data_dir, "dataset", "test", f"{lang_id}*"))
+        train_filepaths = []
+        dev_filepaths = []
+        test_filepaths = []
+
+        for lang_id in _LANGUAGES:
+            train_filepaths.append(
+                (
+                    lang_id,
+                    glob(os.path.join(data_dir, "dataset", "train", f"{lang_id}*")),
+                )
+            )
+            dev_filepaths.append(
+                (
+                    lang_id,
+                    glob(os.path.join(data_dir, "dataset", "devtest", f"{lang_id}*")),
+                )
+            )
+            test_filepaths.append(
+                (
+                    lang_id,
+                    glob(os.path.join(data_dir, "dataset", "test", f"{lang_id}*")),
+                )
+            )
 
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 # Whatever you put in gen_kwargs will be passed to _generate_examples
                 gen_kwargs={
-                    "filepaths": train_filepaths,
-                    "lang": lang_id,
+                    "all_filepaths": train_filepaths,
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 # Whatever you put in gen_kwargs will be passed to _generate_examples
                 gen_kwargs={
-                    "filepaths": dev_filepaths,
-                    "lang": lang_id,
+                    "all_filepaths": dev_filepaths,
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
                 # Whatever you put in gen_kwargs will be passed to _generate_examples
                 gen_kwargs={
-                    "filepaths": test_filepaths,
-                    "lang": lang_id,
+                    "all_filepaths": test_filepaths,
                 },
             ),
         ]
 
-    def _generate_examples(self, filepaths: List[Path], lang: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, all_filepaths: List[Path]) -> Tuple[int, Dict]:
 
         if self.config.schema == "source":
             key = 0
-            for file in filepaths:
-                for line in open(file):
-                    yield key, {"text": line.strip(), "language": lang}
-                    key += 1
+            for lang_id, filepaths in all_filepaths:
+                for filepath in filepaths:
+                    try:
+                        for line in open(filepath):
+                            yield key, {"text": line.strip(), "language": lang_id}
+                            key += 1
+                    except UnicodeDecodeError:
+                        continue
 
         elif self.config.schema == "seacrowd_text":
             key = 0
-            for file in filepaths:
-                for line in open(file):
-                    yield key, {"id": key, "text": line.strip(), "label": lang}
-                    key += 1
+            for lang_id, filepaths in all_filepaths:
+                for filepath in filepaths:
+                    try:
+                        for line in open(filepath):
+                            yield key, {"id": key, "text": line.strip(), "label": lang_id}
+                            key += 1
+                    except UnicodeDecodeError:
+                        continue
