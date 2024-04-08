@@ -118,6 +118,15 @@ class BalitaNLPDataset(datasets.GeneratorBasedBuilder):
             )
         elif self.config.schema == "seacrowd_imtext":
             features = schemas.image_text_features()
+            features["metadata"] = {
+                "context": datasets.Value("string"),
+                "author": datasets.Value("string"),
+                "category": datasets.Value("string"),
+                "date": datasets.Value("string"),
+                "img_url": datasets.Value("string"),
+                "url": datasets.Value("string"),
+                "website": datasets.Value("string"),
+            }
         else:
             raise ValueError(f"Invalid schema: '{self.config.schema}'")
 
@@ -206,7 +215,12 @@ class BalitaNLPDataset(datasets.GeneratorBasedBuilder):
                     "texts": row["title"],
                     "metadata": {
                         "context": row["body"],
-                        "labels": [],
+                        "author": row["author"],
+                        "category": row["category"],
+                        "date": row["date"],
+                        "img_url": row["img_url"],
+                        "url": row["url"],
+                        "website": row["website"],
                     },
                 }
                 yield idx, x
