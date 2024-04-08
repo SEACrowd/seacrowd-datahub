@@ -69,7 +69,8 @@ _LOCAL = False
 
 _FILE = "QED.{}.{}"  # E.g. QED.en-id.id
 
-_URLS = "https://object.pouta.csc.fi/OPUS-QED/v2.0a/moses/{}.txt.zip"
+_PAIR_URL = "https://object.pouta.csc.fi/OPUS-QED/v2.0a/moses/{}.txt.zip"
+_MONO_URL = "https://object.pouta.csc.fi/OPUS-QED/v2.0a/mono/{}.txt.gz"
 
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION, Tasks.SELF_SUPERVISED_PRETRAINING]
 
@@ -114,6 +115,8 @@ class QEDDataset(datasets.GeneratorBasedBuilder):
         ("ms", "my"),
     ]
 
+    MONO_LANGS = ["en", "vi", "th", "my", "jv", "id", "tl", "ms"]
+
     BUILDER_CONFIGS = [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_{lang1}-{lang2}_source",
@@ -125,49 +128,31 @@ class QEDDataset(datasets.GeneratorBasedBuilder):
         for lang1, lang2 in LANG_PAIRS
     ] + [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_{lang1}-{lang2}_{lang1}_source",
+            name=f"{_DATASETNAME}_{lang}_source",
             version=datasets.Version(_SEACROWD_VERSION),
-            description=f"{_DATASETNAME} source schema {lang1} for translation from {lang1} to {lang2}",
-            schema=f"source",
-            subset_id=f"{_DATASETNAME}_{lang1}-{lang2}_{lang1}",
+            description=f"{_DATASETNAME} source {lang} schema for Self-supervised Pretraining task",
+            schema="source",
+            subset_id=f"{_DATASETNAME}_{lang}",
         )
-        for lang1, lang2 in LANG_PAIRS
-    ] + [
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_{lang1}-{lang2}_{lang2}_source",
-            version=datasets.Version(_SEACROWD_VERSION),
-            description=f"{_DATASETNAME} source schema {lang2} for translation from {lang1} to {lang2}",
-            schema=f"source",
-            subset_id=f"{_DATASETNAME}_{lang1}-{lang2}_{lang2}",
-        )
-        for lang1, lang2 in LANG_PAIRS
+        for lang in MONO_LANGS
     ] + [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_{lang1}-{lang2}_seacrowd_t2t",
             version=datasets.Version(_SEACROWD_VERSION),
             description=f"{_DATASETNAME} SEACrowd schema for translation from {lang1} to {lang2} for Machine Translation task",
-            schema=f"seacrowd_t2t",
+            schema="seacrowd_t2t",
             subset_id=f"{_DATASETNAME}_{lang1}-{lang2}",
         )
         for lang1, lang2 in LANG_PAIRS
     ] + [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_{lang1}-{lang2}_{lang1}_seacrowd_ssp",
+            name=f"{_DATASETNAME}_{lang}_seacrowd_ssp",
             version=datasets.Version(_SEACROWD_VERSION),
-            description=f"{_DATASETNAME} SEACrowd schema {lang1} for translation from {lang1} to {lang2} for Self-supervised Pretraining task",
-            schema=f"seacrowd_ssp",
-            subset_id=f"{_DATASETNAME}_{lang1}-{lang2}_{lang1}",
+            description=f"{_DATASETNAME} SEACrowd {lang} schema for Self-supervised Pretraining task",
+            schema="seacrowd_ssp",
+            subset_id=f"{_DATASETNAME}_{lang}",
         )
-        for lang1, lang2 in LANG_PAIRS
-    ] + [
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_{lang1}-{lang2}_{lang2}_seacrowd_ssp",
-            version=datasets.Version(_SEACROWD_VERSION),
-            description=f"{_DATASETNAME} SEACrowd schema {lang2} for translation from {lang1} to {lang2} for Self-supervised Pretraining task",
-            schema=f"seacrowd_ssp",
-            subset_id=f"{_DATASETNAME}_{lang1}-{lang2}_{lang2}",
-        )
-        for lang1, lang2 in LANG_PAIRS
+        for lang in MONO_LANGS
     ]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_en-id_source"
@@ -175,7 +160,8 @@ class QEDDataset(datasets.GeneratorBasedBuilder):
     def _info(self) -> datasets.DatasetInfo:
 
         if self.config.schema == "source":
-            if len(self.config.subset_id.split("_")) == 2: # MT TASK
+            if len(self.config.subset_id.split("_")[-1].split("-")) == 2: # MT TASK
+
                 lang1, lang2 = self.config.subset_id.split("_")[-1].split("-")
                 features = datasets.Features(
                     {
@@ -183,8 +169,7 @@ class QEDDataset(datasets.GeneratorBasedBuilder):
                         "translation": datasets.Translation(languages=(lang1, lang2)),
                     }
                 )
-            elif len(self.config.subset_id.split("_")) == 3: # ssp task
-                lang = self.config.subset_id.split("_")[-1]
+            elif len(self.config.subset_id.split("_")[-1].split("-")) == 1: # ssp task
                 features = datasets.Features(
                     {
                         "id": datasets.Value("int32"),
@@ -208,13 +193,13 @@ class QEDDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        
-        if len(self.config.subset_id.split("_")) == 2:
-            lang_pair = self.config.subset_id.split("_")[-1]
-        elif len(self.config.subset_id.split("_")) == 3:
-            lang_pair = self.config.subset_id.split("_")[-2]
+        lang_info = self.config.subset_id.split("_")[-1]
 
-        url = _URLS.format(lang_pair)
+        if len(self.config.subset_id.split("_")[-1].split("-")) == 1: # SSP Task
+            url = _MONO_URL.format(lang_info)
+        elif len(self.config.subset_id.split("_")[-1].split("-")) == 2: # MT Task
+            url = _PAIR_URL.format(lang_info)
+
         data_dir = dl_manager.download_and_extract(url)
 
         return [
@@ -229,7 +214,7 @@ class QEDDataset(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
-        if len(self.config.subset_id.split("_")) == 2: # MT Task
+        if len(self.config.subset_id.split("_")[-1].split("-")) == 2: # MT Task
 
             lang_pair = self.config.subset_id.split("_")[-1]
             lang1, lang2 = lang_pair.split("-")
@@ -260,26 +245,11 @@ class QEDDataset(datasets.GeneratorBasedBuilder):
                         },
             
 
-        elif len(self.config.subset_id.split("_")) == 3: # SSP Task
+        elif len(self.config.subset_id.split("_")[-1].split("-")) == 1: # SSP Task
 
-            lang_pair = self.config.subset_id.split("_")[-2]
-            lang = self.config.subset_id.split("_")[-1]
-
-            l_path = os.path.join(filepath, _FILE.format(lang_pair, lang))
-
-            if self.config.schema == "source":            
-                with open(l_path, encoding="utf-8") as f:
-                    for i, x in enumerate(f.readlines()):
-                        yield i, {
-                            "id": i,
-                            "text": x.strip(), 
-                        }
-
-
-            elif self.config.schema == "seacrowd_ssp":
-                with open(l_path, encoding="utf-8") as f:
-                    for i, x in enumerate(f.readlines()):
-                        yield i, {
-                            "id": str(i),
-                            "text": x.strip(),
-                        }
+            with open(filepath, 'r') as f:
+                for i, x in enumerate(f.readlines()):
+                    yield i, {
+                        "id": str(i),
+                        "text": x.strip(),
+                    }
