@@ -66,7 +66,7 @@ _LICENSE = Licenses.CC_BY_4_0.value
 
 _LOCAL = False
 
-_URLS = "https://data.mendeley.com/public-files/datasets/8nr3pbdk5c/files/e5730ffa-527c-4e06-ac76-aab758f63ae0/file_downloaded"
+_URLS = "https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/8nr3pbdk5c-1.zip"
 
 _SUPPORTED_TASKS = [Tasks.OPTICAL_CHARACTER_RECOGNITION]
 
@@ -128,7 +128,9 @@ class KVISThaiOCRDataset(datasets.GeneratorBasedBuilder):
         Returns SplitGenerators.
         """
 
-        path = dl_manager.download_and_extract(_URLS)
+        dir = dl_manager.download_and_extract(_URLS)
+        path = dl_manager.extract(os.path.join(dir, "KVIS TOCR Dataset.zip"))
+
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
