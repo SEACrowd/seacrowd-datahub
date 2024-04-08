@@ -1,6 +1,6 @@
 loguru==0.5.3
 bioc==1.3.7
-pandas==1.3.3
+pandas==1.3.5
 numpy>=1.22
 pybrat==0.1.4
 datasets>=2.2.0
@@ -18,7 +18,12 @@ soundfile
 torchaudio==0.11
 ffmpeg
 conllu
-openpyxl
+openpyxl==3.1.2
 translate-toolkit==3.7.3
 typing_extensions
 scikit-learn==1.1.2
+pyarrow
+opencv-python>=4.9
+textgrid==1.5
+audiosegment==0.23.0
+pyreadr==0.5.0
