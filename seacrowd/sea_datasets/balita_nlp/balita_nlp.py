@@ -41,9 +41,12 @@ _CITATION = """\
 _DATASETNAME = "balita_nlp"
 
 _DESCRIPTION = """\
-BalitaNLP is a dataset for image-conditional language generation and text-conditional image generation. It consists of 351,755 Filipino
-news articles and images gathered from Filipino news outlets. News articles are categorized into five possible classes: News, Sports,
-Entertainment, Crime, and Other.
+BalitaNLP is a dataset for image-conditional language generation and text-conditional image generation. It consists of 300k Filipino news
+articles and images gathered from Filipino news outlets. News articles are categorized into five possible classes: News, Sports, Entertainment,
+Crime, and Other. Some articles were removed from the SEACrowd `imtext` schema, as their corresponding image files do not exist:
+- `train` split (262480 total articles): from the original 281403 articles, 18923 (~6.72%) had missing images
+- `test` split (32821 total articles): from the original 35177 articles, 2356 (~6.70%) had missing images
+- `validation` split (32806 total articles): from the original 35175 articles, 2369 (~6.73%) had missing images
 """
 
 _HOMEPAGE = "https://github.com/KenrickLance/BalitaNLP-Dataset"
@@ -95,6 +98,8 @@ class BalitaNLPDataset(datasets.GeneratorBasedBuilder):
             subset_id=f"{_DATASETNAME}",
         ),
     ]
+
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -190,6 +195,11 @@ class BalitaNLPDataset(datasets.GeneratorBasedBuilder):
                 yield idx, x
 
             elif self.config.schema == "seacrowd_imtext":
+
+                # Remove examples with no existing image path
+                if img_path == "":
+                    continue
+
                 x = {
                     "id": idx,
                     "image_paths": [img_path],
