@@ -127,7 +127,7 @@ class IDNewspapers2018Dataset(datasets.GeneratorBasedBuilder):
                     file_paths.append(os.path.join(path, name))
 
         for idx, file_path in enumerate(file_paths):
-            with open(file_path, "r") as file:
+            with open(file_path, "r", encoding="utf-8") as file:
                 data = json.load(file)
 
                 if self.config.schema == "source":
@@ -141,7 +141,7 @@ class IDNewspapers2018Dataset(datasets.GeneratorBasedBuilder):
 
                 elif self.config.schema == "seacrowd_ssp":
                     x = {
-                        "id": idx,
+                        "id": str(idx),
                         "text": data["content"],
                     }
                     yield idx, x
