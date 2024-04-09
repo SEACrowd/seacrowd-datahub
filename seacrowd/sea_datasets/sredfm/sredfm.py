@@ -13,7 +13,7 @@ from seacrowd.utils.constants import Licenses, Tasks
 _CITATION = """\
 @inproceedings{huguet-cabot-et-al-2023-redfm-dataset,
     title = "RED$^{\rm FM}$: a Filtered and Multilingual Relation Extraction Dataset",
-    author = "Huguet Cabot, Pere-Llu{\'\i}s  and Tedeschi, Simone and Ngonga Ngomo, Axel-Cyrille and
+    author = "Huguet Cabot, Pere-Lluís  and Tedeschi, Simone and Ngonga Ngomo, Axel-Cyrille and
       Navigli, Roberto",
     booktitle = "Proc. of the 61st Annual Meeting of the Association for Computational Linguistics: ACL 2023",
     month = jul,
@@ -56,7 +56,11 @@ _SEACROWD_VERSION = "1.0.0"
 
 
 class SREDFMDataset(datasets.GeneratorBasedBuilder):
-    """SREDFM is an automatically annotated dataset for relation extraction task. Relation Extraction (RE) is a task that identifies relationships between entities in a text, enabling the acquisition of relational facts and bridging the gap between natural language and structured knowledge. SREDFM covers 400 relation types, 13 entity types, totaling more than 40 million triplet instances."""
+    """SREDFM is an automatically annotated dataset for relation extraction task.
+    Relation Extraction (RE) is a task that identifies relationships between entities in a text,
+    enabling the acquisition of relational facts and bridging the gap between natural language
+    and structured knowledge. SREDFM covers 400 relation types, 13 entity types,
+    totaling more than 40 million triplet instances."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
@@ -124,7 +128,8 @@ class SREDFMDataset(datasets.GeneratorBasedBuilder):
         data_dir = dl_manager.download_and_extract(urls)
 
         relation_names = dict()
-        with open(_URLS["relations_url"], encoding="utf-8") as f:
+        path = dl_manager.download(_URLS["relations_url"])
+        with open(path, encoding="utf-8") as f:
             for row in f:
                 rel_code, rel_name, _, _ = row.strip().split("\t")
                 relation_names[rel_code] = rel_name
