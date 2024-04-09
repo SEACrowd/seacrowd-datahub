@@ -151,6 +151,8 @@ class CoSEMDataset(datasets.GeneratorBasedBuilder):
         file_paths = [os.path.join(path, file) for file in files]
         pattern = r"<(COSEM:.*?)>(.*?)(?=<COSEM:|$)"
 
+        s = {}
+
         for file_path in file_paths:
             with open(file_path, "r", encoding="utf-8") as file:
                 text = file.read()
@@ -159,6 +161,10 @@ class CoSEMDataset(datasets.GeneratorBasedBuilder):
                 for match in matches:
                     key = match[0].strip()
                     value = match[1].strip()
+
+                    if key in s:
+                        continue
+                    s[key] = value
 
                     if self.config.schema == "source" or self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SELF_SUPERVISED_PRETRAINING]).lower()}":
                         yield key, {"id": key, "text": value}
