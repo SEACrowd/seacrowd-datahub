@@ -137,18 +137,15 @@ class MedEVDataset(datasets.GeneratorBasedBuilder):
             en_lines = f.readlines()
         with open(filepath["vie"], "r") as f:
             vie_lines = f.readlines()
-        all_lines = list(zip(en_lines, vie_lines))
 
         if self.config.schema == "source":
-
-            for i, line in enumerate(all_lines):
+            for i, line in enumerate(en_lines + vie_lines):
                 yield i, {
                     "text": line,
                 }
 
         elif self.config.schema == "seacrowd_t2t":
-
-            for i, (en_line, vie_line) in enumerate(all_lines):
+            for i, (en_line, vie_line) in enumerate(list(zip(en_lines, vie_lines))):
                 yield i, {
                     "id": str(i),
                     "text_1": en_line,
