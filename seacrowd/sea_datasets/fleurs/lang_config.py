@@ -1,4 +1,4 @@
-{
+_LANG_CONFIG = {
   "mya": {
     "fleurs_lang_code": "my",
     "fleurs_country_code": "mm"

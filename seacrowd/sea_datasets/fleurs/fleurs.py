@@ -7,9 +7,11 @@ from itertools import product
 from typing import Dict, List, Tuple
 
 import datasets
+
 from datasets import load_dataset
 from datasets.download.download_manager import DownloadManager
 
+from seacrowd.sea_datasets.fleurs.lang_config import _LANG_CONFIG
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import TASK_TO_SCHEMA, Licenses, Tasks
@@ -30,16 +32,15 @@ _CITATION = """
 logger = datasets.logging.get_logger(__name__)
 
 
-with open(DownloadManager().download_and_extract("seacrowd/sea_datasets/fleurs/lang_config.json"), "r") as f:
-    _LANG_CONFIG = json.load(f)
-
 _LOCAL = False
-_LANGUAGES = list(_LANG_CONFIG.keys())
 
 # since this fleurs source already subsets SEA langs, the names on lang group id is hard-coded
 _LANG_GROUP_ID = ["south_east_asian_sea"]
 
 _DATASETNAME = "fleurs"
+
+_LANGUAGES = list(_LANG_CONFIG.keys())
+
 _DESCRIPTION = """\
     Fleurs dataset is a part of XTREME-S benchmark to evaluate universal cross-lingual speech representations in many languages.
     Fleurs is used for two tasks: automatic speech recognition and speech classification.

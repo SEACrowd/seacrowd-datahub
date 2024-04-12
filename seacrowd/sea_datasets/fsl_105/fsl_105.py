@@ -2,7 +2,10 @@ import os
 from pathlib import Path, PureWindowsPath
 from typing import Dict, List, Tuple
 
-import cv2
+try:
+    import cv2
+except:
+    print("Install the `cv2` package to use.")
 import datasets
 import pandas as pd
 
