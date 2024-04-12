@@ -73,7 +73,7 @@ _LICENSE = Licenses.UNKNOWN.value
 _LOCAL = False
 
 _URLS = {
-    _DATASETNAME: "https://www.kaggle.com/datasets/realdeo/indonesian-qa-generated-by-kg/download?datasetVersionNumber=1",
+    _DATASETNAME: "https://github.com/muhammadravi251001/ac-iquad/raw/main/data/ac_iquad.zip",
 }
 
 _SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
@@ -160,10 +160,7 @@ class ACIQuADDataset(datasets.GeneratorBasedBuilder):
         """Returns SplitGenerators."""
 
         subset = self.config.name.split("_")[2]
-        # data_dir = dl_manager.download_and_extract(_URLS[_DATASETNAME])
-
-        LOCAL_PATH = "ac_iquad.zip"
-        data_dir = dl_manager.download_and_extract(LOCAL_PATH)
+        data_dir = dl_manager.download_and_extract(_URLS[_DATASETNAME])
 
         return [
             datasets.SplitGenerator(
