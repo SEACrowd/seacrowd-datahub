@@ -78,21 +78,21 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
             name=f"{_DATASETNAME}_t2t_seacrowd_t2t",
             version=datasets.Version(_SEACROWD_VERSION),
             description=f"{_DATASETNAME} SEACrowd schema for t2t subset",
-            schema=f"seacrowd_t2t",
+            schema="seacrowd_t2t",
             subset_id=f"{_DATASETNAME}_t2t",
         ),
         SEACrowdConfig(
             name=f"{_DATASETNAME}_sptext_seacrowd_sptext",
             version=datasets.Version(_SEACROWD_VERSION),
             description=f"{_DATASETNAME} SEACrowd schema for sptext subset",
-            schema=f"seacrowd_sptext",
+            schema="seacrowd_sptext",
             subset_id=f"{_DATASETNAME}_sptext",
         ),
         SEACrowdConfig(
             name=f"{_DATASETNAME}_sptext_trans_seacrowd_sptext",
             version=datasets.Version(_SEACROWD_VERSION),
             description=f"{_DATASETNAME} SEACrowd schema for sptext_trans subset",
-            schema=f"seacrowd_sptext",
+            schema="seacrowd_sptext",
             subset_id=f"{_DATASETNAME}_sptext_trans",
         ),
     ]
@@ -106,6 +106,7 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
                 {
                     "nr": datasets.Value("int64"),
                     "media_id": datasets.Value("string"),
+                    "speaker_id": datasets.Value("string"),
                     "audio": datasets.Audio(sampling_rate=16000),
                     "annotation_aol": datasets.Value("string"),
                     "annotation_ind": datasets.Value("string"),
@@ -159,6 +160,7 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
                 yield k, {
                     "nr": k + 1,
                     "media_id": row["media_id"],
+                    "speaker_id": row["speaker_id"],
                     "audio": row["audio_path"],
                     "annotation_aol": row["annotation_aol"],
                     "annotation_ind": row["annotation_ind"],
@@ -261,9 +263,9 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
     def _get_source_df(self, complete_dict) -> pd.DataFrame:
         xml_dict = {k: v["text_path"] for k, v in complete_dict.items()}
 
-        audio_df = pd.DataFrame({"media_id": [k for k in complete_dict.keys()], "audio_path": [v["audio_path"] for v in complete_dict.values()]})
+        audio_df = pd.DataFrame({"media_id": [k for k in complete_dict.keys()],"speaker_id": [k.split("_")[-1] for k in complete_dict.keys()], "audio_path": [v["audio_path"] for v in complete_dict.values()]})
         text_df = self._merge_text_dfs(xml_dict)
 
         df = text_df.merge(audio_df, on="media_id", how="inner")
 
-        return df[["media_id", "audio_path", "annotation_aol", "annotation_ind", "begin_time", "end_time"]]
+        return df[["media_id", "speaker_id", "audio_path", "annotation_aol", "annotation_ind", "begin_time", "end_time"]]
