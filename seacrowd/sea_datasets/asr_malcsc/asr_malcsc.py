@@ -84,6 +84,7 @@ class ASRMalcscDataset(datasets.GeneratorBasedBuilder):
                     "speaker_id": datasets.Value("string"),
                     "topic": datasets.Value("string"),
                     "text": datasets.Value("string"),
+                    "timestamp": datasets.Value("string"),
                     "path": datasets.Value("string"),
                     "audio": datasets.Audio(sampling_rate=16_000),
                     "speaker_gender": datasets.Value("string"),
@@ -157,11 +158,13 @@ class ASRMalcscDataset(datasets.GeneratorBasedBuilder):
             # transcription file
             transcription_path = os.path.join(filepath, "TXT", audioinfo_data[i][1].replace("wav", "txt"))
             with open(transcription_path, "r", encoding="utf-8") as transcription_file:
-                transcription = transcription_file.readlines()
+                file_i = transcription_file.readlines()
             # remove redundant speaker info from transcription file
-            transcription = [s.strip("\n").split("\t") for s in transcription]
-            transcription = [s[-1] for s in transcription]
+            file_i = [s.strip("\n").split("\t") for s in file_i]
+            transcription = [s[-1] for s in file_i]
+            timestamp = [s[0] for s in file_i]
             text = " \n ".join(transcription)
+            timestamp_text = " \n ".join(timestamp)
 
             if self.config.schema == "source":
                 example = {
@@ -171,6 +174,7 @@ class ASRMalcscDataset(datasets.GeneratorBasedBuilder):
                     "speaker_id": audioinfo_data[i][2],
                     "topic": audioinfo_data[i][3],
                     "text": text,
+                    "timestamp": timestamp_text,
                     "path": wav_path,
                     "audio": wav_path,
                     "speaker_gender": spkinfo_dict[audioinfo_data[i][2]]["speaker_gender"],
