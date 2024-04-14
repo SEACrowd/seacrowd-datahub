@@ -30,7 +30,8 @@ _DATASETNAME = "asr_indocsc"
 _DESCRIPTION = """\
 This open-source dataset consists of 4.54 hours of transcribed Indonesian
 conversational speech on certain topics, where seven conversations between two
-pairs of speakers were contained.
+pairs of speakers were contained. Please create an account and be logged in on
+https://magichub.com to download the data.
 """
 
 _HOMEPAGE = "https://magichub.com/datasets/indonesian-conversational-speech-corpus/"
