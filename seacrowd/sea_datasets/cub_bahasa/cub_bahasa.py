@@ -27,6 +27,9 @@ language descriptions are collected through the Amazon Mechanical Turk (AMT) pla
 are required at least 10 words, without any information on subcategories and actions.
 """
 
+_LOCAL=False
+_LANGUAGES = ["ind"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
+
 _HOMEPAGE = "https://github.com/share424/Indonesian-Text-to-Image-synthesis-with-Sentence-BERT-and-FastGAN"
 _LICENSE = Licenses.UNKNOWN.value
 _URLS = {
