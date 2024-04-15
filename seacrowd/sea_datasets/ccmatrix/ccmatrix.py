@@ -82,14 +82,23 @@ class CCMatrixDataset(datasets.GeneratorBasedBuilder):
     SEACROWD_SCHEMA = TASK_TO_SCHEMA[Tasks.MACHINE_TRANSLATION].lower()
 
     LANG_PAIRS = [
-        ("en", "jv"), ("id", "jv"), 
-        ("jv", "tl"), ("jv", "ms"), 
-        ("en", "vi"), ("en", "id"), 
-        ("en", "tl"), ("en", "ms"), 
-        ("id", "vi"), ("tl", "vi"), 
-        ("ms", "vi"), ("id", "tl"), 
-        ("id", "ms"), ("ms", "tl")
+        ("eng", "jav"), ("ind", "jav"), 
+        ("jav", "tgl"), ("jav", "zlm"), 
+        ("eng", "vie"), ("eng", "ind"), 
+        ("eng", "tgl"), ("eng", "zlm"), 
+        ("ind", "vie"), ("tgl", "vie"), 
+        ("zlm", "vie"), ("ind", "tgl"), 
+        ("ind", "zlm"), ("zlm", "tgl")
     ]
+
+    ISO_MAPPER = {
+        "eng": "en",
+        "ind": "id",
+        "jav": "jv",
+        "vie": "vi",
+        "tgl": "tl",
+        "zlm": "ms",
+    }
 
     BUILDER_CONFIGS = (
         [
@@ -107,7 +116,7 @@ class CCMatrixDataset(datasets.GeneratorBasedBuilder):
                 name=f"{_DATASETNAME}_{lang1}-{lang2}_{lang1}_source",
                 version=datasets.Version(_SEACROWD_VERSION),
                 description=f"{_DATASETNAME} source schema {lang1} for translation from {lang1} to {lang2}",
-                schema=f"source",
+                schema="source",
                 subset_id=f"{_DATASETNAME}_{lang1}-{lang2}_{lang1}",
             )
             for lang1, lang2 in LANG_PAIRS
@@ -117,7 +126,7 @@ class CCMatrixDataset(datasets.GeneratorBasedBuilder):
                 name=f"{_DATASETNAME}_{lang1}-{lang2}_{lang2}_source",
                 version=datasets.Version(_SEACROWD_VERSION),
                 description=f"{_DATASETNAME} source schema {lang2} for translation from {lang1} to {lang2}",
-                schema=f"source",
+                schema="source",
                 subset_id=f"{_DATASETNAME}_{lang1}-{lang2}_{lang2}",
             )
             for lang1, lang2 in LANG_PAIRS
@@ -127,7 +136,7 @@ class CCMatrixDataset(datasets.GeneratorBasedBuilder):
                 name=f"{_DATASETNAME}_{lang1}-{lang2}_seacrowd_t2t",
                 version=datasets.Version(_SEACROWD_VERSION),
                 description=f"{_DATASETNAME} SEACrowd schema",
-                schema=f"seacrowd_t2t",
+                schema="seacrowd_t2t",
                 subset_id=f"{_DATASETNAME}_{lang1}-{lang2}",
             )
             for lang1, lang2 in LANG_PAIRS
@@ -137,7 +146,7 @@ class CCMatrixDataset(datasets.GeneratorBasedBuilder):
                 name=f"{_DATASETNAME}_{lang1}-{lang2}_{lang1}_seacrowd_ssp",
                 version=datasets.Version(_SEACROWD_VERSION),
                 description=f"{_DATASETNAME} SEACrowd schema {lang1} for translation from {lang1} to {lang2} for Self-supervised Pretraining task",
-                schema=f"seacrowd_ssp",
+                schema="seacrowd_ssp",
                 subset_id=f"{_DATASETNAME}_{lang1}-{lang2}_{lang1}",
             )
             for lang1, lang2 in LANG_PAIRS
@@ -147,7 +156,7 @@ class CCMatrixDataset(datasets.GeneratorBasedBuilder):
                 name=f"{_DATASETNAME}_{lang1}-{lang2}_{lang2}_seacrowd_ssp",
                 version=datasets.Version(_SEACROWD_VERSION),
                 description=f"{_DATASETNAME} SEACrowd schema {lang2} for translation from {lang1} to {lang2} for Self-supervised Pretraining task",
-                schema=f"seacrowd_ssp",
+                schema="seacrowd_ssp",
                 subset_id=f"{_DATASETNAME}_{lang1}-{lang2}_{lang2}",
             )
             for lang1, lang2 in LANG_PAIRS
@@ -159,7 +168,7 @@ class CCMatrixDataset(datasets.GeneratorBasedBuilder):
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
             if len(self.config.subset_id.split("_")) == 2:  # MT TASK
-                lang1, lang2 = self.config.subset_id.split("_")[-1].split("-")
+                lang1, lang2 = self._map_lang_pair_iso(self.config.subset_id.split("_")[-1]).split("-")
                 features = datasets.Features(
                     {
                         "id": datasets.Value("int32"),
@@ -168,7 +177,6 @@ class CCMatrixDataset(datasets.GeneratorBasedBuilder):
                     }
                 )
             elif len(self.config.subset_id.split("_")) == 3:  # ssp task
-                lang = self.config.subset_id.split("_")[-1]
                 features = datasets.Features(
                     {
                         "id": datasets.Value("int32"),
@@ -190,13 +198,17 @@ class CCMatrixDataset(datasets.GeneratorBasedBuilder):
             citation=_CITATION,
         )
 
+    def _map_lang_pair_iso(self, lang_pair: str) -> str:
+        lang1, lang2 = [self.ISO_MAPPER[lang] for lang in lang_pair.split("-")]
+        return f"{lang1}-{lang2}"
+
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
 
         if len(self.config.subset_id.split("_")) == 2:
-            lang_pair = self.config.subset_id.split("_")[-1]
+            lang_pair = self._map_lang_pair_iso(self.config.subset_id.split("_")[-1])
         elif len(self.config.subset_id.split("_")) == 3:
-            lang_pair = self.config.subset_id.split("_")[-2]
+            lang_pair = self._map_lang_pair_iso(self.config.subset_id.split("_")[-2])
 
         url = _URLS.format(lang_pair)
         data_dir = dl_manager.download_and_extract(url)
@@ -215,16 +227,17 @@ class CCMatrixDataset(datasets.GeneratorBasedBuilder):
 
         if len(self.config.subset_id.split("_")) == 2:  # MT Task
 
-            lang_pair = self.config.subset_id.split("_")[-1]
+            lang_pair = self._map_lang_pair_iso(self.config.subset_id.split("_")[-1])
             lang1, lang2 = lang_pair.split("-")
 
             l1_path = os.path.join(filepath, _FILE.format(lang_pair, lang1))
             l2_path = os.path.join(filepath, _FILE.format(lang_pair, lang2))
             scores_path = os.path.join(filepath, _FILE.format(lang_pair, "scores"))
-
+            
             if self.config.schema == "source":
                 with open(l1_path, encoding="utf-8") as f1, open(l2_path, encoding="utf-8") as f2, open(scores_path, encoding="utf-8") as f3:
                     for i, (x, y, score) in enumerate(zip(f1, f2, f3)):
+                        print(x,y,score)
                         yield i, {
                             "id": i,
                             "score": score,
@@ -235,6 +248,7 @@ class CCMatrixDataset(datasets.GeneratorBasedBuilder):
                         }
 
             elif self.config.schema == "seacrowd_t2t":
+                print("CP 4")
                 with open(l1_path, encoding="utf-8") as f1, open(l2_path, encoding="utf-8") as f2:
                     for i, (x, y) in enumerate(zip(f1, f2)):
                         yield i, {
@@ -247,8 +261,8 @@ class CCMatrixDataset(datasets.GeneratorBasedBuilder):
 
         elif len(self.config.subset_id.split("_")) == 3:  # SSP Task
 
-            lang_pair = self.config.subset_id.split("_")[-2]
-            lang = self.config.subset_id.split("_")[-1]
+            lang_pair = self._map_lang_pair_iso(self.config.subset_id.split("_")[-2])
+            lang = self.ISO_MAPPER[self.config.subset_id.split("_")[-1]]
 
             l_path = os.path.join(filepath, _FILE.format(lang_pair, lang))
 
