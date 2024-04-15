@@ -238,11 +238,11 @@ class PfsaIdDataset(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
+        i = 0
         for _, path in enumerate(filepath):
             tokens, labels = [], []
             lines = open(path, "r").readlines()
 
-            i = 0
             for line in lines:
                 if line == "\n":
                     yield i, {
