@@ -34,6 +34,7 @@ from typing import Dict, List, Tuple
 
 import datasets
 
+from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Tasks, Licenses
 
@@ -75,7 +76,7 @@ _LANGUAGES = []  # We follow ISO639-3 language code (https://iso639-3.sil.org/co
 # Some datasets may also have custom licenses. In this case, simply put f'{Licenses.OTHERS.value} | {FULL_LICENSE_TERM}' into `_LICENSE`
 _LICENSE = "" # example: Licenses.MIT.value, Licenses.CC_BY_NC_SA_4_0.value, Licenses.UNLICENSE.value, Licenses.UNKNOWN.value
 
-# TODO: Add a _LOCAL flag to indicate whether the data cannot be sourced from a public link 
+# TODO: Add a _LOCAL flag to indicate whether the data cannot be sourced from a public link
 #  E.g. the dataset requires signing a specific term of use, the dataset is sent through email, etc.
 _LOCAL = False
 
@@ -101,7 +102,7 @@ _SOURCE_VERSION = ""
 _SEACROWD_VERSION = "1.0.0"
 
 
-# TODO: Name the dataset class to match the script name using PascalCase instead of snake_case. 
+# TODO: Name the dataset class to match the script name using PascalCase instead of snake_case.
 # optional: class name can append "Dataset" as suffix to provide better clarity (e.g. OSCAR 2201 --> Oscar2201Dataset/Oscar2201)
 class NewDataset(datasets.GeneratorBasedBuilder):
     """TODO: Short description of my dataset."""
