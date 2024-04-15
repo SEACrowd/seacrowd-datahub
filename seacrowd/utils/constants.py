@@ -4,12 +4,13 @@ from types import SimpleNamespace
 
 from seacrowd.utils.schemas import (
     image_text_features,
-    imqa_features,
     kb_features,
+    tree_features,
     pairs_features,
     pairs_features_score,
     pairs_multi_features,
     qa_features,
+    imqa_features,
     seq_label_features,
     speech2speech_features,
     speech_features,
@@ -19,9 +20,8 @@ from seacrowd.utils.schemas import (
     text2text_features,
     text_features,
     text_multi_features,
-    tod_features,
-    tree_features,
     video_features,
+    tod_features,
 )
 
 METADATA: dict = {
@@ -135,7 +135,6 @@ class Tasks(Enum):
 
     # No seacrowd schema
     FACT_CHECKING = "FCT"
-    NON_WORD_ERROR_SPELLING_CORRECTION = "NWESC"
     WORD_LIST = "WL"
 
 
@@ -290,9 +289,8 @@ TASK_TO_SCHEMA = {
     Tasks.VIDEO_CAPTIONING: "VIDTEXT",
     Tasks.VIDEO_TO_TEXT_RETRIEVAL: "VIDTEXT",
     Tasks.FACT_CHECKING: None,
-    Tasks.MORALITY_CLASSIFICATION: "TEXT",
-    Tasks.NON_WORD_ERROR_SPELLING_CORRECTION: "TEXT",
     Tasks.WORD_LIST: None,
+    Tasks.MORALITY_CLASSIFICATION: "TEXT",
 }
 
 SCHEMA_TO_TASKS = defaultdict(set)
