@@ -179,7 +179,7 @@ class PfsaIdDataset(datasets.GeneratorBasedBuilder):
                 }
             )
 
-        elif self.config.schema == f"seacrowd_seq_label":
+        elif self.config.schema == "seacrowd_seq_label":
             features = schemas.seq_label_features(self.LABEL_CLASSES)
 
         return datasets.DatasetInfo(
@@ -224,19 +224,22 @@ class PfsaIdDataset(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
-        for i, path in enumerate(filepath):
+        for _, path in enumerate(filepath):
             tokens, labels = [], []
             lines = open(path, "r").readlines()
 
+            i = 0
             for line in lines:
                 if line == "\n":
-                    continue
-                token, label = line.split("\t")
-                tokens.append(token)
-                labels.append(label.strip("\n"))
-
-            yield i, {
-                "id": str(i),
-                "tokens": tokens,
-                "labels": labels,
-            }
+                    yield i, {
+                        "id": str(i),
+                        "tokens": tokens,
+                        "labels": labels,
+                    }
+                    i += 1
+                    tokens = []
+                    labels = []
+                else:
+                    token, label = line.split("\t")
+                    tokens.append(token)
+                    labels.append(label.strip("\n"))
