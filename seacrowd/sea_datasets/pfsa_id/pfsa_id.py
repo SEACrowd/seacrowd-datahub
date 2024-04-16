@@ -14,8 +14,7 @@
 # limitations under the License.
 
 """
-PFSA-ID is an annotated corpus for Public Figure Statement Attribution in the Indonesian Language. 
-
+PFSA-ID is an annotated corpus for Public Figure Statement Attribution in the Indonesian Language.
 The annotation using the multi-class named entity recognition with 11 labels: PERSON, ROLE, AFFILIATION, PERSONCOREF, CUE, CUECOREF, STATEMENT, ISSUE, EVENT, DATETIME, and LOCATION and using the BILOU scheme as the representation of tokens.
 """
 from pathlib import Path
@@ -39,7 +38,14 @@ _CITATION = """\
   url = {https://www.emerald.com/insight/content/doi/10.1108/GKMC-04-2022-0091/full/html},
   author = {Yohanes Sigit {Purnomo W.P.} and Yogan Jaya Kumar and Nur Zareen Zulkarnain},
   keywords = {Indonesian corpus, Public figures, Statement attribution, News article, Baseline model, Named entity recognition},
-  abstract = {Purpose By far, the corpus for the quotation extraction and quotation attribution tasks in Indonesian is still limited in quantity and depth. This study aims to develop an Indonesian corpus of public figure statements attributions and a baseline model for attribution extraction, so it will contribute to fostering research in information extraction for the Indonesian language. Design/methodology/approach The methodology is divided into corpus development and extraction model development. During corpus development, data were collected and annotated. The development of the extraction model entails feature extraction, the definition of the model architecture, parameter selection and configuration, model training and evaluation, as well as model selection. Findings The Indonesian corpus of public figure statements attribution achieved 90.06% agreement level between the annotator and experts and could serve as a gold standard corpus. Furthermore, the baseline model predicted most labels and achieved 82.026% F-score. Originality/value To the best of the authors’ knowledge, the resulting corpus is the first corpus for attribution of public figures’ statements in the Indonesian language, which makes it a significant step for research on attribution extraction in the language. The resulting corpus and the baseline model can be used as a benchmark for further research. Other researchers could follow the methods presented in this paper to develop a new corpus and baseline model for other languages.}
+  abstract = {Purpose By far, the corpus for the quotation extraction and quotation attribution tasks in Indonesian is still limited in quantity and depth. This study aims to develop an Indonesian corpus of public figure statements attributions and a
+    baseline model for attribution extraction, so it will contribute to fostering research in information extraction for the Indonesian language. Design/methodology/approach The methodology is divided into corpus development and extraction model
+    development. During corpus development, data were collected and annotated. The development of the extraction model entails feature extraction, the definition of the model architecture, parameter selection and configuration,
+    model training and evaluation, as well as model selection. Findings The Indonesian corpus of public figure statements attribution achieved 90.06% agreement level between the annotator and experts and could serve as a gold standard corpus.
+    Furthermore, the baseline model predicted most labels and achieved 82.026% F-score. Originality/value To the best of the authors’ knowledge, the resulting corpus is the first corpus for attribution of public figures’ statements in the Indonesian
+    language, which makes it a significant step for research on attribution extraction in the language. The resulting corpus and the baseline model can be used as a benchmark for further research. Other researchers could follow the methods presented
+    in this paper to develop a new corpus and baseline model for other languages.
+    }
 }
 
 @article{PurnomoWP2024,
@@ -60,7 +66,7 @@ _CITATION = """\
 _DATASETNAME = "pfsa_id"
 
 _DESCRIPTION = """\
-PFSA-ID is an annotated corpus for Public Figure Statement Attribution in the Indonesian Language. 
+PFSA-ID is an annotated corpus for Public Figure Statement Attribution in the Indonesian Language.
 
 The annotation using the multi-class named entity recognition with 11 labels: PERSON, ROLE, AFFILIATION, PERSONCOREF, CUE, CUECOREF, STATEMENT, ISSUE, EVENT, DATETIME, and LOCATION and using the BILOU scheme as the representation of tokens.
 """
