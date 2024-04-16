@@ -12,11 +12,11 @@ from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @inproceedings{asgari2020unisent,
-  title={UniSent: Universal Adaptable Sentiment Lexica for 1000+ Languages},
-  author={Asgari, Ehsaneddin and Braune, Fabienne and Ringlstetter, Christoph and Mofrad, Mohammad RK},
-  booktitle={Proceedings of the International Conference on Language Resources and Evaluation (LREC-2020)},
-  year={2020},
-  organization={European Language Resources Association (ELRA)}
+title={UniSent: Universal Adaptable Sentiment Lexica for 1000+ Languages},
+author={Asgari, Ehsaneddin and Braune, Fabienne and Ringlstetter, Christoph and Mofrad, Mohammad RK},
+booktitle={Proceedings of the International Conference on Language Resources and Evaluation (LREC-2020)},
+year={2020},
+organization={European Language Resources Association (ELRA)}
 }
 """
 _DATASETNAME = "unisent"
@@ -65,16 +65,24 @@ _SEACROWD_VERSION = "1.0.0"
 class UniSentDataset(datasets.GeneratorBasedBuilder):
     LABELS = ["NEGATIVE", "POSITIVE"]
 
-    BUILDER_CONFIGS = [SEACrowdConfig(name=f"{_DATASETNAME}_{lang}_source", version=datasets.Version(_SOURCE_VERSION), description=_DESCRIPTION, schema="source", subset_id=f"{_DATASETNAME}_{lang}",) for lang in _LANGUAGES] + [
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_{lang}_seacrowd_text",
-            version=datasets.Version(_SEACROWD_VERSION),
-            description=_DESCRIPTION,
-            schema="seacrowd_text",
-            subset_id=f"{_DATASETNAME}_{lang}",
-        )
-        for lang in _LANGUAGES
-    ]
+    BUILDER_CONFIGS = ([
+                           SEACrowdConfig(name=f"{_DATASETNAME}_{lang}_source",
+                                          version=datasets.Version(_SOURCE_VERSION),
+                                          description=_DESCRIPTION,
+                                          schema="source",
+                                          subset_id=f"{_DATASETNAME}_{lang}", ) for lang in _LANGUAGES
+                       ]
+                       +
+                       [
+                           SEACrowdConfig(
+                               name=f"{_DATASETNAME}_{lang}_seacrowd_text",
+                               version=datasets.Version(_SEACROWD_VERSION),
+                               description=_DESCRIPTION,
+                               schema="seacrowd_text",
+                               subset_id=f"{_DATASETNAME}_{lang}",
+                           )
+                           for lang in _LANGUAGES
+                       ])
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
