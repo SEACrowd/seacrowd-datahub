@@ -14,8 +14,7 @@
 # limitations under the License.
 
 """
-
-
+The Malaysia AI Hansard Scrape dataset contains 142,766 PDFs from the Malaysian Parliament website.
 """
 
 from pathlib import Path
@@ -28,16 +27,12 @@ from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
-@article{,
-  author    = {N/A},
-  title     = {No Publication},
-  journal   = {N/A},
-  volume    = {N/A},
-  year      = {N/A},
-  url       = {N/A},
-  doi       = {N/A},
-  biburl    = {N/A},
-  bibsource = {N/A}
+@article{malaysua_ai_hansard,
+  author    = {{Malaysia-AI}},
+  title     = {Crawl Malaysian Hansard},
+  year      = {2023},  % Change to the relevant year if known
+  url       = {https://huggingface.co/datasets/malaysia-ai/crawl-malaysian-hansard}
+
 }
 """
 
@@ -127,7 +122,6 @@ class MalaysiaAIHansardDataset(datasets.GeneratorBasedBuilder):
         """Returns SplitGenerators."""
 
         urls = _URLS[_DATASETNAME]
-
         # data_dir = dl_manager.download_and_extract(urls)
         # dl_manager not used since dataloader uses HF 'load_dataset'
 
