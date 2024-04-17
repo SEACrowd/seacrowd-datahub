@@ -10,12 +10,19 @@ from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
-@article{lowphansirikul2020scb,
-  title={scb-mt-en-th-2020: A Large English-Thai Parallel Corpus},
-  author={Lowphansirikul, Lalita and Polpanumas, Charin and Rutherford, Attapol T and Nutanong, Sarana},
-  journal={arXiv preprint arXiv:2007.03541},
-  year={2020}
-}
+@article{Lowphansirikul2021,
+    author={Lowphansirikul, Lalita
+            and Polpanumas, Charin
+            and Rutherford, Attapol T.
+            and Nutanong, Sarana},
+    title={A large English--Thai parallel corpus from the web and machine-generated text},
+    journal={Language Resources and Evaluation},
+    year={2021},
+    month={Mar},
+    day={30},
+    issn={1574-0218},
+    doi={10.1007/s10579-021-09536-6},
+    url={https://doi.org/10.1007/s10579-021-09536-6}
 """
 
 _DATASETNAME = "generated_review_enth"
