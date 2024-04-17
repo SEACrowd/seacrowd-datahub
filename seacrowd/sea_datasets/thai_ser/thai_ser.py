@@ -17,7 +17,7 @@ import glob
 import json
 import os
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Union
 
 import datasets
 
@@ -112,7 +112,24 @@ class ThaiSER(datasets.GeneratorBasedBuilder):
 
     def _info(self) -> datasets.DatasetInfo:
 
-        if self.config.schema == "source" or self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
+        if self.config.schema == "source":
+            features = datasets.Features(
+                {
+                    "id": datasets.Value("string"),
+                    "path": datasets.Value("string"),
+                    "audio": datasets.Audio(sampling_rate=44_100),
+                    "speaker_id": datasets.Value("string"),
+                    "labels": datasets.ClassLabel(names=self._LABELS),
+                    "majority_emo": datasets.Value("string"),  # 'None' when no majority
+                    "annotated": datasets.Value("string"),
+                    "agreement": datasets.Value("float32"),
+                    "metadata": {
+                        "speaker_age": datasets.Value("int64"),
+                        "speaker_gender": datasets.Value("string"),
+                    },
+                }
+            )
+        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             # same as schemas.speech_features(self._LABELS) except for sampling_rate
             features = datasets.Features(
                 {
@@ -157,9 +174,8 @@ class ThaiSER(datasets.GeneratorBasedBuilder):
             )
         ]
 
-    def _generate_examples(self, actor_demography_filepath: Path, emotion_label_filepath: Path, data_filepath: Path, split: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, actor_demography_filepath: Path, emotion_label_filepath: Path, data_filepath: Dict[str, Union[Path, Dict]], split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
-
         # read actor_demography file
         with open(actor_demography_filepath, "r", encoding="utf-8") as actor_demography_file:
             actor_demography = json.load(actor_demography_file)
@@ -170,7 +186,7 @@ class ThaiSER(datasets.GeneratorBasedBuilder):
             emotion_label = json.load(emotion_label_file)
 
         # iterate through data folders
-        for folder_name, folder_path in data_filepath.items():
+        for folder_path in data_filepath.values():
             flac_files = glob.glob(os.path.join(folder_path, "**/*.flac"), recursive=True)
             # iterate through recordings
             for audio_path in flac_files:
@@ -180,6 +196,9 @@ class ThaiSER(datasets.GeneratorBasedBuilder):
                 # otherwise, obtain label from id for scripted utterances and skip sample for the improvised utterances
                 if id in emotion_label.keys():
                     assigned_emo = emotion_label[id][0]["assigned_emo"]
+                    majority_emo = emotion_label[id][0]["majority_emo"]
+                    agreement = emotion_label[id][0]["agreement"]
+                    annotated = emotion_label[id][0]["annotated"]
                 else:
                     if "script" in id:
                         label = id.split("_")[-1][0]  # Emotion (1 = Neutral, 2 = Angry, 3 = Happy, 4 = Sad, 5 = Frustrated)
@@ -187,7 +206,19 @@ class ThaiSER(datasets.GeneratorBasedBuilder):
                     else:
                         continue
 
-                if self.config.schema == "source" or self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
+                if self.config.schema == "source":
+                    example = {
+                        "id": id.strip(".flac"),
+                        "path": audio_path,
+                        "audio": audio_path,
+                        "speaker_id": speaker_id,
+                        "labels": assigned_emo,
+                        "majority_emo": majority_emo,
+                        "agreement": agreement,
+                        "annotated": annotated,
+                        "metadata": {"speaker_age": actor_demography_dict[speaker_id]["speaker_age"], "speaker_gender": actor_demography_dict[speaker_id]["speaker_gender"]},
+                    }
+                elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
                     example = {
                         "id": id.strip(".flac"),
                         "path": audio_path,
