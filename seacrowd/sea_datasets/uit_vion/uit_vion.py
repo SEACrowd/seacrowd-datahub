@@ -59,7 +59,7 @@ _URLS = {
     _DATASETNAME: "https://github.com/kh4nh12/UIT-ViON-Dataset/archive/refs/heads/master.zip",
 }
 
-_SUPPORTED_TASKS = [Tasks.INTENT_CLASSIFICATION]
+_SUPPORTED_TASKS = [Tasks.TOPIC_MODELING]
 
 _SOURCE_VERSION = "1.0.0"
 
