@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+'''
+This is a dataset containing pdfs scraped from 735 gov.my websites.
+'''
 
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -24,16 +27,11 @@ from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
-@article{,
-  author    = {N/A},
-  title     = {No Publication},
-  journal   = {N/A},
-  volume    = {N/A},
-  year      = {N/A},
-  url       = {N/A},
-  doi       = {N/A},
-  biburl    = {N/A},
-  bibsource = {N/A}
+@article{malaysua_ai_government,
+  author    = {{Malaysia-AI}},
+  title     = {Crawl Malaysian Government},
+  year      = {2023},  % Change to the relevant year if known
+  url       = {https://huggingface.co/datasets/malaysia-ai/crawl-my-website
 }
 """
 
@@ -47,7 +45,6 @@ It consists of thousands of the unedited text, a link to the URL where the websi
 _HOMEPAGE = "https://huggingface.co/datasets/malaysia-ai/crawl-my-website"
 
 _LANGUAGES = ["zlm"]
-
 
 _LICENSE = Licenses.APACHE_2_0.value
 
@@ -163,18 +160,3 @@ class MalaysiaAIGovernmentDataset(datasets.GeneratorBasedBuilder):
                     "id": key,
                     "text": sample["text"] if "text" in sample else sample["body"],
                 }
-
-
-
-# from datasets import load_dataset
-    
-# data = load_dataset("seacrowd/sea_datasets/malaysia_ai_government/malaysia_ai_government.py", name="malaysia_ai_government_gov_my_seacrowd_ssp")
-# data = load_dataset("seacrowd/sea_datasets/malaysia_ai_government/malaysia_ai_government.py", name="malaysia_ai_government_govdocs_seacrowd_ssp")
-# data = load_dataset("seacrowd/sea_datasets/malaysia_ai_government/malaysia_ai_government.py", name="malaysia_ai_government_muftiwp_gov_my_seacrowd_ssp")
-# data = load_dataset("seacrowd/sea_datasets/malaysia_ai_government/malaysia_ai_government.py", name="malaysia_ai_government_myjms_mohe_gov_my_seacrowd_ssp")
-
-# python -m tests.test_seacrowd seacrowd/sea_datasets/malaysia_ai_government/malaysia_ai_government.py --subset_id malaysia_ai_government_gov_my
-# python -m tests.test_seacrowd seacrowd/sea_datasets/malaysia_ai_government/malaysia_ai_government.py --subset_id malaysia_ai_government_govdocs
-# python -m tests.test_seacrowd seacrowd/sea_datasets/malaysia_ai_government/malaysia_ai_government.py --subset_id malaysia_ai_government_muftiwp_gov_my
-# python -m tests.test_seacrowd seacrowd/sea_datasets/malaysia_ai_government/malaysia_ai_government.py --subset_id malaysia_ai_government_myjms_mohe_gov_my
-
