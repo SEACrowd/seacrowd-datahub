@@ -120,7 +120,7 @@ class ThaiSER(datasets.GeneratorBasedBuilder):
                     "audio": datasets.Audio(sampling_rate=44_100),
                     "speaker_id": datasets.Value("string"),
                     "labels": datasets.ClassLabel(names=self._LABELS),
-                    "majority_emo": datasets.Value("string"),  # 'None' when no majority
+                    "majority_emo": datasets.Value("string"),  # 'None' when no single majority
                     "annotated": datasets.Value("string"),
                     "agreement": datasets.Value("float32"),
                     "metadata": {
@@ -203,6 +203,7 @@ class ThaiSER(datasets.GeneratorBasedBuilder):
                     if "script" in id:
                         label = id.split("_")[-1][0]  # Emotion (1 = Neutral, 2 = Angry, 3 = Happy, 4 = Sad, 5 = Frustrated)
                         assigned_emo = self._LABELS[int(label) - 1]
+                        majority_emo = agreement = annotated = None
                     else:
                         continue
 
