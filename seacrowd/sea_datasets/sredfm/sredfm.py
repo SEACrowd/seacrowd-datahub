@@ -40,11 +40,9 @@ _LICENSE = Licenses.CC_BY_SA_4_0.value
 _LOCAL = False
 
 _URLS = {
-    _DATASETNAME: {
-        "train": "https://huggingface.co/datasets/Babelscape/SREDFM/resolve/main/data/train.vi.jsonl",
-        "dev": "https://huggingface.co/datasets/Babelscape/SREDFM/resolve/main/data/dev.vi.jsonl",
-        "test": "https://huggingface.co/datasets/Babelscape/SREDFM/resolve/main/data/test.vi.jsonl",
-    },
+    "train": "https://huggingface.co/datasets/Babelscape/SREDFM/resolve/main/data/train.vi.jsonl",
+    "dev": "https://huggingface.co/datasets/Babelscape/SREDFM/resolve/main/data/dev.vi.jsonl",
+    "test": "https://huggingface.co/datasets/Babelscape/SREDFM/resolve/main/data/test.vi.jsonl",
     "relations_url": "https://huggingface.co/datasets/Babelscape/SREDFM/raw/main/relations.tsv",
 }
 
@@ -67,22 +65,22 @@ class SREDFMDataset(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name="sredfm_source",
+            name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
-            description="sredfm source schema",
+            description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id="sredfm",
+            subset_id=f"{_DATASETNAME}",
         ),
         SEACrowdConfig(
-            name="sredfm_seacrowd_kb",
+            name=f"{_DATASETNAME}_seacrowd_kb",
             version=SEACROWD_VERSION,
-            description="sredfm SEACrowd schema",
+            description=f"{_DATASETNAME} SEACrowd schema",
             schema="seacrowd_kb",
-            subset_id="sredfm",
+            subset_id=f"{_DATASETNAME}",
         ),
     ]
 
-    DEFAULT_CONFIG_NAME = "sredfm_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -124,12 +122,11 @@ class SREDFMDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        urls = _URLS[_DATASETNAME]
-        data_dir = dl_manager.download_and_extract(urls)
+        data_dir = dl_manager.download_and_extract(_URLS)
 
         relation_names = dict()
-        path = dl_manager.download(_URLS["relations_url"])
-        with open(path, encoding="utf-8") as f:
+        relation_path = data_dir["relations_url"]
+        with open(relation_path, encoding="utf-8") as f:
             for row in f:
                 rel_code, rel_name, _, _ = row.strip().split("\t")
                 relation_names[rel_code] = rel_name
