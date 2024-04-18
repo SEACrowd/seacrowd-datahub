@@ -237,9 +237,9 @@ class SleukRithSet(datasets.GeneratorBasedBuilder):
                 yield idx, {
                     "id": str(idx),
                     "image_paths": [example[0]],
-                    # "texts": None,
+                    "texts": None,
                     "metadata": {
-                        # "context": None,
+                        "context": None,
                         "labels": [example[1]],
                     },
                 }
