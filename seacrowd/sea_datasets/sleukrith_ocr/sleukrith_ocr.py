@@ -18,9 +18,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 import datasets
-import gdown
 import numpy as np
-from PIL import Image
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
@@ -149,8 +147,22 @@ class SleukRithSet(datasets.GeneratorBasedBuilder):
             citation=_CITATION,
         )
 
+    def module_exists(self, module_name):
+        try:
+            mod = __import__(module_name)
+        except ImportError:
+            return False
+        else:
+            return True
+
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
+        # check if gdown is installed
+        if self.module_exists("gdown"):
+            import gdown
+        else:
+            raise ImportError("Please install `gdown` to enable downloading data from google drive.")
+
         # create custom data directory
         data_dir = Path.cwd() / "data" / "sleukrith_ocr"
         data_dir.mkdir(parents=True, exist_ok=True)
@@ -188,6 +200,12 @@ class SleukRithSet(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, image_data: Path, label_data: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
+        # check if PIL is installed
+        if self.module_exists("PIL"):
+            from PIL import Image
+        else:
+            raise ImportError("Please install `pillow` to process images.")
+
         # load images
         with open(image_data, "rb") as file:
             # read and unpack the first 12 bytes for metadata
