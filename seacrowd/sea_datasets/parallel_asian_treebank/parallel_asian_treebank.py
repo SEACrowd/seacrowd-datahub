@@ -1,5 +1,4 @@
 from itertools import combinations
-from pathlib import Path
 from typing import List
 
 import datasets
@@ -34,10 +33,10 @@ _CITATION = """\
 """
 
 _DESCRIPTION = """\
-The ALT project aims to advance the state-of-the-art Asian natural language processing (NLP) techniques through the open collaboration for developing and using ALT. 
-It was first conducted by NICT and UCSY as described in Ye Kyaw Thu, Win Pa Pa, Masao Utiyama, Andrew Finch and Eiichiro Sumita (2016). 
-Then, it was developed under ASEAN IVO. 
-The process of building ALT began with sampling about 20,000 sentences from English Wikinews, and then these sentences were translated into the other languages. 
+The ALT project aims to advance the state-of-the-art Asian natural language processing (NLP) techniques through the open collaboration for developing and using ALT.
+It was first conducted by NICT and UCSY as described in Ye Kyaw Thu, Win Pa Pa, Masao Utiyama, Andrew Finch and Eiichiro Sumita (2016).
+Then, it was developed under ASEAN IVO.
+The process of building ALT began with sampling about 20,000 sentences from English Wikinews, and then these sentences were translated into the other languages.
 ALT now has 13 languages: Bengali, English, Filipino, Hindi, Bahasa Indonesia, Japanese, Khmer, Lao, Malay, Myanmar (Burmese), Thai, Vietnamese, Chinese (Simplified Chinese).
 """
 
