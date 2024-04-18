@@ -1,17 +1,26 @@
+from itertools import combinations
 from pathlib import Path
 from typing import List
-from itertools import combinations
 
 import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
+from seacrowd.utils.constants import Licenses, Tasks
 
 _DATASETNAME = "parallel_asian_treebank"
 
 _LANGUAGES = ["khm", "lao", "mya", "ind", "fil", "zlm", "tha", "vie"]
-_LANGUAGES_TO_FILENAME_LANGUAGE_CODE = { "khm": "khm", "lao": "lo", "mya": "my", "ind": "id", "fil": "fil", "zlm": "ms", "tha": "th", "vie": "vi", }
+_LANGUAGES_TO_FILENAME_LANGUAGE_CODE = {
+    "khm": "khm",
+    "lao": "lo",
+    "mya": "my",
+    "ind": "id",
+    "fil": "fil",
+    "zlm": "ms",
+    "tha": "th",
+    "vie": "vi",
+}
 _LOCAL = True
 _CITATION = """\
 @inproceedings{riza2016introduction,
@@ -90,34 +99,23 @@ class ParallelAsianTreebank(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         if self.config.data_dir is None:
-            raise ValueError(
-                "This is a local dataset. Please pass the data_dir kwarg to load_dataset."
-            )
+            raise ValueError("This is a local dataset. Please pass the data_dir kwarg to load_dataset.")
         else:
             data_dir = self.config.data_dir
 
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
-                gen_kwargs={
-                    "data_dir": data_dir,
-                    "split": "train"
-                },
+                gen_kwargs={"data_dir": data_dir, "split": "train"},
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
-                gen_kwargs={
-                    "data_dir": data_dir,
-                    "split": "test"
-                },
+                gen_kwargs={"data_dir": data_dir, "split": "test"},
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
-                gen_kwargs={
-                    "data_dir": data_dir,
-                    "split": "dev"
-                },
-            )
+                gen_kwargs={"data_dir": data_dir, "split": "dev"},
+            ),
         ]
 
     def _generate_examples(self, data_dir, split: str):
@@ -138,7 +136,7 @@ class ParallelAsianTreebank(datasets.GeneratorBasedBuilder):
                     mapping_data[id] = {}
 
                 mapping_data[id][language] = sentence
-        
+
         combination_languages = list(combinations(_LANGUAGES, 2))
 
         i = 0
@@ -154,7 +152,7 @@ class ParallelAsianTreebank(datasets.GeneratorBasedBuilder):
                         "text_2_name": each_pair[1],
                     }
 
-                    i+=1
+                    i += 1
 
                     yield i, {
                         "id": f"{id}-{each_pair[1]}-{each_pair[0]}",
@@ -164,4 +162,4 @@ class ParallelAsianTreebank(datasets.GeneratorBasedBuilder):
                         "text_2_name": each_pair[0],
                     }
 
-                    i+=1
+                    i += 1
