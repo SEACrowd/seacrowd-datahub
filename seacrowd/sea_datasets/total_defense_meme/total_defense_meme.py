@@ -126,7 +126,7 @@ class TotalDefenseMemeDataset(datasets.GeneratorBasedBuilder):
             features = datasets.Features(
                 {
                     "image_path": datasets.Value("string"),
-                    "categories": datasets.Sequence(datasets.ClassLabel(names=meme_type)),
+                    "meme_type": datasets.Sequence(datasets.ClassLabel(names=meme_type)),
                     "text": datasets.Value("string"),
                     "tags": datasets.Sequence(datasets.Value("string")),
                     "pillar_stances": datasets.Sequence(
@@ -242,7 +242,7 @@ class TotalDefenseMemeDataset(datasets.GeneratorBasedBuilder):
             if self.config.schema == "source":
                 yield key, {
                     "image_path": image_path,
-                    "categories": categories,
+                    "meme_type": categories,
                     "text": text,
                     "tags": tags,
                     "pillar_stances": pillar_stances,
@@ -262,7 +262,7 @@ class TotalDefenseMemeDataset(datasets.GeneratorBasedBuilder):
                 }
                 key += 1
 
-            # pillar classification seacrowd schema
+            # pillar/topic classification seacrowd schema
             elif self.config.schema == _SEACROWD_SCHEMA["IMC_MULTI"]:
                 if pillar_stances:  # only those with pillar stances
                     yield key, {
