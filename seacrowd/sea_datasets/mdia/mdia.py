@@ -20,16 +20,17 @@ import datasets
 import pandas as pd
 
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import SCHEMA_TO_FEATURES, TASK_TO_SCHEMA, Licenses, Tasks
+from seacrowd.utils.constants import (SCHEMA_TO_FEATURES, TASK_TO_SCHEMA,
+                                      Licenses, Tasks)
 
 _CITATION = """\
 @misc{zhang2022mdia,
-      title={MDIA: A Benchmark for Multilingual Dialogue Generation in 46 Languages}, 
-      author={Qingyu Zhang and Xiaoyu Shen and Ernie Chang and Jidong Ge and Pengke Chen},
-      year={2022},
-      eprint={2208.13078},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL}
+    title={MDIA: A Benchmark for Multilingual Dialogue Generation in 46 Languages},
+    author={Qingyu Zhang and Xiaoyu Shen and Ernie Chang and Jidong Ge and Pengke Chen},
+    year={2022},
+    eprint={2208.13078},
+    archivePrefix={arXiv},
+    primaryClass={cs.CL}
 }
 """
 
@@ -55,11 +56,8 @@ _URLS = {
     "translated": "https://github.com/DoctorDream/mDIA/raw/master/datasets/translated.zip",
 }
 
-_SUPPORTED_TASKS = [Tasks.DIALOGUE_SYSTEM, Tasks.MACHINE_TRANSLATION]  #  DS, MT
-_SEACROWD_SCHEMA = {
-    task.value: f"seacrowd_{str(TASK_TO_SCHEMA[task]).lower()}"
-    for task in _SUPPORTED_TASKS
-}  # t2t
+_SUPPORTED_TASKS = [Tasks.DIALOGUE_SYSTEM, Tasks.MACHINE_TRANSLATION]  # DS, MT
+_SEACROWD_SCHEMA = {task.value: f"seacrowd_{str(TASK_TO_SCHEMA[task]).lower()}" for task in _SUPPORTED_TASKS}  # t2t
 _SUBSETS = [
     "ind_dialogue",
     "ind_eng",
@@ -134,12 +132,8 @@ class MdiaDataset(datasets.GeneratorBasedBuilder):
                     "translated_target_body": datasets.Value("string"),
                 }
             )
-        elif (
-            self.config.schema == _SEACROWD_SCHEMA["DS"]
-        ):  # same schema with _SEACROWD_SCHEMA["MT"]
-            features = SCHEMA_TO_FEATURES[
-                TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]]
-            ]  # text2text_features
+        elif self.config.schema == _SEACROWD_SCHEMA["DS"]:  # same schema with _SEACROWD_SCHEMA["MT"]
+            features = SCHEMA_TO_FEATURES[TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]]]  # text2text_features
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
