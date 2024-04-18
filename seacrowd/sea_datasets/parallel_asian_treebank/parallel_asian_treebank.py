@@ -1,7 +1,9 @@
-from itertools import combinations
-from typing import List
+import itertools
+from pathlib import Path
+from typing import List, Tuple
 
 import datasets
+import pandas as pd
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
@@ -19,8 +21,12 @@ _LANGUAGES_TO_FILENAME_LANGUAGE_CODE = {
     "zlm": "ms",
     "tha": "th",
     "vie": "vi",
+    "eng": "en",
+    "hin": "hi",
+    "jpn": "ja",
+    "zho": "zh",
 }
-_LOCAL = True
+_LOCAL = False
 _CITATION = """\
 @inproceedings{riza2016introduction,
   title={Introduction of the asian language treebank},
@@ -44,7 +50,12 @@ _HOMEPAGE = "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/"
 
 _LICENSE = Licenses.CC_BY_4_0.value
 
-_URL = "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/ALT-Parallel-Corpus-20191206.zip"
+_URLS = {
+    "data": "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/ALT-Parallel-Corpus-20191206.zip",
+    "train": "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/URL-train.txt",
+    "dev": "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/URL-dev.txt",
+    "test": "https://www2.nict.go.jp/astrec-att/member/mutiyama/ALT/URL-test.txt",
+}
 
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 
@@ -55,24 +66,31 @@ _SEACROWD_VERSION = "1.0.0"
 class ParallelAsianTreebank(datasets.GeneratorBasedBuilder):
     """The ALT project aims to advance the state-of-the-art Asian natural language processing (NLP) techniques through the open collaboration for developing and using ALT"""
 
-    BUILDER_CONFIGS = [
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_source",
-            version=_SOURCE_VERSION,
-            description=f"{_DATASETNAME} source schema",
-            schema="source",
-            subset_id=_DATASETNAME,
-        ),
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_t2t",
-            version=_SEACROWD_VERSION,
-            description=f"{_DATASETNAME} SEACrowd schema",
-            schema="seacrowd_t2t",
-            subset_id=_DATASETNAME,
-        ),
-    ]
-
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
+    BUILDER_CONFIGS = []
+    lang_combinations = list(itertools.combinations(_LANGUAGES_TO_FILENAME_LANGUAGE_CODE.keys(), 2))
+    for lang_a, lang_b in lang_combinations:
+        if lang_a not in _LANGUAGES and lang_b not in _LANGUAGES:
+            # Don't create a subset if both languages are not from SEA
+            pass
+        else:
+            BUILDER_CONFIGS.append(
+                SEACrowdConfig(
+                    name=f"{_DATASETNAME}_{lang_a}_{lang_b}_source",
+                    version=_SOURCE_VERSION,
+                    description=f"{_DATASETNAME} source schema",
+                    schema="source",
+                    subset_id=f"{_DATASETNAME}_{lang_a}_{lang_b}_source",
+                )
+            )
+            BUILDER_CONFIGS.append(
+                SEACrowdConfig(
+                    name=f"{_DATASETNAME}_{lang_a}_{lang_b}_seacrowd_t2t",
+                    version=_SOURCE_VERSION,
+                    description=f"{_DATASETNAME} seacrowd schema",
+                    schema="seacrowd_t2t",
+                    subset_id=f"{_DATASETNAME}_{lang_a}_{lang_b}_seacrowd_t2t",
+                )
+            )
 
     def _info(self):
         # The features are the same for both source and seacrowd
@@ -86,68 +104,69 @@ class ParallelAsianTreebank(datasets.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
-        if self.config.data_dir is None:
-            raise ValueError("This is a local dataset. Please pass the data_dir kwarg to load_dataset.")
-        else:
-            data_dir = self.config.data_dir
+
+        def _split_at_n(text: str, n: int) -> Tuple[str, str]:
+            """Split text on the n-th instance"""
+            return ("_".join(text.split("_")[:n]), "_".join(text.split("_")[n:]))
+
+        _, subset = _split_at_n(self.config.subset_id, 3)
+        lang_pair, _ = _split_at_n(subset, 2)
+        lang_a, lang_b = lang_pair.split("_")
+
+        data_dir = Path(dl_manager.download_and_extract(_URLS["data"])) / "ALT-Parallel-Corpus-20191206"
 
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
-                gen_kwargs={"data_dir": data_dir, "split": "train"},
+                gen_kwargs={"data_dir": data_dir, "lang_a": lang_a, "lang_b": lang_b, "split_file": dl_manager.download(_URLS["train"])},
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
-                gen_kwargs={"data_dir": data_dir, "split": "test"},
+                gen_kwargs={"data_dir": data_dir, "lang_a": lang_a, "lang_b": lang_b, "split_file": dl_manager.download(_URLS["test"])},
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
-                gen_kwargs={"data_dir": data_dir, "split": "dev"},
+                gen_kwargs={"data_dir": data_dir, "lang_a": lang_a, "lang_b": lang_b, "split_file": dl_manager.download(_URLS["dev"])},
             ),
         ]
 
-    def _generate_examples(self, data_dir: str, split: str):
+    def _generate_examples(self, data_dir: Path, lang_a: str, lang_b: str, split_file: str):
 
-        if self.config.schema not in ["source", "seacrowd_t2t"]:
-            raise ValueError(f"Invalid config: {self.config.name}")
+        def _get_texts(lang: str) -> pd.DataFrame:
+            with open(data_dir / f"data_{_LANGUAGES_TO_FILENAME_LANGUAGE_CODE[lang]}.txt", "r") as f:
+                rows = [line.strip().split("\t") for line in f.readlines()]
 
-        mapping_data = {}
+            url_id = [row[0].split(".")[1] for row in rows]
+            sent_id = [row[0].split(".")[-1] for row in rows]
+            text = [row[1] for row in rows]
 
-        for language in _LANGUAGES:
-            lines = open(f"{data_dir}/data_{_LANGUAGES_TO_FILENAME_LANGUAGE_CODE[language]}.txt.{split}", "r").readlines()
+            df = pd.DataFrame({"url_id": url_id, "sent_id": sent_id, "text": text})
+            return df
 
-            for line in lines:
-                id, sentence = line.split("\t")
-                sentence = sentence.rsplit()
+        with open(split_file, "r") as f:
+            url_texts = [line.strip() for line in f.readlines()]
+            # Get valid URLs for the split
+            urlids_for_current_split = [row.split("\t")[0].split(".")[1] for row in url_texts]
 
-                if id not in mapping_data:
-                    mapping_data[id] = {}
+        lang_a_df = _get_texts(lang_a)
+        lang_b_df = _get_texts(lang_b)
 
-                mapping_data[id][language] = sentence
+        for idx, urlid in enumerate(urlids_for_current_split):
+            lang_a_df_split = lang_a_df[lang_a_df["url_id"] == urlid]
+            lang_b_df_split = lang_b_df[lang_b_df["url_id"] == urlid]
 
-        combination_languages = list(combinations(_LANGUAGES, 2))
+            if len(lang_a_df_split) == 0 or len(lang_b_df_split) == 0:
+                # Sometimes, not all languages have values for a specific ID
+                pass
+            else:
+                text_a = " ".join(lang_a_df_split["text"].to_list())
+                text_b = " ".join(lang_b_df_split["text"].to_list())
 
-        i = 0
-
-        for id in mapping_data:
-            for each_pair in combination_languages:
-                if each_pair[0] in mapping_data[id] and each_pair[1] in mapping_data[id]:
-                    yield i, {
-                        "id": f"{id}-{each_pair[0]}-{each_pair[1]}",
-                        "text_1": mapping_data[id][each_pair[0]],
-                        "text_2": mapping_data[id][each_pair[1]],
-                        "text_1_name": each_pair[0],
-                        "text_2_name": each_pair[1],
-                    }
-
-                    i += 1
-
-                    yield i, {
-                        "id": f"{id}-{each_pair[1]}-{each_pair[0]}",
-                        "text_1": mapping_data[id][each_pair[1]],
-                        "text_2": mapping_data[id][each_pair[0]],
-                        "text_1_name": each_pair[1],
-                        "text_2_name": each_pair[0],
-                    }
-
-                    i += 1
+                # Same schema for both source and SEACrowd
+                yield idx, {
+                    "id": idx,
+                    "text_1": text_a,
+                    "text_2": text_b,
+                    "text_1_name": lang_a,
+                    "text_2_name": lang_b,
+                }
