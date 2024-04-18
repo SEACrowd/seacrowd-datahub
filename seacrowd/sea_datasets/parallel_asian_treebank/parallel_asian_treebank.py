@@ -75,19 +75,8 @@ class ParallelAsianTreebank(datasets.GeneratorBasedBuilder):
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self):
-        if self.config.schema == "source":
-            features = datasets.Features(
-                {
-                    "id": datasets.Value("string"),
-                    "text_1": datasets.Value("string"),
-                    "text_2": datasets.Value("string"),
-                    "text_1_name": datasets.Value("string"),
-                    "text_2_name": datasets.Value("string"),
-                }
-            )
-        elif self.config.schema == "seacrowd_t2t":
-            features = schemas.text2text_features
-
+        # The features are the same for both source and seacrowd
+        features = schemas.text2text_features
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
             features=features,
