@@ -63,7 +63,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class ParallelAsianTreebank(datasets.GeneratorBasedBuilder):
+class ParallelAsianTreebankDataset(datasets.GeneratorBasedBuilder):
     """The ALT project aims to advance the state-of-the-art Asian natural language processing (NLP) techniques through the open collaboration for developing and using ALT"""
 
     BUILDER_CONFIGS = []
