@@ -117,7 +117,7 @@ class ParallelAsianTreebank(datasets.GeneratorBasedBuilder):
             ),
         ]
 
-    def _generate_examples(self, data_dir, split: str):
+    def _generate_examples(self, data_dir: str, split: str):
 
         if self.config.schema not in ["source", "seacrowd_t2t"]:
             raise ValueError(f"Invalid config: {self.config.name}")
@@ -125,9 +125,9 @@ class ParallelAsianTreebank(datasets.GeneratorBasedBuilder):
         mapping_data = {}
 
         for language in _LANGUAGES:
-            datas = open(f"{data_dir}/data_{_LANGUAGES_TO_FILENAME_LANGUAGE_CODE[language]}.txt.{split}", "r").readlines()
+            lines = open(f"{data_dir}/data_{_LANGUAGES_TO_FILENAME_LANGUAGE_CODE[language]}.txt.{split}", "r").readlines()
 
-            for line in datas:
+            for line in lines:
                 id, sentence = line.split("\t")
                 sentence = sentence.rsplit()
 
