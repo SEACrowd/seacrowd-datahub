@@ -59,6 +59,7 @@ _URLS = {
     },
     "zoom": {"zoom1-10": "https://github.com/vistec-AI/dataset-releases/releases/download/v1/zoom1-10.zip", "zoom11-20": "https://github.com/vistec-AI/dataset-releases/releases/download/v1/zoom11-20.zip"},
 }
+_URLS["studio_zoom"] = {**_URLS["studio"], **_URLS["zoom"]}
 
 _SUPPORTED_TASKS = [Tasks.SPEECH_EMOTION_RECOGNITION]
 
@@ -76,35 +77,35 @@ class ThaiSER(datasets.GeneratorBasedBuilder):
     _LABELS = ["Neutral", "Angry", "Happy", "Sad", "Frustrated"]
 
     BUILDER_CONFIGS = [
-        # zoom
+        # studio
         SEACrowdConfig(
             name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
             description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id=f"{_DATASETNAME}_zoom",
+            subset_id=f"{_DATASETNAME}",
         ),
         SEACrowdConfig(
             name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd schema",
             schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
-            subset_id=f"{_DATASETNAME}_zoom",
+            subset_id=f"{_DATASETNAME}",
         ),
-        # studio
+        # studio and zoom
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_studio_source",
+            name=f"{_DATASETNAME}_include_zoom_source",
             version=SOURCE_VERSION,
             description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id=f"{_DATASETNAME}_studio",
+            subset_id=f"{_DATASETNAME}_include_zoom",
         ),
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_studio_seacrowd_{SEACROWD_SCHEMA_NAME}",
+            name=f"{_DATASETNAME}_include_zoom_seacrowd_{SEACROWD_SCHEMA_NAME}",
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd schema",
             schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
-            subset_id=f"{_DATASETNAME}_studio",
+            subset_id=f"{_DATASETNAME}_include_zoom",
         ),
     ]
 
@@ -156,7 +157,7 @@ class ThaiSER(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
 
-        setting = "studio" if "studio" in self.config.name else "zoom"
+        setting = "studio_zoom" if "zoom" in self.config.name else "studio"
 
         data_paths = {"actor_demography": Path(dl_manager.download_and_extract(_URLS["actor_demography"])), "emotion_label": Path(dl_manager.download_and_extract(_URLS["emotion_label"])), setting: {}}
         for url_name, url_path in _URLS[setting].items():
