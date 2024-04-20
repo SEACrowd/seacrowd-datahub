@@ -14,7 +14,8 @@
 # limitations under the License.
 
 """
-Alorese Corpus is a collection of language data in a couple of Alorese variation (Alor and Pantar Alorese). The collection is available in video, audio, and text formats with genres ranging from Experiment or task, Stimuli, Discourse, and Written materials.
+Alorese Corpus is a collection of language data in a couple of Alorese variation (Alor and Pantar Alorese). The collection is available in video, audio, and text formats with genres
+ranging from Experiment or task, Stimuli, Discourse, and Written materials.
 """
 import xml.etree.ElementTree as ET
 from typing import Dict, List, Tuple
@@ -44,9 +45,10 @@ _CITATION = """\
 
 _DATASETNAME = "alorese"
 _DESCRIPTION = """\
- Alorese Corpus is a collection of language data in a couple of Alorese variation (Alor and Pantar Alorese). The collection is available in video, audio, and text formats with genres ranging from Experiment or task, Stimuli, Discourse, and Written materials.
+ Alorese Corpus is a collection of language data in a couple of Alorese variation (Alor and Pantar Alorese). The collection is available in video, audio, and text formats with genres
+ ranging from Experiment or task, Stimuli, Discourse, and Written materials.
 """
-_HOMEPAGE = "	https://hdl.handle.net/1839/e10d7de5-0a6d-4926-967b-0a8cc6d21fb1"
+_HOMEPAGE = "https://hdl.handle.net/1839/e10d7de5-0a6d-4926-967b-0a8cc6d21fb1"
 _LANGUAGES = ["aol", "ind"]
 _LICENSE = Licenses.UNKNOWN.value
 _LOCAL = False
@@ -60,40 +62,23 @@ _SEACROWD_VERSION = "1.0.0"
 
 
 class AloreseDataset(datasets.GeneratorBasedBuilder):
-    """Alorese Corpus is a collection of language data in a couple of Alorese variation (Alor and Pantar Alorese). The collection is available in video, audio, and text formats with genres ranging from Experiment or task, Stimuli, Discourse, and Written materials."""
+    """Alorese Corpus is a collection of language data in a couple of Alorese variation (Alor and Pantar Alorese). The collection is available in video, audio, and text formats with genres ranging
+    from Experiment or task, Stimuli, Discourse, and Written materials."""
 
-    SUBSETS = ["t2t", "sptext", "sptext_trans"]
-
-    BUILDER_CONFIGS = [
+    BUILDER_CONFIGS = [SEACrowdConfig(name=f"{_DATASETNAME}_source", version=datasets.Version(_SOURCE_VERSION), description=f"{_DATASETNAME} source schema", schema="source", subset_id=f"{_DATASETNAME}",)] + [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_{subset}_source",
-            version=datasets.Version(_SOURCE_VERSION),
-            description=f"{_DATASETNAME} source schema for {subset} subset",
-            schema="source",
-            subset_id=f"{_DATASETNAME}_{subset}",
-        )
-        for subset in SUBSETS
-    ] + [
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_t2t_seacrowd_t2t",
+            name=f"{_DATASETNAME}_seacrowd_t2t",
             version=datasets.Version(_SEACROWD_VERSION),
-            description=f"{_DATASETNAME} SEACrowd schema for t2t subset",
+            description=f"{_DATASETNAME} SEACrowd for text2text schema",
             schema="seacrowd_t2t",
-            subset_id=f"{_DATASETNAME}_t2t",
+            subset_id=f"{_DATASETNAME}",
         ),
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_sptext_seacrowd_sptext",
+            name=f"{_DATASETNAME}_seacrowd_sptext",
             version=datasets.Version(_SEACROWD_VERSION),
-            description=f"{_DATASETNAME} SEACrowd schema for sptext subset",
+            description=f"{_DATASETNAME} SEACrowd for sptext schema",
             schema="seacrowd_sptext",
-            subset_id=f"{_DATASETNAME}_sptext",
-        ),
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_sptext_trans_seacrowd_sptext",
-            version=datasets.Version(_SEACROWD_VERSION),
-            description=f"{_DATASETNAME} SEACrowd schema for sptext_trans subset",
-            schema="seacrowd_sptext",
-            subset_id=f"{_DATASETNAME}_sptext_trans",
+            subset_id=f"{_DATASETNAME}",
         ),
     ]
 
@@ -115,12 +100,12 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
                 }
             )
 
-        elif "seacrowd_sptext" in self.config.schema:
+        elif self.config.schema == "seacrowd_sptext":
             features = schemas.speech_text_features
 
         elif self.config.schema == "seacrowd_t2t":
             features = schemas.text2text_features
-        
+
         else:
             raise ValueError(f"Invalid config schema: {self.config.schema}")
 
@@ -133,14 +118,12 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
-        if self.config.schema == "source":
-            paths = dl_manager.download(_URLS)
+
+        if self.config.schema == "seacrowd_t2t":
+            filepath = {k: v["text_path"] for k, v in _URLS.items()}
+            paths = dl_manager.download(filepath)
         else:
-            if "t2t" in self.config.subset_id:
-                filepath = {k: v["text_path"] for k, v in _URLS.items()}
-                paths = dl_manager.download(filepath)
-            else:
-                paths = dl_manager.download(_URLS)
+            paths = dl_manager.download(_URLS)
 
         return [
             datasets.SplitGenerator(
@@ -168,34 +151,23 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
                     "end_time": row["end_time"],
                 }
 
-        elif "seacrowd" in self.config.schema:
-            if "t2t" in self.config.subset_id:
-                caption_df = self._merge_text_dfs(filepath)
+        elif self.config.schema == "seacrowd_t2t":
+            caption_df = self._merge_text_dfs(filepath)
 
-                for k, row in caption_df.iterrows():
-                    yield k, {
-                        "id": k + 1,
-                        "text_1": row["annotation_aol"],
-                        "text_2": row["annotation_ind"],
-                        "text_1_name": _LANGUAGES[0],
-                        "text_2_name": _LANGUAGES[1],
-                    }
-            elif "sptext" in self.config.subset_id:
-                annot_lang = "annotation_aol" if self.config.subset_id.split("_")[-1] == "sptext" else "annotation_ind"
-                sptext_df = self._get_sptext_df(filepath)
+            for k, row in caption_df.iterrows():
+                yield k, {
+                    "id": k + 1,
+                    "text_1": row["annotation_aol"],
+                    "text_2": row["annotation_ind"],
+                    "text_1_name": _LANGUAGES[0],
+                    "text_2_name": _LANGUAGES[1],
+                }
 
-                for k, row in sptext_df.iterrows():
-                    yield k, {
-                        "id": k + 1, 
-                        "path": row["audio_path"], 
-                        "audio": row["audio_path"], 
-                        "text": row[annot_lang], 
-                        "speaker_id": row["speaker_id"], 
-                        "metadata": {
-                            "speaker_age": None, 
-                            "speaker_gender": None
-                        }
-                    }
+        elif self.config.schema == "seacrowd_sptext":
+            sptext_df = self._get_sptext_df(filepath)
+
+            for k, row in sptext_df.iterrows():
+                yield k, {"id": k + 1, "path": row["audio_path"], "audio": row["audio_path"], "text": row["annotation_aol"], "speaker_id": row["speaker_id"], "metadata": {"speaker_age": None, "speaker_gender": None}}
 
     def _get_time_df(self, xml_tree) -> pd.DataFrame:
         time_slot_values = [(time_slot.attrib["TIME_SLOT_ID"], int(time_slot.attrib["TIME_VALUE"])) for time_slot in xml_tree.iter(tag="TIME_SLOT")]
@@ -263,7 +235,7 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
     def _get_source_df(self, complete_dict) -> pd.DataFrame:
         xml_dict = {k: v["text_path"] for k, v in complete_dict.items()}
 
-        audio_df = pd.DataFrame({"media_id": [k for k in complete_dict.keys()],"speaker_id": [k.split("_")[-1] for k in complete_dict.keys()], "audio_path": [v["audio_path"] for v in complete_dict.values()]})
+        audio_df = pd.DataFrame({"media_id": [k for k in complete_dict.keys()], "speaker_id": [k.split("_")[-1] for k in complete_dict.keys()], "audio_path": [v["audio_path"] for v in complete_dict.values()]})
         text_df = self._merge_text_dfs(xml_dict)
 
         df = text_df.merge(audio_df, on="media_id", how="inner")
