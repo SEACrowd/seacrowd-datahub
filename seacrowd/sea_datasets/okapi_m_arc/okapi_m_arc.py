@@ -1,7 +1,3 @@
-"""This file is a modified version of the file by Natural Language Processing Group at the University of Oregon.
-Authors: Chien Nguyen et al. 2023
-"""
-
 import json
 import os
 from pathlib import Path
@@ -34,7 +30,10 @@ _CITATION = """\
 _DATASETNAME = "okapi_m_arc"
 
 _DESCRIPTION = """\
-mARC is a Multilingual translation of AI2's Arc Challenge from the paper "Okapi: Instruction-tuned Large Language Models in Multiple Languages with Reinforcement Learning from Human Feedback" (Lai et al., 2023). The original ARC dataset is a multiple-choice question answering dataset of 7,787 genuine grade-school level science questions assembled to encourage research in advanced question-answering. The dataset is partitioned into a Challenge Set and an Easy Set, where the former contains only questions answered incorrectly by both a retrieval-based algorithm and a word co-occurrence algorithm. We also include a corpus of over 14 million science sentences relevant to the task and an implementation of three neural baseline models for this dataset. We pose ARC as a challenge to the community.
+mARC is a Multilingual translation of AI2's Arc Challenge from the paper "Okapi: Instruction-tuned Large Language Models in Multiple Languages with Reinforcement Learning from Human Feedback" (Lai et al., 2023). 
+The original ARC dataset is a multiple-choice question answering dataset of 7,787 genuine grade-school level science questions assembled to encourage research in advanced question-answering. 
+The dataset is partitioned into a Challenge Set and an Easy Set, where the former contains only questions answered incorrectly by both a retrieval-based algorithm and a word co-occurrence algorithm. 
+We also include a corpus of over 14 million science sentences relevant to the task and an implementation of three neural baseline models for this dataset. We pose ARC as a challenge to the community.
 """
 
 
@@ -122,6 +121,7 @@ class MultilingualArc(datasets.GeneratorBasedBuilder):
         train_path = Path(dl_manager.download_and_extract(f"{_URLS['base_url']}/data/{_LANG_MAP[lang]}_train.json"))
         valid_path = Path(dl_manager.download_and_extract(f"{_URLS['base_url']}/data/{_LANG_MAP[lang]}_validation.json"))
         test_path = Path(dl_manager.download_and_extract(f"{_URLS['base_url']}/data/{_LANG_MAP[lang]}_test.json"))
+
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
