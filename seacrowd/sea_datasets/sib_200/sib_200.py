@@ -47,6 +47,31 @@ The train/validation/test sets are available for all the 205 languages.
 _HOMEPAGE = "https://github.com/dadelani/sib-200"
 
 _LANGUAGES = [
+    "ace",
+    "ban",
+    "bjn",
+    "bug",
+    "ceb",
+    "ilo",
+    "ind",
+    "jav",
+    "kac",
+    "khm",
+    "lao",
+    "lus",
+    "min",
+    "mya",
+    "pag",
+    "shn",
+    "sun",
+    "tgl",
+    "tha",
+    "vie",
+    "war",
+    "zsm",
+]
+
+_SUPPORTED_LANGUAGE_CODES = [
     "ace_Arab",
     "ace_Latn",
     "ban_Latn",
@@ -81,7 +106,7 @@ _LOCAL = False
 # This can be an arbitrarily nested dict/list of URLs (see below in `_split_generators` method)
 _URL = "https://huggingface.co/datasets/Davlan/sib200"
 
-_SUPPORTED_TASKS = [Tasks.DOMAIN_KNOWLEDGE_CLASSIFICATION]
+_SUPPORTED_TASKS = [Tasks.TOPIC_MODELING]
 
 _SOURCE_VERSION = "1.0.0"
 
@@ -110,7 +135,7 @@ class Sib200Dataset(datasets.GeneratorBasedBuilder):
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
     def _populate_configs():
-        configs = [_sib_config_constructor(lang, schema="source", version=_SOURCE_VERSION) for lang in _LANGUAGES] + [_sib_config_constructor(lang, schema=_SEACROWD_SCHEMA, version=_SEACROWD_VERSION) for lang in _LANGUAGES]
+        configs = [_sib_config_constructor(lang, schema="source", version=_SOURCE_VERSION) for lang in _SUPPORTED_LANGUAGE_CODES] + [_sib_config_constructor(lang, schema=_SEACROWD_SCHEMA, version=_SEACROWD_VERSION) for lang in _SUPPORTED_LANGUAGE_CODES]
 
         all_lang_source_config = SEACrowdConfig(
             name=f"{_DATASETNAME}_source",
@@ -180,23 +205,23 @@ class Sib200Dataset(datasets.GeneratorBasedBuilder):
         lr_sum_datasets = []
 
         lang = self.config.subset_id.split(" ")[-1]
-        if lang in _LANGUAGES:
+        if lang in _SUPPORTED_LANGUAGE_CODES:
             lr_sum_datasets.append(self._load_hf_data_from_remote(lang, split))
         elif lang == "SEA":
-            for lang in _LANGUAGES:
+            for lang in _SUPPORTED_LANGUAGE_CODES:
                 lr_sum_datasets.append(self._load_hf_data_from_remote(lang, split))
         else:
             raise ValueError(f"Language {lang} not a SEA language in the dataset")
 
         index = 0
-        for lang_subset in lr_sum_datasets:
+        for lang_subset, lang_code in zip(lr_sum_datasets, _SUPPORTED_LANGUAGE_CODES):
             for row in lang_subset:
                 if self.config.schema == "source":
                     example = row
 
                 elif self.config.schema == "seacrowd_text":
                     example = {
-                        "id": row["index_id"],
+                        "id": f'{lang_code}_{row["index_id"]}',
                         "text": row["text"],
                         "label": row["category"],
                     }
