@@ -202,19 +202,21 @@ class Sib200Dataset(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
-        lr_sum_datasets = []
+        lr_sum_datasets, lang_codes = [], []
 
         lang = self.config.subset_id.split(" ")[-1]
         if lang in _SUPPORTED_LANGUAGE_CODES:
             lr_sum_datasets.append(self._load_hf_data_from_remote(lang, split))
+            lang_codes.append(lang)
         elif lang == "SEA":
             for lang in _SUPPORTED_LANGUAGE_CODES:
                 lr_sum_datasets.append(self._load_hf_data_from_remote(lang, split))
+                lang_codes.append(lang)
         else:
             raise ValueError(f"Language {lang} not a SEA language in the dataset")
 
         index = 0
-        for lang_subset, lang_code in zip(lr_sum_datasets, _SUPPORTED_LANGUAGE_CODES):
+        for lang_subset, lang_code in zip(lr_sum_datasets, lang_codes):
             for row in lang_subset:
                 if self.config.schema == "source":
                     example = row
