@@ -73,14 +73,14 @@ class MultilingualArc(datasets.GeneratorBasedBuilder):
             SEACrowdConfig(
                 name="okapi_m_arc_vie_seacrowd_qa",
                 version=datasets.Version(_SEACROWD_VERSION),
-                description="Vietnamese SEACrowd question answering schema",
+                description="Vietnamese mARC SEACrowd question answering schema",
                 schema="seacrowd_qa",
                 subset_id="okapi_m_arc_vie_seacrowd_qa",
             ),
             SEACrowdConfig(
                 name="okapi_m_arc_ind_seacrowd_qa",
                 version=datasets.Version(_SEACROWD_VERSION),
-                description="Indonesian SEACrowd question answering schema",
+                description="Indonesian mARC SEACrowd question answering schema",
                 schema="seacrowd_qa",
                 subset_id="okapi_m_arc_ind_seacrowd_qa",
             )
