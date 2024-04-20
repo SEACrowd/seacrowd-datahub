@@ -237,7 +237,6 @@ class CCMatrixDataset(datasets.GeneratorBasedBuilder):
             if self.config.schema == "source":
                 with open(l1_path, encoding="utf-8") as f1, open(l2_path, encoding="utf-8") as f2, open(scores_path, encoding="utf-8") as f3:
                     for i, (x, y, score) in enumerate(zip(f1, f2, f3)):
-                        print(x,y,score)
                         yield i, {
                             "id": i,
                             "score": score,
@@ -248,7 +247,6 @@ class CCMatrixDataset(datasets.GeneratorBasedBuilder):
                         }
 
             elif self.config.schema == "seacrowd_t2t":
-                print("CP 4")
                 with open(l1_path, encoding="utf-8") as f1, open(l2_path, encoding="utf-8") as f2:
                     for i, (x, y) in enumerate(zip(f1, f2)):
                         yield i, {
