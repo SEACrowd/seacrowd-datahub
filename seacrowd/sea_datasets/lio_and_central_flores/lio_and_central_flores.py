@@ -45,7 +45,7 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 
-class LioAndCentralFlores(datasets.GeneratorBasedBuilder):
+class LioAndCentralFloresDataset(datasets.GeneratorBasedBuilder):
     """This dataset is a collection of language resources of Li'o, Ende, Nage, and So'a"""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
@@ -56,13 +56,18 @@ class LioAndCentralFlores(datasets.GeneratorBasedBuilder):
     BUILDER_CONFIGS = []
     for name in dataset_names:
         if name.split("_")[4] == "nxe":
+            # We only use source schema here for nage ("nxe") because nage dataset only contain wordlist
+            # For "nxe" , include a separate configuration to handle word lists. It will be return nage only word list
             source_config = SEACrowdConfig(name=f"{name}_wordlist_source", version=SOURCE_VERSION, description=f"{_DATASETNAME} source schema", schema="source", subset_id=name)
             BUILDER_CONFIGS.append(source_config)
-            source_config = SEACrowdConfig(name=f"{_DATASETNAME}_nxe_eng_wordlist_source", version=SOURCE_VERSION, description=f"{_DATASETNAME} source schema", schema="source", subset_id=name)
+            # Additionally, include a configuration for English word lists in "nxe" datasets. It will be return eng only word corresponding to nage wordlist
+            source_config = SEACrowdConfig(name=f"{name}_eng_wordlist_source", version=SOURCE_VERSION, description=f"{_DATASETNAME} source schema", schema="source", subset_id=name)
             BUILDER_CONFIGS.append(source_config)
         else:
+            # For other languages, except "nxe", use a standard source schema configuration
             source_config = SEACrowdConfig(name=f"{name}_source", version=SOURCE_VERSION, description=f"{_DATASETNAME} source schema", schema="source", subset_id=name)
             BUILDER_CONFIGS.append(source_config)
+            # Additionally, include a SEACrowd schema configuration for other languages
             seacrowd_config = SEACrowdConfig(name=f"{name}_seacrowd_{SEACROWD_SCHEMA_NAME}", version=SEACROWD_VERSION, description=f"{_DATASETNAME} SEACrowd schema", schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}", subset_id=name)
             BUILDER_CONFIGS.append(seacrowd_config)
 
@@ -75,7 +80,8 @@ class LioAndCentralFlores(datasets.GeneratorBasedBuilder):
             else:
                 features = datasets.Features({"source_sentence": datasets.Value("string"), "target_sentence": datasets.Value("string"), "source_lang": datasets.Value("string"), "target_lang": datasets.Value("string")})
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
-            features = schemas.text2text_features
+            if self.config.name.split("_")[4] != "nxe":
+                features = schemas.text2text_features
         else:
             raise ValueError("Invalid config schema")
 
@@ -103,7 +109,8 @@ class LioAndCentralFlores(datasets.GeneratorBasedBuilder):
         """Yields examples as (key, example) tuples."""
 
         if language == "nxe" and self.config.schema == "source":
-            if "_".join(self.config.name.split("_")[4:6]) == "nxe_eng":
+            schema_type = "_".join(self.config.name.split("_")[4:6])
+            if schema_type == "nxe_eng":
                 words, _ = self._get_word_(filepath)
             else:
                 _, words = self._get_word_(filepath)
@@ -114,19 +121,22 @@ class LioAndCentralFlores(datasets.GeneratorBasedBuilder):
                     yield idx, row
 
         else:
-            source_data, target_data = self._get_sentence_(filepath)
-            for idx, (source, target) in enumerate(zip(source_data, target_data)):
-                if self.config.schema == "source":
-                    example = {"source_sentence": source, "target_sentence": target, "source_lang": "eng", "target_lang": language}
-                elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
-                    example = {
-                        "id": str(idx),
-                        "text_1": source,
-                        "text_2": target,
-                        "text_1_name": "eng",
-                        "text_2_name": language,
-                    }
-                yield idx, example
+            if language != "nxe":
+                source_data, target_data = self._get_sentence_(filepath)
+                for idx, (source, target) in enumerate(zip(source_data, target_data)):
+                    if self.config.schema == "source":
+                        example = {"source_sentence": source, "target_sentence": target, "source_lang": "eng", "target_lang": language}
+                    elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
+                        example = {
+                            "id": str(idx),
+                            "text_1": source,
+                            "text_2": target,
+                            "text_1_name": "eng",
+                            "text_2_name": language,
+                        }
+                    yield idx, example
+            else:
+                raise ValueError("Not found 'nxe sentences")
 
     def _get_sentence_(self, path_dict) -> Tuple[List, List]:
         source_data = []
