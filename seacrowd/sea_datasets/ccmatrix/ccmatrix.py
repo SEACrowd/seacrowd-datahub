@@ -229,6 +229,7 @@ class CCMatrixDataset(datasets.GeneratorBasedBuilder):
 
             lang_pair = self._map_lang_pair_iso(self.config.subset_id.split("_")[-1])
             lang1, lang2 = lang_pair.split("-")
+            lang1_name, lang2_name = self.config.subset_id.split("_")[-1].split('-')
 
             l1_path = os.path.join(filepath, _FILE.format(lang_pair, lang1))
             l2_path = os.path.join(filepath, _FILE.format(lang_pair, lang2))
@@ -253,8 +254,8 @@ class CCMatrixDataset(datasets.GeneratorBasedBuilder):
                             "id": str(i),
                             "text_1": x.strip(),
                             "text_2": y.strip(),
-                            "text_1_name": lang1,
-                            "text_2_name": lang2,
+                            "text_1_name": lang1_name,
+                            "text_2_name": lang2_name,
                         },
 
         elif len(self.config.subset_id.split("_")) == 3:  # SSP Task
