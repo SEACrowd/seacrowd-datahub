@@ -18,9 +18,12 @@ SIB-200 is the largest publicly available topic classification dataset based on 
 The train/validation/test sets are available for all the 205 languages.
 """
 
+import os
+from pathlib import Path
 from typing import List, Tuple, Dict
 
 import datasets
+import pandas as pd
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
@@ -104,7 +107,9 @@ _LICENSE = Licenses.CC_BY_SA_4_0.value
 _LOCAL = False
 
 # This can be an arbitrarily nested dict/list of URLs (see below in `_split_generators` method)
-_URL = "https://huggingface.co/datasets/Davlan/sib200"
+_URLS = {
+    "base_url": "https://huggingface.co/datasets/Davlan/sib200/raw/main/data"
+}
 
 _SUPPORTED_TASKS = [Tasks.TOPIC_MODELING]
 
@@ -186,46 +191,54 @@ class Sib200Dataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
         # dl_manager not used since dataloader uses HF 'load_dataset'
-        return [
-            datasets.SplitGenerator(name=split, gen_kwargs={"split": split._name})
-            for split in (
-                datasets.Split.TRAIN,
-                datasets.Split.VALIDATION,
-                datasets.Split.TEST,
-            )
-        ]
-
-    def _load_hf_data_from_remote(self, lang: str, split: str) -> datasets.DatasetDict:
-        """Load dataset from HuggingFace."""
-        hf_remote_ref = "/".join(_URL.split("/")[-2:])
-        return datasets.load_dataset(hf_remote_ref, lang, split=split)
-
-    def _generate_examples(self, split: str) -> Tuple[int, Dict]:
-        """Yields examples as (key, example) tuples."""
-        lr_sum_datasets, lang_codes = [], []
-
         lang = self.config.subset_id.split(" ")[-1]
         if lang in _SUPPORTED_LANGUAGE_CODES:
-            lr_sum_datasets.append(self._load_hf_data_from_remote(lang, split))
-            lang_codes.append(lang)
+            train_paths = [Path(dl_manager.download_and_extract(f"{_URLS['base_url']}/{lang}/train.tsv"))]
+            valid_paths = [Path(dl_manager.download_and_extract(f"{_URLS['base_url']}/{lang}/dev.tsv"))]
+            test_paths = [Path(dl_manager.download_and_extract(f"{_URLS['base_url']}/{lang}/test.tsv"))]
+            lang_codes = [lang]
         elif lang == "SEA":
-            for lang in _SUPPORTED_LANGUAGE_CODES:
-                lr_sum_datasets.append(self._load_hf_data_from_remote(lang, split))
+            train_paths, valid_paths, test_paths, lang_codes = [], [], [], []
+            for lang in _SUPPORTED_LANGUAGE_CODES:                
+                train_paths.append(Path(dl_manager.download_and_extract(f"{_URLS['base_url']}/{lang}/train.tsv")))
+                valid_paths.append(Path(dl_manager.download_and_extract(f"{_URLS['base_url']}/{lang}/dev.tsv")))
+                test_paths.append(Path(dl_manager.download_and_extract(f"{_URLS['base_url']}/{lang}/test.tsv")))
                 lang_codes.append(lang)
         else:
             raise ValueError(f"Language {lang} not a SEA language in the dataset")
+        return [
+            datasets.SplitGenerator(
+                name=datasets.Split.TRAIN, 
+                gen_kwargs={"file_paths": train_paths, "lang_codes": lang_codes}
+            ),
+            datasets.SplitGenerator(
+                name=datasets.Split.VALIDATION, 
+                gen_kwargs={"file_paths": valid_paths, "lang_codes": lang_codes}
+            ),
+            datasets.SplitGenerator(
+                name=datasets.Split.TEST, 
+                gen_kwargs={"file_paths": test_paths, "lang_codes": lang_codes}
+            )
+        ]
 
+    def _generate_examples(self, file_paths: List[str], lang_codes: List[str]) -> Tuple[int, Dict]:
+        """Yields examples as (key, example) tuples."""
         index = 0
-        for lang_subset, lang_code in zip(lr_sum_datasets, lang_codes):
-            for row in lang_subset:
+        for file_path, lang_code in zip(file_paths, lang_codes):
+            lang_df = pd.read_csv(file_path, sep='\t')
+            for row in lang_df.itertuples():
                 if self.config.schema == "source":
-                    example = row
+                    example = {
+                        "index_id": row.index_id,
+                        "text": row.text,
+                        "category": row.category,
+                    }
 
                 elif self.config.schema == "seacrowd_text":
                     example = {
-                        "id": f'{lang_code}_{row["index_id"]}',
-                        "text": row["text"],
-                        "label": row["category"],
+                        "id": f'{lang_code}_{row.index_id}',
+                        "text": row.text,
+                        "label": row.category,
                     }
                 yield index, example
                 index += 1
