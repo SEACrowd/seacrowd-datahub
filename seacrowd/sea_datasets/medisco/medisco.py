@@ -131,8 +131,9 @@ class Medisco(datasets.GeneratorBasedBuilder):
             for audio_id in os.listdir(speaker_path):
                 audio_idx = int(audio_id.split('.', 1)[0]) - 1 # get 0-based index
                 audio_path = os.path.join(speaker_path, audio_id)
+                key = '{}_{}_{}'.format(split, speaker_id, audio_idx)
                 example = {
-                    "id": audio_id,
+                    "id": key,
                     "speaker_id": speaker_id,
                     "path": audio_path,
                     "audio": audio_path,
@@ -144,5 +145,4 @@ class Medisco(datasets.GeneratorBasedBuilder):
                         "speaker_gender": gender,
                         "speaker_age": None,
                     }
-                key = '{}_{}_{}'.format(split, speaker_id, audio_id)
                 yield key, example
