@@ -44,6 +44,7 @@ _DATASETNAME = "lti_langid_corpus"
 _DESCRIPTION = """\
 The LTI LangID corpus is a dataset for language identification.
 The most recent version, v5, contains training data for 1266 languages, and some (possibly very tiny) amount of text for a total of 1706 languages.
+This dataloader can only be executed in a BASH environment at the moment. (See https://github.com/SEACrowd/seacrowd-datahub/pull/405)
 """
 
 _HOMEPAGE = "https://www.cs.cmu.edu/~ralf/langid.html"
@@ -178,7 +179,6 @@ _LOCAL = False
 
 _URL = "http://sourceforge.net/projects/la-strings/files/Language-Data/LTI-LangID-rel5.txz/download"
 
-# TODO: add supported task by dataset. One dataset may support multiple tasks
 _SUPPORTED_TASKS = [Tasks.LANGUAGE_IDENTIFICATION]
 
 _SOURCE_VERSION = "5.0.0"
@@ -239,23 +239,25 @@ class LTILangIDDataset(datasets.GeneratorBasedBuilder):
         dev_filepaths = []
         test_filepaths = []
 
+        dataset_dir = os.path.join(data_dir, "dataset")
+
         for lang_id in _LANGUAGES:
             train_filepaths.append(
                 (
                     lang_id,
-                    glob(os.path.join(data_dir, "dataset", "train", f"{lang_id}*")),
+                    glob(os.path.join(dataset_dir, "train", f"{lang_id}*")),
                 )
             )
             dev_filepaths.append(
                 (
                     lang_id,
-                    glob(os.path.join(data_dir, "dataset", "devtest", f"{lang_id}*")),
+                    glob(os.path.join(dataset_dir, "devtest", f"{lang_id}*")),
                 )
             )
             test_filepaths.append(
                 (
                     lang_id,
-                    glob(os.path.join(data_dir, "dataset", "test", f"{lang_id}*")),
+                    glob(os.path.join(dataset_dir, "test", f"{lang_id}*")),
                 )
             )
 
@@ -291,7 +293,8 @@ class LTILangIDDataset(datasets.GeneratorBasedBuilder):
                 for filepath in filepaths:
                     try:
                         for line in open(filepath):
-                            yield key, {"text": line.strip(), "language": lang_id}
+                            text = line.strip().replace("\u200d", " ").replace("\u200b", " ")
+                            yield key, {"text": text, "language": lang_id}
                             key += 1
                     except UnicodeDecodeError:
                         continue
@@ -302,7 +305,8 @@ class LTILangIDDataset(datasets.GeneratorBasedBuilder):
                 for filepath in filepaths:
                     try:
                         for line in open(filepath):
-                            yield key, {"id": key, "text": line.strip(), "label": lang_id}
+                            text = line.strip().replace("\u200d", " ").replace("\u200b", " ")
+                            yield key, {"id": f"{filepath.split('/')[-1]}_{key}", "text": text, "label": lang_id}
                             key += 1
                     except UnicodeDecodeError:
                         continue
