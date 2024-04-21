@@ -115,19 +115,6 @@ class VintextDataset(datasets.GeneratorBasedBuilder):
 
         elif self.config.schema == "seacrowd_imtext":
             features = schemas.image_text_features()
-            features["metadata"]["meta"]["annotations"] = datasets.Sequence(
-                {
-                    "x1": datasets.Value("int32"),
-                    "y1": datasets.Value("int32"),
-                    "x2": datasets.Value("int32"),
-                    "y2": datasets.Value("int32"),
-                    "x3": datasets.Value("int32"),
-                    "y3": datasets.Value("int32"),
-                    "x4": datasets.Value("int32"),
-                    "y4": datasets.Value("int32"),
-                    "transcript": datasets.Value("string"),
-                }
-            )
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -209,21 +196,19 @@ class VintextDataset(datasets.GeneratorBasedBuilder):
                     "metadata": {
                         "context": "",
                         "labels": [],
-                        "meta": {
-                            "annotations": [
-                                {
-                                    "x1": label[0],
-                                    "y1": label[1],
-                                    "x2": label[2],
-                                    "y2": label[3],
-                                    "x3": label[4],
-                                    "y3": label[5],
-                                    "x4": label[6],
-                                    "y4": label[7],
-                                    "transcript": label[8],
-                                }
-                                for label in labels
-                            ]
-                        },
+                        "annotations": [
+                            {
+                                "x1": label[0],
+                                "y1": label[1],
+                                "x2": label[2],
+                                "y2": label[3],
+                                "x3": label[4],
+                                "y3": label[5],
+                                "x4": label[6],
+                                "y4": label[7],
+                                "transcript": label[8],
+                            }
+                            for label in labels
+                        ],
                     },
                 }
