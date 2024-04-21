@@ -239,7 +239,7 @@ class LTILangIDDataset(datasets.GeneratorBasedBuilder):
         dev_filepaths = []
         test_filepaths = []
 
-        dataset_dir = os.path.join(data_dir, "dataset")
+        dataset_dir = os.path.join(data_dir, "datasplits")
 
         for lang_id in _LANGUAGES:
             train_filepaths.append(
