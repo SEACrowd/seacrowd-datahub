@@ -68,42 +68,39 @@ class ChatGPTMalaysianOpenQADataset(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_{subset}_source",
+            name=f"{_DATASETNAME}_source",
             version=datasets.Version(_SOURCE_VERSION),
-            description=f"{_DATASETNAME}_{subset} source schema",
+            description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id=f"{_DATASETNAME}_{subset}",
-        )
-        for subset in _URLS.keys()
-    ] + [
+            subset_id=f"{_DATASETNAME}",
+        ),
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_{subset}_seacrowd_qa",
+            name=f"{_DATASETNAME}_seacrowd_qa",
             version=datasets.Version(_SEACROWD_VERSION),
-            description=f"{_DATASETNAME}_{subset} SEACrowd schema",
+            description=f"{_DATASETNAME} SEACrowd schema",
             schema="seacrowd_qa",
-            subset_id=f"{_DATASETNAME}_{subset}",
-        )
-        for subset in _URLS.keys()
+            subset_id=f"{_DATASETNAME}",
+        ),
     ]
 
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
+
     def _info(self) -> datasets.DatasetInfo:
-        if self.config.schema == "source" and "wikipedia_qa" not in self.config.subset_id:
-            features = datasets.Features(
-                {
-                    "paragraph": datasets.Value("string"),
-                    "qa": datasets.Value("string"),
-                }
-            )
-        elif self.config.schema == "source" and "wikipedia_qa" in self.config.subset_id:
+        if self.config.schema == "source":
             features = datasets.Features(
                 {
                     "paragraph": datasets.Value("string"),
                     "qa": datasets.Value("string"),
                     "url": datasets.Value("string"),
+                    "source": datasets.Value("string"),
                 }
             )
         elif self.config.schema == "seacrowd_qa":
             features = schemas.qa_features
+            features["meta"] = {
+                "url": datasets.Value("string"),
+                "source": datasets.Value("string"),
+            }
         else:
             raise ValueError(f"Invalid schema: '{self.config.schema}'")
 
@@ -119,50 +116,52 @@ class ChatGPTMalaysianOpenQADataset(datasets.GeneratorBasedBuilder):
         """
         Returns SplitGenerators.
         """
-        start = len(_DATASETNAME) + 1
-        url = _URLS[self.config.subset_id[start:]]
-        path = dl_manager.download_and_extract(url)
+        paths = dl_manager.download_and_extract(_URLS)
 
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
-                    "filepath": path,
+                    "filepaths": paths,
                     "split": "train",
                 },
             )
         ]
 
-    def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepaths: Path, split: str) -> Tuple[int, Dict]:
         """
         Yields examples as (key, example) tuples.
         """
 
         idx = 0
-        with open(filepath, "r") as f:
-            data = list(map(json.loads, f))
-            if self.config.schema == "source":
-                for d in data:
-                    x = {k: v if v != "" and k in self.info.features else None for k, v in d.items()}
-                    if "wikipedia_qa" in self.config.subset_id:
-                        x["url"] = d["url"]
-                    yield idx, x
-                    idx += 1
-            elif self.config.schema == "seacrowd_qa":
-                for d in data:
-                    for q in d["qa"]["qa"]:
-                        x = {
-                            "id": idx,
-                            "question_id": idx,
-                            "document_id": idx,
-                            "question": q["question"],
-                            "type": "extractive",
-                            "choices": [],
-                            "context": d["paragraph"],
-                            "answer": [q["answer"]],
-                            "meta": {},
-                        }
+        for name, file in filepaths.items():
+            with open(file, "r") as f:
+                data = list(map(json.loads, f))
+                if self.config.schema == "source":
+                    for d in data:
+                        x = {k: v if v != "" and k in self.info.features else None for k, v in d.items()}
+                        x["url"] = d.get("url", None)
+                        x["source"] = name
                         yield idx, x
                         idx += 1
-            else:
-                raise ValueError(f"Invalid schema: '{self.config.schema}'")
+                elif self.config.schema == "seacrowd_qa":
+                    for d in data:
+                        for q in d["qa"]["qa"]:
+                            x = {
+                                "id": idx,
+                                "question_id": idx,
+                                "document_id": idx,
+                                "question": q["question"],
+                                "type": "extractive",
+                                "choices": [],
+                                "context": d["paragraph"],
+                                "answer": [q["answer"]],
+                                "meta": {
+                                    "url": d.get("url", None),
+                                    "source": name,
+                                },
+                            }
+                            yield idx, x
+                            idx += 1
+                else:
+                    raise ValueError(f"Invalid schema: '{self.config.schema}'")
