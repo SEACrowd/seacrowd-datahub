@@ -138,7 +138,13 @@ class ParallelAsianTreebankDataset(datasets.GeneratorBasedBuilder):
 
             url_id = [row[0].split(".")[1] for row in rows]
             sent_id = [row[0].split(".")[-1] for row in rows]
-            text = [row[1] for row in rows]
+            text = []
+            for row in rows:
+                # There are rows with an empty text, but they are still tagged with an ID
+                # so we keep them and just pass an empty string.
+                sent = row[1] if len(row) > 1 else ""
+                text.append(sent)
+
 
             df = pd.DataFrame({"url_id": url_id, "sent_id": sent_id, "text": text})
             return df
