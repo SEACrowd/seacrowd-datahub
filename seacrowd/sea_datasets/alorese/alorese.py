@@ -65,7 +65,14 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
     """Alorese Corpus is a collection of language data in a couple of Alorese variation (Alor and Pantar Alorese). The collection is available in video, audio, and text formats with genres ranging
     from Experiment or task, Stimuli, Discourse, and Written materials."""
 
-    BUILDER_CONFIGS = [SEACrowdConfig(name=f"{_DATASETNAME}_source", version=datasets.Version(_SOURCE_VERSION), description=f"{_DATASETNAME} source schema", schema="source", subset_id=f"{_DATASETNAME}",)] + [
+    BUILDER_CONFIGS = [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_source",
+            version=datasets.Version(_SOURCE_VERSION),
+            description=f"{_DATASETNAME} source schema",
+            schema="source", 
+            subset_id=f"{_DATASETNAME}"
+        ),
         SEACrowdConfig(
             name=f"{_DATASETNAME}_seacrowd_t2t",
             version=datasets.Version(_SEACROWD_VERSION),
