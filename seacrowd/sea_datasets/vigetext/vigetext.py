@@ -147,4 +147,5 @@ class VigetextDataset(datasets.GeneratorBasedBuilder):
                     "choices": [opt[2:].strip() for opt in question_and_options[1:]],  # remove A., B., ... in the options
                     "context": "",
                     "answer": [answer_map[item["target"]]],
+                    "meta": {}
                 }
