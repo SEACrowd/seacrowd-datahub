@@ -1,6 +1,6 @@
 if [[ "$1" == "" ]]; then
     echo "Error: Missing the dataset name"
-    echo "./test_example_source_only.sh <dataset name> <number of cross fold (optional)>"
+    echo "./test_example_source_only.sh <dataset name> --<flag (optional)> <content of flag>"
     exit
 fi
 

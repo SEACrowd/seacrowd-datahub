@@ -55,35 +55,47 @@ Check the following before approving:
 
 # Dataloader Reviewer SOP
 
-The objective of datasheet review is to ensure that all dataloaders in SEACrowd has correctness to the HF Dataloader Structure & SEACrowd defined schema and config and follow similar code format and/or style.
+The objective of datasheet review is to ensure that all dataloaders in SEACrowd conform to the HF Dataloader Structure and SEACrowd-defined schema and config and follow a similar code format and/or style.
 
 ### Dataloader Check
 1. Metadata correctness. (ensure Tasks, Languages, HOME_URL, DATA_URL is used). Make sure the dataloader also has `__init__.py`.
 2. All subsets are implemented correctly to respective dataloader issue and according to SEACrowd Schema definition (has both `source` and `seacrowd` schema -- if a given task has its SEACrowd Schema, else can raise it to reviewers/mods).
 3. Pass the test scripts defined in `tests` folder.
 4. Pass manual check.
- a. Perform a sampling of configs based on Lang and/or Task combinations
- b. Execute `datasets.load_dataset` check based on config list (a)
- c. Check on the dataset schema & few first examples for plausibility.
+   a. Perform a sampling of configs based on Lang and/or Task combinations
+   b. Execute `datasets.load_dataset` check based on config list (a)
+   c. Check on the dataset schema & few first examples for plausibility.
 5. Follows some general rules/conventions:
-    1. `PascalCase` for dataloader class name (and “Dataset” is contained in the suffix of the class name).
-    2. Lowercase word characters (regex identifier: `\w`) for schema column names, including the `source` schema if the original dataset doesn’t follow it.
-6. The code aligns with the `black` formatter:
+    a. Use `PascalCase` for the dataloader class name (optional: "Dataset" can be appended to the Dataloader class name; see `templates/template.py` for example).
+    b. Use lowercase word characters (regex identifier: `\w`) for schema column names, including the `source` schema if the original dataset doesn't follow it.
+6. The code aligns with the `black` formatter. Hint:
 use this `make check_file=seacrowd/sea_datasets/{dataloader}/{dataloader}.py`
-7. Follows Dataloader Config Rule
-The dataset can be divided into different cases based on the compulsory Dataloader Configs:
-a. Single Language, Single Task (Type 1)
-b. Multiple Language, Single Task (Type 2)
-c. Single Language, Multiple Task (Type 3)
-d. Multiple Language, Multiple Task (Type 4)
-For a multilingual dataset of Lang Identification (or Linguistic Features/Unit Identification), it’s not considered Multilingual Dataset since the Lang itself is used as the label, or it doesn’t make sense to split the data based on the languages.
+7. Follows Dataloader Config Rules (will be described in the following)
 
-   Based on afromentioned types, the checklist for Config Correctness:
-    1. For type 1 & 3, both config of `f”{_DATASETNAME}_source”` and `f”{_DATASETNAME}_seacrowd_{TASK_TO_SCHEMA}”` must be implemented.
-    2. For type 2 & 4, the dataloader config in (1) shouldn't be implemented, consequently it must cover all possible languages as a replacement. The formatting for Multilingual are `f”{_DATASETNAME}_{ISO_639_3_LANG}_source”` and `f”{_DATASETNAME}_{ISO_639_3_LANG}_seacrowd_{TASK_TO_SCHEMA}”`.
-    3. For point (2), since it won't pass the test-cases using the default args, a custom arg must be provided by the Dataloader PR creator to ensure the reproducibility of Testing among reviewers.
+### Dataloader Config Rules
+Based on the compulsory Dataloader Configs listed on Datasheet Issue, the dataset are divided into 4 different types:
+1. Single Subset, Single Task (Type 1)
+2. Multiple Subsets, Single Task (Type 2)
+3. Single Subset, Multiple Task (Type 3)
+4. Multiple Subsets, Multiple Task (Type 4)
 
-## Approval process
-1. For every dataloader, it requires 2 reviewers per issue (the assignee must not review their own dataloader).
-2. Once the second reviewer approved, the PR should be merged to the `master` branch using `squash and merge` strategy for cleaner commit history.
-3. Reviewers will be assigned from the reviewer pool once/twice a week (by @holylovenia) or any reviewers can take any unassigned review process as long as it can be done in timely manner.
+    **Note for Multilingual Dataset:**
+   
+    For a multilingual dataset, generally, it falls under multiple subsets type (since one language is considered as a standalone subset of the dataloder) unless it's influencing the label heavily or it doesn't make sense to split the data based on the languages (for instance, in the case of Lang Identification or Linguistic Features/Unit Identification).
+
+Based on aforementioned types, the checklist for Config Correctness is as follows:
+1. For type 1 & 3, both config of `f”{_DATASETNAME}_source”` and `f”{_DATASETNAME}_seacrowd_{TASK_TO_SCHEMA}”` must be implemented.
+2. For type 2 and 4, the dataloader config in (1) generally shouldn't be implemented (case-by-case checking can be done if needed). Consequently, it must cover all listed subsets in Dataloader Issue.
+3. The formatting for config names that have multiple subsets are
+    1. `f”{_DATASETNAME}_{subset_name}_source”` 
+    2. `f”{_DATASETNAME}_{subset_name}_seacrowd_{TASK_TO_SCHEMA}”`
+
+      **If the subset name contains language info, the lang identifier should be in a `ISO_639_3` lang code.**
+3. For point (2), since it won't pass the test-cases using the default args, a custom arg must be provided by the Dataloader PR creator (or Dataloader Issue Assignee) to ensure the reproducibility of Testing among reviewers. The reviewers can add the testing args if necessary.
+
+## Approval and Dataloader Reviewer Assignment Process 
+1. Every dataloader requires 2 reviewers per issue (the assignee must not review their own dataloader).
+2. Once the second reviewer is approved, the PR can be merged to the `master` branch using the `squash and merge` strategy for a cleaner commit history.
+3. For the Reviewers' Assignment, there are two possible ways:
+   1. @holylovenia will assign and monitor reviewers once a week to maintain and balance the load and overall pace. It will prioritize dataloaders used for experiments, then on reverse chronological order based on PR created time.
+   2. Any reviewers can take any unassigned PR as long as the review can be done promptly.
