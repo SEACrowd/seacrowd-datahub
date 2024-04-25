@@ -255,7 +255,7 @@ class AliceTHIDataset(datasets.GeneratorBasedBuilder):
                         "image_paths": [str(file) for file in image_files],
                         "texts": _SUBSETS[self.config.subset_id]["label_dict"][label],
                         "metadata": {
-                            # "context": "",
+                            "context": "",
                             "labels": [label] * len(image_files),
                         },
                     }
