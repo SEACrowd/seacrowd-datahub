@@ -22,7 +22,16 @@ import datasets
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import SCHEMA_TO_FEATURES, TASK_TO_SCHEMA, Licenses, Tasks
 
-_CITATION = ""  # no paper/dataset citation found
+_CITATION = """\
+@misc{zhu2023extrapolating,
+    title={Extrapolating Large Language Models to Non-English by Aligning Languages}, 
+    author={Wenhao Zhu and Yunzhe Lv and Qingxiu Dong and Fei Yuan and Jingjing Xu and Shujian Huang and Lingpeng Kong and Jiajun Chen and Lei Li},
+    year={2023},
+    eprint={2308.04948},
+    archivePrefix={arXiv},
+    primaryClass={cs.CL}
+}
+"""
 
 _DATASETNAME = "multilingual_alpaca"
 
@@ -34,7 +43,7 @@ The six languages are Arabic (Ar), Greek (El), Hindi (Hi), Turkish (Tr),
 Vietnamese (Vi), Chinese (Zh).
 """
 
-_HOMEPAGE = "https://drive.google.com/file/d/1bkejieKDJFDJ45UmQYiY4eeqpGBwj-r-/view"
+_HOMEPAGE = "https://github.com/NJUNLP/x-LLM"
 
 _LANGUAGES = ["vie"]
 
@@ -42,7 +51,7 @@ _LICENSE = Licenses.UNKNOWN.value
 
 _LOCAL = False
 
-_URLS = {_DATASETNAME: _HOMEPAGE}  # 628mb
+_URLS = {_DATASETNAME: "https://drive.google.com/file/d/1bkejieKDJFDJ45UmQYiY4eeqpGBwj-r-/view"}  # ~660mb
 
 _SUPPORTED_TASKS = [Tasks.INSTRUCTION_TUNING]
 _SEACROWD_SCHEMA = f"seacrowd_{TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]].lower()}"  # t2t
