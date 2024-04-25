@@ -20,11 +20,12 @@ from typing import Dict, List, Tuple
 import datasets
 
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import SCHEMA_TO_FEATURES, TASK_TO_SCHEMA, Licenses, Tasks
+from seacrowd.utils.constants import (SCHEMA_TO_FEATURES, TASK_TO_SCHEMA,
+                                      Licenses, Tasks)
 
 _CITATION = """\
 @misc{zhu2023extrapolating,
-    title={Extrapolating Large Language Models to Non-English by Aligning Languages}, 
+    title={Extrapolating Large Language Models to Non-English by Aligning Languages},
     author={Wenhao Zhu and Yunzhe Lv and Qingxiu Dong and Fei Yuan and Jingjing Xu and Shujian Huang and Lingpeng Kong and Jiajun Chen and Lei Li},
     year={2023},
     eprint={2308.04948},
@@ -96,9 +97,7 @@ class MultilingualAlpacaDataset(datasets.GeneratorBasedBuilder):
                 }
             )
         elif self.config.schema == _SEACROWD_SCHEMA:
-            features = SCHEMA_TO_FEATURES[
-                TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]]
-            ]  # text2text_features
+            features = SCHEMA_TO_FEATURES[TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]]]  # text2text_features
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
