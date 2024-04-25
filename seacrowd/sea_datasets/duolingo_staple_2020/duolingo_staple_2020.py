@@ -47,22 +47,6 @@ _CITATION = """\
     url = "https://aclanthology.org/2020.ngt-1.28",
     doi = "10.18653/v1/2020.ngt-1.28",
     pages = "232--243",
-    abstract = "We present the task of Simultaneous Translation and Paraphrasing
-    for Language Education (STAPLE). Given a prompt in one language, the goal is
-    to generate a diverse set of correct translations that language learners are
-    likely to produce. This is motivated by the need to create and maintain
-    large, high-quality sets of acceptable translations for exercises in a
-    language-learning application, and synthesizes work spanning machine
-    translation, MT evaluation, automatic paraphrasing, and language education
-    technology. We developed a novel corpus with unique properties for five
-    languages (Hungarian, Japanese, Korean, Portuguese, and Vietnamese), and
-    report on the results of a shared task challenge which attracted 20 teams to
-    solve the task. In our meta-analysis, we focus on three aspects of the
-    resulting systems: external training corpus selection, model architecture
-    and training decisions, and decoding and filtering strategies. We find that
-    strong systems start with a large amount of generic training data, and then
-    fine-tune with in-domain data, sampled according to our provided learner
-    response frequencies.",
 }
 """
 
@@ -85,7 +69,7 @@ _LICENSE = Licenses.CC_BY_NC_4_0.value
 
 _LOCAL = True  # needs to fill a form to download the dataset (dynamic link)
 
-_URLS = {}
+_URLS = "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/38OJR6&version=6.0"
 _SUBSETS = ["aws_baseline", "gold"]
 
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
