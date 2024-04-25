@@ -20,7 +20,8 @@ from typing import Dict, List, Tuple
 import datasets
 
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import SCHEMA_TO_FEATURES, TASK_TO_SCHEMA, Licenses, Tasks
+from seacrowd.utils.constants import (SCHEMA_TO_FEATURES, TASK_TO_SCHEMA,
+                                      Licenses, Tasks)
 
 _CITATION = """\
 @article{Chen2012,
@@ -32,7 +33,7 @@ _CITATION = """\
     publisher = {Springer Science and Business Media LLC},
     author = {Chen, Tao and Kan, Min-Yen},
     year = {2012},
-    month = aug 
+    month = aug
 }
 """
 
@@ -140,9 +141,7 @@ class NusSmsCorpusDataset(datasets.GeneratorBasedBuilder):
                 }
             )
         elif self.config.schema == _SEACROWD_SCHEMA:
-            features = SCHEMA_TO_FEATURES[
-                TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]]
-            ]  # ssp_features
+            features = SCHEMA_TO_FEATURES[TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]]]  # ssp_features
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
