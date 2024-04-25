@@ -19,7 +19,8 @@ from typing import Dict, List, Tuple
 import datasets
 
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import SCHEMA_TO_FEATURES, TASK_TO_SCHEMA, Licenses, Tasks
+from seacrowd.utils.constants import (SCHEMA_TO_FEATURES, TASK_TO_SCHEMA,
+                                      Licenses, Tasks)
 
 _CITATION = """\
 @inproceedings{mayhew-etal-2020-simultaneous,
@@ -131,9 +132,7 @@ class DuolingoStaple2020Dataset(datasets.GeneratorBasedBuilder):
                     }
                 )
         elif self.config.schema == _SEACROWD_SCHEMA:
-            features = SCHEMA_TO_FEATURES[
-                TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]]
-            ]  # text2text_features
+            features = SCHEMA_TO_FEATURES[TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]]]  # text2text_features
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -146,9 +145,7 @@ class DuolingoStaple2020Dataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
         if self.config.data_dir is None:
-            raise ValueError(
-                "This is a local dataset. Please pass the data_dir kwarg (staple-2020 dir) to load_dataset."
-            )
+            raise ValueError("This is a local dataset. Please pass the data_dir kwarg (staple-2020 dir) to load_dataset.")
         else:
             data_dir = Path(self.config.data_dir) / "en_vi"
 
@@ -161,8 +158,7 @@ class DuolingoStaple2020Dataset(datasets.GeneratorBasedBuilder):
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
-                    "filepath": data_dir
-                    / f"train.en_vi.{'2020-01-13.gold' if self.config.subset_id == 'gold' else filename}.txt",
+                    "filepath": data_dir / f"train.en_vi.{'2020-01-13.gold' if self.config.subset_id == 'gold' else filename}.txt",
                 },
             ),
             datasets.SplitGenerator(
@@ -220,9 +216,7 @@ class DuolingoStaple2020Dataset(datasets.GeneratorBasedBuilder):
                     translations = []
                     for answer in parts[1:]:
                         translation, weight = list(map(str.strip, answer.split("|")))
-                        translations.append(
-                            {"text": translation, "weight": float(weight)}
-                        )
+                        translations.append({"text": translation, "weight": float(weight)})
                     yield key, {
                         "prompt_id": prompt_id,
                         "source_text": source_text,
