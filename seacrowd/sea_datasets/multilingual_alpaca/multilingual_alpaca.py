@@ -18,7 +18,6 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 import datasets
-import gdown
 
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import SCHEMA_TO_FEATURES, TASK_TO_SCHEMA, Licenses, Tasks
@@ -102,6 +101,12 @@ class MultilingualAlpacaDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
+        # check if gdown is installed
+        try:
+            import gdown
+        except ImportError:
+            raise ImportError("Please install `gdown` to enable downloading data from google drive.")
+
         # download data from gdrive
         output_dir = Path.cwd() / "data" / "multilingual_alpaca"
         output_dir.mkdir(parents=True, exist_ok=True)
