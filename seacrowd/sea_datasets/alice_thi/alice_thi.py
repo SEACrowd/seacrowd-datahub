@@ -24,19 +24,19 @@ from seacrowd.utils.constants import TASK_TO_SCHEMA, Licenses, Tasks
 
 _CITATION = """\
 @article{SURINTA2015405,
-	title = "Recognition of handwritten characters using local gradient feature descriptors",
-	journal = "Engineering Applications of Artificial Intelligence",
-	volume = "45",
-	number = "Supplement C",
-	pages = "405 - 414",
-	year = "2015",
-	issn = "0952-1976",
-	doi = "https://doi.org/10.1016/j.engappai.2015.07.017",
-	url = "http://www.sciencedirect.com/science/article/pii/S0952197615001724",
-	author = "Olarik Surinta and Mahir F. Karaaba and Lambert R.B. Schomaker and Marco A. Wiering",
-	keywords = "Handwritten character recognition, Feature extraction, Local gradient feature descriptor, 
-	Support vector machine, k-nearest neighbors"
-}	
+    title = "Recognition of handwritten characters using local gradient feature descriptors",
+    journal = "Engineering Applications of Artificial Intelligence",
+    volume = "45",
+    number = "Supplement C",
+    pages = "405 - 414",
+    year = "2015",
+    issn = "0952-1976",
+    doi = "https://doi.org/10.1016/j.engappai.2015.07.017",
+    url = "http://www.sciencedirect.com/science/article/pii/S0952197615001724",
+    author = "Olarik Surinta and Mahir F. Karaaba and Lambert R.B. Schomaker and Marco A. Wiering",
+    keywords = "Handwritten character recognition, Feature extraction, Local gradient feature descriptor,
+    Support vector machine, k-nearest neighbors"
+}
 """
 
 _DATASETNAME = "alice_thi"
