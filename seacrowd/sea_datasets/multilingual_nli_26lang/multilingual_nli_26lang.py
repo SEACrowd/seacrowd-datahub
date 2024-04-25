@@ -78,11 +78,10 @@ class MultilingualNLI26LangDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    LANGS = ["id", "vi"]
     SUBSETS = ["anli", "fever", "ling", "mnli", "wanli"]
 
     BUILDER_CONFIGS = []
-    for lang, subset in list(itertools.product(LANGS, SUBSETS)):
+    for lang, subset in list(itertools.product(_LANGUAGES, SUBSETS)):
         subset_id = f"{lang}_{subset}"
         BUILDER_CONFIGS += [
             SEACrowdConfig(
@@ -101,7 +100,7 @@ class MultilingualNLI26LangDataset(datasets.GeneratorBasedBuilder):
             ),
         ]
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_id_anli_source"
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_ind_anli_source"
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -129,11 +128,17 @@ class MultilingualNLI26LangDataset(datasets.GeneratorBasedBuilder):
         """Returns SplitGenerators."""
         file_list = HfFileSystem().ls("datasets/MoritzLaurer/multilingual-NLI-26lang-2mil7/data", detail=False)
 
+        subset_config = self.config.subset_id
+        if "ind" in subset_config:
+            subset_config = subset_config.replace("ind", "id")
+        if "vie" in subset_config:
+            subset_config = subset_config.replace("vie", "vi")
+
         data_urls = []
         for file_path in file_list:
             file_name = file_path.split("/")[-1]
             subset_id = file_name.split("-")[0]
-            if subset_id == self.config.subset_id:
+            if subset_id == subset_config:
                 if file_path.endswith(".parquet"):
                     url = _BASE_URL.format(file_name=file_name)
                     data_urls.append(url)
