@@ -142,7 +142,7 @@ class MultilingualNLI26LangDataset(datasets.GeneratorBasedBuilder):
                 if file_path.endswith(".parquet"):
                     url = _BASE_URL.format(file_name=file_name)
                     data_urls.append(url)
-        
+
         data_paths = list(map(Path, dl_manager.download_and_extract(data_urls)))
         return [
             datasets.SplitGenerator(
