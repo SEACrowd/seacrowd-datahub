@@ -224,7 +224,7 @@ class AloreseDataset(datasets.GeneratorBasedBuilder):
     def _groupby_caption_by_media_ids(self, caption_df: pd.DataFrame) -> pd.DataFrame:
         caption_df = (
             caption_df.groupby("media_id")
-            .agg({"annotation_aol": lambda x: " ".join([value if value is not None else "<NONE>" for value in x]), "annotation_ind": lambda x: " ".join([value if value is not None else "<NONE>" for value in x])})
+            .agg({"annotation_aol": lambda x: " ".join([str(value) if value is not None else "<NONE>" for value in x]), "annotation_ind": lambda x: " ".join([str(value) if value is not None else "<NONE>" for value in x])})
             .reset_index()
         )
         return caption_df
