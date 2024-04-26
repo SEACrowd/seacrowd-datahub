@@ -86,7 +86,13 @@ models and workflows at scale using high-performance computing (HPC).
 
 _HOMEPAGE = "https://hplt-project.org/datasets/v1.2"
 
-_LANGUAGES = ["ind", "zlm", "tha", "mya", "fil"]
+_LANGUAGES = {
+    "ind": "id",
+    "zlm": "ms",
+    "tha": "th",
+    "mya": "my",
+    "fil": "tl",
+}
 
 _LICENSE = Licenses.CC0_1_0.value
 
@@ -111,11 +117,11 @@ class HpltDataset(datasets.GeneratorBasedBuilder):
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-    LANGS = ["id", "ms", "th", "my", "tl"]
+
     SUBSETS = ["raw", "deduplicated", "cleaned"]
 
     BUILDER_CONFIGS = []
-    for lang, subset in list(itertools.product(LANGS, SUBSETS)):
+    for lang, subset in list(itertools.product(_LANGUAGES.keys(), SUBSETS)):
         subset_id = f"{lang}_{subset}"
         BUILDER_CONFIGS += [
             SEACrowdConfig(
@@ -134,7 +140,7 @@ class HpltDataset(datasets.GeneratorBasedBuilder):
             ),
         ]
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_my_cleaned_source"  # smallest w.r.t. size
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_mya_cleaned_source"  # smallest w.r.t. size
 
     def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
@@ -165,6 +171,7 @@ class HpltDataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators. Data is not yet extracted for efficient generation."""
         lang, subset = self.config.subset_id.split("_")
+        lang = _LANGUAGES[lang]
         map_url = _URLS[subset].format(lang=lang)
 
         response = requests.get(map_url, timeout=10)
