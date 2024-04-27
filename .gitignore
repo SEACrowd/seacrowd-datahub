@@ -40,6 +40,8 @@ ipython_config.py
 # Icon must end with two \r
 Icon
 
+# local / temporary data
+data/
 
 # Thumbnails
 ._*
