@@ -19,7 +19,7 @@ This template serves as a starting point for contributing a dataset to the SEACr
 When modifying it for your dataset, look for TODO items that offer specific instructions.
 
 Full documentation on writing dataset loading scripts can be found here:
-https://huggingface.co/docs/datasets/add_dataset.html
+https://huggingface.co/docs/hub/datasets-adding
 
 To create a dataset loading script you will create a class and implement 3 methods:
   * `_info`: Establishes the schema for the dataset, and returns a datasets.DatasetInfo object.
@@ -34,6 +34,7 @@ from typing import Dict, List, Tuple
 
 import datasets
 
+from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Tasks, Licenses
 
@@ -68,14 +69,14 @@ _HOMEPAGE = ""
 # TODO: Add languages related to this dataset
 _LANGUAGES = []  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 
-# TODO: Add the licence for the dataset here 
+# TODO: Add the licence for the dataset here (see constant choices in https://github.com/SEACrowd/seacrowd-datahub/blob/master/seacrowd/utils/constants.py)
 # Note that this doesn't have to be a common open source license.
 # In the case of the dataset intentionally is built without license, please use `Licenses.UNLICENSE.value`
 # In the case that it's not clear whether the dataset has a license or not, please use `Licenses.UNKNOWN.value`
 # Some datasets may also have custom licenses. In this case, simply put f'{Licenses.OTHERS.value} | {FULL_LICENSE_TERM}' into `_LICENSE`
 _LICENSE = "" # example: Licenses.MIT.value, Licenses.CC_BY_NC_SA_4_0.value, Licenses.UNLICENSE.value, Licenses.UNKNOWN.value
 
-# TODO: Add a _LOCAL flag to indicate whether the data cannot be sourced from a public link 
+# TODO: Add a _LOCAL flag to indicate whether the data cannot be sourced from a public link
 #  E.g. the dataset requires signing a specific term of use, the dataset is sent through email, etc.
 _LOCAL = False
 
@@ -90,7 +91,7 @@ _URLS = {
     _DATASETNAME: "url or list of urls or ... ",
 }
 
-# TODO: add supported task by dataset. One dataset may support multiple tasks
+# TODO: add supported task by dataset. One dataset may support multiple tasks --> # TODO: add supported task by dataset. One dataset may support multiple tasks (see constant choices in https://github.com/SEACrowd/seacrowd-datahub/blob/master/seacrowd/utils/constants.py)
 _SUPPORTED_TASKS = []  # example: [Tasks.TRANSLATION, Tasks.NAMED_ENTITY_RECOGNITION, Tasks.RELATION_EXTRACTION]
 
 # TODO: set this to a version that is associated with the dataset. if none exists use "1.0.0"
@@ -101,7 +102,8 @@ _SOURCE_VERSION = ""
 _SEACROWD_VERSION = "1.0.0"
 
 
-# TODO: Name the dataset class to match the script name using CamelCase instead of snake_case
+# TODO: Name the dataset class to match the script name using PascalCase instead of snake_case.
+# optional: class name can append "Dataset" as suffix to provide better clarity (e.g. OSCAR 2201 --> Oscar2201Dataset/Oscar2201)
 class NewDataset(datasets.GeneratorBasedBuilder):
     """TODO: Short description of my dataset."""
 
@@ -203,7 +205,7 @@ class NewDataset(datasets.GeneratorBasedBuilder):
 
         # PUBLIC DATASETS: Assign your data-dir based on the dl_manager.
 
-        # dl_manager is a datasets.download.DownloadManager that can be used to download and extract URLs; many examples use the download_and_extract method; see the DownloadManager docs here: https://huggingface.co/docs/datasets/package_reference/builder_classes.html#datasets.DownloadManager
+        # dl_manager is a datasets.download.DownloadManager that can be used to download and extract URLs; many examples use the download_and_extract method; see the DownloadManager docs here: https://huggingface.co/docs/datasets/v1.1.1/_modules/datasets/utils/download_manager.html
 
         # dl_manager can accept any type of nested list/dict and will give back the same structure with the url replaced with the path to local files.
 

@@ -14,7 +14,7 @@ features = datasets.Features(
     {
         "id": datasets.Value("string"),
         "video_path": datasets.Value("string"),
-        "texts": datasets.Value("string"),
+        "text": datasets.Value("string"),
         "metadata": {
             "resolution": {
                 "width": datasets.Value("int64"),
