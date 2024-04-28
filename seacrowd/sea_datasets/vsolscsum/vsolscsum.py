@@ -1,37 +1,3 @@
-# coding=utf-8
-# Copyright 2022 The HuggingFace Datasets Authors and the current dataset script contributor.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-"""
-The Vietnamese dataset for social context summarization \
-    The dataset contains 141 open-domain articles along with \
-    3,760 sentences, 2,448 extracted standard sentences and \
-    comments as standard summaries and 6,926 comments in 12 \
-    events. This dataset was manually annotated by human. \
-    Note that the extracted standard summaries also include comments.\
-    The label of a sentence or comment was generated based on the \
-    voting among social annotators. For example, given a sentence, \
-    each annotator makes a binary decision in order to indicate \
-    that whether this sentence is a summary candidate (YES) or not \
-    (NO). If three annotators agree yes, this sentences is labeled by 3. \
-    Therefore, the label of each sentence or comment ranges from 1 to 5\
-    (1: very poor, 2: poor, 3: fair, 4: good; 5: perfect). The standard \
-    summary sentences are those which receive at least three agreements \
-    from annotators. The inter-agreement calculated by Cohen's Kappa \
-    after validation among annotators is 0.685.
-"""
-
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Dict, List, Tuple
