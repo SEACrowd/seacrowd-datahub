@@ -22,7 +22,6 @@ BasahaCorpus contains short stories in four Central Philippine languages \
     have been provided by an expert from Let's Read Asia.
 """
 
-import os
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -34,13 +33,22 @@ from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Tasks, Licenses
 
 _CITATION = """\
-@misc{imperial2023basahacorpus,
-      title={BasahaCorpus: An Expanded Linguistic Resource for Readability Assessment in Central Philippine Languages}, 
-      author={Joseph Marvin Imperial and Ekaterina Kochmar},
-      year={2023},
-      eprint={2310.11584},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL}
+@inproceedings{imperial-kochmar-2023-basahacorpus,
+    title = "{B}asaha{C}orpus: An Expanded Linguistic Resource for Readability Assessment in {C}entral {P}hilippine Languages",
+    author = "Imperial, Joseph Marvin  and
+      Kochmar, Ekaterina",
+    editor = "Bouamor, Houda  and
+      Pino, Juan  and
+      Bali, Kalika",
+    booktitle = "Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing",
+    month = dec,
+    year = "2023",
+    address = "Singapore",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.emnlp-main.388",
+    doi = "10.18653/v1/2023.emnlp-main.388",
+    pages = "6302--6309",
+    abstract = "Current research on automatic readability assessment (ARA) has focused on improving the performance of models in high-resource languages such as English. In this work, we introduce and release BasahaCorpus as part of an initiative aimed at expanding available corpora and baseline models for readability assessment in lower resource languages in the Philippines. We compiled a corpus of short fictional narratives written in Hiligaynon, Minasbate, Karay-a, and Rinconada{---}languages belonging to the Central Philippine family tree subgroup{---}to train ARA models using surface-level, syllable-pattern, and n-gram overlap features. We also propose a new hierarchical cross-lingual modeling approach that takes advantage of a language{'}s placement in the family tree to increase the amount of available training data. Our study yields encouraging results that support previous work showcasing the efficacy of cross-lingual models in low-resource settings, as well as similarities in highly informative linguistic features for mutually intelligible languages.",
 }
 """
 
@@ -95,16 +103,7 @@ class BasahaCorpusDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    BUILDER_CONFIGS = [
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_{lang}_source",
-            version=datasets.Version(_SOURCE_VERSION),
-            description=f"{_DATASETNAME} source schema",
-            schema="source",
-            subset_id=f"{_DATASETNAME}_{lang}",
-        )
-        for lang in _LANGUAGES
-    ] + [
+    BUILDER_CONFIGS = [SEACrowdConfig(name=f"{_DATASETNAME}_{lang}_source", version=datasets.Version(_SOURCE_VERSION), description=f"{_DATASETNAME} source schema", schema="source", subset_id=f"{_DATASETNAME}_{lang}",) for lang in _LANGUAGES] + [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_{lang}_seacrowd_text",
             version=datasets.Version(_SEACROWD_VERSION),
@@ -171,9 +170,7 @@ class BasahaCorpusDataset(datasets.GeneratorBasedBuilder):
             citation=_CITATION,
         )
 
-    def _split_generators(
-        self, dl_manager: datasets.DownloadManager
-    ) -> List[datasets.SplitGenerator]:
+    def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
 
         lang = self.config.name.split("_")[2]
@@ -181,10 +178,7 @@ class BasahaCorpusDataset(datasets.GeneratorBasedBuilder):
         if lang in _LANGUAGES:
             data_path = Path(dl_manager.download_and_extract(_URLS[lang]))
         else:
-            data_path = [
-                Path(dl_manager.download_and_extract(_URLS[lang]))
-                for lang in _LANGUAGES
-            ]
+            data_path = [Path(dl_manager.download_and_extract(_URLS[lang])) for lang in _LANGUAGES]
 
         return [
             datasets.SplitGenerator(
