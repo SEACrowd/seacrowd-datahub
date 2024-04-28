@@ -84,6 +84,7 @@ class ViSim400Dataset(datasets.GeneratorBasedBuilder):
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
+    SEACROWD_SCHEMA_NAME = "pairs_score"
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
@@ -94,10 +95,10 @@ class ViSim400Dataset(datasets.GeneratorBasedBuilder):
             subset_id=f"{_DATASETNAME}",
         ),
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_t2t",
+            name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",
             version=_SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd schema",
-            schema="seacrowd_t2t",
+            schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
             subset_id=f"{_DATASETNAME}",
         ),
     ]
@@ -119,8 +120,8 @@ class ViSim400Dataset(datasets.GeneratorBasedBuilder):
                 }
             )
 
-        elif self.config.schema == "seacrowd_t2t":
-            features = schemas.text2text_features
+        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
+            features = schemas.pairs_features_score()
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -163,14 +164,14 @@ class ViSim400Dataset(datasets.GeneratorBasedBuilder):
             if self.config.schema == "source":
                 example = row.to_dict()
 
-            elif self.config.schema == "seacrowd_t2t":
+            elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
 
                 example = {
                     "id": str(index),
                     "text_1": str(row["Word1"]),
                     "text_2": str(row["Word2"]),
-                    "text_1_name": str(row["Sim1"]),
-                    "text_2_name": str(row["Sim2"]),
+                    # I choose Sim2 instead of Sim1 because it's been normalized to [1, 10]
+                    "label": str(row["Sim2"]),
                 }
 
             yield index, example
