@@ -46,9 +46,8 @@ _CITATION = """\
     publisher = "Association for Computational Linguistics",
     url = "https://aclanthology.org/N18-2032",
     doi = "10.18653/v1/N18-2032",
-    pages = "199--205",
-    abstract = "We present two novel datasets for the low-resource language Vietnamese to assess models of semantic similarity: ViCon comprises pairs of synonyms and antonyms across word classes, thus offering data to distinguish between similarity and dissimilarity. ViSim-400 provides degrees of similarity across five semantic relations, as rated by human judges. The two datasets are verified through standard co-occurrence and neural network models, showing results comparable to the respective English datasets.",
-}
+    pages = "199--205"
+    }
 """
 
 _DATASETNAME = "visim400"
