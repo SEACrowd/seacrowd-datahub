@@ -62,8 +62,7 @@ _CITATION = """\
     publisher = "The COLING 2016 Organizing Committee",
     url = "https://aclanthology.org/W16-5405",
     pages = "38--48",
-    abstract = "This paper presents VSoLSCSum, a Vietnamese linked sentence-comment dataset, which was manually created to treat the lack of standard corpora for social context summarization in Vietnamese. The dataset was collected through the keywords of 141 Web documents in 12 special events, which were mentioned on Vietnamese Web pages. Social users were asked to involve in creating standard summaries and the label of each sentence or comment. The inter-agreement calculated by Cohen{'}s Kappa among raters after validating is 0.685. To illustrate the potential use of our dataset, a learning to rank method was trained by using a set of local and social features. Experimental results indicate that the summary model trained on our dataset outperforms state-of-the-art baselines in both ROUGE-1 and ROUGE-2 in social context summarization.",
-}
+    }
 """
 
 _DATASETNAME = "vsolscsum"
