@@ -32,16 +32,16 @@ The Vietnamese dataset for social context summarization \
     after validation among annotators is 0.685.
 """
 
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Dict, List, Tuple
-import xml.etree.ElementTree as ET
 
 import datasets
 import pandas as pd
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
+from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @inproceedings{nguyen-etal-2016-vsolscsum,
@@ -237,7 +237,3 @@ class VSolSCSumDataset(datasets.GeneratorBasedBuilder):
                 }
 
             yield index, example
-
-
-# This template is based on the following template from the datasets package:
-# https://github.com/huggingface/datasets/blob/master/templates/new_dataset_script.py
