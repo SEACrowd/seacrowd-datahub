@@ -28,7 +28,7 @@ import pandas as pd
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
+from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @inproceedings{nguyen-etal-2018-introducing,
