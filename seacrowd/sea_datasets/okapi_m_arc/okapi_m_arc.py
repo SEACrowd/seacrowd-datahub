@@ -1,7 +1,7 @@
 import json
 import os
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, Generator, List, Tuple
 
 import datasets
 
@@ -30,9 +30,9 @@ _CITATION = """\
 _DATASETNAME = "okapi_m_arc"
 
 _DESCRIPTION = """\
-mARC is a Multilingual translation of AI2's Arc Challenge from the paper "Okapi: Instruction-tuned Large Language Models in Multiple Languages with Reinforcement Learning from Human Feedback" (Lai et al., 2023). 
-The original ARC dataset is a multiple-choice question answering dataset of 7,787 genuine grade-school level science questions assembled to encourage research in advanced question-answering. 
-The dataset is partitioned into a Challenge Set and an Easy Set, where the former contains only questions answered incorrectly by both a retrieval-based algorithm and a word co-occurrence algorithm. 
+mARC is a Multilingual translation of AI2's Arc Challenge from the paper "Okapi: Instruction-tuned Large Language Models in Multiple Languages with Reinforcement Learning from Human Feedback" (Lai et al., 2023).
+The original ARC dataset is a multiple-choice question answering dataset of 7,787 genuine grade-school level science questions assembled to encourage research in advanced question-answering.
+The dataset is partitioned into a Challenge Set and an Easy Set, where the former contains only questions answered incorrectly by both a retrieval-based algorithm and a word co-occurrence algorithm.
 We also include a corpus of over 14 million science sentences relevant to the task and an implementation of three neural baseline models for this dataset. We pose ARC as a challenge to the community.
 """
 
@@ -50,46 +50,45 @@ _SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
+
 class MultilingualArc(datasets.GeneratorBasedBuilder):
-    """mARC is a Multilingual translation of AI2's Arc Challenge which is a multiple-choice question answering dataset 
+    """mARC is a Multilingual translation of AI2's Arc Challenge which is a multiple-choice question answering dataset
     of 7,787 genuine grade-school level science questions assembled to encourage research in advanced question-answering"""
 
-    BUILDER_CONFIGS = (
-        [
-            SEACrowdConfig(
-                name="okapi_m_arc_vie_source",
-                version=datasets.Version(_SOURCE_VERSION),
-                description="Vietnamese mARC source schema",
-                schema="source",
-                subset_id="okapi_m_arc_vie_source",
-            ),
-            SEACrowdConfig(
-                name="okapi_m_arc_ind_source",
-                version=datasets.Version(_SOURCE_VERSION),
-                description="Indonesian mARC source schema",
-                schema="source",
-                subset_id="okapi_m_arc_ind_source",
-            ),
-            SEACrowdConfig(
-                name="okapi_m_arc_vie_seacrowd_qa",
-                version=datasets.Version(_SEACROWD_VERSION),
-                description="Vietnamese mARC SEACrowd question answering schema",
-                schema="seacrowd_qa",
-                subset_id="okapi_m_arc_vie_seacrowd_qa",
-            ),
-            SEACrowdConfig(
-                name="okapi_m_arc_ind_seacrowd_qa",
-                version=datasets.Version(_SEACROWD_VERSION),
-                description="Indonesian mARC SEACrowd question answering schema",
-                schema="seacrowd_qa",
-                subset_id="okapi_m_arc_ind_seacrowd_qa",
-            )
-        ]
-    )
+    BUILDER_CONFIGS = [
+        SEACrowdConfig(
+            name="okapi_m_arc_vie_source",
+            version=datasets.Version(_SOURCE_VERSION),
+            description="Vietnamese mARC source schema",
+            schema="source",
+            subset_id="okapi_m_arc_vie_source",
+        ),
+        SEACrowdConfig(
+            name="okapi_m_arc_ind_source",
+            version=datasets.Version(_SOURCE_VERSION),
+            description="Indonesian mARC source schema",
+            schema="source",
+            subset_id="okapi_m_arc_ind_source",
+        ),
+        SEACrowdConfig(
+            name="okapi_m_arc_vie_seacrowd_qa",
+            version=datasets.Version(_SEACROWD_VERSION),
+            description="Vietnamese mARC SEACrowd question answering schema",
+            schema="seacrowd_qa",
+            subset_id="okapi_m_arc_vie_seacrowd_qa",
+        ),
+        SEACrowdConfig(
+            name="okapi_m_arc_ind_seacrowd_qa",
+            version=datasets.Version(_SEACROWD_VERSION),
+            description="Indonesian mARC SEACrowd question answering schema",
+            schema="seacrowd_qa",
+            subset_id="okapi_m_arc_ind_seacrowd_qa",
+        ),
+    ]
 
     DEFAULT_CONFIG_NAME = "okapi_m_arc_ind_seacrowd_qa"
 
-    def _info(self):
+    def _info(self) -> datasets.DatasetInfo:
         if self.config.schema == "source":
             features = datasets.Features(
                 {
@@ -106,7 +105,7 @@ class MultilingualArc(datasets.GeneratorBasedBuilder):
             )
         else:
             features = schemas.qa_features
-            
+
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
             features=features,
@@ -115,9 +114,9 @@ class MultilingualArc(datasets.GeneratorBasedBuilder):
             citation=_CITATION,
         )
 
-    def _split_generators(self, dl_manager):
+    def _split_generators(self, dl_manager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        lang = self.config.subset_id[:-(len(self.config.schema)+1)].split('_')[-1]
+        lang = self.config.subset_id[: -(len(self.config.schema) + 1)].split("_")[-1]
         train_path = Path(dl_manager.download_and_extract(f"{_URLS['base_url']}/data/{_LANG_MAP[lang]}_train.json"))
         valid_path = Path(dl_manager.download_and_extract(f"{_URLS['base_url']}/data/{_LANG_MAP[lang]}_validation.json"))
         test_path = Path(dl_manager.download_and_extract(f"{_URLS['base_url']}/data/{_LANG_MAP[lang]}_test.json"))
@@ -125,29 +124,23 @@ class MultilingualArc(datasets.GeneratorBasedBuilder):
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
-                gen_kwargs={
-                    "filepath": train_path
-                },
+                gen_kwargs={"filepath": train_path},
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
-                gen_kwargs={
-                    "filepath": valid_path
-                },
+                gen_kwargs={"filepath": valid_path},
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
-                gen_kwargs={
-                    "filepath": test_path
-                },
+                gen_kwargs={"filepath": test_path},
             ),
         ]
 
-    def _generate_examples(self, filepath):
+    def _generate_examples(self, filepath) -> Generator[Tuple[int, Dict], None, None]:
         """Yields examples."""
         with open(filepath, encoding="utf-8") as f:
             data = json.load(f)
-            
+
         for i, d in enumerate(data):
             text_choices = []
             label_choices = []
@@ -180,8 +173,8 @@ class MultilingualArc(datasets.GeneratorBasedBuilder):
                     "question_id": d["id"],
                     "document_id": d["id"],
                     "question": d["instruction"],
-                    "type": 'multiple_choice',
-                    "choices": [f'{label}. {text}'for label, text in zip(label_choices, text_choices)],
+                    "type": "multiple_choice",
+                    "choices": [f"{label}. {text}" for label, text in zip(label_choices, text_choices)],
                     "context": None,
                     "answer": [f'{d["answer"]}. {text_choices[ord(d["answer"])-65]}'],
                     "meta": {}
