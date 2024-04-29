@@ -57,8 +57,6 @@ _CITATION = """\
 
 _DATASETNAME = "squad_id_nli"
 
-# TODO: Add description of the dataset here
-# You can copy an official description
 _DESCRIPTION = """
 The SQuAD_ID-NLI dataset is derived from the SQuAD_ID \
     question answering dataset, utilizing named \
