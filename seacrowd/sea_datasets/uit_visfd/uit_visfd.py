@@ -29,7 +29,7 @@ import pandas as pd
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
+from seacrowd.utils.constants import Licenses, Tasks
 
 # TODO: Add BibTeX citation
 _CITATION = """\
@@ -53,7 +53,6 @@ _CITATION = """\
   publisher="Springer International Publishing",
   address="Cham",
   pages="647--658",
-  abstract="In this paper, we present a process of building a social listening system based on aspect-based sentiment analysis in Vietnamese, from creating a dataset to building a real application. Firstly, we create UIT-ViSFD, a Vietnamese Smartphone Feedback Dataset, as a new benchmark dataset built based on a strict annotation scheme for evaluating aspect-based sentiment analysis, consisting of 11,122 human-annotated comments for mobile e-commerce, which is freely available for research purposes. We also present a proposed approach based on the Bi-LSTM architecture with the fastText word embeddings for the Vietnamese aspect-based sentiment task. Our experiments show that our approach achieves the best performances (in F1-score) of 84.48{\%} for the aspect task and 63.06{\%} for the sentiment task, which performs several conventional machine learning and deep learning systems. Lastly, we build SA2SL, a social listening system based on the best performance model on our dataset, which will inspire more social listening systems in the future.",
   isbn="978-3-030-82147-0"
   }
 """
@@ -76,7 +75,7 @@ _LOCAL = False
 
 _URLS = {_DATASETNAME: "https://github.com/LuongPhan/UIT-ViSFD/raw/main/UIT-ViSFD.zip"}
 
-_SUPPORTED_TASKS = [Tasks.SENTIMENT_ANALYSIS]
+_SUPPORTED_TASKS = [Tasks.ASPECT_BASED_SENTIMENT_ANALYSIS]
 
 _SOURCE_VERSION = "1.0.0"
 
@@ -96,6 +95,7 @@ class UITViSFDDataset(datasets.GeneratorBasedBuilder):
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
+    SEACROWD_SCHEMA_NAME = "text_multi"
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
@@ -106,10 +106,10 @@ class UITViSFDDataset(datasets.GeneratorBasedBuilder):
             subset_id=f"{_DATASETNAME}",
         ),
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_text_multi",
+            name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd schema",
-            schema="seacrowd_text_multi",
+            schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
             subset_id=f"{_DATASETNAME}",
         ),
     ]
@@ -150,8 +150,6 @@ class UITViSFDDataset(datasets.GeneratorBasedBuilder):
         "OTHERS",
     ]
 
-    label_feature = datasets.ClassLabel(names=_LABELS)
-
     def _info(self) -> datasets.DatasetInfo:
 
         if self.config.schema == "source":
@@ -160,7 +158,7 @@ class UITViSFDDataset(datasets.GeneratorBasedBuilder):
                 {"index": datasets.Value("int64"), "comment": datasets.Value("string"), "n_star": datasets.Value("int64"), "date_time": datasets.Value("string"), "label": datasets.Sequence(feature=datasets.ClassLabel(names=self._LABELS))}
             )
 
-        elif self.config.schema == "seacrowd_text_multi":
+        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             features = schemas.text_multi_features(self._LABELS)
 
         return datasets.DatasetInfo(
@@ -222,7 +220,7 @@ class UITViSFDDataset(datasets.GeneratorBasedBuilder):
             if self.config.schema == "source":
                 example = row.to_dict()
 
-            elif self.config.schema == "seacrowd_text_multi":
+            elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
 
                 example = {
                     "id": str(row["index"]),
@@ -231,7 +229,3 @@ class UITViSFDDataset(datasets.GeneratorBasedBuilder):
                 }
 
             yield index, example
-
-
-# This template is based on the following template from the datasets package:
-# https://github.com/huggingface/datasets/blob/master/templates/new_dataset_script.py
