@@ -58,18 +58,12 @@ _CITATION = """\
   }
 """
 
-# TODO: create a module level variable with your dataset name (should match script name)
-#  E.g. Hallmarks of Cancer: [dataset_name] --> hallmarks_of_cancer
 _DATASETNAME = "uit_visfd"
 
-# TODO: Add description of the dataset here
-# You can copy an official description
 _DESCRIPTION = """
-Crawled textual feedback from customers about smartphones on \
-    a large e-commerce website in Vietnam. The label of the \
-    dataset is ten aspects and three polarities. Please read \
-    the guidelines in the paper for more information. \
-    We randomly divide the dataset into three sets:
+UIT-ViSFD is the Vietnamese Smartphone Feedback Dataset.
+It is an aspect-based sentiment analysis dataset.
+It consists of 11,122 human-annotated comments for mobile e-commerce.
 """
 
 _HOMEPAGE = "https://github.com/LuongPhan/UIT-ViSFD"
@@ -91,11 +85,13 @@ _SEACROWD_VERSION = "1.0.0"
 
 class UITViSFDDataset(datasets.GeneratorBasedBuilder):
     """
-    Crawled textual feedback from customers about smartphones on \
-        a large e-commerce website in Vietnam. The label of the \
-        dataset is ten aspects and three polarities. Please read \
-        the guidelines in the paper for more information. \
-        We randomly divide the dataset into three sets:
+    Crawled textual feedback from customers about smartphones on a large e-commerce website in Vietnam.
+    The label of the dataset is ten aspects and three polarities.
+    Please read the guidelines in the paper for more information.
+    We randomly divide the dataset into three sets:
+        - Train: 7,786.
+        - Dev: 1,112.
+        - Test: 2,224.
     """
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
