@@ -92,6 +92,7 @@ _LANGUAGES = {
     "tha": "th",
     "mya": "my",
     "fil": "tl",
+    "vie": "vi"
 }
 
 _LICENSE = Licenses.CC0_1_0.value
