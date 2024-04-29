@@ -24,7 +24,7 @@ import pandas as pd
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
+from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @inproceedings{nguyen-etal-2024-vilexnorm,
@@ -62,7 +62,7 @@ _LOCAL = False
 _URLS = {
     "train": "https://raw.githubusercontent.com/ngxtnhi/ViLexNorm/main/data/train.csv",
     "dev": "https://raw.githubusercontent.com/ngxtnhi/ViLexNorm/main/data/dev.csv",
-    "test": "https://raw.githubusercontent.com/ngxtnhi/ViLexNorm/main/data/test.csv"
+    "test": "https://raw.githubusercontent.com/ngxtnhi/ViLexNorm/main/data/test.csv",
 }
 
 _SUPPORTED_TASKS = [Tasks.MULTILEXNORM]
@@ -100,11 +100,13 @@ class VilexnormDataset(datasets.GeneratorBasedBuilder):
     def _info(self) -> datasets.DatasetInfo:
 
         if self.config.schema == "source":
-            features = datasets.Features({
-                "id": datasets.Value("int32"),
-                "original": datasets.Value("string"),
-                "normalized": datasets.Value("string"),
-            })
+            features = datasets.Features(
+                {
+                    "id": datasets.Value("int32"),
+                    "original": datasets.Value("string"),
+                    "normalized": datasets.Value("string"),
+                }
+            )
 
         elif self.config.schema == "seacrowd_t2t":
             features = schemas.text2text_features
@@ -138,7 +140,7 @@ class VilexnormDataset(datasets.GeneratorBasedBuilder):
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
-                    "filepath": data_dir["dev"]
+                    "filepath": data_dir["dev"],
                 },
             ),
         ]
