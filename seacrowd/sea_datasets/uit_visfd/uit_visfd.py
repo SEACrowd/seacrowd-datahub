@@ -95,7 +95,6 @@ class UITViSFDDataset(datasets.GeneratorBasedBuilder):
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-    SEACROWD_SCHEMA_NAME = "text_multi"
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
@@ -106,10 +105,10 @@ class UITViSFDDataset(datasets.GeneratorBasedBuilder):
             subset_id=f"{_DATASETNAME}",
         ),
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",
+            name=f"{_DATASETNAME}_seacrowd_text_multi",
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd schema",
-            schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
+            schema="seacrowd_text_multi",
             subset_id=f"{_DATASETNAME}",
         ),
     ]
@@ -158,7 +157,7 @@ class UITViSFDDataset(datasets.GeneratorBasedBuilder):
                 {"index": datasets.Value("int64"), "comment": datasets.Value("string"), "n_star": datasets.Value("int64"), "date_time": datasets.Value("string"), "label": datasets.Sequence(feature=datasets.ClassLabel(names=self._LABELS))}
             )
 
-        elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
+        elif self.config.schema == "seacrowd_text_multi":
             features = schemas.text_multi_features(self._LABELS)
 
         return datasets.DatasetInfo(
@@ -220,7 +219,7 @@ class UITViSFDDataset(datasets.GeneratorBasedBuilder):
             if self.config.schema == "source":
                 example = row.to_dict()
 
-            elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
+            elif self.config.schema == "seacrowd_text_multi":
 
                 example = {
                     "id": str(row["index"]),
