@@ -139,7 +139,7 @@ class UDHRLID(datasets.GeneratorBasedBuilder):
 
         return [
             datasets.SplitGenerator(
-                name=datasets.Split.TRAIN,
+                name=datasets.Split.TEST,
                 gen_kwargs={
                     "filepath": data_path,
                 },
