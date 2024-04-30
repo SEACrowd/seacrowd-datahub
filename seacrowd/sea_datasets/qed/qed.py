@@ -61,7 +61,7 @@ QED - The QCRI Educational Domain Corpus (formerly QCRI AMARA Corpus) is an open
 
 _HOMEPAGE = "https://opus.nlpl.eu/QED/corpus/version/QED"
 
-_LANGUAGES = ["eng", "vie", "tha", "mya", "jav", "ind", "tgl", "zlm"]
+_LANGUAGES = ["eng", "vie", "tha", "mya", "jav", "ind", "tgl", "zlm", "ceb", "fil", "khm", "lao", "mad", "pam"]
 
 _LICENSE = Licenses.OTHERS.value
 
@@ -92,6 +92,33 @@ class QEDDataset(datasets.GeneratorBasedBuilder):
         ("en", "id"),
         ("en", "tl"),
         ("en", "ms"),
+        ("en","fil"),
+        ("en", "km"),
+        ("en", "lo")
+        ("en","mad"),
+        ("en","pam"),
+        ("fil","vi"),
+        ("km","vi"),
+        ("lo","vi"),
+        ("pam","vi"),
+        ("fil","th"),
+        ("km","th"),
+        ("lo","th"),
+        ("pam","th"),
+        ("fil","my"),
+        ("km","my"),
+        ("lo","my"),
+        ("fil","jv"),
+        ("jv","lo"),
+        ("fil","id"),
+        ("id","km"),
+        ("id","lo"),
+        ("fil","tl"),
+        ("km","tl"),
+        ("lo","tl"),
+        ("fil","ms"),
+        ("km","ms"),
+        ("lo","ms"),
         ("th", "vi"),
         ("th", "my"),
         ("th", "jv"),
@@ -113,9 +140,24 @@ class QEDDataset(datasets.GeneratorBasedBuilder):
         ("ms", "th"),
         ("ms", "vi"),
         ("ms", "my"),
+        ("ceb","en"),
+        ("ceb","vi"),
+        ("ceb","th"),
+        ("ceb","my"),
+        ("ceb","jv"),
+        ("ceb","id"),
+        ("ceb","tl"),
+        ("ceb","ms"),
+        ("ceb","fil"),
+        ("ceb","km"),
+        ("ceb","lo"),
+        ("ceb","pam"),
+        ("fil","km"),
+        ("fil","lo"),
+        ("km","lo"),
     ]
 
-    MONO_LANGS = ["en", "vi", "th", "my", "jv", "id", "tl", "ms"]
+    MONO_LANGS = ["en", "vi", "th", "my", "jv", "id", "tl", "ms","ceb","fil","km","lo","mad","pam"]
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
