@@ -14,11 +14,9 @@
 # limitations under the License.
 
 """
-Crawled textual feedback from customers about smartphones on \
-    a large e-commerce website in Vietnam. The label of the \
-    dataset is ten aspects and three polarities. Please read \
-    the guidelines in the paper for more information. \
-    We randomly divide the dataset into three sets:
+UIT-ViSFD is the Vietnamese Smartphone Feedback Dataset.
+It is an aspect-based sentiment analysis dataset.
+It consists of 11,122 human-annotated comments for mobile e-commerce.
 """
 import os
 from pathlib import Path
@@ -31,7 +29,6 @@ from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
-# TODO: Add BibTeX citation
 _CITATION = """\
   @InProceedings{10.1007/978-3-030-82147-0_53,
   author="Luc Phan, Luong
