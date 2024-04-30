@@ -199,6 +199,7 @@ class M3ExamDataset(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         lang = self.config.name.split("_")[1]
+        thai_answer_mapper = {"1": "1", "2": "2", "3": "3", "4": "4", "5": "5", "๑": "1", "๒": "2", "๓": "3", "๔": "4", "๕": "5"}
         if self.config.schema == "source":
             if split == "train":
                 filepath_json = os.path.join(filepath, f"{_LANG_MAPPER[lang]}-questions-image.json")
@@ -252,16 +253,21 @@ class M3ExamDataset(datasets.GeneratorBasedBuilder):
             with open(filepath, "r") as file:
                 data = json.load(file)
             idx = 0
+
             for json_obj in data:
+                answer = [".".join(answer.split(".")[1:]).strip() for answer in json_obj["options"] if json_obj["answer_text"] == answer.split(".")[0]]
+                if "_tha_" in self.config.name and len(answer) == 0:
+                    answer = [".".join(answer.split(".")[1:]).strip() for answer in json_obj["options"] if thai_answer_mapper[json_obj["answer_text"]] == thai_answer_mapper[answer.split(".")[0]]]
+
                 example = {
                     "id": idx,
                     "question_id": idx,
                     "document_id": idx,
                     "question": json_obj["question_text"],
                     "type": "multiple_choice",
-                    "choices": [". ".join(answer.split(". ")[1:]) for answer in json_obj["options"]],
+                    "choices": [".".join(answer.split(".")[1:]).strip() for answer in json_obj["options"]],
                     "context": "",
-                    "answer": [". ".join(answer.split(". ")[1:]) for answer in json_obj["options"] if json_obj["answer_text"] == answer[0]],
+                    "answer": answer,
                     "meta": {
                         "background_description": json_obj["background_description"] if "background_description" in json_obj.keys() else None,
                         "level": json_obj["level"] if "level" in json_obj.keys() else None,
@@ -278,7 +284,11 @@ class M3ExamDataset(datasets.GeneratorBasedBuilder):
             with open(filepath_json, "r") as file:
                 data = json.load(file)
             idx = 0
+
             for json_obj in data:
+                answer = [".".join(answer.split(".")[1:]).strip() for answer in json_obj["options"] if json_obj["answer_text"] == answer.split(".")[0]]
+                if "_tha_" in self.config.name and len(answer) == 0:
+                    answer = [".".join(answer.split(".")[1:]).strip() for answer in json_obj["options"] if thai_answer_mapper[json_obj["answer_text"]] == thai_answer_mapper[answer.split(".")[0]]]
                 image_paths = []
                 for text in [json_obj["question_text"]] + json_obj["options"] + json_obj["background_description"]:
                     matches = re.findall(r"\[image-(\d+)\.(jpg|png)\]", text)
@@ -292,9 +302,9 @@ class M3ExamDataset(datasets.GeneratorBasedBuilder):
                     "document_id": idx,
                     "questions": [json_obj["question_text"]],
                     "type": "multiple_choice",
-                    "choices": [". ".join(answer.split(". ")[1:]) for answer in json_obj["options"]],
+                    "choices": [".".join(answer.split(".")[1:]).strip() for answer in json_obj["options"]],
                     "context": "",
-                    "answer": [". ".join(answer.split(". ")[1:]) for answer in json_obj["options"] if json_obj["answer_text"] == answer[0]],
+                    "answer": answer,
                     "image_paths": image_paths,
                     "meta": {
                         "background_description": json_obj["background_description"] if "background_description" in json_obj.keys() else None,
