@@ -1,21 +1,3 @@
-# coding=utf-8
-# Copyright 2022 The HuggingFace Datasets Authors and the current dataset script contributor.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-"""
-The Malaysian English News (MEN) dataset includes 200 Malaysian English news article with human annotated entities and relations (in total 6,061 entities and 3,268 relation instances). Malaysian English combines elements of standard English with Malay, Chinese, and Indian languages. Four human annotators were split into 2 groups, each group annotated 100 news articles and inter-annotator agreement was calculated between 2 or more annotators working on the same task (entity annotation; F1-score 0.82, relation annotation; F1-score 0.51).
-"""
 import json
 import os
 from pathlib import Path
@@ -29,7 +11,7 @@ from seacrowd.utils.schemas import kb_features
 
 _CITATION = """\
 @misc{chanthran2024malaysian,
-      title={Malaysian English News Decoded: A Linguistic Resource for Named Entity and Relation Extraction}, 
+      title={Malaysian English News Decoded: A Linguistic Resource for Named Entity and Relation Extraction},
       author={Mohan Raj Chanthran and Lay-Ki Soon and Huey Fang Ong and Bhawani Selvaretnam},
       year={2024},
       eprint={2402.14521},
@@ -41,7 +23,9 @@ _CITATION = """\
 _DATASETNAME = "men"
 
 _DESCRIPTION = """\
-The Malaysian English News (MEN) dataset includes 200 Malaysian English news article with human annotated entities and relations (in total 6,061 entities and 3,268 relation instances). Malaysian English combines elements of standard English with Malay, Chinese, and Indian languages. Four human annotators were split into 2 groups, each group annotated 100 news articles and inter-annotator agreement was calculated between 2 or more annotators working on the same task (entity annotation; F1-score 0.82, relation annotation; F1-score 0.51).
+The Malaysian English News (MEN) dataset includes 200 Malaysian English news article with human annotated entities and relations (in total 6,061 entities and 3,268 relation instances).
+Malaysian English combines elements of standard English with Malay, Chinese, and Indian languages. Four human annotators were split into 2 groups, each group annotated 100 news articles
+and inter-annotator agreement was calculated between 2 or more annotators working on the same task (entity annotation; F1-score 0.82, relation annotation; F1-score 0.51).
 """
 
 _HOMEPAGE = "https://github.com/mohanraj-nlp/MEN-Dataset/tree/main"
@@ -62,7 +46,8 @@ _SEACROWD_VERSION = "1.0.0"
 
 
 class MENDataset(datasets.GeneratorBasedBuilder):
-    """The Malaysian English News (MEN) dataset includes 200 Malaysian English news article with human annotated entities and relations (in total 6,061 entities and 3,268 relation instances). Malaysian English combines elements of standard English with Malay, Chinese, and Indian languages. Four human annotators were split into 2 groups, each group annotated 100 news articles and inter-annotator agreement was calculated between 2 or more annotators working on the same task (entity annotation; F1-score 0.82, relation annotation; F1-score 0.51)."""
+    """The Malaysian English News dataset comprises 200 articles with 6,061 annotated entities and 3,268 relations.
+    Inter-annotator agreement for entity annotation was high (F1-score 0.82), but lower for relation annotation (F1-score 0.51)."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
@@ -87,7 +72,6 @@ class MENDataset(datasets.GeneratorBasedBuilder):
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     def _info(self) -> datasets.DatasetInfo:
-
         if self.config.schema == "source":
             features = datasets.Features(
                 {
@@ -152,7 +136,6 @@ class MENDataset(datasets.GeneratorBasedBuilder):
 
         i = 0
         for item in entities:
-
             article_id = item["id"]
             entities = item["entities"]
             relations = item["relations"]
@@ -183,7 +166,7 @@ class MENDataset(datasets.GeneratorBasedBuilder):
                         {
                             "id": f"{article_id}-entity-{entity['id']}",
                             "type": entity["label"],
-                            "text": [articles[article_id][entity["position"]["start_offset"] : entity["position"]["end_offset"]]],
+                            "text": [articles[article_id][entity["position"]["start_offset"]:entity["position"]["end_offset"]]],
                             "offsets": [[entity["position"]["start_offset"], entity["position"]["end_offset"]]],
                             "normalized": [],
                         }
@@ -192,6 +175,13 @@ class MENDataset(datasets.GeneratorBasedBuilder):
                     "events": [],
                     "coreferences": [],
                     "relations": [
-                        {"id": f"{article_id}-relation-{relation['id']}", "type": relation["relation"], "arg1_id": f"{article_id}-entity-{relation['head']}", "arg2_id": f"{article_id}-entity-{relation['tail']}", "normalized": [{"db_name": relation["relation_source"], "db_id": ""}]} for relation in relations
+                        {
+                            "id": f"{article_id}-relation-{relation['id']}",
+                            "type": relation["relation"],
+                            "arg1_id": f"{article_id}-entity-{relation['head']}",
+                            "arg2_id": f"{article_id}-entity-{relation['tail']}",
+                            "normalized": [{"db_name": relation["relation_source"], "db_id": ""}],
+                        }
+                        for relation in relations
                     ],
                 }
