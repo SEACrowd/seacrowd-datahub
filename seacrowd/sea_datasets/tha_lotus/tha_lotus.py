@@ -41,7 +41,7 @@ It contains two datasets, one for training acoustic model, another for training 
 """
 
 _HOMEPAGE = "https://github.com/korakot/corpus/tree/main/LOTUS"
-_LICENSE = Licenses.CC.value
+_LICENSE = Licenses.CC_BY_NC_SA_3_0.value
 
 _URL = "https://github.com/korakot/corpus/releases/download/v1.0/AIFORTHAI-LotusCorpus.zip"
 
