@@ -10,7 +10,7 @@ from seacrowd.utils.constants import Licenses, Tasks
 
 # TODO: Add BibTeX citation
 _CITATION = """\
-@article{,
+@article{goldhahn2012leipzig,
   author    = {Goldhahn, Dirk and Eckart, Thomas and Quasthoff, Uwe and others},
   title     = {Building large monolingual dictionaries at the leipzig corpora collection: From 100 to 200 languages},
   journal   = {LREC},
