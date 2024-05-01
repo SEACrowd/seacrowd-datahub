@@ -72,7 +72,9 @@ _URLS = {
     "verb": "https://www.ims.uni-stuttgart.de/documents/ressourcen/experiment-daten/ViData.zip",
 }
 
-_SUPPORTED_TASKS = [Tasks.WORD_ANALOGY]
+# This task is more suitable for TEXTUAL_ENTAILMENT
+# not WORD_ANALOGY task
+_SUPPORTED_TASKS = [Tasks.TEXTUAL_ENTAILMENT]
 
 _SOURCE_VERSION = "1.0.0"
 
