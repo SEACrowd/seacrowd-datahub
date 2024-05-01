@@ -1,5 +1,5 @@
 """
-SEA Crowd Data Loader for Bloom Speech.
+SEA Crowd Data Loader for Thai LOTUS.
 """
 import os
 from typing import Dict, List, Tuple
