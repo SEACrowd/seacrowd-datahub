@@ -163,7 +163,3 @@ class NusaTranslationSenti(datasets.GeneratorBasedBuilder):
         for row in df.itertuples():
             ex = {"id": str(row.id), "text": row.text, "label": row.label}
             yield row.id, ex
-
-
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)
