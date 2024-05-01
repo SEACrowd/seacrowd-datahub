@@ -95,7 +95,7 @@ class BRCCDataset(datasets.GeneratorBasedBuilder):
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
-                    "filepath": os.path.join(data_dir, "BahasaRojak Datasets/BRCC/mix.train"),
+                    "filepath": os.path.join(data_dir, "BahasaRojak Datasets", "BRCC", "mix.train"),
                     "split": "train",
                 },
             )
@@ -104,8 +104,6 @@ class BRCCDataset(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
         with open(filepath, encoding="utf-8") as f:
-            lines = f.readlines()
-
-        for idx, line in enumerate(lines):
+           for idx, line in enumerate(f):
             example = {"id": str(idx), "text": line.strip()}
             yield idx, example
