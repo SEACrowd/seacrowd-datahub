@@ -86,20 +86,20 @@ class ViConDataset(datasets.GeneratorBasedBuilder):
     distinguish between similarity and dissimilarity.
     """
 
-    TYPES = ["noun", "adj", "verb"]
+    POS_TAGS = ["noun", "adj", "verb"]
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    BUILDER_CONFIGS = [SEACrowdConfig(name=f"{_DATASETNAME}_{TYPE}_source", version=_SOURCE_VERSION, description=f"{_DATASETNAME}_{TYPE} source schema", schema="source", subset_id=f"{_DATASETNAME}_{TYPE}",) for TYPE in TYPES] + [
+    BUILDER_CONFIGS = [SEACrowdConfig(name=f"{_DATASETNAME}_{POS_TAG}_source", version=_SOURCE_VERSION, description=f"{_DATASETNAME}_{POS_TAG} source schema", schema="source", subset_id=f"{_DATASETNAME}_{POS_TAG}",) for POS_TAG in POS_TAGS] + [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_{TYPE}_seacrowd_pairs",
+            name=f"{_DATASETNAME}_{POS_TAG}_seacrowd_pairs",
             version=_SEACROWD_VERSION,
-            description=f"{_DATASETNAME}_{TYPE} SEACrowd schema",
+            description=f"{_DATASETNAME}_{POS_TAG} SEACrowd schema",
             schema="seacrowd_pairs",
-            subset_id=f"{_DATASETNAME}_{TYPE}",
+            subset_id=f"{_DATASETNAME}_{POS_TAG}",
         )
-        for TYPE in TYPES
+        for POS_TAG in POS_TAGS
     ]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_noun_source"
@@ -130,23 +130,23 @@ class ViConDataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
 
-        TYPE = self.config.name.split("_")[1]
-        if TYPE == "noun" or TYPE == "verb":
+        POS_TAG = self.config.name.split("_")[1]
+        if POS_TAG == "noun" or POS_TAG == "verb":
             number = 400
-        elif TYPE == "adj":
+        elif POS_TAG == "adj":
             number = 600
 
-        if TYPE in self.TYPES:
-            data_dir = dl_manager.download_and_extract(_URLS[TYPE])
+        if POS_TAG in self.POS_TAGS:
+            data_dir = dl_manager.download_and_extract(_URLS[POS_TAG])
 
         else:
-            data_dir = [dl_manager.download_and_extract(_URLS[TYPE]) for TYPE in self.TYPES]
+            data_dir = [dl_manager.download_and_extract(_URLS[POS_TAG]) for POS_TAG in self.POS_TAGS]
 
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
-                    "filepath": os.path.join(data_dir, f"ViData/ViCon/{number}_{TYPE}_pairs.txt"),
+                    "filepath": os.path.join(data_dir, f"ViData/ViCon/{number}_{POS_TAG}_pairs.txt"),
                     "split": "train",
                 },
             )
