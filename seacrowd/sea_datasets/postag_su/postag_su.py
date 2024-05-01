@@ -265,7 +265,3 @@ class PosSunMonoDataset(datasets.GeneratorBasedBuilder):
 
         else:
             raise NotImplementedError(f"Schema '{self.config.schema}' is not defined.")
-
-
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)

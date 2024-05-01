@@ -217,7 +217,3 @@ class IndolemUdIdGsdDataset(datasets.GeneratorBasedBuilder):
 
         for key, example in enumerate(generator_fn(filepath)):
             yield key, example
-
-
-# if __name__ == "__main__":
-#     datasets.load_dataset(__file__)

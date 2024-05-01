@@ -189,8 +189,3 @@ class MalindoParallelDataset(datasets.GeneratorBasedBuilder):
                     "text_2_name": "jpn",
                 }
                 yield i, ex
-
-
-
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)

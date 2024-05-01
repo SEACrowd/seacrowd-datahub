@@ -156,7 +156,3 @@ class MalaysiaAIHansardDataset(datasets.GeneratorBasedBuilder):
                     "id": key,
                     "text": sample["cleaned"],
                 }
-
-
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)

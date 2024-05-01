@@ -236,7 +236,3 @@ class UdIdCsuiDataset(datasets.GeneratorBasedBuilder):
 
         for key, example in enumerate(dataset):
             yield key, example
-
-
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)
