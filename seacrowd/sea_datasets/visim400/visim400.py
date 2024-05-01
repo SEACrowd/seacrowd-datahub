@@ -41,7 +41,7 @@ _HOMEPAGE = "https://www.ims.uni-stuttgart.de/forschung/ressourcen/experiment-da
 
 _LANGUAGES = ["vie"]
 
-_LICENSE = Licenses.CC_BY_NC_SA_2_0.value
+_LICENSE = Licenses.CC_BY_NC_SA_4_0.value
 
 _LOCAL = False
 
