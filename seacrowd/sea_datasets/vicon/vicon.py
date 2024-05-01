@@ -175,7 +175,7 @@ class ViConDataset(datasets.GeneratorBasedBuilder):
                 example = {
                     "id": str(index),
                     "text_1": str(row["Word1"]),
-                    "text_1": str(row["Word2"]),
+                    "text_2": str(row["Word2"]),
                     "label": str(row["Relation"]),
                 }
 
