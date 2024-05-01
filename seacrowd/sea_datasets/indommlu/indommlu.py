@@ -199,7 +199,7 @@ class IndoMMLUDataset(datasets.GeneratorBasedBuilder):
             name=f"{_DATASETNAME}_{lang}_seacrowd_qa",
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} {lang} SEACrowd schema",
-            schema=f"seacrowd_{lang}_qa",
+            schema=f"seacrowd_qa",
             subset_id=_DATASETNAME,
         )
         BUILDER_CONFIGS.append(lang_config)

@@ -34,7 +34,7 @@ _LOCAL = False
 _URLS = {
     _DATASETNAME: "https://raw.githubusercontent.com/ir-nlp-csui/saltik/main/saltik.json",
 }
-_SUPPORTED_TASKS = [Tasks.NON_WORD_ERROR_SPELLING_CORRECTION]
+_SUPPORTED_TASKS = []
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 

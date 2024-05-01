@@ -174,8 +174,8 @@ class MultilingualArc(datasets.GeneratorBasedBuilder):
                     "document_id": d["id"],
                     "question": d["instruction"],
                     "type": "multiple_choice",
-                    "choices": [f"{label}. {text}" for label, text in zip(label_choices, text_choices)],
+                    "choices": [text for text in text_choices],
                     "context": None,
-                    "answer": [f'{d["answer"]}. {text_choices[ord(d["answer"])-65]}'],
+                    "answer": [text_choices[ord(d["answer"])-65]],
                     "meta": {}
                 }

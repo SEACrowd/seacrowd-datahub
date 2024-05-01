@@ -96,8 +96,11 @@ _SOURCE_VERSION = "1.0.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
+_LOCAL = False
+
 
 def load_topic(fn):
+
     qid2topic = {}
     with open(fn, encoding="utf-8") as f:
         for line in f:

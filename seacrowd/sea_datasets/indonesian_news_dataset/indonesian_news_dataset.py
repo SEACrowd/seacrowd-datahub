@@ -19,6 +19,8 @@ _CITATION = """\
 }
 """
 
+_LANGUAGES = ["ind"]
+
 _DATASETNAME = "indonesian_news_dataset"
 
 _DESCRIPTION = """An imbalanced dataset to classify Indonesian News articles.
@@ -43,6 +45,8 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 _TAGS = ["bola", "news", "bisnis", "tekno", "otomotif"]
+
+_LOCAL = False
 
 
 class IndonesianNewsDataset(datasets.GeneratorBasedBuilder):

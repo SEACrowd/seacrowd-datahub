@@ -115,18 +115,21 @@ class GklmipSentimentDataset(datasets.GeneratorBasedBuilder):
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
                     "filepath": os.path.join(data_dir, "product_sentiment_dataset_train.json"),
+                    "split": "train",
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
                 gen_kwargs={
                     "filepath": os.path.join(data_dir, "product_sentiment_dataset_test.json"),
+                    "split": "test",
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
                     "filepath": os.path.join(data_dir, "product_sentiment_dataset_dev.json"),
+                    "split": "validation",
                 },
             ),
         ]

@@ -82,6 +82,8 @@ _LANGUAGES = [source.split("_")[0] for source in _SOURCE_NAMES]
 
 _DEFAULT_LANG = "zsm"
 
+_LOCAL = False
+
 def config_constructor(belebele_subset: str, schema: str, version: str) -> SEACrowdConfig:
     lang = _LANGUAGES[_SOURCE_NAMES.index(belebele_subset)]
     return SEACrowdConfig(
@@ -153,7 +155,7 @@ class BelebeleDataset(datasets.GeneratorBasedBuilder):
 
         return [
             datasets.SplitGenerator(
-                name=datasets.Split.TRAIN,
+                name=datasets.Split.TEST,
                 gen_kwargs={
                     "file": file,
                 },

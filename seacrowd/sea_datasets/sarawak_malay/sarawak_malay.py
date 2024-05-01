@@ -17,9 +17,17 @@ import os
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-import audiosegment
+try:
+    import audiosegment
+except:
+    print("Install the `audiosegment` package to use.")
+
+try:
+    import textgrid
+except:
+    print("Install the `textgrid` package to use.")
+
 import datasets
-import textgrid
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig

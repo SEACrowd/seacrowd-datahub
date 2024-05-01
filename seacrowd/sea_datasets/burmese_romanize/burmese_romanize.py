@@ -40,6 +40,8 @@ _SUPPORTED_TASKS = [Tasks.TRANSLITERATION]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
+_LOCAL = False
+
 
 class BurmeseRomanizeDataset(datasets.GeneratorBasedBuilder):
     """Romanization of names in Burmese script"""

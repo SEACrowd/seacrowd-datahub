@@ -1,4 +1,4 @@
-{
+_LANG_CONFIG = {
   "ace": {
     "name": "Acehnese",
     "source_subset": "ace"

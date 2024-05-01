@@ -38,6 +38,8 @@ _SUPPORTED_TASKS = [Tasks.DOMAIN_KNOWLEDGE_MULTICLASSIFICATION]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
+_LOCAL = False
+
 
 class DengueFilipinoDataset(datasets.GeneratorBasedBuilder):
     """Dengue Dataset Low-Resource Multi-label Text Classification Dataset in Filipino"""

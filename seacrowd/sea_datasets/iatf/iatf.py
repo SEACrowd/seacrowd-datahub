@@ -2,7 +2,11 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 import datasets
-import pyreadr
+
+try:
+    import pyreadr
+except:
+    print("Install the `pyreadr` package to use.")
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig

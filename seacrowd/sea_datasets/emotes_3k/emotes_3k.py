@@ -164,10 +164,10 @@ class Emotes3KDatasets(datasets.GeneratorBasedBuilder):
 
         return [
             datasets.SplitGenerator(
-                name=datasets.Split.TRAIN,
+                name=datasets.Split.TEST,
                 gen_kwargs={
                     "filepath": path,
-                    "split": "train",
+                    "split": "test",
                 },
             ),
         ]

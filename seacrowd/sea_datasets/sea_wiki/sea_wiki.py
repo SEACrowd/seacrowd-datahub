@@ -10,6 +10,7 @@ import datasets
 from datasets import load_dataset
 from datasets.download.download_manager import DownloadManager
 
+from seacrowd.sea_datasets.sea_wiki.lang_config import _LANG_CONFIG
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
@@ -28,10 +29,6 @@ _CITATION = """
 """
 
 logger = datasets.logging.get_logger(__name__)
-
-
-with open(DownloadManager().download_and_extract("seacrowd/sea_datasets/sea_wiki/lang_config.json"), "r") as f:
-    _LANG_CONFIG = json.load(f)
 
 _LOCAL = False
 _LANGUAGES = list(_LANG_CONFIG.keys())

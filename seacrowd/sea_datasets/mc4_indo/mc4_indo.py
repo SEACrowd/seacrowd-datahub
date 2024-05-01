@@ -52,6 +52,7 @@ _CONFIGS = {"full": {"train": 1016, "validation": 8}}
 #     "full": {"train": 1, "validation": 1}
 # }
 
+_LOCAL = False
 
 _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
 _SOURCE_VERSION = "1.0.0"

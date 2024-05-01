@@ -81,6 +81,7 @@ _HF_URL = "https://huggingface.co/datasets/tydiqa"
 _SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
 _LANGUAGES = ["ind", "tha"]
 _LOCAL = False
+_SOURCE_VERSION = "1.0.0"
 _SOURCE_VERSION_P = "1.0.0"
 _SOURCE_VERSION_S = "1.1.0"
 _SEACROWD_VERSION = "1.0.0"
