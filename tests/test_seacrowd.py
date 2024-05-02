@@ -527,7 +527,7 @@ if __name__ == "__main__":
     parser.add_argument("path", type=str, help="path to dataloader script (e.g. examples/n2c2_2011.py)")
     parser.add_argument(
         "--schema",
-        type=str,
+        type=str.upper,
         default=None,
         required=False,
         choices=list(VALID_SCHEMAS),
