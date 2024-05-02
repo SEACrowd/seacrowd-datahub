@@ -138,6 +138,3 @@ class Toxicity200(datasets.GeneratorBasedBuilder):
                 yield id, row
         else:
             raise ValueError(f"Invalid config: {self.config.name}")
-
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)

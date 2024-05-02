@@ -143,7 +143,3 @@ class TEDEnId(datasets.GeneratorBasedBuilder):
                 yield row["id"], ex
         else:
             raise ValueError(f"Invalid config: {self.config.name}")
-
-
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)
