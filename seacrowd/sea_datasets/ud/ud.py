@@ -49,7 +49,10 @@ _DATASETNAME = "ud-v2.13"
 _SUBSETS = {"id_gsd" : "UD_Indonesian-GSD", 
             "id_csui": "UD_Indonesian-CSUI", 
             "id_pud" : "UD_Indonesian-PUD", 
-            "vi_vtb": "UD_Vietnamese-VTB"}
+            "vi_vtb": "UD_Vietnamese-VTB",
+            "tl_trg": "UD_Tagalog-TRG",
+            "tl_ugnayan": "UD_Tagalog-Ugnayan"
+            }
 
 _DESCRIPTION = """\
 Universal Dependencies (UD) is a project that is developing cross-linguistically consistent treebank annotation
