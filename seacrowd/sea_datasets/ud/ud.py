@@ -85,7 +85,15 @@ _URLS = {
         "test": "https://raw.githubusercontent.com/UniversalDependencies/UD_Vietnamese-VTB/master/vi_vtb-ud-test.conllu",
         "dev": "https://raw.githubusercontent.com/UniversalDependencies/UD_Vietnamese-VTB/master/vi_vtb-ud-dev.conllu",
     },
+    "tl_trg": {
+        "test": "https://github.com/UniversalDependencies/UD_Tagalog-TRG/blob/master/tl_trg-ud-test.conllu",
+    },
+    "tl_ugnayan": {
+        "test": "https://github.com/UniversalDependencies/UD_Tagalog-Ugnayan/blob/master/tl_ugnayan-ud-test.conllu",
+    },
 }
+
+
 
 _SUPPORTED_TASKS = [Tasks.POS_TAGGING]
 
@@ -367,6 +375,94 @@ class UdIdPUDDataset(UDDataset):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
     _SUBSET = "id_pud"
+    BUILDER_CONFIGS = [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{_SUBSET}_source",
+            version=SOURCE_VERSION,
+            description=f"{_DATASETNAME}_{_SUBSET} source schema",
+            schema="source",
+            subset_id=f"{_DATASETNAME}_{_SUBSET}",
+        ),
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{_SUBSET}_seacrowd_seq_label",
+            version=SEACROWD_VERSION,
+            description=f"{_DATASETNAME}_{_SUBSET} SEACrowd Seq Label schema",
+            schema="seacrowd_seq_label",
+            subset_id=f"{_DATASETNAME}_{_SUBSET}",
+        ),
+    ]
+
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{_SUBSET}_source"
+
+    def _split_generators(
+            self, dl_manager: datasets.DownloadManager
+    ) -> List[datasets.SplitGenerator]:
+        """Returns SplitGenerators."""
+        urls = _URLS[self._SUBSET]
+        data_path = dl_manager.download(urls)
+
+        return [
+            datasets.SplitGenerator(
+                name=datasets.Split.TEST,
+                gen_kwargs={
+                    "filepath": data_path["test"],
+                },
+            )
+        ]
+
+
+
+class UdTlTRGDataset(UDDataset):
+
+    # def __init__(self, subset):
+
+    SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
+    SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
+    _SUBSET = "tl_trg"
+    BUILDER_CONFIGS = [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{_SUBSET}_source",
+            version=SOURCE_VERSION,
+            description=f"{_DATASETNAME}_{_SUBSET} source schema",
+            schema="source",
+            subset_id=f"{_DATASETNAME}_{_SUBSET}",
+        ),
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{_SUBSET}_seacrowd_seq_label",
+            version=SEACROWD_VERSION,
+            description=f"{_DATASETNAME}_{_SUBSET} SEACrowd Seq Label schema",
+            schema="seacrowd_seq_label",
+            subset_id=f"{_DATASETNAME}_{_SUBSET}",
+        ),
+    ]
+
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{_SUBSET}_source"
+
+    def _split_generators(
+            self, dl_manager: datasets.DownloadManager
+    ) -> List[datasets.SplitGenerator]:
+        """Returns SplitGenerators."""
+        urls = _URLS[self._SUBSET]
+        data_path = dl_manager.download(urls)
+
+        return [
+            datasets.SplitGenerator(
+                name=datasets.Split.TEST,
+                gen_kwargs={
+                    "filepath": data_path["test"],
+                },
+            )
+        ]
+
+
+
+class UdTlUGNAYANDataset(UDDataset):
+
+    # def __init__(self, subset):
+
+    SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
+    SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
+    _SUBSET = "tl_ugnayan"
     BUILDER_CONFIGS = [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_{_SUBSET}_source",
