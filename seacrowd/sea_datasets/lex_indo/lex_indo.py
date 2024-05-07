@@ -3,8 +3,9 @@ from typing import List
 
 import datasets
 
+from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Licenses
+from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @misc{magichubLEXIndoIndonesian,
@@ -30,7 +31,9 @@ _LOCAL = True
 
 _URLS = {}
 
-_SUPPORTED_TASKS = []
+_SUPPORTED_TASKS = [Tasks.MULTILEXNORM]
+
+_LANGUAGES = ["ind"]
 
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
@@ -41,14 +44,23 @@ class LexIndo(datasets.GeneratorBasedBuilder):
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
+    SEACROWD_SCHEMA_NAME = "t2t"
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_source",
-            version=datasets.Version(_SOURCE_VERSION),
-            description="lex_indo lexicon with source schema",
+            version=SOURCE_VERSION,
+            description=f"{_DATASETNAME} lexicon with source schema",
             schema="source",
-            subset_id="lex_indo",
+            subset_id=_DATASETNAME,
+        )
+    ] + [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_seacrowd_{SEACROWD_SCHEMA_NAME}",
+            version=SEACROWD_VERSION,
+            description=f"{_DATASETNAME} lexicon with SEACrowd schema",
+            schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
+            subset_id=_DATASETNAME,
         )
     ]
 
@@ -59,7 +71,7 @@ class LexIndo(datasets.GeneratorBasedBuilder):
         if schema == "source":
             features = datasets.Features({"id": datasets.Value("string"), "word": datasets.Value("string"), "phoneme": datasets.Value("string")})
         else:
-            raise NotImplementedError()
+            features = schemas.text2text_features
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -81,20 +93,34 @@ class LexIndo(datasets.GeneratorBasedBuilder):
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
                     "filepath": data_dir,
-                    "split": "train",
                 },
             )
         ]
 
-    def _generate_examples(self, filepath: Path, split: str):
+    def _generate_examples(self, filepath: Path):
         """Yields examples as (key, example) tuples."""
 
-        with open(f"{filepath}/Indonesian_dic.txt", "r") as f:
-            data = f.readlines()
+        try:
+            with open(f"{filepath}/Indonesian_dic.txt", "r") as f:
+                data = f.readlines()
+        except FileNotFoundError:
+            print("File not found. Please check the file path. Make sure Indonesian_dic.txt is in dest directory")
+        except IOError:
+            print("An error occurred while trying to read the file.")
 
-        if self.config.schema == "source":
-            for idx, text in enumerate(data):
-                row = {"id": str(idx), "word": text.split()[0], "phoneme": " ".join(text.split()[1:])}
-                yield idx, row
-        else:
-            raise ValueError(f"Invalid config: {self.config.name}")
+        for idx, text in enumerate(data):
+            word_i = text.split()[0]
+            phoneme_i = " ".join(text.split()[1:])
+            if self.config.schema == "source":
+                example = {"id": str(idx), "word": word_i, "phoneme": phoneme_i}
+            elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
+                example = {
+                    "id": str(idx),
+                    "text_1": word_i,
+                    "text_2": phoneme_i,
+                    "text_1_name": _LANGUAGES[-1],
+                    "text_2_name": "phoneme",
+                }
+            else:
+                raise ValueError(f"Invalid config: {self.config.name}")
+            yield idx, example
