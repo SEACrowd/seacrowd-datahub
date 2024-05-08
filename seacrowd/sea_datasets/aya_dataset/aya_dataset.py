@@ -46,7 +46,7 @@ The Aya Dataset is a multilingual instruction fine-tuning dataset curated by an 
 
 _HOMEPAGE = "https://huggingface.co/datasets/CohereForAI/aya_dataset"
 
-_LANGUAGES = ["ceb", "ind", "jav", "mya", "tam", "tgl", "sun", "tha", "vie", "zsm"]
+_LANGUAGES = ["ceb", "ind", "jav", "mya", "tam", "fil", "sun", "tha", "vie", "zsm"]
 
 _LICENSE = Licenses.APACHE_2_0.value
 
