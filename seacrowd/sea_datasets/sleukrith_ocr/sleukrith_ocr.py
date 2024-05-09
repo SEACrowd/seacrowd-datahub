@@ -34,28 +34,9 @@ _CITATION = """\
     address = {New York, NY, USA},
     url = {https://doi.org/10.1145/3151509.3151510},
     doi = {10.1145/3151509.3151510},
-    abstract = {Analysis of ancient Khmer documents can be quite challenging due
-    to the elaborated shape of Khmer handwritten characters combined with the
-    complex structure of how words are formed from those characters. Palm leaf
-    manuscripts, one of the most well-known old Khmer documents, have been being
-    digitized and centralized; therefore, document analysis functions such as
-    text search capabilities are necessary but still remain unavailable for this
-    type of documents. In order to contribute to the progress of relevant
-    researches, we introduce in this paper a new dataset called SleukRith set
-    comprising of 657 pages of Khmer palm leaf manuscripts randomly selected
-    from various collections whose quality and digitization method are variable.
-    The dataset contains three types of data: isolated characters, words, and
-    lines. Each type of data is annotated with the ground truth information
-    which is very useful for evaluating and serving as a training set for common
-    document analysis tasks such as character/text recognition, word/line
-    segmentation, and word spotting. In order to serve as a base line, the
-    result of an evaluation study of Khmer isolated character recognition that
-    we have conducted on SleukRith Set using Convolutional Neural Network is
-    also presented.},
     booktitle = {Proceedings of the 4th International Workshop on Historical Document Imaging and Processing},
     pages = {1-6},
     numpages = {6},
-    keywords = {palm leaf manuscript, ground truth, annotated dataset, Handwritten document analysis},
     location = {Kyoto, Japan},
     series = {HIP '17}
 }
