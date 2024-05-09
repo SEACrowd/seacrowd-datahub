@@ -117,7 +117,7 @@ class ViSim400Dataset(datasets.GeneratorBasedBuilder):
 
         return [
             datasets.SplitGenerator(
-                name=datasets.Split.Test,
+                name=datasets.Split.TEST,
                 gen_kwargs={
                     "filepath": os.path.join(data_dir, "ViData/ViSim-400/Visim-400.txt"),
                     "split": "test",
