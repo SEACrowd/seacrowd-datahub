@@ -33,8 +33,11 @@ _DATASETNAME = "visim400"
 
 _DESCRIPTION = """\
 ViSim-400 is a Vietnamese dataset of semantic relation \
-    pairs for evaluation of models that reflect the \
-    continuum between similarity and relatedness.
+pairs for evaluation of models that reflect the \
+continuum between similarity and relatedness.
+
+We choose 'Sim2' instead of 'Sim1' for the label output of \
+our SEACrowd dataloader schema because it's been normalized to [1, 10].
 """
 
 _HOMEPAGE = "https://www.ims.uni-stuttgart.de/forschung/ressourcen/experiment-daten/vnese-sem-datasets/"
