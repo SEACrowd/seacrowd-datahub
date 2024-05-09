@@ -59,7 +59,6 @@ _LICENSE = Licenses.CC_BY_4_0.value
 _LOCAL = False
 
 _BASE_URL = "https://huggingface.co/datasets/ontocord/CulturaY/resolve/main/{lang}/"
-_SUBSETS = ["my", "tl", "ms", "vi", "id", "th"]
 
 _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
 _SEACROWD_SCHEMA = f"seacrowd_{TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]].lower()}"  # ssp
@@ -76,7 +75,7 @@ class CulturaYDataset(datasets.GeneratorBasedBuilder):
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
     BUILDER_CONFIGS = []
-    for subset in _SUBSETS:
+    for subset in _LANGUAGES:
         BUILDER_CONFIGS += [
             SEACrowdConfig(
                 name=f"{_DATASETNAME}_{subset}_source",
@@ -124,7 +123,8 @@ class CulturaYDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators. Data is not yet extracted for efficient generation."""
-        subset = self.config.subset_id
+        lang_dict = {"mya": "my", "fil": "tl", "zlm": "ms", "vie": "vi", "ind": "id", "tha": "th"}
+        subset = lang_dict[self.config.subset_id]
         base_path = _BASE_URL.format(lang=subset)
 
         fs = HfFileSystem(token=dl_manager.download_config.token)
