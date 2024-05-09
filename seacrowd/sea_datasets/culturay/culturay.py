@@ -43,9 +43,11 @@ dataset of 15TB (uncompressed)/3TB (zstd-compressed) that applies the same
 dataset cleaning methodology to the HPLT v1.1 dataset. Please note that HPLT
 v1.2 has also been released and is an alternative verison with different
 cleaning methodolgies. This data was used in part to train our SOTA Vietnamese
-model: Vistral-7B-Chat. Before using this dataloader, please accept the
-acknowledgement at https://huggingface.co/datasets/ontocord/CulturaY and use
-huggingface-cli login for authentication.
+model: Vistral-7B-Chat.
+
+Before using this dataloader, please accept the acknowledgement at
+https://huggingface.co/datasets/ontocord/CulturaY and use huggingface-cli login
+for authentication.
 """
 
 _HOMEPAGE = "https://huggingface.co/datasets/ontocord/CulturaY"
@@ -125,7 +127,9 @@ class CulturaYDataset(datasets.GeneratorBasedBuilder):
         subset = self.config.subset_id
         base_path = _BASE_URL.format(lang=subset)
 
-        file_list = HfFileSystem().ls(f"datasets/ontocord/CulturaY/{subset}", detail=False)
+        fs = HfFileSystem(token=dl_manager.download_config.token)
+        file_list = fs.ls(f"datasets/ontocord/CulturaY/{subset}", detail=False)
+
         data_urls = [
             f"{base_path}{filename.split('/')[-1]}"
             for filename in file_list
