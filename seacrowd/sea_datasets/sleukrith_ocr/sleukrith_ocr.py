@@ -130,7 +130,7 @@ class SleukRithSet(datasets.GeneratorBasedBuilder):
 
     def module_exists(self, module_name):
         try:
-            mod = __import__(module_name)
+            __import__(module_name)
         except ImportError:
             return False
         else:
