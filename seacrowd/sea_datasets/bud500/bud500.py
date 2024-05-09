@@ -165,10 +165,10 @@ class Bud500Dataset(datasets.GeneratorBasedBuilder):
                         elif self.config.schema == _SEACROWD_SCHEMA:
                             yield key, {
                                 "id": str(key),
-                                # "path": None,
+                                "path": None,
                                 "audio": row.audio,
                                 "text": row.transcription,
-                                # "speaker_id": None,
-                                # "metadata": None,
+                                "speaker_id": None,
+                                "metadata": None,
                             }
                         key += 1
