@@ -49,6 +49,8 @@ Latin (700 per character), and 2000 images for Baybayin diacritics (500 per
 symbol). Each character image is strictly center-fitted with a size 56x56
 pixels. This dataset was initially used to discriminate Latin script from
 Baybayin script in character recognition.
+
+This is local dataset, please download the dataset from the `_HOMEPAGE` URL.
 """
 
 _HOMEPAGE = "https://www.kaggle.com/datasets/rodneypino/baybayin-and-latin-binary-images-in-mat-format"
@@ -180,6 +182,6 @@ class BaybayinDataset(datasets.GeneratorBasedBuilder):
                     "id": str(key),
                     "image_paths": image_paths,
                     "texts": char,
-                    # "metadata": None
+                    "metadata": None
                 }
                 key += 1
