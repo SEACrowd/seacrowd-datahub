@@ -63,7 +63,7 @@ Hmong, Indonesian, Khmer, Lao, Malay, Thai, and Vietnamese.
 
 _HOMEPAGE = "https://github.com/MicrosoftTranslator/NTREX"
 
-_LANGUAGES = ["mya", "fil", "ind", "khm", "lao", "zlm", "tha", "vie", "hmv"]
+_LANGUAGES = ["mya", "fil", "ind", "khm", "lao", "zlm", "tha", "vie", "hmv", "eng"]
 
 _LICENSE = Licenses.CC_BY_SA_4_0.value
 
@@ -412,7 +412,7 @@ class Ntrex128Dataset(datasets.GeneratorBasedBuilder):
         lang2_txt_path = Path(dl_manager.download_and_extract(_URLS[_DATASETNAME].format(lang=_MAPPING[lang2])))
         return [
             datasets.SplitGenerator(
-                name=datasets.Split.TRAIN,
+                name=datasets.Split.TEST,
                 gen_kwargs={"filepath": [lang1_txt_path, lang2_txt_path]},
             ),
         ]
