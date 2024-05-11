@@ -42,10 +42,10 @@ group the dataset into the closest language family, i.e.: Javanese, Dayak, Bugin
 Sundanese, Madurese, Banjar, Batak Toba, Khek, Malay, Minangkabau, and Tiociu.
 """
 
-_HOMEPAGE = "https://github.com/herrysujaini/korpusseacrowd"
+_HOMEPAGE = "https://github.com/herrysujaini/korpusnusantara"
 _LICENSE = "Unknown"
 _URLS = {
-    _DATASETNAME: "https://github.com/herrysujaini/korpusseacrowd/raw/main/korpus seacrowd.xlsx",
+    _DATASETNAME: "https://github.com/herrysujaini/korpusnusantara/raw/main/korpus nusantara.xlsx",
 }
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 
