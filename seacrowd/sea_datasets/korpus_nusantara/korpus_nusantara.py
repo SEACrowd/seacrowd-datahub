@@ -9,7 +9,7 @@ from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Tasks, DEFAULT_SOURCE_VIEW_NAME, DEFAULT_SEACROWD_VIEW_NAME
 
-_DATASETNAME = "korpus_seacrowd"
+_DATASETNAME = "korpus_nusantara"
 _SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
 _UNIFIED_VIEW_NAME = DEFAULT_SEACROWD_VIEW_NAME
 
@@ -94,46 +94,46 @@ class KorpusNusantara(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name=f"korpus_seacrowd_ind_{subset}_source",
+            name=f"korpus_nusantara_ind_{subset}_source",
             version=datasets.Version(_SOURCE_VERSION),
             description=f"Korpus_Nusantara ind2{subset} source schema",
             schema="source",
-            subset_id=f"korpus_seacrowd",
+            subset_id=f"korpus_nusantara",
         )
         for subset in _LANGUAGES[1:]
     ] + \
     [
         SEACrowdConfig(
-            name=f"korpus_seacrowd_ind_{subset}_seacrowd_t2t",
+            name=f"korpus_nusantara_ind_{subset}_seacrowd_t2t",
             version=datasets.Version(_SEACROWD_VERSION),
             description=f"Korpus_Nusantara ind2{subset} Nusantara schema",
             schema="seacrowd_t2t",
-            subset_id=f"korpus_seacrowd",
+            subset_id=f"korpus_nusantara",
         )
         for subset in _LANGUAGES[1:]
     ] + \
     [
         SEACrowdConfig(
-            name=f"korpus_seacrowd_{subset}_ind_source",
+            name=f"korpus_nusantara_{subset}_ind_source",
             version=datasets.Version(_SOURCE_VERSION),
             description=f"Korpus_Nusantara {subset}2ind source schema",
             schema="source",
-            subset_id=f"korpus_seacrowd",
+            subset_id=f"korpus_nusantara",
         )
         for subset in _LANGUAGES[1:]
     ] + \
     [
         SEACrowdConfig(
-            name=f"korpus_seacrowd_{subset}_ind_seacrowd_t2t",
+            name=f"korpus_nusantara_{subset}_ind_seacrowd_t2t",
             version=datasets.Version(_SEACROWD_VERSION),
             description=f"Korpus_Nusantara {subset}2ind Nusantara schema",
             schema="seacrowd_t2t",
-            subset_id=f"korpus_seacrowd",
+            subset_id=f"korpus_nusantara",
         )
         for subset in _LANGUAGES[1:]
     ]
 
-    DEFAULT_CONFIG_NAME = "korpus_seacrowd_jav_ind_source"
+    DEFAULT_CONFIG_NAME = "korpus_nusantara_jav_ind_source"
 
     def _info(self):
         if self.config.schema == "source":
@@ -180,10 +180,10 @@ class KorpusNusantara(datasets.GeneratorBasedBuilder):
         
     def get_domain_data(self, dfs):
         domain = self.config.name
-        matched_domain = re.findall(r"korpus_seacrowd_.*?_.*?_", domain)
+        matched_domain = re.findall(r"korpus_nusantara_.*?_.*?_", domain)
         
         assert len(matched_domain) == 1
-        domain = matched_domain[0][:-1].replace("korpus_seacrowd_", "").split("_")
+        domain = matched_domain[0][:-1].replace("korpus_nusantara_", "").split("_")
         src_lang, tgt_lang = domain[0], domain[1]
         
         subsets = Domain2Subsets.get(src_lang if src_lang != "ind" else tgt_lang, None)
