@@ -17,11 +17,13 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 import datasets
-from huggingface_hub import HfFileSystem
-from pyarrow import parquet as pq
+import fsspec
+import pandas as pd
+from fsspec.callbacks import TqdmCallback
 
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import SCHEMA_TO_FEATURES, TASK_TO_SCHEMA, Licenses, Tasks
+from seacrowd.utils.constants import (SCHEMA_TO_FEATURES, TASK_TO_SCHEMA,
+                                      Licenses, Tasks)
 
 _CITATION = """\
 @inproceedings{Juan14,
@@ -57,7 +59,7 @@ _LICENSE = Licenses.CC_BY_SA_3_0.value
 
 _LOCAL = False
 
-_BASE_URL = "https://huggingface.co/datasets/meisin123/iban_speech_corpus/resolve/main/data/{filename}"
+_URL = "https://github.com/sarahjuan/iban/tree/master/data"
 
 _SUPPORTED_TASKS = [Tasks.SPEECH_RECOGNITION]
 _SEACROWD_SCHEMA = f"seacrowd_{TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]].lower()}"  # sptext
@@ -98,12 +100,11 @@ class ASRIbanDataset(datasets.GeneratorBasedBuilder):
                 {
                     "audio": datasets.Audio(sampling_rate=16_000),
                     "transcription": datasets.Value("string"),
+                    "speaker_id": datasets.Value("string"),
                 }
             )
         elif self.config.schema == _SEACROWD_SCHEMA:
-            features = SCHEMA_TO_FEATURES[
-                TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]]
-            ]  # speech_text_features
+            features = SCHEMA_TO_FEATURES[TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]]]  # speech_text_features
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -115,46 +116,75 @@ class ASRIbanDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        file_list = HfFileSystem().ls("datasets/meisin123/iban_speech_corpus/data", detail=False)
-        data_urls = []
-        for filename in file_list:
-            if filename.endswith(".parquet"):
-                filename = filename.split("/")[-1]
-                url = _BASE_URL.format(filename=filename)
-                data_urls.append(url)
+        # prepare data directory
+        data_dir = Path.cwd() / "data" / "asr_ibsc"
+        data_dir.mkdir(parents=True, exist_ok=True)
+
+        # download data
+        # if rate limiting is an issue, pass github username and token
+        username = None
+        token = None
+        fs = fsspec.filesystem("github", org="sarahjuan", repo="iban", ref="master", username=username, token=token)
+        fs.clear_instance_cache()
+
+        # download annotation
+        print("Downloading annotation...")
+        fs.get(fs.ls("data/train/"), (data_dir / "train").as_posix(), recursive=True)
+        fs.get(fs.ls("data/test/"), (data_dir / "test").as_posix(), recursive=True)
+
+        # download audio files
+        print("Downloading audio files (~1GB). It may take several minutes...")
+        for idx, folder in enumerate(fs.ls("data/wav/")):
+            folder_name = folder.split("/")[-1]
+            pbar = TqdmCallback(tqdm_kwargs={"desc": f"-> {folder_name} [{idx+1:2d}/{len(fs.ls('data/wav/'))}]", "unit": "file"})
+            fs.get(fs.ls(f"data/wav/{folder_name}/"), (data_dir / "wav" / folder_name).as_posix(), recursive=True, callback=pbar)
 
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
-                    "data_paths": list(map(Path, dl_manager.download(sorted(data_urls))))
+                    "data_dir": data_dir,
+                    "split": "train",
+                },
+            ),
+            datasets.SplitGenerator(
+                name=datasets.Split.TEST,
+                gen_kwargs={
+                    "data_dir": data_dir,
+                    "split": "test",
                 },
             ),
         ]
 
-    def _generate_examples(self, data_paths: Path) -> Tuple[int, Dict]:
+    def _generate_examples(self, data_dir: Path, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
-        key = 0
-        for data_path in data_paths:
-            with open(data_path, "rb") as f:
-                pf = pq.ParquetFile(f)
 
-                for row_group in range(pf.num_row_groups):
-                    df = pf.read_row_group(row_group).to_pandas()
+        text_file = data_dir / split / f"{split}_text"
+        utt2spk_file = data_dir / split / f"{split}_utt2spk"
+        wav_scp_file = data_dir / split / f"{split}_wav.scp"
 
-                    for row in df.itertuples():
-                        if self.config.schema == "source":
-                            yield key, {
-                                "audio": row.audio,
-                                "transcription": row.transcription,
-                            }
-                        elif self.config.schema == _SEACROWD_SCHEMA:
-                            yield key, {
-                                "id": str(key),
-                                "path": None,
-                                "audio": row.audio,
-                                "text": row.transcription,
-                                "speaker_id": None,
-                                "metadata": None,
-                            }
-                        key += 1
+        # load the data
+        text_df = pd.read_csv(text_file, sep="  ", header=None, names=["utt_id", "text"])
+        utt2spk_df = pd.read_csv(utt2spk_file, sep="\t", header=None, names=["utt_id", "speaker"])
+        wav_df = pd.read_csv(wav_scp_file, sep="\t", header=None, names=["utt_id", "wav_path"])
+        merged_df = pd.merge(text_df, utt2spk_df, on="utt_id")
+        merged_df = pd.merge(merged_df, wav_df, on="utt_id")
+
+        for _, row in merged_df.iterrows():
+            wav_file = data_dir / "wav" / row["speaker"] / row["wav_path"].split("/")[-1]
+
+            if self.config.schema == "source":
+                yield row["utt_id"], {
+                    "audio": str(wav_file.as_posix()),
+                    "transcription": row["text"],
+                    "speaker_id": row["speaker"],
+                }
+            elif self.config.schema == _SEACROWD_SCHEMA:
+                yield row["utt_id"], {
+                    "id": row["utt_id"],
+                    "path": str(wav_file),
+                    "audio": str(wav_file.as_posix()),
+                    "text": row["text"],
+                    "speaker_id": row["speaker"],
+                    "metadata": None,
+                }
