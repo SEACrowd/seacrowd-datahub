@@ -95,21 +95,7 @@ _SEACROWD_VERSION = "1.0.0"
 
 class ThaiRomanizationDataset(datasets.GeneratorBasedBuilder):
     """
-    The Thai Romanization dataset contains 648,241 Thai words \
-    that were transliterated into English, making Thai \
-    pronounciation easier for non-native Thai speakers. \
-    This is a valuable dataset for Thai language learners \
-    and researchers working on Thai language processing task. \
-    Each word in the Thai Romanization dataset is paired with \
-    its English phonetic representation, enabling accurate \
-    pronunciation guidance. This facilitates the learning and \
-    practice of Thai pronunciation for individuals who may not \
-    be familiar with the Thai script. The dataset aids in improving \
-    the accessibility and usability of Thai language resources, \
-    supporting applications such as speech recognition, text-to-speech \
-    synthesis, and machine translation. It enables the development of \
-    Thai language tools that can benefit Thai learners, tourists, \
-    and those interested in Thai culture and language.
+    Thai Romanization dataloader from Kaggle (Phong et al., 2018)
     """
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
