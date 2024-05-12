@@ -100,13 +100,13 @@ class AyaCollectionTranslatedDataset(datasets.GeneratorBasedBuilder):
         if self.config.schema == "source":
             features = datasets.Features(
                 {
-                    "id": datasets.Value("string"),
+                    "id": datasets.Value("int64"),
                     "inputs": datasets.Value("string"),
                     "targets": datasets.Value("string"),
                     "dataset_name": datasets.Value("string"),
                     "sub_dataset_name": datasets.Value("string"),
                     "task_type": datasets.Value("string"),
-                    "template_id": datasets.Value("string"),
+                    "template_id": datasets.Value("int64"),
                     "language": datasets.Value("string"),
                     "script": datasets.Value("string"),
                     "split": datasets.Value("string"),
