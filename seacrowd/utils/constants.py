@@ -10,6 +10,8 @@ from seacrowd.utils.schemas import (
     pairs_features_score,
     pairs_multi_features,
     qa_features,
+    image_features,
+    image_multi_features,
     imqa_features,
     seq_label_features,
     speech2speech_features,
@@ -120,6 +122,10 @@ class Tasks(Enum):
 
     # SpeechSpeech
     SPEECH_TO_SPEECH_TRANSLATION = "S2ST"
+
+    # Image
+    IMAGE_CLASSIFICATION = "IMC"
+    IMAGE_CLASSIFICATION_MULTILABEL = "IMC_MULTI"
 
     # ImageText
     IMAGE_CAPTIONING = "IC"
@@ -281,6 +287,8 @@ TASK_TO_SCHEMA = {
     Tasks.SPEECH_EMOTION_RECOGNITION: "SPEECH",
     Tasks.SPEECH_EMOTION_RECOGNITION_MULTILABEL: "SPEECH_MULTI",
     Tasks.VISUAL_QUESTION_ANSWERING: "IMQA",
+    Tasks.IMAGE_CLASSIFICATION: "IMAGE",
+    Tasks.IMAGE_CLASSIFICATION_MULTILABEL: "IMAGE_MULTI",
     Tasks.IMAGE_CAPTIONING: "IMTEXT",
     Tasks.SIGN_LANGUAGE_RECOGNITION: "IMTEXT",
     Tasks.OPTICAL_CHARACTER_RECOGNITION: "IMTEXT",
@@ -291,7 +299,6 @@ TASK_TO_SCHEMA = {
     Tasks.FACT_CHECKING: None,
     Tasks.WORD_LIST: None,
     Tasks.MORALITY_CLASSIFICATION: "TEXT",
-    Tasks.OPTICAL_CHARACTER_RECOGNITION: "IMTEXT"
 }
 
 SCHEMA_TO_TASKS = defaultdict(set)
@@ -318,6 +325,8 @@ SCHEMA_TO_FEATURES = {
     "S2S": speech2speech_features,
     "SPEECH": speech_features(),
     "SPEECH_MULTI": speech_multi_features(),
+    "IMAGE": image_features(),
+    "IMAGE_MULTI": image_multi_features(),
     "IMTEXT": image_text_features(),
     "IMQA": imqa_features,
     "VIDTEXT": video_features,
