@@ -10,6 +10,11 @@ from seacrowd.utils import schemas
 import jsonlines
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 
+try:
+    import gdown
+except:
+    print("Please install `gdown` to proceed.")
+
 
 _CITATION = """\
 @article{aji2022paracotta,
@@ -93,13 +98,20 @@ class ParaCotta(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
         urls = _URLS[_DATASETNAME]
+        # download data from gdrive
+        output_dir = Path.cwd() / "data" / _DATASETNAME
+        output_dir.mkdir(parents=True, exist_ok=True)
+        output_file = output_dir / f"{_DATASETNAME}.tsv"
+        if not output_file.exists():
+            gdown.download(urls, str(output_file), fuzzy=True)
+        else:
+            print(f"File already downloaded: {str(output_file)}")
 
-        data_dir = Path(dl_manager.download(urls))
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
-                    "filepath": data_dir,
+                    "filepath": output_file,
                     "split": "test",
                 },
             ),
