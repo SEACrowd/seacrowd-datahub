@@ -42,19 +42,7 @@ from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Tasks, Licenses
 
 # There are no citation available for this dataset.
-_CITATION = """\
-@article{,
-  author    = {},
-  title     = {},
-  journal   = {},
-  volume    = {},
-  year      = {},
-  url       = {},
-  doi       = {},
-  biburl    = {},
-  bibsource = {}
-}
-"""
+_CITATION = ""
 
 _DATASETNAME = "thai_romanization"
 
