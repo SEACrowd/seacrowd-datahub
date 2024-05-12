@@ -96,7 +96,20 @@ class AyaCollectionTemplatedDataset(datasets.GeneratorBasedBuilder):
     def _info(self) -> datasets.DatasetInfo:
 
         if self.config.schema == "source":
-            features = datasets.Features({"inputs": datasets.Value("string"), "targets": datasets.Value("string")})
+            features = datasets.Features(
+                {
+                    "id": datasets.Value("string"),
+                    "inputs": datasets.Value("string"),
+                    "targets": datasets.Value("string"),
+                    "dataset_name": datasets.Value("string"),
+                    "sub_dataset_name": datasets.Value("string"),
+                    "task_type": datasets.Value("string"),
+                    "template_id": datasets.Value("string"),
+                    "language": datasets.Value("string"),
+                    "split": datasets.Value("string"),
+                    "script": datasets.Value("string"),
+                }
+            )
 
         elif self.config.schema == "seacrowd_t2t":
             features = schemas.text2text_features
