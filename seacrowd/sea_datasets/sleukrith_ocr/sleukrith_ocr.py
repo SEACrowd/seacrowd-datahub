@@ -53,6 +53,9 @@ data: isolated characters, words, and lines. Each type of data is annotated with
 the ground truth information which is very useful for evaluating and serving as
 a training set for common document analysis tasks such as character/text
 recognition, word/line segmentation, and word spotting.
+
+The character mapping (per label) is not explained anywhere in the dataset homepage,
+thus the labels are simply numbered from 0 to 110, each corresponds to a distinct character.
 """
 
 _HOMEPAGE = "https://github.com/donavaly/SleukRith-Set"
