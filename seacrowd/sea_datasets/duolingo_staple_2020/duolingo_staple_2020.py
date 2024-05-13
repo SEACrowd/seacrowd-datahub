@@ -71,6 +71,9 @@ _LICENSE = Licenses.CC_BY_NC_4_0.value
 _LOCAL = True  # needs to fill a form to download the dataset (dynamic link)
 
 _URLS = "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/38OJR6&version=6.0"
+
+# `aws_baseline` refers to reference translations from Amazon Automated MT model,
+# while `gold` refers to translations accepted by Duolingo learners
 _SUBSETS = ["aws_baseline", "gold"]
 
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
