@@ -20,7 +20,8 @@ import datasets
 from scipy.io import loadmat
 
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import SCHEMA_TO_FEATURES, TASK_TO_SCHEMA, Licenses, Tasks
+from seacrowd.utils.constants import (SCHEMA_TO_FEATURES, TASK_TO_SCHEMA,
+                                      Licenses, Tasks)
 
 _CITATION = """\
 @article{Pino2021,
@@ -120,9 +121,7 @@ class BaybayinDataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
         if self.config.data_dir is None:
-            raise ValueError(
-                "This is a local dataset. Please pass the `data_dir` kwarg (where the .pdf is located) to load_dataset."
-            )
+            raise ValueError("This is a local dataset. Please pass the `data_dir` kwarg (where the .pdf is located) to load_dataset.")
         else:
             data_dir = Path(self.config.data_dir)
 
@@ -148,7 +147,7 @@ class BaybayinDataset(datasets.GeneratorBasedBuilder):
             from PIL import Image
         except ImportError as err:
             raise ImportError("You need to install PIL (`pip install pillow`) to store the image from MATLAB structs to .png files.") from err
-        
+
         raw_data = loadmat(str(mat_file))
         contained_data = raw_data[str(mat_file.stem)][0, 0]
 
@@ -175,17 +174,12 @@ class BaybayinDataset(datasets.GeneratorBasedBuilder):
 
                 image_paths = []
                 for i in range(char_data.shape[0]):
-                    image = (char_data[i].reshape((56, 56)) * 255).astype('uint8')
+                    image = (char_data[i].reshape((56, 56)) * 255).astype("uint8")
                     image_path = str(image_dir / f"{char}_{i}.png")
 
                     # save image
                     Image.fromarray(image).save(image_path)
                     image_paths.append(image_path)
 
-                yield key, {
-                    "id": str(key),
-                    "image_paths": image_paths,
-                    "texts": char,
-                    "metadata": None
-                }
+                yield key, {"id": str(key), "image_paths": image_paths, "texts": char, "metadata": None}
                 key += 1
