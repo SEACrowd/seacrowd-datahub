@@ -5,6 +5,7 @@ from .pairs import features as pairs_features
 from .pairs import features_with_continuous_label as pairs_features_score
 from .pairs_multilabel import features as pairs_multi_features
 from .qa import features as qa_features
+from .chat import features as chat_features
 from .image import features as image_features
 from .image import multi_features as image_multi_features
 from .imqa import features as imqa_features
@@ -28,6 +29,7 @@ __all__ = [
     "pairs_features_score",
     "pairs_multi_features",
     "qa_features",
+    "chat_features",
     "image_features",
     "image_multi_features",
     "imqa_features",

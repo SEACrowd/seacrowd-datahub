@@ -52,7 +52,7 @@ _LOCAL = False
 
 _URLS = "https://huggingface.co/datasets/ontocord/onto4all/resolve/main/data/train-00000-of-00001.parquet?download=true"
 
-_SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
+_SUPPORTED_TASKS = [Tasks.MULTI_TURN_CONVERSATION]
 
 _SOURCE_VERSION = "1.0.0"
 
@@ -73,10 +73,10 @@ class Onto4AllDataset(datasets.GeneratorBasedBuilder):
             subset_id=f"{_DATASETNAME}",
         ),
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_qa",
+            name=f"{_DATASETNAME}_seacrowd_chat",
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd schema",
-            schema="seacrowd_qa",
+            schema="seacrowd_chat",
             subset_id=f"{_DATASETNAME}",
         ),
     ]
@@ -98,8 +98,11 @@ class Onto4AllDataset(datasets.GeneratorBasedBuilder):
                 }
             )
 
-        elif self.config.schema == "seacrowd_qa":
-            features = schemas.qa_features
+        elif self.config.schema == "seacrowd_chat":
+            features = schemas.chat_features
+            features["meta"] = {
+                "type": datasets.Value("string")
+            }
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -140,9 +143,8 @@ class Onto4AllDataset(datasets.GeneratorBasedBuilder):
                     "type": row["type"],
                     "conversation": conversation,
                 }
-                break
 
-        elif self.config.schema == "seacrowd_qa":
+        elif self.config.schema == "seacrowd_chat":
             for i, row in df.iterrows():
                 context = ""
                 question = ""
@@ -158,12 +160,18 @@ class Onto4AllDataset(datasets.GeneratorBasedBuilder):
 
                 yield i, {
                     "id": row["id"],
-                    "question_id": row["id"],
-                    "document_id": "",
-                    "question": question,
-                    "type": row["type"],
-                    "choices": [],
-                    "context": context,
-                    "answer": [answer],
-                    "meta": {},
+                    "input": [
+                        {
+                            "role": "system",
+                            "content": context,
+                        },
+                        {
+                            "role": "user",
+                            "content": question,
+                        },
+                    ],
+                    "output": answer,
+                    "meta": {
+                        "type": row["type"],
+                    },
                 }
