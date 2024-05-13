@@ -17,7 +17,6 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 import datasets
-from PIL import Image
 from scipy.io import loadmat
 
 from seacrowd.utils.configs import SEACrowdConfig
@@ -145,6 +144,11 @@ class BaybayinDataset(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, mat_file: Path) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
+        try:
+            from PIL import Image
+        except ImportError as err:
+            raise ImportError("You need to install PIL (`pip install pillow`) to store the image from MATLAB structs to .png files.") from err
+        
         raw_data = loadmat(str(mat_file))
         contained_data = raw_data[str(mat_file.stem)][0, 0]
 
