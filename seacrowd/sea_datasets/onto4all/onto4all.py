@@ -21,7 +21,6 @@ from typing import Dict, List, Tuple
 
 import datasets
 import pandas as pd
-import json
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
