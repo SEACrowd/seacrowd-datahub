@@ -21,6 +21,7 @@ from typing import Dict, List, Tuple
 
 import datasets
 import pandas as pd
+import json
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
@@ -128,11 +129,19 @@ class Onto4AllDataset(datasets.GeneratorBasedBuilder):
 
         if self.config.schema == "source":
             for i, row in df.iterrows():
+                conversation = [{
+                        "from": item["from"],
+                        "value": item["value"],
+                        "weight": item["weight"],
+                    } for item in row["conversation"]
+                ]
+
                 yield i, {
                     "id": row["id"],
                     "type": row["type"],
-                    "conversation": row["conversation"],
+                    "conversation": conversation,
                 }
+                break
 
         elif self.config.schema == "seacrowd_qa":
             for i, row in df.iterrows():
@@ -141,13 +150,12 @@ class Onto4AllDataset(datasets.GeneratorBasedBuilder):
                 answer = ""
 
                 for item in row["conversation"]:
-                    for k,v in item.items():
-                        if k == "system":
-                            context = v
-                        elif k == "human":
-                            question = v
-                        elif k == "gpt":
-                            answer = v
+                    if item["from"] == "system":
+                        context = item["value"]
+                    elif item["from"] == "human":
+                        question = item["value"]
+                    elif item["from"] == "gpt":
+                        answer = item["value"]
 
                 yield i, {
                     "id": row["id"],
