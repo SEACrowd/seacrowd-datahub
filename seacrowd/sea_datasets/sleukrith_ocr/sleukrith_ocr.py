@@ -67,10 +67,12 @@ _LICENSE = Licenses.UNKNOWN.value
 _LOCAL = False
 
 _URLS = {
+    # this URL corresponds to the raw unprocessed data (whole images); unused in this dataloader
     "sleukrith-set": {
         "images": "https://drive.google.com/uc?export=download&id=19JIxAjjXWuJ7mEyUl5-xRr2B8uOb-GKk",  # 1GB
         "annotated-data": "https://drive.google.com/uc?export=download&id=1Xi5ucRUb1e9TUU-nv2rCUYv2ANVsXYDk",  # 11.7MB
     },
+    # this URL corresponds to the processed data (per characters); used in this dataloader
     "isolated-characters": {
         "images_train": "https://drive.google.com/uc?export=download&id=1KXf5937l-Xu_sXsGPuQOgFt4zRaXlSJ5",  # 249MB
         "images_test": "https://drive.google.com/uc?export=download&id=1KSt5AiRIilRryh9GBcxyUUhnbiScdQ-9",  # 199MB
