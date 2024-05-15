@@ -6,7 +6,7 @@ import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, DEFAULT_SOURCE_VIEW_NAME, DEFAULT_SEACROWD_VIEW_NAME
+from seacrowd.utils.constants import Tasks
 
 _DATASETNAME = "medisco"
 
@@ -15,8 +15,8 @@ _LOCAL = False
 _CITATION = """\
 @INPROCEEDINGS{8629259,
   author={Qorib, Muhammad Reza and Adriani, Mirna},
-  booktitle={2018 International Conference on Asian Language Processing (IALP)}, 
-  title={Building MEDISCO: Indonesian Speech Corpus for Medical Domain}, 
+  booktitle={2018 International Conference on Asian Language Processing (IALP)},
+  title={Building MEDISCO: Indonesian Speech Corpus for Medical Domain},
   year={2018},
   volume={},
   number={},
@@ -38,10 +38,7 @@ _URLs = {
             "audio": "https://huggingface.co/datasets/mrqorib/MEDISCO/resolve/main/MEDISCO/train/audio.tar.gz",
             "text": "https://huggingface.co/datasets/mrqorib/MEDISCO/resolve/main/MEDISCO/train/annotation/sentences.txt",
         },
-        "test": {
-            "audio": "https://huggingface.co/datasets/mrqorib/MEDISCO/resolve/main/MEDISCO/test/audio.tar.gz",
-            "text": "https://huggingface.co/datasets/mrqorib/MEDISCO/resolve/main/MEDISCO/test/annotation/sentences.txt"
-        }
+        "test": {"audio": "https://huggingface.co/datasets/mrqorib/MEDISCO/resolve/main/MEDISCO/test/audio.tar.gz", "text": "https://huggingface.co/datasets/mrqorib/MEDISCO/resolve/main/MEDISCO/test/annotation/sentences.txt"},
     }
 }
 
@@ -50,9 +47,10 @@ _SUPPORTED_TASKS = [Tasks.SPEECH_RECOGNITION]
 _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
+
 class Medisco(datasets.GeneratorBasedBuilder):
     "MEDISCO is a medical Indonesian speech corpus that contains 731 medical terms and consists of 4,680 utterances with total duration 10 hours"
-    
+
     BUILDER_CONFIGS = [
         SEACrowdConfig(
             name="medisco_source",
@@ -101,35 +99,27 @@ class Medisco(datasets.GeneratorBasedBuilder):
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
-                gen_kwargs={
-                    "filepath": dl_manager.download_and_extract(base_path["train"]["audio"]),
-                    "text_path": dl_manager.download_and_extract(base_path["train"]["text"]),
-                    "split": "train"
-                },
+                gen_kwargs={"filepath": dl_manager.download_and_extract(base_path["train"]["audio"]), "text_path": dl_manager.download_and_extract(base_path["train"]["text"]), "split": "train"},
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
-                gen_kwargs={
-                    "filepath": dl_manager.download_and_extract(base_path["test"]["audio"]),
-                    "text_path": dl_manager.download_and_extract(base_path["test"]["text"]),
-                    "split": "test"
-                },
+                gen_kwargs={"filepath": dl_manager.download_and_extract(base_path["test"]["audio"]), "text_path": dl_manager.download_and_extract(base_path["test"]["text"]), "split": "test"},
             ),
         ]
 
     def _generate_examples(self, filepath: Path, text_path: Path, split: str) -> Tuple[int, Dict]:
 
-        with open(text_path, encoding='utf-8') as f:
-            texts = f.readlines() # contains trailing \n
-        
+        with open(text_path, encoding="utf-8") as f:
+            texts = f.readlines()  # contains trailing \n
+
         for speaker_id in os.listdir(filepath):
             speaker_path = os.path.join(filepath, speaker_id)
             if not os.path.isdir(speaker_path):
                 continue
             for audio_id in os.listdir(speaker_path):
-                audio_idx = int(audio_id.split('.', 1)[0]) - 1 # get 0-based index
+                audio_idx = int(audio_id.split(".", 1)[0]) - 1  # get 0-based index
                 audio_path = os.path.join(speaker_path, audio_id)
-                key = '{}_{}_{}'.format(split, speaker_id, audio_idx)
+                key = "{}_{}_{}".format(split, speaker_id, audio_idx)
                 example = {
                     "id": key,
                     "speaker_id": speaker_id,
@@ -138,7 +128,7 @@ class Medisco(datasets.GeneratorBasedBuilder):
                     "text": texts[audio_idx].strip(),
                 }
                 if self.config.schema == "seacrowd_sptext":
-                    gender = speaker_id.split('-', 1)[0]
+                    gender = speaker_id.split("-", 1)[0]
                     example["metadata"] = {
                         "speaker_gender": gender,
                         "speaker_age": None,
