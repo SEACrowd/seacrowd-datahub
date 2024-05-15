@@ -9,8 +9,6 @@ from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Tasks, DEFAULT_SOURCE_VIEW_NAME, DEFAULT_SEACROWD_VIEW_NAME
 
 _DATASETNAME = "medisco"
-_SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
-_UNIFIED_VIEW_NAME = DEFAULT_SEACROWD_VIEW_NAME
 
 _LANGUAGES = ["ind"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 _LOCAL = False
