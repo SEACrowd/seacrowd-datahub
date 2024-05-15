@@ -14,7 +14,8 @@
 # limitations under the License.
 
 """
-The ViLexNorm corpus is a collection of comment pairs in Vietnamese, designed for the task of lexical normalization. The corpus contains 10,467 comment pairs, carefully curated and annotated for lexical normalization purposes. These comment pairs are partitioned into three subsets: training, development, and test, distributed in an 8:1:1 ratio.
+The ViLexNorm corpus is a collection of comment pairs in Vietnamese, designed for the task of lexical normalization. The corpus contains 10,467 comment pairs, carefully curated and annotated for lexical normalization purposes.
+These comment pairs are partitioned into three subsets: training, development, and test, distributed in an 8:1:1 ratio.
 """
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -41,14 +42,19 @@ _CITATION = """\
     publisher = "Association for Computational Linguistics",
     url = "https://aclanthology.org/2024.eacl-long.85",
     pages = "1421--1437",
-    abstract = "Lexical normalization, a fundamental task in Natural Language Processing (NLP), involves the transformation of words into their canonical forms. This process has been proven to benefit various downstream NLP tasks greatly. In this work, we introduce Vietnamese Lexical Normalization (ViLexNorm), the first-ever corpus developed for the Vietnamese lexical normalization task. The corpus comprises over 10,000 pairs of sentences meticulously annotated by human annotators, sourced from public comments on Vietnam{'}s most popular social media platforms. Various methods were used to evaluate our corpus, and the best-performing system achieved a result of 57.74{\%} using the Error Reduction Rate (ERR) metric (van der Goot, 2019a) with the Leave-As-Is (LAI) baseline. For extrinsic evaluation, employing the model trained on ViLexNorm demonstrates the positive impact of the Vietnamese lexical normalization task on other NLP tasks. Our corpus is publicly available exclusively for research purposes.",
+    abstract = "Lexical normalization, a fundamental task in Natural Language Processing (NLP), involves the transformation of words into their canonical forms. This process has been proven to benefit various downstream NLP tasks greatly.
+    In this work, we introduce Vietnamese Lexical Normalization (ViLexNorm), the first-ever corpus developed for the Vietnamese lexical normalization task. The corpus comprises over 10,000 pairs of sentences meticulously annotated
+    by human annotators, sourced from public comments on Vietnam{'}s most popular social media platforms. Various methods were used to evaluate our corpus, and the best-performing system achieved a result of 57.74% using
+    the Error Reduction Rate (ERR) metric (van der Goot, 2019a) with the Leave-As-Is (LAI) baseline. For extrinsic evaluation, employing the model trained on ViLexNorm demonstrates the positive impact of the Vietnamese lexical normalization task
+    on other NLP tasks. Our corpus is publicly available exclusively for research purposes.",
 }
 """
 
 _DATASETNAME = "vilexnorm"
 
 _DESCRIPTION = """\
-The ViLexNorm corpus is a collection of comment pairs in Vietnamese, designed for the task of lexical normalization. The corpus contains 10,467 comment pairs, carefully curated and annotated for lexical normalization purposes. These comment pairs are partitioned into three subsets: training, development, and test, distributed in an 8:1:1 ratio.
+The ViLexNorm corpus is a collection of comment pairs in Vietnamese, designed for the task of lexical normalization. The corpus contains 10,467 comment pairs, carefully curated and annotated for lexical normalization purposes.
+These comment pairs are partitioned into three subsets: training, development, and test, distributed in an 8:1:1 ratio.
 """
 
 _HOMEPAGE = "https://github.com/ngxtnhi/ViLexNorm"
@@ -73,7 +79,8 @@ _SEACROWD_VERSION = "1.0.0"
 
 
 class VilexnormDataset(datasets.GeneratorBasedBuilder):
-    """The ViLexNorm corpus is a collection of comment pairs in Vietnamese, designed for the task of lexical normalization. The corpus contains 10,467 comment pairs, carefully curated and annotated for lexical normalization purposes. These comment pairs are partitioned into three subsets: training, development, and test, distributed in an 8:1:1 ratio."""
+    """The ViLexNorm corpus is a collection of comment pairs in Vietnamese, designed for the task of lexical normalization. The corpus contains 10,467 comment pairs, carefully curated and annotated for lexical normalization purposes.
+    These comment pairs are partitioned into three subsets: training, development, and test, distributed in an 8:1:1 ratio."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
