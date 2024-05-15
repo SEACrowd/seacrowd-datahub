@@ -80,7 +80,7 @@ _URLS = {
     for ds in ["base", "full"]
 } | {"docs": {ldoc: f"https://www.cs.jhu.edu/~shuosun/clirmatrix/data/DOCS/{_CLIR_LANG[ldoc]}.tsv.gz" for ldoc in _LANGUAGES}}
 
-_SUPPORTED_TASKS = [Tasks.TEXT_RETRIEVAL]
+_SUPPORTED_TASKS = []
 
 _SOURCE_VERSION = "1.0.0"
 
