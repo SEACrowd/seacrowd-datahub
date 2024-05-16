@@ -190,7 +190,7 @@ class NationalSpeechCorpusSgIMDA(datasets.GeneratorBasedBuilder):
                     text_data[text_id] = comp[1].strip()
         return text_data
 
-    def _generate_examples(self, filepath: Path, audio_dir: Path, text_dir: Path, split: str, mic_type: str, metadata_path: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepath: Path, audio_dir: Path, text_dir: Path, split: str, mic_type: str, metadata_path: str, tmp_cache="~/.cache/nsc") -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
         # get speaker info from Excel file
@@ -246,8 +246,9 @@ class NationalSpeechCorpusSgIMDA(datasets.GeneratorBasedBuilder):
 
                     start_sec, end_sec = int(start * 1000), int(end * 1000)
                     segment = audio_file[start_sec:end_sec]
-                    os.makedirs(f"{self.cache_dir}/segmented/{audio_name}/", exist_ok=True)
-                    segement_filename = f"{self.cache_dir}/segmented/{audio_name}/{audio_filename}-{round(start, 0)}-{round(end, 0)}.wav"
+                    export_dir = os.path.join(tmp_cache, "segmented", audio_name)
+                    os.makedirs(export_dir, exist_ok=True)
+                    segement_filename = os.path.join(export_dir, f"{audio_filename}-{round(start, 0)}-{round(end, 0)}.wav")
                     segment.export(segement_filename, format="wav")
 
                     example = {
@@ -273,7 +274,8 @@ class NationalSpeechCorpusSgIMDA(datasets.GeneratorBasedBuilder):
                 for text_id, text in text_data.items():
                     with zipfile.ZipFile(os.path.join(filepath, audio_dir, f"SPEAKER{audio_name}.zip")) as zip_file:
                         zip_path = os.path.join(f"SPEAKER{audio_name}", f"SESSION{session}", f"{text_id}.WAV")
-                        extract_path = os.path.join(self.cache_dir, audio_dir)
+                        extract_path = os.path.join(tmp_cache, audio_dir)
+                        os.makedirs(extract_path, exist_ok=True)
                         audio_path = zip_file.extract(zip_path, path=extract_path)
 
                         key = text_id
