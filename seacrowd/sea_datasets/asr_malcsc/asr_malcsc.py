@@ -189,7 +189,7 @@ class ASRMalcscDataset(datasets.GeneratorBasedBuilder):
                     "path": wav_path,
                     "audio": wav_path,
                     "text": text,
-                    "metadata": {"speaker_age": spkinfo_dict[audioinfo_data[i][2]]["speaker_age"], "speaker_gender": spkinfo_dict[audioinfo_data[i][2]]["speaker_gender"], "timestamp": timestamp_text},
+                    "metadata": {"speaker_age": spkinfo_dict[audioinfo_data[i][2]]["speaker_age"], "speaker_gender": spkinfo_dict[audioinfo_data[i][2]]["speaker_gender"]},
                 }
 
             yield i, example
