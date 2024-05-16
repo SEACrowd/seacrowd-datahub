@@ -36,19 +36,7 @@ from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
 # There are no citations available for this dataset.
-_CITATION = """\
-@article{,
-  author    = {},
-  title     = {},
-  journal   = {},
-  volume    = {},
-  year      = {},
-  url       = {},
-  doi       = {},
-  biburl    = {},
-  bibsource = {}
-}
-"""
+_CITATION = ""
 
 _DATASETNAME = "lexitron"
 
