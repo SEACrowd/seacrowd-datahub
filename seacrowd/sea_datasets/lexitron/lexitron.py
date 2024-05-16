@@ -24,8 +24,8 @@ Corpus-based dictionary of Thai and English languages. \
     list -> Thai, 83,000 words.
 """
 import os
-from pathlib import Path
 import re
+from pathlib import Path
 from typing import Dict, List, Tuple
 
 import datasets
@@ -33,7 +33,7 @@ import pandas as pd
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
+from seacrowd.utils.constants import Licenses, Tasks
 
 # There are no citations available for this dataset.
 _CITATION = """\
@@ -249,7 +249,7 @@ class LEXiTRONDataset(datasets.GeneratorBasedBuilder):
             doc_data = []
 
             for doc in docs:
-                esearch = eentry = tentry = ecat = esyn = ethai = id = None
+                esearch = eentry = tentry = ecat = esyn = id = None
 
                 esearch_match = re.search(r"<esearch>(.*?)</esearch>", doc)
                 if esearch_match:
