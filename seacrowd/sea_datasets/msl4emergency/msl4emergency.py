@@ -69,6 +69,9 @@ class MSL4Emergency(datasets.GeneratorBasedBuilder):
         for task, cfg_sufix in zip(_SUPPORTED_TASKS, _CONFIG_SUFFIXES_FOR_TASK)
     ]
 
+    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
+
+
     def _info(self) -> datasets.DatasetInfo:
         _config_schema_name = self.config.schema
         logger.info(f"Received schema name: {self.config.schema}")
@@ -84,7 +87,7 @@ class MSL4Emergency(datasets.GeneratorBasedBuilder):
             )
 
         # speech-text schema
-        elif _config_schema_name == f"seacrowd_sptext":
+        elif _config_schema_name == f"seacrowd_t2t":
             features = schemas.text2text_features
 
         elif _config_schema_name == f"seacrowd_imtext":
@@ -103,44 +106,46 @@ class MSL4Emergency(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: DownloadManager) -> List[datasets.SplitGenerator]:
         local_path = dl_manager.download_and_extract(_URL)
-        local_path = os.path.join(local_path.title(), "msl4emergency-ver-1.0")
+        local_path = os.path.join(local_path.title(), "MSL4Emergency-master", "msl4emergency-ver-1.0")
 
         base_video_dir = os.path.join(local_path, "video")
         video_dir_list = []
-        for _child_dir in base_video_dir:
+        for _child_dir in os.listdir(base_video_dir):
             _full_child_dir = os.path.join(base_video_dir, _child_dir)
             if os.path.isdir(_full_child_dir):
                 video_dir_list.extend([os.path.join(_full_child_dir, video_fp) for video_fp in os.listdir(_full_child_dir) if video_fp.endswith(".mp4")])
+
+        text_path = os.path.join(local_path, "my-sl")
+        with open(text_path, "r") as f:
+            text_data = [data.split("\t") for data in f.readlines()]
 
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
-                    "article_data_dir": video_dir_list,
-                    "text_translation": os.path.join(local_path, "my-sl")
+                    "video_dir_list": video_dir_list,
+                    "text_data": text_data
                 })
         ]
 
-    def _generate_examples(self, video_dir_list: str, text_translation: str) -> Generator[Tuple[int, Dict], None, None]:
+    def _generate_examples(self, video_dir_list: list, text_data: list) -> Generator[Tuple[int, Dict], None, None]:
         _config_schema_name = self.config.schema
 
-        with open(text_translation, "r") as f:
-            trans_data = [data.split("\t") for data in f.readlines()]
         idx = 1
         for video_path in video_dir_list:
             if _config_schema_name == "source":
                 yield idx, {
                     "id": idx,
-                    "mya_text": trans_data[idx][0],
-                    "ysm_text": trans_data[idx][1],
+                    "mya_text": text_data[idx-1][0].strip(),
+                    "ysm_text": text_data[idx-1][1].strip(),
                     "video_url": video_path
                 }
 
-            elif _config_schema_name == "seacrowd_sptext":
+            elif _config_schema_name == "seacrowd_t2t":
                 yield idx, {
                     "id": idx,
-                    "text_1": trans_data[idx][0],
-                    "text_2": trans_data[idx][1],
+                    "text_1": text_data[idx-1][0].strip(),
+                    "text_2": text_data[idx-1][1].strip(),
                     "text_1_name": "target_mya",
                     "text_2_name": "source_ysm"
                 }
@@ -149,7 +154,7 @@ class MSL4Emergency(datasets.GeneratorBasedBuilder):
                 yield idx, {
                     "id": idx,
                     "image_paths": [video_path],
-                    "texts": trans_data[idx][1],
+                    "texts": text_data[idx-1][1].strip(),
                     "metadata": {
                         "context": "myanmar sign language transcribed",
                         "labels": None,
@@ -160,3 +165,7 @@ class MSL4Emergency(datasets.GeneratorBasedBuilder):
                 raise ValueError(f"Received unexpected config schema of {_config_schema_name}!")
 
             idx += 1
+
+
+if __name__ == "__main__":
+    datasets.load_dataset(__file__)
