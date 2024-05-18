@@ -152,6 +152,10 @@ class ACIQuADDataset(datasets.GeneratorBasedBuilder):
 
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             features = schemas.qa_features
+            features["meta"] = {
+                "sparql": datasets.Value("string"),
+                "answer_meta": datasets.Value("string"),
+            }
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -166,6 +170,9 @@ class ACIQuADDataset(datasets.GeneratorBasedBuilder):
 
         subset = self.config.name.split("_")[2]
         data_dir = dl_manager.download_and_extract(_URLS[_DATASETNAME])
+
+        if subset == "simple":
+            subset = "single"
 
         return [
             datasets.SplitGenerator(
@@ -212,6 +219,7 @@ class ACIQuADDataset(datasets.GeneratorBasedBuilder):
                     "choices": [],
                     "context": row["context"],
                     "answer": eval(row["answerline"]),
+                    "meta": {"sparql": row["sparql"], "answer_meta": row["answer"]},
                 }
 
             yield index, example
