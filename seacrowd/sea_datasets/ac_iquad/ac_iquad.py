@@ -140,15 +140,18 @@ class ACIQuADDataset(datasets.GeneratorBasedBuilder):
     def _info(self) -> datasets.DatasetInfo:
 
         if self.config.schema == "source":
-            features = datasets.Features(
-                {
-                    "question": datasets.Value("string"),
-                    "sparql": datasets.Value("string"),
-                    "answer": datasets.Value("string"),
-                    "context": datasets.Value("string"),
-                    "answerline": datasets.Value("string"),
-                }
-            )
+            features_dict = {
+                "question": datasets.Value("string"),
+                "sparql": datasets.Value("string"),
+                "answer": datasets.Value("string"),
+                "context": datasets.Value("string"),
+                "answerline": datasets.Value("string"),
+            }
+
+            if self.config.subset_id.split("_")[2] == "complex":
+                features_dict["type"] = datasets.Value("string")
+
+            features = datasets.Features(features_dict)
 
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             features = schemas.qa_features
@@ -205,6 +208,9 @@ class ACIQuADDataset(datasets.GeneratorBasedBuilder):
 
             if self.config.schema == "source":
                 example = row.to_dict()
+
+                if self.config.subset_id.split("_")[2] == "complex":
+                    example["type"] = row["tipe"]
 
             elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
 
