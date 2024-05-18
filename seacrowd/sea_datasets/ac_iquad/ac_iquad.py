@@ -152,10 +152,12 @@ class ACIQuADDataset(datasets.GeneratorBasedBuilder):
 
         elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
             features = schemas.qa_features
-            features["meta"] = {
-                "sparql": datasets.Value("string"),
-                "answer_meta": datasets.Value("string"),
-            }
+
+            if self.config.subset_id.split("_")[2] == "complex":
+                features["meta"] = {"sparql": datasets.Value("string"), "answer_meta": datasets.Value("string"), "type": datasets.Value("string")}
+
+            else:
+                features["meta"] = {"sparql": datasets.Value("string"), "answer_meta": datasets.Value("string")}
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -221,5 +223,8 @@ class ACIQuADDataset(datasets.GeneratorBasedBuilder):
                     "answer": eval(row["answerline"]),
                     "meta": {"sparql": row["sparql"], "answer_meta": row["answer"]},
                 }
+
+                if self.config.subset_id.split("_")[2] == "complex":
+                    example["meta"]["type"] = row["tipe"]
 
             yield index, example
