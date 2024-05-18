@@ -21,7 +21,7 @@ import datasets
 import pandas as pd
 
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Licenses, Tasks
+from seacrowd.utils.constants import Licenses
 
 _CITATION = """\
 @inproceedings{sun-duh-2020-clirmatrix,
@@ -96,7 +96,7 @@ class CLIRMatrixDataset(datasets.GeneratorBasedBuilder):
     BUILDER_CONFIGS = [
         *[
             SEACrowdConfig(
-                name=f"{_DATASETNAME}{subset}_source",
+                name=f"{_DATASETNAME}{subset}_source",  # refers to the `base` split in the original paper.
                 version=datasets.Version(_SOURCE_VERSION),
                 description=f"{_DATASETNAME} source schema",
                 schema="source",
@@ -106,7 +106,7 @@ class CLIRMatrixDataset(datasets.GeneratorBasedBuilder):
         ],
         *[
             SEACrowdConfig(
-                name=f"{_DATASETNAME}{subset}_full_source",
+                name=f"{_DATASETNAME}{subset}_full_source",  # refers to the `full` split in the original paper.
                 version=datasets.Version(_SOURCE_VERSION),
                 description=f"{_DATASETNAME} full subset source schema",
                 schema="source",
