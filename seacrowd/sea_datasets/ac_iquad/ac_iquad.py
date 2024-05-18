@@ -33,12 +33,17 @@ import pandas as pd
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
+from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @article{afa5bf8149d6406786539c1ea827087d,
     title = "AC-IQuAD: Automatically Constructed Indonesian Question Answering Dataset by Leveraging Wikidata",
-    abstract = "Constructing a question-answering dataset can be prohibitively expensive, making it difficult for researchers to make one for an under-resourced language, such as Indonesian. We create a novel Indonesian Question Answering dataset that is produced automatically end-to-end. The process uses Context Free Grammar, the Wikipedia Indonesian Corpus, and the concept of the proxy model. The dataset consists of 134 thousand simple questions and 60 thousand complex questions. It achieved competitive grammatical and model accuracy compared to the translated dataset but suffers from some issues due to resource constraints.",
+    abstract = "Constructing a question-answering dataset can be prohibitively expensive, making it difficult for researchers
+    to make one for an under-resourced language, such as Indonesian. We create a novel Indonesian Question Answering dataset
+    that is produced automatically end-to-end. The process uses Context Free Grammar, the Wikipedia Indonesian Corpus, and
+    the concept of the proxy model. The dataset consists of 134 thousand simple questions and 60 thousand complex questions.
+    It achieved competitive grammatical and model accuracy compared to the translated dataset but suffers from some issues
+    due to resource constraints.",
     keywords = "Automatic dataset construction, Question answering dataset, Under-resourced Language",
     author = "Kerenza Doxolodeo and Krisnadhi, {Adila Alfa}",
     note = "Publisher Copyright: {\textcopyright} 2024, The Author(s).",
@@ -101,18 +106,18 @@ class ACIQuADDataset(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_single_source",
+            name=f"{_DATASETNAME}_simple_source",
             version=SOURCE_VERSION,
             description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id=f"{_DATASETNAME}_single",
+            subset_id=f"{_DATASETNAME}_simple",
         ),
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_single_seacrowd_{SEACROWD_SCHEMA_NAME}",
+            name=f"{_DATASETNAME}_simple_seacrowd_{SEACROWD_SCHEMA_NAME}",
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd schema",
             schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
-            subset_id=f"{_DATASETNAME}_single",
+            subset_id=f"{_DATASETNAME}_simple",
         ),
         SEACrowdConfig(
             name=f"{_DATASETNAME}_complex_source",
@@ -195,7 +200,7 @@ class ACIQuADDataset(datasets.GeneratorBasedBuilder):
             elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
 
                 subset = self.config.name.split("_")[2]
-                if subset == "single":
+                if subset == "simple":
                     row["answerline"] = f"[{row['answerline']}]"
 
                 example = {
