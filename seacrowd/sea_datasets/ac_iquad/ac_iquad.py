@@ -210,7 +210,7 @@ class ACIQuADDataset(datasets.GeneratorBasedBuilder):
                 example = row.to_dict()
 
                 if self.config.subset_id.split("_")[2] == "complex":
-                    example["type"] = row["tipe"]
+                    example["type"] = example.pop("tipe", None)
 
             elif self.config.schema == f"seacrowd_{self.SEACROWD_SCHEMA_NAME}":
 
