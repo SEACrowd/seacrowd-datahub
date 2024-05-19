@@ -197,8 +197,8 @@ class VintextDataset(datasets.GeneratorBasedBuilder):
                     "image_paths": [row["image_path"]],
                     "texts": None,
                     "metadata": {
-                        "context": "",
-                        "labels": [],
+                        "context": None,
+                        "labels": None,
                         "annotations": [
                             {
                                 "x1": label[0],
