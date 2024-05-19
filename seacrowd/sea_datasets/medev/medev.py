@@ -141,6 +141,7 @@ class MedEVDataset(datasets.GeneratorBasedBuilder):
         if self.config.schema == "source":
             for i, line in enumerate(en_lines + vie_lines):
                 yield i, {
+                    "id": str(i),
                     "text": line,
                 }
 
