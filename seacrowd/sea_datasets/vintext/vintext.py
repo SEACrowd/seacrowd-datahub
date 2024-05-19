@@ -15,8 +15,8 @@
 
 """
 Vintext is a challenging scene text dataset for Vietnamese, where some characters are equivocal in the visual form due to accent symbols.
-This dataset contains 2000 fully annotated images with 56,084 text instances. Each text instance is delineated by a quadrilateral bounding box and associated with the ground truth sequence of characters.
-The dataset is randomly split into three subsets for training (1,200 images), validation (300 images), and testing (500 images).
+This dataset contains 1500 fully annotated images from the original format. Each text instance is delineated by a quadrilateral bounding box and associated with the ground truth sequence of characters.
+The dataset is randomly split into 2 subsets for training (1,200 images) and testing (300 images).
 """
 import os
 from pathlib import Path
@@ -67,8 +67,8 @@ _SEACROWD_VERSION = "1.0.0"
 
 class VintextDataset(datasets.GeneratorBasedBuilder):
     """Vintext is a challenging scene text dataset for Vietnamese, where some characters are equivocal in the visual form due to accent symbols.
-    This dataset contains 2000 fully annotated images with 56,084 text instances. Each text instance is delineated by a quadrilateral bounding box and associated with the ground truth sequence of characters.
-    The dataset is randomly split into three subsets for training (1,200 images), validation (300 images), and testing (500 images)."""
+This dataset contains 1500 fully annotated images from the original format. Each text instance is delineated by a quadrilateral bounding box and associated with the ground truth sequence of characters.
+The dataset is randomly split into 2 subsets for training (1,200 images) and testing (300 images)."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
