@@ -198,10 +198,10 @@ class VintextDataset(datasets.GeneratorBasedBuilder):
                 yield i, {
                     "id": row["id"],
                     "image_paths": [row["image_path"]],
-                    "texts": "",
+                    "texts": None,
                     "metadata": {
-                        "context": "",
-                        "labels": [],
+                        "context": None,
+                        "labels": None,
                         "annotations": [
                             {
                                 "x1": label[0],
