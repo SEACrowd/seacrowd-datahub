@@ -63,13 +63,34 @@ class Vlsp2020MtEnviDataset(datasets.GeneratorBasedBuilder):
     # Skipping openSub & mono-vi for future development (Large Drive file download bottleneck)
     subsets = {
         # key: subset_id, value: subset_filename
-        "EVBCorpus" : ["bitext"],
-        "VLSP20-official" : ["offi_test"],
-        "basic": ["data"],
-        "indomain-news": ["train", "dev", "tst"],
-        "iwslt15": ["train", "dev", "test"],
-        "ted-like": ["data"],
-        "wiki-alt": ["data"]
+        "EVBCorpus" : [
+            ("bitext", datasets.Split.TRAIN)
+        ],
+        "VLSP20-official" : [
+            ("offi_test", datasets.Split.TEST)
+        ],
+        "basic": [
+            ("data", datasets.Split.TRAIN)
+        ],
+        "indomain-news": [
+            ("train", datasets.Split.TRAIN),
+            ("dev", datasets.Split.VALIDATION),
+            ("tst", datasets.Split.TEST)
+        ],
+        "iwslt15": [
+            ("train", datasets.Split.TRAIN),
+            ("dev", datasets.Split.VALIDATION),
+            ("test", datasets.Split.TEST)
+        ],
+        "iwslt15-official": [
+            ("IWSLT15.official_test", datasets.Split.TEST)
+        ],
+        "ted-like": [
+            ("data", datasets.Split.TRAIN)
+        ],
+        "wiki-alt": [
+            ("data", datasets.Split.TRAIN)
+        ]
     }
 
     BUILDER_CONFIGS = [
@@ -117,23 +138,24 @@ class Vlsp2020MtEnviDataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
         subset_id = self.config.subset_id.split("_")[-1]
-        
-        splitnames = [datasets.Split.TRAIN, datasets.Split.VALIDATION, datasets.Split.TEST]
+                
         filenames = self.subsets[subset_id]
+        if "iwslt15" in subset_id: # for iwslt15-official
+            subset_id = "iwslt15"
 
         data_dir = dl_manager.download_and_extract(_URLS)
 
         return [
             datasets.SplitGenerator(
-                name=splitnames[i],
+                name=splitname,
                 gen_kwargs={
                     "filepath": {
-                        "en": os.path.join(data_dir, "EnViCorpora-master", subset_id, f"{filenames[i]}.en"),
-                        "vi": os.path.join(data_dir, "EnViCorpora-master", subset_id, f"{filenames[i]}.vi"),
+                        "en": os.path.join(data_dir, "EnViCorpora-master", subset_id, f"{filename}.en"),
+                        "vi": os.path.join(data_dir, "EnViCorpora-master", subset_id, f"{filename}.vi"),
                     },
                 },
             )
-            for i in range(len(filenames))
+            for filename, splitname in filenames
         ]
 
     def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
