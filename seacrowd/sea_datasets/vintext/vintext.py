@@ -30,11 +30,14 @@ from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
-@inproceedings{m_Nguyen-etal-CVPR21,
-    author = {Nguyen Nguyen and Thu Nguyen and Vinh Tran and Triet Tran and Thanh Ngo and Thien Nguyen and Minh Hoai},
-    title = {Dictionary-guided Scene Text Recognition},
-    year = {2021},
-    booktitle = {Proceedings of the {IEEE} Conference on Computer Vision and Pattern Recognition (CVPR)},
+@INPROCEEDINGS{vintext,
+    author={Nguyen, Nguyen and Nguyen, Thu and Tran, Vinh and Tran, Minh-Triet and Ngo, Thanh Duc and Huu Nguyen, Thien and Hoai, Minh},
+    booktitle={2021 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 
+    title={Dictionary-guided Scene Text Recognition}, 
+    year={2021},
+    pages={7379-7388},
+    keywords={Training;Visualization;Computer vision;Casting;Dictionaries;Codes;Text recognition},
+    doi={10.1109/CVPR46437.2021.00730}
 }
 """
 
