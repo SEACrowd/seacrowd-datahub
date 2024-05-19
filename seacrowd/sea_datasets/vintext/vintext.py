@@ -23,7 +23,6 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 import datasets
-import gdown
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
@@ -129,6 +128,10 @@ class VintextDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
+        try:
+            import gdown
+        except ImportError as err:
+            raise ImportError("You need to install gdown (`pip install gdown`) to downloads a public file/folder from Google Drive.") from err
 
         zip_filepath = os.path.join(os.path.dirname(__file__), "vietnamese_original.zip")
         if not os.path.exists(zip_filepath):
@@ -140,15 +143,15 @@ class VintextDataset(datasets.GeneratorBasedBuilder):
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
-                    "imagepath": os.path.join(data_dir, "vietnamese/train_images"),
-                    "labelpath": os.path.join(data_dir, "vietnamese/labels"),
+                    "imagepath": Path(data_dir) / "vietnamese/train_images",
+                    "labelpath": Path(data_dir) / "vietnamese/labels",
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
                 gen_kwargs={
-                    "imagepath": os.path.join(data_dir, "vietnamese/test_image"),
-                    "labelpath": os.path.join(data_dir, "vietnamese/labels"),
+                    "imagepath": Path(data_dir) / "vietnamese/test_image",
+                    "labelpath": Path(data_dir) / "vietnamese/labels",
                 },
             ),
         ]
