@@ -49,9 +49,12 @@ _LICENSE = Licenses.UNKNOWN.value
 _LOCAL = False
 
 _URLS = {
-    "train": {"en": "https://huggingface.co/datasets/nhuvo/MedEV/resolve/main/train.en.txt?download=true", "vie": "https://huggingface.co/datasets/nhuvo/MedEV/resolve/main/train.vi.txt?download=true"},
-    "val": {"en": "https://huggingface.co/datasets/nhuvo/MedEV/resolve/main/val.en.new.txt?download=true", "vie": "https://huggingface.co/datasets/nhuvo/MedEV/resolve/main/val.vi.new.txt?download=true"},
-    "test": {"en": "https://huggingface.co/datasets/nhuvo/MedEV/resolve/main/test.en.new.txt?download=true", "vie": "https://huggingface.co/datasets/nhuvo/MedEV/resolve/main/test.vi.new.txt?download=true"},
+    "train_en": "https://huggingface.co/datasets/nhuvo/MedEV/resolve/main/train.en.txt?download=true", 
+    "train_vie": "https://huggingface.co/datasets/nhuvo/MedEV/resolve/main/train.vi.txt?download=true",
+    "val_en": "https://huggingface.co/datasets/nhuvo/MedEV/resolve/main/val.en.new.txt?download=true", 
+    "val_vie": "https://huggingface.co/datasets/nhuvo/MedEV/resolve/main/val.vi.new.txt?download=true",
+    "test_en": "https://huggingface.co/datasets/nhuvo/MedEV/resolve/main/test.en.new.txt?download=true",
+    "test_vie": "https://huggingface.co/datasets/nhuvo/MedEV/resolve/main/test.vi.new.txt?download=true",
 }
 
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
@@ -73,14 +76,14 @@ class MedEVDataset(datasets.GeneratorBasedBuilder):
             version=SOURCE_VERSION,
             description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id=f"{_DATASETNAME}",
+            subset_id=_DATASETNAME,
         ),
         SEACrowdConfig(
             name=f"{_DATASETNAME}_seacrowd_t2t",
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd schema",
             schema="seacrowd_t2t",
-            subset_id=f"{_DATASETNAME}",
+            subset_id=_DATASETNAME,
         ),
     ]
 
@@ -91,6 +94,7 @@ class MedEVDataset(datasets.GeneratorBasedBuilder):
         if self.config.schema == "source":
             features = datasets.Features(
                 {
+                    "id": datasets.Value("string"),
                     "text": datasets.Value("string"),
                 }
             )
@@ -114,28 +118,31 @@ class MedEVDataset(datasets.GeneratorBasedBuilder):
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
-                    "filepath": data_dir["train"],
+                    "filepath_en": data_dir["train_en"],
+                    "filepath_vie": data_dir["train_vie"],
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
                 gen_kwargs={
-                    "filepath": data_dir["test"],
+                    "filepath_en": data_dir["test_en"],
+                    "filepath_vie": data_dir["test_vie"],
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
-                    "filepath": data_dir["val"],
+                    "filepath_en": data_dir["val_en"],
+                    "filepath_vie": data_dir["val_vie"],
                 },
             ),
         ]
 
-    def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
+    def _generate_examples(self, filepath_en: Path, filepath_vie: Path) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
-        with open(filepath["en"], "r", encoding="utf-8") as f:
+        with open(filepath_en, "r", encoding="utf-8") as f:
             en_lines = f.readlines()
-        with open(filepath["vie"], "r") as f:
+        with open(filepath_vie, "r", encoding="utf-8") as f:
             vie_lines = f.readlines()
 
         if self.config.schema == "source":
@@ -151,6 +158,6 @@ class MedEVDataset(datasets.GeneratorBasedBuilder):
                     "id": str(i),
                     "text_1": en_line,
                     "text_2": vie_line,
-                    "text_1_name": "en",
+                    "text_1_name": "eng",
                     "text_2_name": "vie",
                 }
