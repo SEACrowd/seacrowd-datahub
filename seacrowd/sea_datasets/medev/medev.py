@@ -133,7 +133,7 @@ class MedEVDataset(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
-        with open(filepath["en"], "r") as f:
+        with open(filepath["en"], "r", encoding="utf-8") as f:
             en_lines = f.readlines()
         with open(filepath["vie"], "r") as f:
             vie_lines = f.readlines()
