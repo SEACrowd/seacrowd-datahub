@@ -134,9 +134,6 @@ class UP2Dataset(datasets.GeneratorBasedBuilder):
                }
             )
 
-        # For example seacrowd_kb, seacrowd_t2t
-        # elif self.config.schema == "seacrowd_[seacrowdschema_name]":
-        #     features = schemas.kb_features
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
