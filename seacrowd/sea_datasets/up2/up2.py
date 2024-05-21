@@ -194,6 +194,3 @@ class UP2Dataset(datasets.GeneratorBasedBuilder):
                 for key, example in enumerate(data):
                     yield f"{_lang}_{key}", example
 
-            # elif self.config.schema == "seacrowd_[seacrowd_schema_name]":
-            #     for key, example in enumerate(data):
-            #         yield key, {}
