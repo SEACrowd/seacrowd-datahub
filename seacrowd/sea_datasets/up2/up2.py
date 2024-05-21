@@ -106,13 +106,6 @@ class UP2Dataset(datasets.GeneratorBasedBuilder):
             schema="source",
             subset_id=f"{_DATASETNAME}{'_' if _LANG else ''}{_LANG}",
         ) for _LANG in ['', *_LANGUAGES]],
-        # *[SEACrowdConfig(
-        #     name=f"{_DATASETNAME}{'_' if _LANG else ''}{_LANG}_seacrowd_[seacrowd_schema_name]",
-        #     version=datasets.Version(_SEACROWD_VERSION),
-        #     description=f"{_DATASETNAME} SEACrowd schema",
-        #     schema="seacrowd_[seacrowd_schema_name]",
-        #     subset_id=f"{_DATASETNAME}{'_' if _LANG else ''}{_LANG}",
-        # ) for _LANG in ['', *_LANGUAGES]],
     ]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{_LANGUAGES[0]}_source"
