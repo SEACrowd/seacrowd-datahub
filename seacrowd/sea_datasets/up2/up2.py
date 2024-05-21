@@ -81,7 +81,6 @@ _URLS = {
     for split in ["train", "test", "dev"]
 }
 
-# TODO: add supported task by dataset. One dataset may support multiple tasks --> # TODO: add supported task by dataset. One dataset may support multiple tasks.
 _SUPPORTED_TASKS = []
 
 _SOURCE_VERSION = "1.0.0"
