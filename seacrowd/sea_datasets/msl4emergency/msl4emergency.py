@@ -1,10 +1,10 @@
 """
-SEA Crowd Data Loader for Bloom Speech.
+SEA Crowd Data Loader for MSL4Emergency.
 """
 import os
 import json
 
-from typing import Dict, Generator, List, Tuple, Union
+from typing import Dict, Generator, List, Tuple
 
 import datasets
 from datasets.download.download_manager import DownloadManager
@@ -165,7 +165,3 @@ class MSL4Emergency(datasets.GeneratorBasedBuilder):
                 raise ValueError(f"Received unexpected config schema of {_config_schema_name}!")
 
             idx += 1
-
-
-if __name__ == "__main__":
-    datasets.load_dataset(__file__)
