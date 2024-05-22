@@ -113,22 +113,23 @@ class UDDataset(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    BUILDER_CONFIGS = [
+    SOURCE_BUILDER_CONFIGS = [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_source",
             version=SOURCE_VERSION,
             description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id=f"{_DATASETNAME}",
-        ),
+            subset_id=f"{subset_name}",
+        ) for subset_name in _SUBSETS.keys()]
+    SEQUENCE_BUILDER_CONFIGS = [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_seacrowd_seq_label",
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd Seq Label schema",
             schema="seacrowd_seq_label",
-            subset_id=f"{_DATASETNAME}",
-        ),
-    ]
+            subset_id=f"{subset_name}",
+        )  for subset_name in _SUBSETS.keys()]
+    BUILDER_CONFIGS = SOURCE_BUILDER_CONFIGS + SEQUENCE_BUILDER_CONFIGS
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
@@ -175,10 +176,8 @@ class UDDataset(datasets.GeneratorBasedBuilder):
         self, dl_manager: datasets.DownloadManager
     ) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
-        urls = _URLS[_DATASETNAME]
-        # data_path = dl_manager.download(urls)
 
-        return []
+        return self._ud_split_generator(dl_manager)
     
 
     def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
@@ -213,293 +212,37 @@ class UDDataset(datasets.GeneratorBasedBuilder):
             yield key, example
 
 
-class UdIdCSUIDataset(UDDataset):
 
-    # def __init__(self, subset):
+    def _ud_split_generator(self, dl_manager):
 
-    SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
-    SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-    _SUBSET = "id_csui"
-    BUILDER_CONFIGS = [
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_{_SUBSET}_source",
-            version=SOURCE_VERSION,
-            description=f"{_DATASETNAME}_{_SUBSET} source schema",
-            schema="source",
-            subset_id=f"{_DATASETNAME}_{_SUBSET}",
-        ),
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_{_SUBSET}_seacrowd_seq_label",
-            version=SEACROWD_VERSION,
-            description=f"{_DATASETNAME}_{_SUBSET} SEACrowd Seq Label schema",
-            schema="seacrowd_seq_label",
-            subset_id=f"{_DATASETNAME}_{_SUBSET}",
-        ),
-    ]
-
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{_SUBSET}_source"
-
-    def _split_generators(
-            self, dl_manager: datasets.DownloadManager
-    ) -> List[datasets.SplitGenerator]:
-        """Returns SplitGenerators."""
-        urls = _URLS[self._SUBSET]
+        split_dset = []
+        if self.config.subset_id not in _SUBSETS:
+            return split_dset
+        urls = _URLS[self.config.subset_id]
         data_path = dl_manager.download(urls)
-
-
-        return [
-            datasets.SplitGenerator(
+        if "train" in data_path:
+            split_dset.append(datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
                     "filepath": data_path["train"]
                 },
-            ),
-            datasets.SplitGenerator(
+            ))
+        if "test" in data_path:
+            split_dset.append(datasets.SplitGenerator(
                 name=datasets.Split.TEST,
                 gen_kwargs={
                     "filepath": data_path["test"],
                 },
-            )
-        ]
-
-
-class UdIdGSDDataset(UDDataset):
-
-    # def __init__(self, subset):
-
-    SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
-    SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-    _SUBSET = "id_gsd"
-    BUILDER_CONFIGS = [
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_{_SUBSET}_source",
-            version=SOURCE_VERSION,
-            description=f"{_DATASETNAME}_{_SUBSET} source schema",
-            schema="source",
-            subset_id=f"{_DATASETNAME}_{_SUBSET}",
-        ),
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_{_SUBSET}_seacrowd_seq_label",
-            version=SEACROWD_VERSION,
-            description=f"{_DATASETNAME}_{_SUBSET} SEACrowd Seq Label schema",
-            schema="seacrowd_seq_label",
-            subset_id=f"{_DATASETNAME}_{_SUBSET}",
-        ),
-    ]
-
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{_SUBSET}_source"
-
-    def _split_generators(
-            self, dl_manager: datasets.DownloadManager
-    ) -> List[datasets.SplitGenerator]:
-        """Returns SplitGenerators."""
-        urls = _URLS[self._SUBSET]
-        data_path = dl_manager.download(urls)
-
-        return [
-            datasets.SplitGenerator(
-                name=datasets.Split.TRAIN,
-                gen_kwargs={
-                    "filepath": data_path["train"]
-                },
-            ),
-            datasets.SplitGenerator(
-                name=datasets.Split.TEST,
-                gen_kwargs={
-                    "filepath": data_path["test"],
-                },
-            ),
-            datasets.SplitGenerator(
+            ))
+        if "dev" in data_path:
+            split_dset.append(datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
                     "filepath": data_path["dev"],
                 },
-            ),
-        ]
+            ))
 
-class UdViVTBDataset(UDDataset):
-
-    # def __init__(self, subset):
-
-    SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
-    SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-    _SUBSET = "vi_vtb"
-    BUILDER_CONFIGS = [
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_{_SUBSET}_source",
-            version=SOURCE_VERSION,
-            description=f"{_DATASETNAME}_{_SUBSET} source schema",
-            schema="source",
-            subset_id=f"{_DATASETNAME}_{_SUBSET}",
-        ),
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_{_SUBSET}_seacrowd_seq_label",
-            version=SEACROWD_VERSION,
-            description=f"{_DATASETNAME}_{_SUBSET} SEACrowd Seq Label schema",
-            schema="seacrowd_seq_label",
-            subset_id=f"{_DATASETNAME}_{_SUBSET}",
-        ),
-    ]
-
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{_SUBSET}_source"
-
-    def _split_generators(
-            self, dl_manager: datasets.DownloadManager
-    ) -> List[datasets.SplitGenerator]:
-        """Returns SplitGenerators."""
-        urls = _URLS[self._SUBSET]
-        data_path = dl_manager.download(urls)
-
-        return [
-            datasets.SplitGenerator(
-                name=datasets.Split.TRAIN,
-                gen_kwargs={
-                    "filepath": data_path["train"]
-                },
-            ),
-            datasets.SplitGenerator(
-                name=datasets.Split.TEST,
-                gen_kwargs={
-                    "filepath": data_path["test"],
-                },
-            ),
-            datasets.SplitGenerator(
-                name=datasets.Split.VALIDATION,
-                gen_kwargs={
-                    "filepath": data_path["dev"],
-                },
-            ),
-        ]
-
-class UdIdPUDDataset(UDDataset):
-
-    # def __init__(self, subset):
-
-    SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
-    SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-    _SUBSET = "id_pud"
-    BUILDER_CONFIGS = [
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_{_SUBSET}_source",
-            version=SOURCE_VERSION,
-            description=f"{_DATASETNAME}_{_SUBSET} source schema",
-            schema="source",
-            subset_id=f"{_DATASETNAME}_{_SUBSET}",
-        ),
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_{_SUBSET}_seacrowd_seq_label",
-            version=SEACROWD_VERSION,
-            description=f"{_DATASETNAME}_{_SUBSET} SEACrowd Seq Label schema",
-            schema="seacrowd_seq_label",
-            subset_id=f"{_DATASETNAME}_{_SUBSET}",
-        ),
-    ]
-
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{_SUBSET}_source"
-
-    def _split_generators(
-            self, dl_manager: datasets.DownloadManager
-    ) -> List[datasets.SplitGenerator]:
-        """Returns SplitGenerators."""
-        urls = _URLS[self._SUBSET]
-        data_path = dl_manager.download(urls)
-
-        return [
-            datasets.SplitGenerator(
-                name=datasets.Split.TEST,
-                gen_kwargs={
-                    "filepath": data_path["test"],
-                },
-            )
-        ]
-
-
-
-class UdTlTRGDataset(UDDataset):
-
-    # def __init__(self, subset):
-
-    SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
-    SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-    _SUBSET = "tl_trg"
-    BUILDER_CONFIGS = [
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_{_SUBSET}_source",
-            version=SOURCE_VERSION,
-            description=f"{_DATASETNAME}_{_SUBSET} source schema",
-            schema="source",
-            subset_id=f"{_DATASETNAME}_{_SUBSET}",
-        ),
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_{_SUBSET}_seacrowd_seq_label",
-            version=SEACROWD_VERSION,
-            description=f"{_DATASETNAME}_{_SUBSET} SEACrowd Seq Label schema",
-            schema="seacrowd_seq_label",
-            subset_id=f"{_DATASETNAME}_{_SUBSET}",
-        ),
-    ]
-
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{_SUBSET}_source"
-
-    def _split_generators(
-            self, dl_manager: datasets.DownloadManager
-    ) -> List[datasets.SplitGenerator]:
-        """Returns SplitGenerators."""
-        urls = _URLS[self._SUBSET]
-        data_path = dl_manager.download(urls)
-
-        return [
-            datasets.SplitGenerator(
-                name=datasets.Split.TEST,
-                gen_kwargs={
-                    "filepath": data_path["test"],
-                },
-            )
-        ]
-
-
-
-class UdTlUGNAYANDataset(UDDataset):
-
-    # def __init__(self, subset):
-
-    SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
-    SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
-    _SUBSET = "tl_ugnayan"
-    BUILDER_CONFIGS = [
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_{_SUBSET}_source",
-            version=SOURCE_VERSION,
-            description=f"{_DATASETNAME}_{_SUBSET} source schema",
-            schema="source",
-            subset_id=f"{_DATASETNAME}_{_SUBSET}",
-        ),
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_{_SUBSET}_seacrowd_seq_label",
-            version=SEACROWD_VERSION,
-            description=f"{_DATASETNAME}_{_SUBSET} SEACrowd Seq Label schema",
-            schema="seacrowd_seq_label",
-            subset_id=f"{_DATASETNAME}_{_SUBSET}",
-        ),
-    ]
-
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{_SUBSET}_source"
-
-    def _split_generators(
-            self, dl_manager: datasets.DownloadManager
-    ) -> List[datasets.SplitGenerator]:
-        """Returns SplitGenerators."""
-        urls = _URLS[self._SUBSET]
-        data_path = dl_manager.download(urls)
-
-        return [
-            datasets.SplitGenerator(
-                name=datasets.Split.TEST,
-                gen_kwargs={
-                    "filepath": data_path["test"],
-                },
-            )
-        ]
+        return split_dset
 
 
 if __name__ == "__main__":
