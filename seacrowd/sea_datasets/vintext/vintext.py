@@ -117,6 +117,19 @@ The dataset is randomly split into 2 subsets for training (1,200 images) and tes
 
         elif self.config.schema == "seacrowd_imtext":
             features = schemas.image_text_features()
+            features["metadata"]["annotations"] = datasets.Sequence(
+                {
+                    "x1": datasets.Value("int32"),
+                    "y1": datasets.Value("int32"),
+                    "x2": datasets.Value("int32"),
+                    "y2": datasets.Value("int32"),
+                    "x3": datasets.Value("int32"),
+                    "y3": datasets.Value("int32"),
+                    "x4": datasets.Value("int32"),
+                    "y4": datasets.Value("int32"),
+                    "transcript": datasets.Value("string"),
+                }
+            )
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,

@@ -12,17 +12,6 @@ def features(label_names = ["Yes", "No"]):
             "metadata": {
                 "context": datasets.Value("string"),
                 "labels": datasets.Sequence(datasets.ClassLabel(names=label_names)),
-                "annotations": datasets.Sequence({
-                    "x1": datasets.Value("int32"),
-                    "y1": datasets.Value("int32"),
-                    "x2": datasets.Value("int32"),
-                    "y2": datasets.Value("int32"),
-                    "x3": datasets.Value("int32"),
-                    "y3": datasets.Value("int32"),
-                    "x4": datasets.Value("int32"),
-                    "y4": datasets.Value("int32"),
-                    "transcript": datasets.Value("string"),
-                })
             },
         }
     )
