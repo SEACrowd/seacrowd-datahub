@@ -95,7 +95,8 @@ class MedEVDataset(datasets.GeneratorBasedBuilder):
             features = datasets.Features(
                 {
                     "id": datasets.Value("string"),
-                    "text": datasets.Value("string"),
+                    "vie_text": datasets.Value("string"),
+                    "eng_text": datasets.Value("string"),
                 }
             )
 
@@ -146,10 +147,11 @@ class MedEVDataset(datasets.GeneratorBasedBuilder):
             vie_lines = f.readlines()
 
         if self.config.schema == "source":
-            for i, line in enumerate(en_lines + vie_lines):
+            for i in range(len(vie_lines)):
                 yield i, {
                     "id": str(i),
-                    "text": line,
+                    "vie_text": vie_lines[i],
+                    "eng_text": en_lines[i],
                 }
 
         elif self.config.schema == "seacrowd_t2t":
