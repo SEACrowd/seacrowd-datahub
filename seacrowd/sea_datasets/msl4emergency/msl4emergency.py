@@ -2,8 +2,6 @@
 SEA Crowd Data Loader for MSL4Emergency.
 """
 import os
-import json
-
 from typing import Dict, Generator, List, Tuple
 
 import datasets
@@ -71,26 +69,23 @@ class MSL4Emergency(datasets.GeneratorBasedBuilder):
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
-
     def _info(self) -> datasets.DatasetInfo:
         _config_schema_name = self.config.schema
         logger.info(f"Received schema name: {self.config.schema}")
 
         if _config_schema_name == "source":
-            features = datasets.Features(
-                {
-                    "id": datasets.Value("string"),
-                    "mya_text": datasets.Value("string"),
-                    "ysm_text": datasets.Value("string"),
-                    "video_url": datasets.Value("string")
-                }
-            )
+            features = datasets.Features({
+                "id": datasets.Value("string"),
+                "mya_text": datasets.Value("string"),
+                "ysm_text": datasets.Value("string"),
+                "video_url": datasets.Value("string")
+            })
 
         # speech-text schema
-        elif _config_schema_name == f"seacrowd_t2t":
+        elif _config_schema_name == "seacrowd_t2t":
             features = schemas.text2text_features
 
-        elif _config_schema_name == f"seacrowd_imtext":
+        elif _config_schema_name == "seacrowd_imtext":
             features = schemas.image_text_features()
 
         else:
@@ -133,28 +128,27 @@ class MSL4Emergency(datasets.GeneratorBasedBuilder):
 
         idx = 1
         for video_path in video_dir_list:
+            mya_text, ysm_text = text_data[idx - 1]
             if _config_schema_name == "source":
                 yield idx, {
                     "id": idx,
-                    "mya_text": text_data[idx-1][0].strip(),
-                    "ysm_text": text_data[idx-1][1].strip(),
-                    "video_url": video_path
-                }
+                    "mya_text": mya_text.strip(),
+                    "ysm_text": ysm_text.strip(),
+                    "video_url": video_path}
 
             elif _config_schema_name == "seacrowd_t2t":
                 yield idx, {
                     "id": idx,
-                    "text_1": text_data[idx-1][0].strip(),
-                    "text_2": text_data[idx-1][1].strip(),
+                    "text_1": mya_text.strip(),
+                    "text_2": ysm_text.strip(),
                     "text_1_name": "target_mya",
-                    "text_2_name": "source_ysm"
-                }
+                    "text_2_name": "source_ysm"}
 
             elif _config_schema_name == "seacrowd_imtext":
                 yield idx, {
                     "id": idx,
                     "image_paths": [video_path],
-                    "texts": text_data[idx-1][1].strip(),
+                    "texts": ysm_text.strip(),
                     "metadata": {
                         "context": "myanmar sign language transcribed",
                         "labels": None,
