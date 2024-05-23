@@ -135,4 +135,16 @@ class WikiHowGOSCDataset(datasets.GeneratorBasedBuilder):
         with open(filepath, "r", encoding="utf-8") as file:
             data = json.load(file)
             for key, example in enumerate(data[split]):
-                yield key, example
+                if "sections" not in example: # Single-section example
+                    yield key, {
+                        "title": example["title"],
+                        "category": example["category"],
+                        "sections": [{
+                            "section": "",
+                            "steps": example["steps"],
+                            "ordered": example["ordered"],
+                        }],
+                        "ordered": 1
+                    }
+                else:
+                    yield key, example
