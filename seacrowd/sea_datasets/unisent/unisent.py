@@ -112,7 +112,7 @@ class UniSentDataset(datasets.GeneratorBasedBuilder):
         data_dir = dl_manager.download_and_extract(urls)
         return [
             datasets.SplitGenerator(
-                name="unisent",
+                name=datasets.Split.TRAIN,
                 gen_kwargs={
                     "filepath": data_dir,
                 },
@@ -136,7 +136,4 @@ class UniSentDataset(datasets.GeneratorBasedBuilder):
         Original labels are -1, +1.
         Clip the label to 0 or 1 to get right index.
         """
-        if int(label) < 0:
-            return 0
-        else:
-            return 1
+        return 0 if int(label) < 0 else 1
