@@ -11,7 +11,7 @@ from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import TASK_TO_SCHEMA, Licenses, Tasks
 
-_CITATION = r"""
+_CITATION = """
 @article{
     msl4emergency,
     title={Statistical Machine Translation between Myanmar Sign Language and Myanmar Written Text},
@@ -29,7 +29,7 @@ _LOCAL = False
 _LANGUAGES = ["ysm", "mya"]
 
 _DATASETNAME = "msl4emergency"
-_DESCRIPTION = r"""
+_DESCRIPTION = """
 The MSL4Emergency corpus is part of a larger Myanmar sign language (MSL) corpus that specifically contains sign language videos for the emergency domain.
 Each signing video is annotated with both its transcription and its Burmese written translation, which may differ from each other due to grammar, syntax and vocabulary differences between MSL and Burmese.
 Signing videos were made by sign language trainers and deaf trainees.
@@ -111,7 +111,7 @@ class MSL4Emergency(datasets.GeneratorBasedBuilder):
                 video_dir_list.extend([os.path.join(_full_child_dir, video_fp) for video_fp in os.listdir(_full_child_dir) if video_fp.endswith(".mp4")])
 
         text_path = os.path.join(local_path, "my-sl")
-        with open(text_path, "r") as f:
+        with open(text_path, "r", encoding="utf-8") as f:
             text_data = [data.split("\t") for data in f.readlines()]
 
         return [
