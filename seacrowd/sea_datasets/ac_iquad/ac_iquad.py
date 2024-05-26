@@ -73,7 +73,7 @@ _HOMEPAGE = "https://www.kaggle.com/datasets/realdeo/indonesian-qa-generated-by-
 
 _LANGUAGES = ["ind"]
 
-_LICENSE = Licenses.UNKNOWN.value
+_LICENSE = Licenses.CC_BY_4_0.value
 
 _LOCAL = False
 
