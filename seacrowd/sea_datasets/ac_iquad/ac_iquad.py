@@ -131,7 +131,7 @@ class ACIQuADDataset(datasets.GeneratorBasedBuilder):
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd schema",
             schema=f"seacrowd_{SEACROWD_SCHEMA_NAME}",
-            subset_id=f"{_DATASETNAME}_complex",
+            subset_id=f"{_DATASETNAME}_simple_complex",
         ),
     ]
 
