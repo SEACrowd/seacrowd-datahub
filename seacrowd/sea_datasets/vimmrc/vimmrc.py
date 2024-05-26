@@ -47,7 +47,7 @@ _HOMEPAGE = "https://sites.google.com/uit.edu.vn/kietnv/datasets#h.1qeaynfs79d1"
 
 _LANGUAGES = ["vie"]
 
-_LICENSE = Licenses.UNKNOWN.value
+_LICENSE = f"{Licenses.UNKNOWN.value} | The corpus is freely available at our website for research purposes."
 
 _LOCAL = False
 
