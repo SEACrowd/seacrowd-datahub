@@ -44,7 +44,7 @@ u}z{\={\i}}tis, Normunds and Guillaume, Bruno and Guiller, Kirian and Guillot-Ba
 _LANGUAGES = ["ind", "vie", "tgl"]
 _LOCAL = False
 
-_DATASETNAME = "ud-v2.13"
+_DATASETNAME = "ud"
 
 _SUBSETS = {"id_gsd" : "UD_Indonesian-GSD", 
             "id_csui": "UD_Indonesian-CSUI", 
