@@ -271,7 +271,7 @@ class UniSentDataset(datasets.GeneratorBasedBuilder):
         ]
 
     def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
-        with open(filepath, "r") as filein:
+        with open(filepath, "r", encoding="utf-8") as filein:
             data_instances = [inst.strip("\n").split("\t") for inst in filein.readlines()]
 
         for di_idx, data_instance in enumerate(data_instances):
