@@ -41,7 +41,7 @@ u}z{\={\i}}tis, Normunds and Guillaume, Bruno and Guiller, Kirian and Guillot-Ba
  year = {2023} }
 """
 
-_LANGUAGES = ["ind", "vie"]
+_LANGUAGES = ["ind", "vie", "tgl"]
 _LOCAL = False
 
 _DATASETNAME = "ud-v2.13"
