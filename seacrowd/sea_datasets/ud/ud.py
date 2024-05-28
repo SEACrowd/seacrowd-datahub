@@ -66,7 +66,7 @@ Universal Dependencies (UD) is a project that is developing cross-linguistically
 
 _HOMEPAGE = "https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-5287"
 
-_LICENSE = ["Apache license 2.0 (apache-2.0)"]
+_LICENSE = Licenses.APACHE_2_0.value
 
 _URLS = {
     "ud-v2.12": "https://lindat.mff.cuni.cz/repository/xmlui/bitstream/handle/11234/1-5150/ud-treebanks-v2.12.tgz?sequence=1&isAllowed=y",
