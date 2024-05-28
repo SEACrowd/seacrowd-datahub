@@ -25,7 +25,7 @@ from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Tasks
 from seacrowd.utils.constants import Licenses
 
-_CITATION = """
+_CITATION = r"""
  @misc{11234/1-5287,
  title = {Universal Dependencies 2.13},
  author = {Zeman, Daniel and Nivre, Joakim and Abrams, Mitchell and Ackermann, Elia and Aepli, No{\"e}mi and Aghaei, Hamid and Agi{\'c}, {\v Z}eljko and Ahmadi, Amir and Ahrenberg, Lars and Ajede, Chika Kennedy and Akkurt,
@@ -90,10 +90,10 @@ _URLS = {
         "dev": "https://raw.githubusercontent.com/UniversalDependencies/UD_Vietnamese-VTB/master/vi_vtb-ud-dev.conllu",
     },
     "tl_trg": {
-        "test": "https://github.com/UniversalDependencies/UD_Tagalog-TRG/blob/master/tl_trg-ud-test.conllu",
+        "test": "https://raw.githubusercontent.com/UniversalDependencies/UD_Tagalog-TRG/master/tl_trg-ud-test.conllu",
     },
     "tl_ugnayan": {
-        "test": "https://github.com/UniversalDependencies/UD_Tagalog-Ugnayan/blob/master/tl_ugnayan-ud-test.conllu",
+        "test": "https://raw.githubusercontent.com/UniversalDependencies/UD_Tagalog-Ugnayan/master/tl_ugnayan-ud-test.conllu",
     },
 }
 
@@ -101,7 +101,7 @@ _URLS = {
 
 _SUPPORTED_TASKS = [Tasks.POS_TAGGING]
 
-_SOURCE_VERSION = "2.13"
+_SOURCE_VERSION = "2.13.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
@@ -131,8 +131,6 @@ class UDDataset(datasets.GeneratorBasedBuilder):
             subset_id=f"{subset_name}",
         )  for subset_name in _SUBSETS.keys()]
     BUILDER_CONFIGS = SOURCE_BUILDER_CONFIGS + SEQUENCE_BUILDER_CONFIGS
-
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
 
     UPOS_TAGS = ["ADJ", "ADP", "ADV", "AUX", "CCONJ", "DET", "INTJ", "NOUN", "NUM", "PART", "PRON", "PROPN", "PUNCT", "SCONJ", "SYM", "VERB", "X"]
 
@@ -246,6 +244,4 @@ class UDDataset(datasets.GeneratorBasedBuilder):
         return split_dset
 
 
-if __name__ == "__main__":
-    data = datasets.load_dataset(__file__)
 
