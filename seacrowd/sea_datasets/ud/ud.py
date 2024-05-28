@@ -23,7 +23,7 @@ from seacrowd.utils import schemas
 from seacrowd.utils.common_parser import load_ud_data, load_ud_data_as_seacrowd_kb
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Tasks
-
+from seacrowd.utils.constants import Licenses
 
 _CITATION = """
  @misc{11234/1-5287,
@@ -68,9 +68,10 @@ _HOMEPAGE = "https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-5287"
 
 _LICENSE = Licenses.APACHE_2_0.value
 
+# "ud-v2.12": "https://lindat.mff.cuni.cz/repository/xmlui/bitstream/handle/11234/1-5150/ud-treebanks-v2.12.tgz?sequence=1&isAllowed=y"
+# "ud-v2.13": "https://lindat.mff.cuni.cz/repository/xmlui/bitstream/handle/11234/1-5287/ud-treebanks-v2.13.tgz?sequence=1&isAllowed=y"
+
 _URLS = {
-    "ud-v2.12": "https://lindat.mff.cuni.cz/repository/xmlui/bitstream/handle/11234/1-5150/ud-treebanks-v2.12.tgz?sequence=1&isAllowed=y",
-    "ud-v2.13": "https://lindat.mff.cuni.cz/repository/xmlui/bitstream/handle/11234/1-5287/ud-treebanks-v2.13.tgz?sequence=1&isAllowed=y",
     "id_csui": {
         "train": "https://raw.githubusercontent.com/UniversalDependencies/UD_Indonesian-CSUI/master/id_csui-ud-train.conllu",
         "test": "https://raw.githubusercontent.com/UniversalDependencies/UD_Indonesian-CSUI/master/id_csui-ud-test.conllu",
@@ -115,7 +116,7 @@ class UDDataset(datasets.GeneratorBasedBuilder):
 
     SOURCE_BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_source",
+            name=f"{_DATASETNAME}_{subset_name}_source",
             version=SOURCE_VERSION,
             description=f"{_DATASETNAME} source schema",
             schema="source",
@@ -123,7 +124,7 @@ class UDDataset(datasets.GeneratorBasedBuilder):
         ) for subset_name in _SUBSETS.keys()]
     SEQUENCE_BUILDER_CONFIGS = [
         SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_seq_label",
+            name=f"{_DATASETNAME}_{subset_name}_seacrowd_seq_label",
             version=SEACROWD_VERSION,
             description=f"{_DATASETNAME} SEACrowd Seq Label schema",
             schema="seacrowd_seq_label",
