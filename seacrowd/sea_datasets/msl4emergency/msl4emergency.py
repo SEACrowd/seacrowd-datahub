@@ -47,7 +47,7 @@ _SEACROWD_VERSION = "1.0.0"
 _CONFIG_SUFFIXES_FOR_TASK = [TASK_TO_SCHEMA.get(task).lower() for task in _SUPPORTED_TASKS]
 
 
-class MSL4Emergency(datasets.GeneratorBasedBuilder):
+class MSL4EmergencyDataset(datasets.GeneratorBasedBuilder):
     """MSL4Emergency dataset"""
 
     BUILDER_CONFIGS = [
