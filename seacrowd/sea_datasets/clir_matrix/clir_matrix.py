@@ -192,7 +192,7 @@ class CLIRMatrixDataset(datasets.GeneratorBasedBuilder):
                 gen_kwargs={"filepath": data_paths["test1"], "doc_paths": doc_paths},
             ),
             datasets.SplitGenerator(
-                name="test2",
+                name="test2",  # just supplementary test sets for users to use in whatever way they want
                 gen_kwargs={"filepath": data_paths["test2"], "doc_paths": doc_paths},
             ),
             datasets.SplitGenerator(
