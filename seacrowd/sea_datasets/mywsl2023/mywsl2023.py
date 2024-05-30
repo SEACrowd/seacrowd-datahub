@@ -59,10 +59,6 @@ _SUPPORTED_TASKS = [Tasks.SIGN_LANGUAGE_RECOGNITION]
 _SUPPORTED_SCHEMA_STRINGS = [f"seacrowd_{str(TASK_TO_SCHEMA[task]).lower()}" for task in _SUPPORTED_TASKS]
 
 _SPLITS = [datasets.Split.TRAIN, datasets.Split.TEST]
-_SPLIT_NAMES = {
-    datasets.Split.TRAIN: "train",
-    datasets.Split.TEST: "test",
-}
 
 _LABELS = ["air", "demam", "dengar", "makan", "minum", "salah", "saya", "senyap", "tidur", "waktu"]
 
@@ -143,7 +139,7 @@ class MyWsl2023(datasets.GeneratorBasedBuilder):
                 datasets.SplitGenerator(
                     name=split,
                     gen_kwargs={
-                        "path": os.path.join(path, "MyWSL2023 RAW DATA", _SPLIT_NAMES[split]),
+                        "path": os.path.join(path, "MyWSL2023 RAW DATA", split._name),
                     },
                 )
             )
@@ -163,7 +159,6 @@ class MyWsl2023(datasets.GeneratorBasedBuilder):
                     "image_paths": [os.path.join(image_folder_path, image_path) for image_path in image_paths],
                     "texts": os.path.basename(image_folder_path),
                 }
-                idx += 1
 
             elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.SIGN_LANGUAGE_RECOGNITION]).lower()}":
                 yield idx, {
@@ -175,7 +170,6 @@ class MyWsl2023(datasets.GeneratorBasedBuilder):
                         "labels": [os.path.basename(image_folder_path)],
                     },
                 }
-                idx += 1
 
             else:
                 raise ValueError(f"Invalid config: {self.config.name}")
