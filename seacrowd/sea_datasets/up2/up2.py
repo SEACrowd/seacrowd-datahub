@@ -23,17 +23,16 @@ from typing import Dict, List, Tuple
 
 import datasets
 
-from seacrowd.utils import schemas
-from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
 from seacrowd.utils.common_parser import load_ud_data
+from seacrowd.utils.configs import SEACrowdConfig
+from seacrowd.utils.constants import Licenses
 
 _CITATION = """\
 @inproceedings{jindal-etal-2022-universal,
     title = "Universal {P}roposition {B}ank 2.0",
     author = "Jindal, Ishan  and
       Rademaker, Alexandre  and
-      Ulewicz, Micha{\l}  and
+      Ulewicz, Micha{l}  and
       Linh, Ha  and
       Nguyen, Huyen  and
       Tran, Khoi-Nguyen  and
@@ -76,7 +75,7 @@ _URLS = {
             f"https://raw.githubusercontent.com/UniversalPropositions/UP_Vietnamese-VTB/main/vi_vtb-up-{split}.conllup",
             # f"https://raw.githubusercontent.com/UniversalDependencies/UD_Vietnamese-VTB/master/vi_vtb-ud-{split}.conllu", # new data => mismatch.
             f"https://raw.githubusercontent.com/UniversalDependencies/UD_Vietnamese-VTB/0edef6d63df949aea0494c6d4ff4f91bb1959019/vi_vtb-ud-{split}.conllu",  # r2.8
-        ]
+        ],
     }
     for split in ["train", "test", "dev"]
 }
@@ -99,13 +98,16 @@ class UP2Dataset(datasets.GeneratorBasedBuilder):
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
     BUILDER_CONFIGS = [
-        *[SEACrowdConfig(
-            name=f"{_DATASETNAME}{'_' if _LANG else ''}{_LANG}_source",
-            version=datasets.Version(_SOURCE_VERSION),
-            description=f"{_DATASETNAME} source schema",
-            schema="source",
-            subset_id=f"{_DATASETNAME}{'_' if _LANG else ''}{_LANG}",
-        ) for _LANG in ['', *_LANGUAGES]],
+        *[
+            SEACrowdConfig(
+                name=f"{_DATASETNAME}{'_' if _LANG else ''}{_LANG}_source",
+                version=datasets.Version(_SOURCE_VERSION),
+                description=f"{_DATASETNAME} source schema",
+                schema="source",
+                subset_id=f"{_DATASETNAME}{'_' if _LANG else ''}{_LANG}",
+            )
+            for _LANG in ["", *_LANGUAGES]
+        ],
     ]
 
     DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_{_LANGUAGES[0]}_source"
@@ -114,18 +116,17 @@ class UP2Dataset(datasets.GeneratorBasedBuilder):
 
         if self.config.schema == "source":
             features = datasets.Features(
-               {
-                   "lang": datasets.Value("string"),
-                   "source_sent_id": datasets.Value("string"),
-                   "sent_id": datasets.Value("string"),
-                   "text": datasets.Value("string"),
-                   "id": [datasets.Value("string")],
-                   "up:pred": [datasets.Value("string")],
-                   "up:argheads": [datasets.Value("string")],
-                   "up:argspans": [datasets.Value("string")],
-               }
+                {
+                    "lang": datasets.Value("string"),
+                    "source_sent_id": datasets.Value("string"),
+                    "sent_id": datasets.Value("string"),
+                    "text": datasets.Value("string"),
+                    "id": [datasets.Value("string")],
+                    "up:pred": [datasets.Value("string")],
+                    "up:argheads": [datasets.Value("string")],
+                    "up:argspans": [datasets.Value("string")],
+                }
             )
-
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -179,11 +180,10 @@ class UP2Dataset(datasets.GeneratorBasedBuilder):
             for cur_data in data:
                 txt_src = sentid2text[cur_data["sent_id"]]
                 txt_up = cur_data["text"].rsplit("..........", 1)[0].rstrip(" -")
-                assert txt_up == txt_src[:len(txt_up)], f"Text mismatch. Found '{txt_up}' in conllup but source is '{txt_src[:len(txt_up)]}'"
+                assert txt_up == txt_src[: len(txt_up)], f"Text mismatch. Found '{txt_up}' in conllup but source is '{txt_src[:len(txt_up)]}'"
                 cur_data["text"] = txt_src
                 cur_data["lang"] = _lang
 
             if self.config.schema == "source":
                 for key, example in enumerate(data):
                     yield f"{_lang}_{key}", example
-
