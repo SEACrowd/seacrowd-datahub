@@ -46,7 +46,7 @@ _CITATION = """\
 _DATASETNAME = "vlogqa"
 
 _DESCRIPTION = """\
-TVlogQA is a Vietnamese spoken language corpus for machine reading comprehension. It
+VlogQA is a Vietnamese spoken language corpus for machine reading comprehension. It
 consists of 10,076 question-answer pairs based on 1,230 transcript documents sourced from
 YouTube videos around food and travel.
 """
