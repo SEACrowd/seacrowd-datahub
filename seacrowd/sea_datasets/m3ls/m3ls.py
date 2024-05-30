@@ -60,7 +60,7 @@ _SEACROWD_VERSION = "1.0.0"
 _CONFIG_SUFFIXES_FOR_TASK = [TASK_TO_SCHEMA.get(task).lower() for task in _SUPPORTED_TASKS]
 
 
-class M3LS(datasets.GeneratorBasedBuilder):
+class M3LSDataset(datasets.GeneratorBasedBuilder):
     """M3LS dataset of Indonesian Language (from BBC Indonesian)"""
 
     BUILDER_CONFIGS = [
