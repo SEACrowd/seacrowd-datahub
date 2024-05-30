@@ -114,7 +114,7 @@ _SOURCE_VERSION = "2.0.8"  # should be 2.08 but HuggingFace does not allow
 _SEACROWD_VERSION = "1.0.0"
 
 
-class NationalSpeechCorpusSgIMDA(datasets.GeneratorBasedBuilder):
+class NationalSpeechCorpusSgIMDADataset(datasets.GeneratorBasedBuilder):
     """The National Speech Corpus (NSC), the first large-scale Singapore English corpus spearheaded by the Info-communications and Media Development Authority (IMDA) of Singapore."""
 
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
