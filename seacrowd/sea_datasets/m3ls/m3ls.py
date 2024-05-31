@@ -7,6 +7,11 @@ from collections.abc import Iterable
 from copy import deepcopy
 from typing import Dict, Generator, List, Tuple, Union
 
+try:
+    import PIL
+except (ImportError, ModuleNotFoundError):
+    raise ImportError("Please install `PIL` to load image-based data from this dataloader.")
+
 import datasets
 from datasets.download.download_manager import DownloadManager
 
