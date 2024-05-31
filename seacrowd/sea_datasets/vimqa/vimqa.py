@@ -52,7 +52,11 @@ _HOMEPAGE = "https://github.com/vimqa/vimqa"
 
 _LANGUAGES = ["vie"]
 
-_LICENSE = Licenses.UNKNOWN.value
+_LICENSE = f"""{Licenses.OTHERS.value} | \
+    The licence terms for VimQA follows this EULA docs on their repo.
+    Please refer to the following doc of EULA (to review the permissions and request for access)
+    VIMQA EULA -- https://github.com/vimqa/vimqa/blob/main/VIMQA_EULA.pdf
+"""
 
 _LOCAL = True
 
@@ -92,7 +96,7 @@ class VimqaDataset(datasets.GeneratorBasedBuilder):
         if self.config.schema == "source":
             features = datasets.Features(
                 {
-                    "_id": datasets.Value("string"),
+                    "id": datasets.Value("string"),
                     "question": datasets.Value("string"),
                     "answer": datasets.Value("string"),
                     "type": datasets.Value("string"),
@@ -163,7 +167,7 @@ class VimqaDataset(datasets.GeneratorBasedBuilder):
         for i, item in enumerate(data):
             if self.config.schema == "source":
                 yield i, {
-                    "_id": item["_id"],
+                    "id": item["_id"],
                     "question": item["question"],
                     "answer": item["answer"],
                     "type": item["type"],
