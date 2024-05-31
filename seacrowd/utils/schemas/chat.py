@@ -7,7 +7,7 @@ features = datasets.Features(
     {
         "id": datasets.Value("string"),
         "input": datasets.Sequence({
-            "role": datasets.ClassLabel(names=["system", "user", "assistant"]),
+            "role": datasets.Value("string"),
             "content": datasets.Value("string"),
         }),
         "output": datasets.Value("string"),
