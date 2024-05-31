@@ -12,7 +12,7 @@ try:
 except (ImportError, ModuleNotFoundError):
     raise ImportError("Please install `PIL` to load image-based data from this dataloader.")
 else:
-    PIL.__version__ # to avoid being marked by formatter
+    PIL.__version__  # to avoid being marked by formatter
 
 import datasets
 from datasets.download.download_manager import DownloadManager
