@@ -69,15 +69,18 @@ class M3LSDataset(datasets.GeneratorBasedBuilder):
             version=datasets.Version(_SOURCE_VERSION),
             description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id=_DATASETNAME)
-    ] + [
-        SEACrowdConfig(
-            name=f"{_DATASETNAME}_seacrowd_{cfg_sufix}",
-            version=datasets.Version(_SEACROWD_VERSION),
-            description=f"{_DATASETNAME} seacrowd schema for {task.name}",
-            schema=f"seacrowd_{cfg_sufix}",
-            subset_id=_DATASETNAME)
-        for task, cfg_sufix in zip(_SUPPORTED_TASKS, _CONFIG_SUFFIXES_FOR_TASK)
+            subset_id=f"{_DATASETNAME}",
+        ),
+        *[
+            SEACrowdConfig(
+                name=f"{_DATASETNAME}_seacrowd_{cfg_sufix}",
+                version=datasets.Version(_SEACROWD_VERSION),
+                description=f"{_DATASETNAME} seacrowd schema for {task.name}",
+                schema=f"seacrowd_{cfg_sufix}",
+                subset_id=f"{_DATASETNAME}",
+            )
+            for task, cfg_sufix in zip(_SUPPORTED_TASKS, _CONFIG_SUFFIXES_FOR_TASK)
+        ],
     ]
 
     def _info(self) -> datasets.DatasetInfo:
@@ -102,10 +105,10 @@ class M3LSDataset(datasets.GeneratorBasedBuilder):
             )
 
         # speech-text schema
-        elif _config_schema_name == f"seacrowd_t2t":
+        elif _config_schema_name == "seacrowd_t2t":
             features = schemas.text2text_features
 
-        elif _config_schema_name == f"seacrowd_imtext":
+        elif _config_schema_name == "seacrowd_imtext":
             features = schemas.image_text_features()
 
         else:
@@ -128,7 +131,7 @@ class M3LSDataset(datasets.GeneratorBasedBuilder):
         # Download from Google drive
         output_dir = os.path.join(os.getcwd(), "data", "m3ls")
         if not os.path.exists(output_dir):
-            os.mkdir(output_dir)
+            os.makedirs(output_dir)
         output_file = output_dir + "/m3ls.zip"
         if not os.path.exists(output_file):
             gdown.download(_URL, str(output_file), fuzzy=True)
@@ -152,8 +155,9 @@ class M3LSDataset(datasets.GeneratorBasedBuilder):
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
                     "article_data_dir": article_data_dir,
-                    "image_folder": os.path.join(local_path, "imagefolder")
-                })
+                    "image_folder": os.path.join(local_path, "imagefolder"),
+                },
+            )
         ]
 
     def _generate_examples(self, article_data_dir: str, image_folder: str) -> Generator[Tuple[int, Dict], None, None]:
@@ -191,7 +195,7 @@ class M3LSDataset(datasets.GeneratorBasedBuilder):
                     "text_1": "\n".join(content_data["paragraphs"]),
                     "text_2": root_data["summary"],
                     "text_1_name": "texts",
-                    "text_2_name": "summary"
+                    "text_2_name": "summary",
                 }
 
             elif _config_schema_name == "seacrowd_imtext":
@@ -301,7 +305,7 @@ class M3LSDataset(datasets.GeneratorBasedBuilder):
         elif mode == "image":
             ftr_idx = list(range(1))
         elif mode == "text":
-            ftr_idx = list(range(1,3))
+            ftr_idx = list(range(1, 3))
 
         ftr_validation_info = {all_content_ftrs[_idx]: _all_ftr_validation_info[all_content_ftrs[_idx]] for _idx in ftr_idx}
 
@@ -376,7 +380,7 @@ class M3LSDataset(datasets.GeneratorBasedBuilder):
         return content_data
 
     @staticmethod
-    def __m3ls_filter_image_and_captions_data(image_data: list, captions_data: list, base_image_folder: str, all_images: list, both_exists: bool=False) -> Tuple[List, List]:
+    def __m3ls_filter_image_and_captions_data(image_data: list, captions_data: list, base_image_folder: str, all_images: list, both_exists: bool = False) -> Tuple[List, List]:
         image_path, captions = [], []
 
         if len(captions_data) != len(image_data):
