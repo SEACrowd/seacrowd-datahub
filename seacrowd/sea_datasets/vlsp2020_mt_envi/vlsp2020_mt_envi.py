@@ -24,7 +24,7 @@ import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, Licenses
+from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
 @inproceedings{vlsp2020-mt,
@@ -43,7 +43,7 @@ Parallel and monolingual data for training machine translation systems translati
 
 _HOMEPAGE = "https://github.com/thanhleha-kit/EnViCorpora"
 
-_LANGUAGES = ["vie"] 
+_LANGUAGES = ["vie"]
 
 _LICENSE = Licenses.UNKNOWN.value
 
@@ -64,32 +64,32 @@ class Vlsp2020MtEnviDataset(datasets.GeneratorBasedBuilder):
     subsets = {
         # key: subset_id, value: subset_filename
         "EVBCorpus" : [
-            ("bitext", datasets.Split.TRAIN)
+            ("bitext", datasets.Split.TRAIN),
         ],
         "VLSP20-official" : [
-            ("offi_test", datasets.Split.TEST)
+            ("offi_test", datasets.Split.TEST),
         ],
         "basic": [
-            ("data", datasets.Split.TRAIN)
+            ("data", datasets.Split.TRAIN),
         ],
         "indomain-news": [
             ("train", datasets.Split.TRAIN),
             ("dev", datasets.Split.VALIDATION),
-            ("tst", datasets.Split.TEST)
+            ("tst", datasets.Split.TEST),
         ],
         "iwslt15": [
             ("train", datasets.Split.TRAIN),
             ("dev", datasets.Split.VALIDATION),
-            ("test", datasets.Split.TEST)
+            ("test", datasets.Split.TEST),
         ],
         "iwslt15-official": [
-            ("IWSLT15.official_test", datasets.Split.TEST)
+            ("IWSLT15.official_test", datasets.Split.TEST),
         ],
         "ted-like": [
-            ("data", datasets.Split.TRAIN)
+            ("data", datasets.Split.TRAIN),
         ],
         "wiki-alt": [
-            ("data", datasets.Split.TRAIN)
+            ("data", datasets.Split.TRAIN),
         ]
     }
 
@@ -118,11 +118,13 @@ class Vlsp2020MtEnviDataset(datasets.GeneratorBasedBuilder):
     def _info(self) -> datasets.DatasetInfo:
 
         if self.config.schema == "source":
-            features = datasets.Features({
-                "id": datasets.Value("string"),
-                "text_en": datasets.Value("string"),
-                "text_vi": datasets.Value("string"),
-            })
+            features = datasets.Features(
+                {
+                    "id": datasets.Value("string"),
+                    "text_en": datasets.Value("string"),
+                    "text_vi": datasets.Value("string"),
+                }
+            )
 
         elif self.config.schema == "seacrowd_t2t":
             features = schemas.text2text_features
@@ -140,7 +142,7 @@ class Vlsp2020MtEnviDataset(datasets.GeneratorBasedBuilder):
         subset_id = self.config.subset_id.split("_")[-1]
                 
         filenames = self.subsets[subset_id]
-        if "iwslt15" in subset_id: # for iwslt15-official
+        if "iwslt15" in subset_id:  # for iwslt15-official
             subset_id = "iwslt15"
 
         data_dir = dl_manager.download_and_extract(_URLS)
@@ -160,25 +162,25 @@ class Vlsp2020MtEnviDataset(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
-        with open(filepath["en"], 'r') as f:
+        with open(filepath["en"], "r") as f:
             en = f.readlines()
-        with open(filepath["vi"], 'r') as f:
+        with open(filepath["vi"], "r") as f:
             vi = f.readlines()
 
         if self.config.schema == "source":
             for i, (en_text, vi_text) in enumerate(zip(en, vi)):
                 yield i, {
-                        "id": str(i),
-                        "text_en": en_text.strip(), 
-                        "text_vi": vi_text.strip()
-                    }
+                    "id": str(i),
+                    "text_en": en_text.strip(), 
+                    "text_vi": vi_text.strip(),
+                }
 
         elif self.config.schema == "seacrowd_t2t":
             for i, (en_text, vi_text) in enumerate(zip(en, vi)):
                 yield i, {
-                        "id": str(i),
-                        "text_1": en_text.strip(),
-                        "text_2": vi_text.strip(),
-                        "text_1_name": "en",
-                        "text_2_name": "vi",
-                    }
+                    "id": str(i),
+                    "text_1": en_text.strip(),
+                    "text_2": vi_text.strip(),
+                    "text_1_name": "en",
+                    "text_2_name": "vi",
+                }
