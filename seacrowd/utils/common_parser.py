@@ -34,7 +34,9 @@ def load_ud_data(filepath, filter_kwargs=None, assert_fn=None):
     :param assert_fn: assertion to make sure raw data is in the expected format
     :return: generator with schema following CONLLU
     """
-    dataset_raw = parse(open(filepath, encoding="utf8").read())
+    with open(filepath, "r", encoding="utf8") as f:
+        raw_data = f.read()
+    dataset_raw = parse(raw_data)
 
     filter_kwargs = filter_kwargs or dict()
     if callable(assert_fn):
