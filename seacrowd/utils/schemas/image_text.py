@@ -16,4 +16,3 @@ def features(label_names = ["Yes", "No"]):
             }
         }
     )
-
