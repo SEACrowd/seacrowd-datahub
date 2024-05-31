@@ -27,7 +27,7 @@ corpus to project sentiment information from English to other
 languages for sentiment analysis on Twitter data. 183 of 1404
 languages are spoken in Southeast Asia
 """
-URL = "https://raw.githubusercontent.com/ehsanasgari/UniSent/master/unisent_lexica_v1/{}_unisent_lexicon.txt"
+_URLS = "https://raw.githubusercontent.com/ehsanasgari/UniSent/master/unisent_lexica_v1/{}_unisent_lexicon.txt"
 _HOMEPAGE = "https://github.com/ehsanasgari/UniSent"
 _LANGUAGES = [
     "aaz",
@@ -207,9 +207,6 @@ _LANGUAGES = [
 
 _LICENSE = Licenses.CC_BY_NC_ND_4_0.value  # cc-by-nc-nd-4.0
 _LOCAL = False
-_URLS = {
-    _DATASETNAME: {lang: URL.format(lang) for lang in _LANGUAGES},
-}
 
 _SUPPORTED_TASKS = [Tasks.SENTIMENT_ANALYSIS]
 
@@ -231,10 +228,8 @@ class UniSentDataset(datasets.GeneratorBasedBuilder):
         for lang in _LANGUAGES
     ]
 
-    DEFAULT_CONFIG_NAME = f"{_DATASETNAME}_source"
-
     def _info(self) -> datasets.DatasetInfo:
-        features = None
+
         if self.config.schema == "source":
             features = datasets.Features(
                 {
@@ -244,6 +239,8 @@ class UniSentDataset(datasets.GeneratorBasedBuilder):
             )
         elif self.config.schema == "seacrowd_text":
             features = schemas.text_features(label_names=self.LABELS)
+        else:
+            raise Exception(f"Unsupported schema: {self.config.schema}")
 
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -255,8 +252,8 @@ class UniSentDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         lang = self.config.subset_id.split("_")[-1]
-        urls = _URLS[_DATASETNAME][lang]
-        data_dir = dl_manager.download_and_extract(urls)
+        url = _URLS.format(lang)
+        data_dir = dl_manager.download_and_extract(url)
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
