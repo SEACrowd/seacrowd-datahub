@@ -14,7 +14,9 @@
 # limitations under the License.
 
 """
-Parallel and monolingual data for training machine translation systems translating English texts into Vietnamese, with a focus on news domain. The data was crawled from high-quality bilingual or multilingual websites of news and one-speaker educational talks on various topics, mostly technology, entertainment, and design (hereby referred to as TED-like talks). The dataset also includes noisy movie subtitles from the OpenSubtitle dataset.
+Parallel and monolingual data for training machine translation systems translating English texts into Vietnamese, with a focus on news domain.
+The data was crawled from high-quality bilingual or multilingual websites of news and one-speaker educational talks on various topics, mostly technology, entertainment, and design (hereby referred to as TED-like talks).
+The dataset also includes noisy movie subtitles from the OpenSubtitle dataset.
 """
 import os
 from pathlib import Path
@@ -38,7 +40,9 @@ year      = {2020}
 _DATASETNAME = "vlsp2020_mt_envi"
 
 _DESCRIPTION = """\
-Parallel and monolingual data for training machine translation systems translating English texts into Vietnamese, with a focus on news domain. The data was crawled from high-quality bilingual or multilingual websites of news and one-speaker educational talks on various topics, mostly technology, entertainment, and design (hereby referred to as TED-like talks). The dataset also includes noisy movie subtitles from the OpenSubtitle dataset.
+Parallel and monolingual data for training machine translation systems translating English texts into Vietnamese, with a focus on news domain.
+The data was crawled from high-quality bilingual or multilingual websites of news and one-speaker educational talks on various topics, mostly technology, entertainment, and design (hereby referred to as TED-like talks).
+The dataset also includes noisy movie subtitles from the OpenSubtitle dataset.
 """
 
 _HOMEPAGE = "https://github.com/thanhleha-kit/EnViCorpora"
@@ -58,15 +62,19 @@ _SOURCE_VERSION = "1.0.0"
 _SEACROWD_VERSION = "1.0.0"
 
 class Vlsp2020MtEnviDataset(datasets.GeneratorBasedBuilder):
-    """Parallel and monolingual data for training machine translation systems translating English texts into Vietnamese, with a focus on news domain. The data was crawled from high-quality bilingual or multilingual websites of news and one-speaker educational talks on various topics, mostly technology, entertainment, and design (hereby referred to as TED-like talks). The dataset also includes noisy movie subtitles from the OpenSubtitle dataset."""
+    """
+    Parallel and monolingual data for training machine translation systems translating English texts into Vietnamese, with a focus on news domain.
+    The data was crawled from high-quality bilingual or multilingual websites of news and one-speaker educational talks on various topics, mostly technology, entertainment, and design (hereby referred to as TED-like talks).
+    The dataset also includes noisy movie subtitles from the OpenSubtitle dataset.
+    """
 
     # Skipping openSub & mono-vi for future development (Large Drive file download bottleneck)
     subsets = {
         # key: subset_id, value: subset_filename
-        "EVBCorpus" : [
+        "EVBCorpus": [
             ("bitext", datasets.Split.TRAIN),
         ],
-        "VLSP20-official" : [
+        "VLSP20-official": [
             ("offi_test", datasets.Split.TEST),
         ],
         "basic": [
@@ -90,7 +98,7 @@ class Vlsp2020MtEnviDataset(datasets.GeneratorBasedBuilder):
         ],
         "wiki-alt": [
             ("data", datasets.Split.TRAIN),
-        ]
+        ],
     }
 
     BUILDER_CONFIGS = [
@@ -140,7 +148,7 @@ class Vlsp2020MtEnviDataset(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
         subset_id = self.config.subset_id.split("_")[-1]
-                
+
         filenames = self.subsets[subset_id]
         if "iwslt15" in subset_id:  # for iwslt15-official
             subset_id = "iwslt15"
@@ -171,7 +179,7 @@ class Vlsp2020MtEnviDataset(datasets.GeneratorBasedBuilder):
             for i, (en_text, vi_text) in enumerate(zip(en, vi)):
                 yield i, {
                     "id": str(i),
-                    "text_en": en_text.strip(), 
+                    "text_en": en_text.strip(),
                     "text_vi": vi_text.strip(),
                 }
 
