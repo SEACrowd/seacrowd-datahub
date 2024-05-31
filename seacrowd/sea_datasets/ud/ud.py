@@ -14,16 +14,16 @@
 # limitations under the License.
 
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Iterable
 
 import datasets
+from copy import deepcopy
 from conllu import TokenList
 
 from seacrowd.utils import schemas
 from seacrowd.utils.common_parser import load_ud_data, load_ud_data_as_seacrowd_kb
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks
-from seacrowd.utils.constants import Licenses
+from seacrowd.utils.constants import Tasks, Licenses
 
 _CITATION = r"""
  @misc{11234/1-5287,
@@ -46,13 +46,17 @@ _LOCAL = False
 
 _DATASETNAME = "ud"
 
-_SUBSETS = {"id_gsd" : "UD_Indonesian-GSD", 
-            "id_csui": "UD_Indonesian-CSUI", 
-            "id_pud" : "UD_Indonesian-PUD", 
-            "vi_vtb": "UD_Vietnamese-VTB",
-            "tl_trg": "UD_Tagalog-TRG",
-            "tl_ugnayan": "UD_Tagalog-Ugnayan"
-            }
+_SUPPORTED_TASKS = [Tasks.POS_TAGGING, Tasks.DEPENDENCY_PARSING, Tasks.MACHINE_TRANSLATION]
+
+#map source subset names to index in `_SUPPORTED_TASKS`
+_SOURCE_SUBSETS_TO_TASKS_INDEX = {
+    "id_csui": [0,1,2],
+    "id_gsd": [0,1],
+    "id_pud": [0,2],
+    "vi_vtb": [0,1],
+    "tl_trg": [0,1,2],
+    "tl_ugnayan": [0,2]
+}
 
 _DESCRIPTION = """\
 Universal Dependencies (UD) is a project that is developing cross-linguistically consistent treebank annotation
@@ -64,6 +68,12 @@ Universal Dependencies (UD) is a project that is developing cross-linguistically
      annotation of similar constructions across languages, while allowing language-specific extensions when necessary.
 """
 
+_ISO_LANG_MAPPER_UD = {
+    "id": "ind",
+    "vi": "vie",
+    "tl": "tgl"
+}
+
 _HOMEPAGE = "https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-5287"
 
 _LICENSE = Licenses.APACHE_2_0.value
@@ -72,93 +82,117 @@ _LICENSE = Licenses.APACHE_2_0.value
 # "ud-v2.13": "https://lindat.mff.cuni.cz/repository/xmlui/bitstream/handle/11234/1-5287/ud-treebanks-v2.13.tgz?sequence=1&isAllowed=y"
 
 _URLS = {
-    "id_csui": {
+    "ud_id_csui": {
         "train": "https://raw.githubusercontent.com/UniversalDependencies/UD_Indonesian-CSUI/master/id_csui-ud-train.conllu",
         "test": "https://raw.githubusercontent.com/UniversalDependencies/UD_Indonesian-CSUI/master/id_csui-ud-test.conllu",
     },
-    "id_gsd": {
-        "train": "https://raw.githubusercontent.com/UniversalDependencies/UD_Indonesian-GSD/master/id_gsd-ud-train.conllu",
-        "test": "https://raw.githubusercontent.com/UniversalDependencies/UD_Indonesian-GSD/master/id_gsd-ud-test.conllu",
-        "dev": "https://raw.githubusercontent.com/UniversalDependencies/UD_Indonesian-GSD/master/id_gsd-ud-dev.conllu",
+    "ud_id_gsd": {
+        "train": "https://raw.githubusercontent.com/indolem/indolem/main/dependency_parsing/UD_Indonesian_GSD/id_gsd-ud-train.conllu",
+        "test": "https://raw.githubusercontent.com/indolem/indolem/main/dependency_parsing/UD_Indonesian_GSD/id_gsd-ud-test.conllu",
+        "dev": "https://raw.githubusercontent.com/indolem/indolem/main/dependency_parsing/UD_Indonesian_GSD/id_gsd-ud-dev.conllu",
     },
-    "id_pud": {
+    "ud_id_pud": {
         "test": "https://raw.githubusercontent.com/UniversalDependencies/UD_Indonesian-PUD/master/id_pud-ud-test.conllu"
     },
-    "vi_vtb": {
+    "ud_vi_vtb": {
         "train": "https://raw.githubusercontent.com/UniversalDependencies/UD_Vietnamese-VTB/master/vi_vtb-ud-train.conllu",
         "test": "https://raw.githubusercontent.com/UniversalDependencies/UD_Vietnamese-VTB/master/vi_vtb-ud-test.conllu",
         "dev": "https://raw.githubusercontent.com/UniversalDependencies/UD_Vietnamese-VTB/master/vi_vtb-ud-dev.conllu",
     },
-    "tl_trg": {
+    "ud_tl_trg": {
         "test": "https://raw.githubusercontent.com/UniversalDependencies/UD_Tagalog-TRG/master/tl_trg-ud-test.conllu",
     },
-    "tl_ugnayan": {
+    "ud_tl_ugnayan": {
         "test": "https://raw.githubusercontent.com/UniversalDependencies/UD_Tagalog-Ugnayan/master/tl_ugnayan-ud-test.conllu",
     },
 }
-
-
-
-_SUPPORTED_TASKS = [Tasks.POS_TAGGING]
 
 _SOURCE_VERSION = "2.13.0"
 
 _SEACROWD_VERSION = "1.0.0"
 
 
-
-
-
 class UDDataset(datasets.GeneratorBasedBuilder):
-
-    SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
-    SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
     SOURCE_BUILDER_CONFIGS = [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_{subset_name}_source",
-            version=SOURCE_VERSION,
+            version=datasets.Version(_SOURCE_VERSION),
             description=f"{_DATASETNAME} source schema",
             schema="source",
-            subset_id=f"{subset_name}",
-        ) for subset_name in _SUBSETS.keys()]
+            subset_id=f"{_DATASETNAME}_{subset_name}",
+        )
+        for subset_name in _SOURCE_SUBSETS_TO_TASKS_INDEX.keys()]
     SEQUENCE_BUILDER_CONFIGS = [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_{subset_name}_seacrowd_seq_label",
-            version=SEACROWD_VERSION,
+            version=datasets.Version(_SEACROWD_VERSION),
             description=f"{_DATASETNAME} SEACrowd Seq Label schema",
             schema="seacrowd_seq_label",
-            subset_id=f"{subset_name}",
-        )  for subset_name in _SUBSETS.keys()]
-    BUILDER_CONFIGS = SOURCE_BUILDER_CONFIGS + SEQUENCE_BUILDER_CONFIGS
+            subset_id=f"{_DATASETNAME}_{subset_name}",
+        )
+        for subset_name, task_idx in _SOURCE_SUBSETS_TO_TASKS_INDEX.items() if _SUPPORTED_TASKS.index(Tasks.POS_TAGGING) in task_idx]
+    KB_CONFIGS = [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{subset_name}_seacrowd_kb",
+            version=datasets.Version(_SEACROWD_VERSION),
+            description=f"{_DATASETNAME} SEACrowd Knowlegde Base schema",
+            schema="seacrowd_kb",
+            subset_id=f"{_DATASETNAME}_{subset_name}",
+        )
+        for subset_name, task_idx in _SOURCE_SUBSETS_TO_TASKS_INDEX.items() if _SUPPORTED_TASKS.index(Tasks.DEPENDENCY_PARSING) in task_idx]
+    T2T_CONFIGS = [
+        SEACrowdConfig(
+            name=f"{_DATASETNAME}_{subset_name}_seacrowd_t2t",
+            version=datasets.Version(_SEACROWD_VERSION),
+            description=f"{_DATASETNAME} SEACrowd Translation T2T schema EN-XX",
+            schema="seacrowd_t2t",
+            subset_id=f"{_DATASETNAME}_{subset_name}",
+        )
+        for subset_name, task_idx in _SOURCE_SUBSETS_TO_TASKS_INDEX.items() if _SUPPORTED_TASKS.index(Tasks.MACHINE_TRANSLATION) in task_idx]
+
+    BUILDER_CONFIGS = SOURCE_BUILDER_CONFIGS + SEQUENCE_BUILDER_CONFIGS + KB_CONFIGS + T2T_CONFIGS
 
     UPOS_TAGS = ["ADJ", "ADP", "ADV", "AUX", "CCONJ", "DET", "INTJ", "NOUN", "NUM", "PART", "PRON", "PROPN", "PUNCT", "SCONJ", "SYM", "VERB", "X"]
 
     def _info(self) -> datasets.DatasetInfo:
-        self.config.schema = "seacrowd_seq_label"
         if self.config.schema == "source":
-            features = datasets.Features(
-                {
-                    # metadata
-                    "sent_id": datasets.Sequence(datasets.Value("string")),
-                    "text": datasets.Sequence(datasets.Value("string")),
-                    "text_en": datasets.Sequence(datasets.Value("string")),
-                    # tokens
-                    "id": [datasets.Sequence(datasets.Value("string"))],
-                    "form": [datasets.Sequence(datasets.Value("string"))],
-                    "lemma": [datasets.Sequence(datasets.Value("string"))],
-                    "upos": [datasets.Sequence(datasets.Value("string"))],
-                    "xpos": [datasets.Sequence(datasets.Value("string"))],
-                    "feats": [datasets.Sequence(datasets.Value("string"))],
-                    "head": [datasets.Sequence(datasets.Value("string"))],
-                    "deprel": [datasets.Sequence(datasets.Value("string"))],
-                    "deps": [datasets.Sequence(datasets.Value("string"))],
-                    "misc": [datasets.Sequence(datasets.Value("string"))],
-                }
-            )
+            schema_dict = {
+                # metadata
+                "sent_id": datasets.Value("string"),
+                "text": datasets.Value("string"),
+                # tokens
+                "id": datasets.Sequence(datasets.Value("string")),
+                "form": datasets.Sequence(datasets.Value("string")),
+                "lemma": datasets.Sequence(datasets.Value("string")),
+                "upos": datasets.Sequence(datasets.Value("string")),
+                "xpos": datasets.Sequence(datasets.Value("string")),
+                "feats": datasets.Sequence(datasets.Value("string")),
+                "head": datasets.Sequence(datasets.Value("string")),
+                "deprel": datasets.Sequence(datasets.Value("string")),
+                "deps": datasets.Sequence(datasets.Value("string")),
+                "misc": datasets.Sequence(datasets.Value("string")),
+            }
+
+            # add text_en for UD data that has en text (for T2T)
+            if _SUPPORTED_TASKS.index(Tasks.MACHINE_TRANSLATION) in _SOURCE_SUBSETS_TO_TASKS_INDEX["_".join(self.config.subset_id.split("_")[1:])]:
+                schema_dict["text_en"] = datasets.Value("string")
+
+            # add "gloss" and "source" for tl_trg subset
+            if self.config.subset_id == "ud_tl_trg":
+                schema_dict["gloss"] = datasets.Value("string")
+                schema_dict["source"] = datasets.Value("string")
+
+            features = datasets.Features(schema_dict)
 
         elif self.config.schema == "seacrowd_seq_label":
             features = schemas.seq_label_features(self.UPOS_TAGS)
+
+        elif self.config.schema == "seacrowd_kb":
+            features = schemas.kb_features
+
+        elif self.config.schema == "seacrowd_t2t":
+            features = schemas.text2text_features
 
         else:
             raise NotImplementedError(f"Schema '{self.config.schema}' is not defined.")
@@ -168,7 +202,7 @@ class UDDataset(datasets.GeneratorBasedBuilder):
             features=features,
             homepage=_HOMEPAGE,
             license=_LICENSE,
-            citation=_CITATION,
+            citation=self._generate_additional_citation(self.config.subset_id),
         )
 
     def _split_generators(
@@ -176,33 +210,59 @@ class UDDataset(datasets.GeneratorBasedBuilder):
     ) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
 
-        return self._ud_split_generator(dl_manager)
+        return self._ud_split_generator(dl_manager, self.config.subset_id)
     
 
     def _generate_examples(self, filepath: Path) -> Tuple[int, Dict]:
         """instance tuple generated in the form (key, labels)"""
-
-        dataset = list(
-            load_ud_data(
-                filepath,
-                filter_kwargs={"id": lambda i: isinstance(i, int)},
-            )
-        )
+        dataset = self._ud_generate_examples(filepath, self.config.subset_id, self.info.features, self.config.schema == "source")
 
         if self.config.schema == "source":
             pass
 
         elif self.config.schema == "seacrowd_seq_label":
+            #some data has label of "_" which indicates a token that has multiple labels (it has the splitted values in the subsequent/preceeding iterables)
+            def remove_invalid_labels_from_seq(sent_id: str, tokens: Iterable, labels: Iterable, invalid_tokens: Iterable):
+                _tokens, _labels = [], []
+                for idx, val in enumerate(labels):
+                    if val not in invalid_tokens:
+                        _tokens.append(tokens[idx])
+                        _labels.append(labels[idx])
+                
+                return sent_id, _tokens, _labels
+
+            dataset = list(
+                map(
+                    lambda d: dict(zip(
+                        ("id", "tokens", "labels"),
+                        remove_invalid_labels_from_seq(d["sent_id"], d["form"], d["upos"],
+                                                     invalid_tokens=("_"))
+                    )),
+                    filter(lambda d: len(d["form"]) == len(d["upos"]),dataset)
+                )
+            )
+        
+        elif self.config.schema == "seacrowd_t2t":
             dataset = list(
                 map(
                     lambda d: {
                         "id": d["sent_id"],
-                        "tokens": d["form"],
-                        "labels": d["upos"],
+                        "text_1": d["text_en"],
+                        "text_2": d["text"],
+                        "text_1_name": "eng",
+                        "text_2_name": _ISO_LANG_MAPPER_UD[self.config.subset_id.split("_")[1]],
                     },
-                    dataset,
+                    filter(lambda d: d.get("text_en"), dataset),
                 )
             )
+
+        elif self.config.schema == "seacrowd_kb":
+            morph_anomaly = self._get_morph_exceptions(self.config.subset_id)
+            dataset = load_ud_data_as_seacrowd_kb(
+                        filepath,
+                        dataset,
+                        morph_exceptions=morph_anomaly
+                    )
 
         else:
             raise NotImplementedError(f"Schema '{self.config.schema}' is not defined.")
@@ -210,14 +270,161 @@ class UDDataset(datasets.GeneratorBasedBuilder):
         for key, example in enumerate(dataset):
             yield key, example
 
+    @staticmethod
+    def _set_load_ud_source_data_kwargs(subset_name: str):
 
+        def _assert_multispan_range_is_one(token_list: TokenList):
+            """
+            Asserting that all tokens with multiple span can only have 2 span, and \
+            no field other than form has important information
+            """
+            for token in token_list.filter(id=lambda i: not isinstance(i, int)):
+                _id = token["id"]
+                assert len(_id) == 3, f"Unexpected length of non-int CONLLU Token's id. Expected 3, found {len(_id)};"
+                assert all(isinstance(a, b) for a, b in zip(_id, [int, str, int])), f"Non-int ID should be in format of '\\d+-\\d+'. Found {_id};"
+                assert _id[2] - _id[0] == 1, f"Token has more than 2 spans. Found {_id[2] - _id[0] + 1} spans;"
+                for key in ["lemma", "upos", "xpos", "feats", "head", "deprel", "deps"]:
+                    assert token[key] in {"_", None}, f"Field other than 'form' should not contain extra information. Found: '{key}' = '{token[key]}'"
 
-    def _ud_split_generator(self, dl_manager):
+        kwargs_return = {}
+
+        if subset_name == "ud_id_csui":
+            kwargs_return = {
+                "filter_kwargs": {"id": lambda i: isinstance(i, int)},
+                "assert_fn": _assert_multispan_range_is_one}
+
+        if subset_name == "ud_jv_csui":
+            kwargs_return = {
+                "filter_kwargs": {"id": lambda i: isinstance(i, int)}}
+
+        return kwargs_return
+
+    @staticmethod
+    def _generate_additional_citation(subset_name: str):
+        # generate additional citation, which `_CITATION` value defined above is appended to the subset-based UD citation
+
+        if subset_name == "ud_id_csui":
+            CITATION = r"""
+                @article {10.3844/jcssp.2020.1585.1597,
+                author = {Alfina, Ika and Budi, Indra and Suhartanto, Heru},
+                title = {Tree Rotations for Dependency Trees: Converting the Head-Directionality of Noun Phrases},
+                article_type = {journal},
+                volume = {16},
+                number = {11},
+                year = {2020},
+                month = {Nov},
+                pages = {1585-1597},
+                doi = {10.3844/jcssp.2020.1585.1597},
+                url = {https://thescipub.com/abstract/jcssp.2020.1585.1597},
+                journal = {Journal of Computer Science},
+                publisher = {Science Publications}
+                }
+
+                """ + _CITATION
+
+        if subset_name == "ud_id_gsd":
+            CITATION = r"""
+            @inproceedings{mcdonald-etal-2013-universal,
+                title = "{U}niversal {D}ependency Annotation for Multilingual Parsing",
+                author = {McDonald, Ryan  and
+                Nivre, Joakim  and
+                Quirmbach-Brundage, Yvonne  and
+                Goldberg, Yoav  and
+                Das, Dipanjan  and
+                Ganchev, Kuzman  and
+                Hall, Keith  and
+                Petrov, Slav  and
+                Zhang, Hao  and
+                T{\"a}ckstr{\"o}m, Oscar  and
+                Bedini, Claudia  and
+                Bertomeu Castell{\'o}, N{\'u}ria  and
+                Lee, Jungmee},
+                booktitle = "Proceedings of the 51st Annual Meeting of the Association for Computational Linguistics (Volume 2: Short Papers)",
+                month = aug,
+                year = "2013",
+                address = "Sofia, Bulgaria",
+                publisher = "Association for Computational Linguistics",
+                url = "https://aclanthology.org/P13-2017",
+                pages = "92--97",
+            }
+
+            @article{DBLP:journals/corr/abs-2011-00677,
+                author    = {Fajri Koto and
+                            Afshin Rahimi and
+                            Jey Han Lau and
+                            Timothy Baldwin},
+                title     = {IndoLEM and IndoBERT: {A} Benchmark Dataset and Pre-trained Language
+                            Model for Indonesian {NLP}},
+                journal   = {CoRR},
+                volume    = {abs/2011.00677},
+                year      = {2020},
+                url       = {https://arxiv.org/abs/2011.00677},
+                eprinttype = {arXiv},
+                eprint    = {2011.00677},
+                timestamp = {Fri, 06 Nov 2020 15:32:47 +0100},
+                biburl    = {https://dblp.org/rec/journals/corr/abs-2011-00677.bib},
+                bibsource = {dblp computer science bibliography, https://dblp.org}
+
+            """ + _CITATION
+
+        if subset_name == "ud_id_gsd":
+            CITATION = r"""
+            @conference{2f8c7438a7f44f6b85b773586cff54e8,
+                title = "A gold standard dependency treebank for Indonesian",
+                author = "Ika Alfina and Arawinda Dinakaramani and Fanany, {Mohamad Ivan} and Heru Suhartanto",
+                note = "Publisher Copyright: {\textcopyright} 2019 Proceedings of the 33rd Pacific Asia Conference on Language, Information and Computation, PACLIC 2019. All rights reserved.; \
+            33rd Pacific Asia Conference on Language, Information and Computation, PACLIC 2019 ; Conference date: 13-09-2019 Through 15-09-2019",
+                year = "2019",
+                month = jan,
+                day = "1",
+                language = "English",
+                pages = "1--9",
+            }
+
+            @article{DBLP:journals/corr/abs-2011-00677,
+                author    = {Fajri Koto and
+                            Afshin Rahimi and
+                            Jey Han Lau and
+                            Timothy Baldwin},
+                title     = {IndoLEM and IndoBERT: {A} Benchmark Dataset and Pre-trained Language
+                            Model for Indonesian {NLP}},
+                journal   = {CoRR},
+                volume    = {abs/2011.00677},
+                year      = {2020},
+                url       = {https://arxiv.org/abs/2011.00677},
+                eprinttype = {arXiv},
+                eprint    = {2011.00677},
+                timestamp = {Fri, 06 Nov 2020 15:32:47 +0100},
+                biburl    = {https://dblp.org/rec/journals/corr/abs-2011-00677.bib},
+                bibsource = {dblp computer science bibliography, https://dblp.org}
+            }
+
+            """ + _CITATION
+        
+        else:
+            CITATION = _CITATION
+
+        return CITATION
+
+    @staticmethod
+    def _get_morph_exceptions(subset_name: str):
+        morph_anomaly = []
+        # not implemented yet
+        # if subset_name == "ud_jv_csui":
+        #     morph_anomaly = [
+        #         # Exceptions due to inconsistencies in the raw data annotation
+        #         ("ne", "e"),
+        #         ("nipun", "ipun"),
+        #         ("me", "e"),  # occurrence word: "Esemme" = "Esem" + "e". original text has double 'm'.
+        #     ]
+
+        return morph_anomaly
+
+    @staticmethod
+    def _ud_split_generator(dl_manager, subset_name: str):
 
         split_dset = []
-        if self.config.subset_id not in _SUBSETS:
-            return split_dset
-        urls = _URLS[self.config.subset_id]
+        urls = _URLS[subset_name]
         data_path = dl_manager.download(urls)
         if "train" in data_path:
             split_dset.append(datasets.SplitGenerator(
@@ -242,6 +449,48 @@ class UDDataset(datasets.GeneratorBasedBuilder):
             ))
 
         return split_dset
+    
+    @classmethod
+    def _ud_generate_examples(cls, filepath: str | list, subset_name: str, features: Iterable, is_source: bool):
 
+        #utility to fill data w/ default val
+        def fill_data(data, col_name, fill_val):
+            _data = deepcopy(data)
+            _data[col_name] = _data.get(col_name, fill_val)
+            return _data
 
+        #utility to remove data
+        def pop_data(data, col_name):
+            _data = deepcopy(data)
+            _data.pop(col_name, None)
+            return _data
 
+        # allow list of filepath be loaded
+        if isinstance(filepath, str):
+            filepath = [filepath]
+
+        dataset = []
+        for _filepath in filepath:
+            dataset.extend(list(
+                load_ud_data(
+                    _filepath, **cls._set_load_ud_source_data_kwargs(subset_name)
+                )
+            ))
+
+        # remove the data from source since the occurrence is small (presumably malformed)
+        # and not listed in misc features (https://tables.grew.fr/?data=ud_feats/MISC)
+        if subset_name == "ud_tl_ugnayan":
+            for key in ("newdoc_id", "text_id"):
+                dataset = list(map(lambda x: pop_data(x, key), dataset))
+        
+        if subset_name == "ud_tl_trg":
+            for key in ("AP", "BP", "OP", "DP", "PIV"):
+                dataset = list(map(lambda x: pop_data(x, key), dataset))
+
+        # fill w/ default only for Source schema
+        if is_source:
+            for key, default_val in zip(("text_en", "gloss", "source"), ("", "", "")):
+                if key in features:
+                    dataset = list(map(lambda x: fill_data(x, key, default_val), dataset))
+    
+        return dataset
