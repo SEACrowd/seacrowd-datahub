@@ -17,7 +17,7 @@
 ![Milestone 4](https://progress-bar.dev/84/?title=Milestone%204%20(150%20Datasets%20Completed))
 <!-- milestone ends -->
 
-Southeast Asia is home to more than 1,000 native languages. Nevertheless, Southeast Asian NLP is underrepresented in the research community, and one of the reasons is the lack of access to public datasets ([Aji et al., 2022](https://aclanthology.org/2022.acl-long.500/)). To address this issue, we initiate **SEACrowd**, a joint collaboration to collect NLP datasets for Southeast Asian languages. Help us collect and centralize Southeast Asian NLP datasets, and be a co-author of our upcoming paper.
+Southeast Asia is home to more than 1,000 native languages. Nevertheless, Southeast Asian NLP, vision-language, and speech processing is underrepresented in the research community, and one of the reasons is the lack of access to public datasets ([Aji et al., 2022](https://aclanthology.org/2022.acl-long.500/)). To address this issue, we initiate **SEACrowd**, a joint collaboration to collect NLP datasets for Southeast Asian languages. Help us collect and centralize Southeast Asian NLP datasets, and be a co-author of our upcoming paper.
 
 ## How to contribute?
 
