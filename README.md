@@ -1,3 +1,5 @@
+<img width="100%" alt="SEACrowd Logo" src="https://github.com/SEACrowd/.github/blob/main/profile/assets/seacrowd-email-banner-without-logo.png?raw=true">
+
 # Welcome to SEACrowd!
 
 <!--
@@ -15,7 +17,7 @@
 ![Milestone 4](https://progress-bar.dev/84/?title=Milestone%204%20(150%20Datasets%20Completed))
 <!-- milestone ends -->
 
-South East Asia is home to more than 1,000 native languages. Nevertheless, South-East Asian NLP is underrepresented in the research community, and one of the reasons is the lack of access to public datasets ([Aji et al., 2022](https://aclanthology.org/2022.acl-long.500/)). To address this issue, we initiate **SEACrowd**, a joint collaboration to collect NLP datasets for South-East Asian languages. Help us collect and centralize South-East Asian NLP datasets, and be a co-author of our upcoming paper.
+Southeast Asia is home to more than 1,000 native languages. Nevertheless, Southeast Asian NLP is underrepresented in the research community, and one of the reasons is the lack of access to public datasets ([Aji et al., 2022](https://aclanthology.org/2022.acl-long.500/)). To address this issue, we initiate **SEACrowd**, a joint collaboration to collect NLP datasets for Southeast Asian languages. Help us collect and centralize Southeast Asian NLP datasets, and be a co-author of our upcoming paper.
 
 ## How to contribute?
 
@@ -55,7 +57,7 @@ The license for a dataset is not always obvious. Here are some strategies to try
 If no official license is listed anywhere, but you find a webpage that describes general data usage policies for the dataset, you can fall back to providing that URL in the `_LICENSE` variable. If you can't find any license information, please note in your PR and put `_LICENSE="Unknown"` in your dataset script.
 
 #### What if my dataset is not yet publicly available?
-You can upload your dataset publicly first, eg. on Github. If you're an owner of a Private Dataset that is being contacted by SEACrowd Representative for a possibility of opening that dataset, you may visit this [Private Dataset FAQ](PRIVATE.md).
+You can upload your dataset publicly first, e.g., on Github. If you're an owner of a Private Dataset that is being contacted by SEACrowd Representative for a possibility of opening that dataset, you may visit this [Private Dataset FAQ](PRIVATE.md).
 
 #### Can I create a PR if I have an idea?
 
@@ -70,7 +72,7 @@ Yes, you can ask for helps in SEACrowd's community channel! Please join our [Dis
 
 We greatly appreciate your help!
 
-The artifacts of this initiative will be described in a forthcoming academic paper targeting a machine learning or NLP audience. Please refer to [this section](https://github.com/SEACrowd#how-much-should-i-contribute) for your contribution rewards in helping South-East Asian NLP. We recognize that some datasets require more effort than others, so please reach out if you have questions. Our goal is to be inclusive with credit!
+The artifacts of this initiative will be described in a forthcoming academic paper targeting a machine learning or NLP audience. Please refer to [this section](https://github.com/SEACrowd#how-much-should-i-contribute) for your contribution rewards in helping Southeast Asian NLP. We recognize that some datasets require more effort than others, so please reach out if you have questions. Our goal is to be inclusive with credit!
 
 ## Citation
 
