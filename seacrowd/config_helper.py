@@ -744,24 +744,39 @@ class SEACrowdConfigHelper:
             self._helpers = [helper for helper in helpers if not helper.is_broken]
 
     @property
-    def available_dataset_names(self) -> List[str]:
-        return sorted(list(set([helper.dataset_name for helper in self])))
+    def available_dataset_names(self, schema=None) -> List[str]:
+        if schema == None:
+            return sorted(list(set([helper.dataset_name for helper in self])))
+        elif "seacrowd" in schema or "source" in schema:
+            return sorted(list(set([helper.dataset_name for helper in self if schema in helper.config.schema])))
+        else:
+            raise ValueError("Schema must be either variations of `seacrowd` or `source`.")
     
     @property
-    def available_config_names(self) -> List[str]:
-        return sorted(list(set([helper.config.name for helper in self])))
+    def available_config_names(self, dataset_name=None, schema=None) -> List[str]:
+        if dataset_name == None and schema == None:
+            return sorted(list(set([helper.config.name for helper in self])))
+        elif dataset_name != None and ("seacrowd" in schema or "source" in schema):
+            return sorted(list(set([helper.config.name for helper in self if helper.dataset_name == dataset_name and schema in helper.config.schema])))
+        elif dataset_name != None:
+            return sorted(list(set([helper.config.name for helper in self if helper.dataset_name == dataset_name])))
+        elif ("seacrowd" in schema or "source" in schema):
+            return sorted(list(set([helper.config.name for helper in self if schema in helper.config.schema])))
+        else:
+            raise ValueError("Schema must be either variations of `seacrowd` or `source`.")
 
     def for_dataset(self, dataset_name: str, schema: str) -> "SEACrowdMetadata":
         # Widening the search for suggestions (if needed)
         other_helpers = [helper for helper in self if helper.dataset_name == dataset_name and schema in helper.config.name]
         # The returned helpers should match the `schema`
         helpers = [helper for helper in other_helpers if schema in helper.config.name]
-        print([helper.config.name for helper in helpers])
+
         if len(helpers) == 0:
             error_msg = f"No helper with helper.dataset_name = {dataset_name}"
             if len(other_helpers) > 0:
                 error_msg += f" with schemas = {schema}. Available schemas are: {[helper.config.schema for helper in other_helpers]}"
             raise ValueError(f"{error_msg}.")
+        
         elif len(helpers) > 1:
             error_msg = f"Multiple helpers with helper.dataset_name = {dataset_name}"
             schema_list = [helper.config.schema for helper in helpers]
@@ -773,6 +788,7 @@ class SEACrowdConfigHelper:
             else:
                 error_msg += f". Specify `schema` as either: {unique_schemas}"
             raise ValueError(f"{error_msg}.")
+        
         return helpers[0]
     
     def for_datasets(self, dataset_names: list[str], schema: str) -> "SEACrowdMetadata":
@@ -781,6 +797,7 @@ class SEACrowdConfigHelper:
 
     def for_config_name(self, config_name: str) -> "SEACrowdMetadata":
         helpers = [helper for helper in self if helper.config.name == config_name]
+
         if len(helpers) == 0:
             raise ValueError(f"No helper with helper.config.name = {config_name}.")
         elif len(helpers) > 1:
@@ -791,6 +808,7 @@ class SEACrowdConfigHelper:
     
     def for_config_names(self, config_name: str) -> "SEACrowdMetadata":
         helpers = [helper for helper in self if helper.config.name == config_name]
+        
         if len(helpers) == 0:
             raise ValueError(f"No helper with helper.config.name = {config_name}.")
         return helpers
