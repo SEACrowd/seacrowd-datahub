@@ -1078,11 +1078,11 @@ class SEACrowdConfigHelper:
             )
         return helpers[0]
     
-    def for_config_names(self, config_name: str) -> "SEACrowdMetadata":
-        helpers = [helper for helper in self if helper.config.name == config_name]
+    def for_config_names(self, config_names: list[str]) -> "SEACrowdMetadata":
+        helpers = [helper for helper in self if helper.config.name in config_names]
         
         if len(helpers) == 0:
-            raise ValueError(f"No helper with helper.config.name = {config_name}.")
+            raise ValueError(f"No helper with helper.config.name = {config_names}.")
         return helpers
 
     def default_for_dataset(self, dataset_name: str) -> "SEACrowdMetadata":
@@ -1164,14 +1164,9 @@ class SEACrowdConfigHelper:
         return list(BENCHMARK_DICT.keys())
 
     def load_benchmark(self, benchmark_name):
-        return {
-            helper.config.name: helper.load_dataset()
-            for helper in self.filtered(
-                lambda x: (
-                    x.config.name in BENCHMARK_DICT[benchmark_name]
-                )
-            )
-        }
+        config_list = BENCHMARK_DICT[benchmark_name]
+        helpers = self.for_config_names(config_list)
+        return [helper.load_dataset() for helper in helpers]
 
 # Metadata Helper
 @dataclass

@@ -17,16 +17,16 @@ from seacrowd.utils.constants import Tasks
 
 _CITATION = """\
 @inproceedings{artari-etal-2021-multi,
-  title        = {A Multi-Pass Sieve Coreference Resolution for {I}ndonesian},
-  author       = {Artari, Valentina Kania Prameswara  and Mahendra, Rahmad  and Jiwanggi, Meganingrum Arista  and Anggraito, Adityo  and Budi, Indra},
-  year         = 2021,
-  month        = sep,
-  booktitle    = {Proceedings of the International Conference on Recent Advances in Natural Language Processing (RANLP 2021)},
-  publisher    = {INCOMA Ltd.},
-  address      = {Held Online},
-  pages        = {79--85},
-  url          = {https://aclanthology.org/2021.ranlp-1.10},
-  abstract     = {Coreference resolution is an NLP task to find out whether the set of referring expressions belong to the same concept in discourse. A multi-pass sieve is a deterministic coreference model that implements several layers of sieves, where each sieve takes a pair of correlated mentions from a collection of non-coherent mentions. The multi-pass sieve is based on the principle of high precision, followed by increased recall in each sieve. In this work, we examine the portability of the multi-pass sieve coreference resolution model to the Indonesian language. We conduct the experiment on 201 Wikipedia documents and the multi-pass sieve system yields 72.74{\%} of MUC F-measure and 52.18{\%} of BCUBED F-measure.}
+    title        = {{A Multi-Pass Sieve Coreference Resolution for Indonesian}},
+    author       = {Artari, Valentina Kania Prameswara  and Mahendra, Rahmad  and Jiwanggi, Meganingrum Arista  and Anggraito, Adityo  and Budi, Indra},
+    year         = 2021,
+    month        = {Sep},
+    booktitle    = {Proceedings of the International Conference on Recent Advances in Natural Language Processing (RANLP 2021)},
+    publisher    = {INCOMA Ltd.},
+    address      = {Held Online},
+    pages        = {79--85},
+    url          = {https://aclanthology.org/2021.ranlp-1.10},
+    abstract     = {Coreference resolution is an NLP task to find out whether the set of referring expressions belong to the same concept in discourse. A multi-pass sieve is a deterministic coreference model that implements several layers of sieves, where each sieve takes a pair of correlated mentions from a collection of non-coherent mentions. The multi-pass sieve is based on the principle of high precision, followed by increased recall in each sieve. In this work, we examine the portability of the multi-pass sieve coreference resolution model to the Indonesian language. We conduct the experiment on 201 Wikipedia documents and the multi-pass sieve system yields 72.74{\%} of MUC F-measure and 52.18{\%} of BCUBED F-measure.}
 }
 """
 

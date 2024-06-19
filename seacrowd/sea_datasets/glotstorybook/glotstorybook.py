@@ -8,15 +8,12 @@ from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Tasks, Licenses, TASK_TO_SCHEMA, SCHEMA_TO_FEATURES
 
 _CITATION = """\
-@inproceedings{kargaran2023glotlid,
-    title     = {{GlotLID}: Language Identification for Low-Resource Languages},
-    author    = {Kargaran, Amir Hossein and
-                Imani, Ayyoob and
-                Yvon, Fran{\c{c}}ois
-                and Sch{\"u}tze, Hinrich},
-    booktitle = {The 2023 Conference on Empirical Methods in Natural Language Processing},
-    year      = {2023},
-    url       = {https://openreview.net/forum?id=dl4e3EBz5j}
+    @inproceedings{kargaran2023glotlid,
+    title        = {{GlotLID: Language Identification for Low-Resource Languages}},
+    author       = {Kargaran, Amir Hossein and Imani, Ayyoob and Yvon, Fran{\c{c}}ois and Sch{\"u}tze, Hinrich},
+    year         = 2023,
+    booktitle    = {The 2023 Conference on Empirical Methods in Natural Language Processing},
+    url          = {https://openreview.net/forum?id=dl4e3EBz5j}
 }
 """
 

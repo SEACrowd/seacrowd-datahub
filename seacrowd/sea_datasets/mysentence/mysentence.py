@@ -9,39 +9,31 @@ from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
 
 _CITATION = """\
-@article{Aung_Kyaw Thu_Hlaing_2023, place={Nonthaburi, Thailand}, title={mySentence: Sentence Segmentation for Myanmar Language
-using Neural Machine Translation Approach}, volume={9}, url={https://ph05.tci-thaijo.org/index.php/JIIST/article/view/87},
-number={October}, 
-abstract="In the informal Myanmar language, for which most NLP applications are used, there is no predefined rule to mark the end of the sentence.
-Therefore, in this paper, we contributed the first Myanmar sentence segmentation corpus and systemat
-ically experimented with twelve neural sequence
-labeling architectures trained and tested on both sentence and sentence+paragraph data. The word LSTM + Softmax achieved the highest accuracy of 99.95{\%}
-while trained and tested on sentence-only data and 97.40{\%} while trained and tested on sentence + paragraph data.",
-journal={Journal of Intelligent Informatics
-and Smart Technology}, author={Aung, Thura and Kyaw Thu , Ye and Hlaing , Zar Zar}, year={2023}, month={Nov.}, pages={e001} };
-
-@InProceedings{10.1007/978-3-031-36886-8_24,
-author="Thu, Ye Kyaw
-and Aung, Thura
-and Supnithi, Thepchai",
-editor="Nguyen, Ngoc Thanh
-and Le-Minh, Hoa
-and Huynh, Cong-Phap
-and Nguyen, Quang-Vu",
-title="Neural Sequence Labeling Based Sentence Segmentation for Myanmar Language",
-booktitle="The 12th Conference on Information Technology and Its Applications",
-year="2023",
-publisher="Springer Nature Switzerland",
-address="Cham",
-pages="285--296",
-abstract="In the informal Myanmar language, for which most NLP applications are used, there is no predefined rule to mark the end of the sentence.
-Therefore, in this paper, we contributed the first Myanmar sentence segmentation corpus and systemat
-ically experimented with twelve neural sequence
-labeling architectures trained and tested on both sentence and sentence+paragraph data. The word LSTM + Softmax achieved the highest accuracy of 99.95{\%}
-while trained and tested on sentence-only data and 97.40{\%} while trained and tested on sentence + paragraph data.",
-isbn="978-3-031-36886-8"
+@article{Aung_Kyaw_Thu_Hlaing_2023,
+    title        = {{mySentence: Sentence Segmentation for Myanmar Language using Neural Machine Translation Approach}},
+    author       = {Aung, Thura and Kyaw Thu , Ye and Hlaing , Zar Zar},
+    year         = 2023,
+    month        = {Nov.},
+    journal      = {Journal of Intelligent Informatics and Smart Technology},
+    volume       = 9,
+    number       = {October},
+    pages        = {e001},
+    url          = {https://ph05.tci-thaijo.org/index.php/JIIST/article/view/87},
+    place        = {Nonthaburi, Thailand},
+    abstract     = {In the informal Myanmar language, for which most NLP applications are used, there is no predefined rule to mark the end of the sentence. Therefore, in this paper, we contributed the first Myanmar sentence segmentation corpus and systemat ically experimented with twelve neural sequence labeling architectures trained and tested on both sentence and sentence+paragraph data. The word LSTM + Softmax achieved the highest accuracy of 99.95{\%} while trained and tested on sentence-only data and 97.40{\%} while trained and tested on sentence + paragraph data.}
 }
-
+@inproceedings{10.1007/978-3-031-36886-8_24,
+    title        = {{Neural Sequence Labeling Based Sentence Segmentation for Myanmar Language}},
+    author       = {Thu, Ye Kyaw and Aung, Thura and Supnithi, Thepchai},
+    year         = 2023,
+    booktitle    = {The 12th Conference on Information Technology and Its Applications},
+    publisher    = {Springer Nature Switzerland},
+    address      = {Cham},
+    pages        = {285--296},
+    isbn         = {978-3-031-36886-8},
+    editor       = {Nguyen, Ngoc Thanh and Le-Minh, Hoa and Huynh, Cong-Phap and Nguyen, Quang-Vu},
+    abstract     = {In the informal Myanmar language, for which most NLP applications are used, there is no predefined rule to mark the end of the sentence. Therefore, in this paper, we contributed the first Myanmar sentence segmentation corpus and systemat ically experimented with twelve neural sequence labeling architectures trained and tested on both sentence and sentence+paragraph data. The word LSTM + Softmax achieved the highest accuracy of 99.95{\%} while trained and tested on sentence-only data and 97.40{\%} while trained and tested on sentence + paragraph data.}
+}
 """
 
 _DATASETNAME = "mysentence"

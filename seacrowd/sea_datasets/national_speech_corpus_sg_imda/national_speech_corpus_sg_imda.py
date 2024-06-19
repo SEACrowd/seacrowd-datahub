@@ -3,10 +3,17 @@ import zipfile
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-import audiosegment
+try:
+    import audiosegment
+except:
+    print("Please install audiosegment to use the `national_speech_corpus_sg_imda` dataloader.")
 import datasets
 import pandas as pd
-import textgrid
+
+try:
+    import textgrid
+except:
+    print("Please install textgrid to use the `national_speech_corpus_sg_imda` dataloader.")
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
