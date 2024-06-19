@@ -1,5 +1,5 @@
 """
-SEA Crowd Data Loader for M3LS.
+SEACrowd Data Loader for M3LS.
 """
 import json
 import os
@@ -10,7 +10,7 @@ from typing import Dict, Generator, List, Tuple, Union
 try:
     import PIL
 except (ImportError, ModuleNotFoundError):
-    raise ImportError("Please install `PIL` to load image-based data from this dataloader.")
+    print("Please install `PIL` to load image-based data from M3LS dataloader.")
 else:
     PIL.__version__  # to avoid being marked by formatter
 

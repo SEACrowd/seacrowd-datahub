@@ -751,21 +751,49 @@ class SEACrowdConfigHelper:
     def available_config_names(self) -> List[str]:
         return sorted(list(set([helper.config.name for helper in self])))
 
-    def for_dataset(self, dataset_name: str) -> "SEACrowdConfigHelper":
-        helpers = [helper for helper in self if helper.dataset_name == dataset_name]
+    def for_dataset(self, dataset_name: str, schema: str) -> "SEACrowdMetadata":
+        # Widening the search for suggestions (if needed)
+        other_helpers = [helper for helper in self if helper.dataset_name == dataset_name and schema in helper.config.name]
+        # The returned helpers should match the `schema`
+        helpers = [helper for helper in other_helpers if schema in helper.config.name]
+        print([helper.config.name for helper in helpers])
         if len(helpers) == 0:
-            raise ValueError(f"no helper with helper.dataset_name = {dataset_name}")
-        return SEACrowdConfigHelper(helpers=helpers)
+            error_msg = f"No helper with helper.dataset_name = {dataset_name}"
+            if len(other_helpers) > 0:
+                error_msg += f" with schemas = {schema}. Available schemas are: {[helper.config.schema for helper in other_helpers]}"
+            raise ValueError(f"{error_msg}.")
+        elif len(helpers) > 1:
+            error_msg = f"Multiple helpers with helper.dataset_name = {dataset_name}"
+            schema_list = [helper.config.schema for helper in helpers]
+            unique_schemas = list(set(schema_list))
+            # If there are duplicates in the schema ids
+            # Commonly occurred in MT datasets (nusax_mt_ind_ace_seacrowd_t2t, nusax_mt_ind_ban_seacrowd_t2t, etc.)
+            if len(unique_schemas) < len(schema_list):
+                error_msg += f". Better use `load_dataset_by_config_name` or `load_datasets_by_config_names` because there are multiple configs with identical schemas: {[helper.config.name for helper in helpers]}"
+            else:
+                error_msg += f". Specify `schema` as either: {unique_schemas}"
+            raise ValueError(f"{error_msg}.")
+        return helpers[0]
+    
+    def for_datasets(self, dataset_names: list[str], schema: str) -> "SEACrowdMetadata":
+        helpers = [self.for_dataset(dataset_name, schema=schema) for dataset_name in dataset_names]
+        return helpers
 
     def for_config_name(self, config_name: str) -> "SEACrowdMetadata":
         helpers = [helper for helper in self if helper.config.name == config_name]
         if len(helpers) == 0:
-            raise ValueError(f"no helper with helper.config.name = {config_name}")
-        if len(helpers) > 1:
+            raise ValueError(f"No helper with helper.config.name = {config_name}.")
+        elif len(helpers) > 1:
             raise ValueError(
-                f"multiple helpers with helper.config.name = {config_name}"
+                f"Multiple helpers with helper.config.name = {config_name}."
             )
         return helpers[0]
+    
+    def for_config_names(self, config_name: str) -> "SEACrowdMetadata":
+        helpers = [helper for helper in self if helper.config.name == config_name]
+        if len(helpers) == 0:
+            raise ValueError(f"No helper with helper.config.name = {config_name}.")
+        return helpers
 
     def default_for_dataset(self, dataset_name: str) -> "SEACrowdMetadata":
         helpers = [
@@ -776,13 +804,13 @@ class SEACrowdConfigHelper:
         assert len(helpers) == 1
         return helpers[0]
 
-    def filtered(
-        self, is_keeper: Callable[[SEACrowdMetadata], bool]
-    ) -> "SEACrowdConfigHelper":
-        """Return dataset config helpers that match is_keeper."""
-        return SEACrowdConfigHelper(
-            helpers=[helper for helper in self if is_keeper(helper)]
-        )
+    # def filtered(
+    #     self, is_keeper: Callable[[SEACrowdMetadata], bool]
+    # ) -> "SEACrowdConfigHelper":
+    #     """Return dataset config helpers that match is_keeper."""
+    #     return SEACrowdConfigHelper(
+    #         helpers=[helper for helper in self if is_keeper(helper)]
+    #     )
 
     def __repr__(self):
         # return "\n\n".join([helper.__repr__() for helper in self])
@@ -827,50 +855,20 @@ class SEACrowdConfigHelper:
             return name_to_schema
     
     def load_dataset(self, dataset_name, schema='seacrowd'):
-        try:        
-            for helper in sorted(self.filtered(
-                    lambda x: (
-                        (dataset_name == x.dataset_name) and 
-                        (x.is_seacrowd_schema if schema == 'seacrowd' else not x.is_seacrowd_schema)
-                    )
-                ), key=lambda x: len(x.config.name)):
-                return helper.load_dataset()
-        except:
-            raise ValueError(f"Couldn't find dataset with name=`{dataset_name}` and schema=`{schema}`")
+        helper = self.for_dataset(dataset_name, schema=schema)
+        return helper.load_dataset()
 
     def load_datasets(self, dataset_names, schema='seacrowd'):
-        return {
-            helper.config.name: helper.load_dataset()
-            for helper in self.filtered(
-                lambda x: (
-                    (x.dataset_name in dataset_names) and 
-                    (x.is_seacrowd_schema if schema == 'seacrowd' else not x.is_seacrowd_schema)
-                )
-            )
-       }
+        helpers = self.for_datasets(dataset_names, schema=schema)
+        return [helper.load_dataset() for helper in helpers]
     
-    def load_dataset_by_config_name(self, config_name, schema='seacrowd'):
-        try:        
-            for helper in sorted(self.filtered(
-                    lambda x: (
-                        (config_name == x.config.name) and 
-                        (x.is_seacrowd_schema if schema == 'seacrowd' else not x.is_seacrowd_schema)
-                    )
-                ), key=lambda x: len(x.config.name)):
-                return helper.load_dataset()
-        except:
-            raise ValueError(f"Couldn't find dataset with config.name=`{config_name}` and schema=`{schema}`")
+    def load_dataset_by_config_name(self, config_name):
+        helper = self.for_config_name(config_name)
+        return helper.load_dataset()
 
-    def load_datasets_by_config_names(self, config_names, schema='seacrowd'):
-        return {
-            helper.config.name: helper.load_dataset()
-            for helper in self.filtered(
-                lambda x: (
-                    (x.config.name in config_names) and 
-                    (x.is_seacrowd_schema if schema == 'seacrowd' else not x.is_seacrowd_schema)
-                )
-            )
-       }
+    def load_datasets_by_config_names(self, config_names):
+        helpers = self.for_config_name(config_names)
+        return [helper.load_dataset() for helper in helpers]
         
     def list_benchmarks(self):
         return list(BENCHMARK_DICT.keys())
@@ -950,7 +948,7 @@ class SEACrowdMetadataHelper:
     
     def filtered(
         self, is_keeper: Callable[[], bool]
-    ) -> "SEACrowdConfigHelper":
+    ) -> "SEACrowdMetadataHelper":
         """Return dataset config helpers that match is_keeper."""
         meta_df = self._meta_df[self._meta_df.apply(is_keeper, axis=1, reduce=True)]
         return SEACrowdMetadataHelper(meta_df=meta_df)
