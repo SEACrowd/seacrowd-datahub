@@ -52,7 +52,7 @@ _SUPPORTED_TASKS = [Tasks.SUMMARIZATION]
 
 _SOURCE_VERSION = "2.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 def construct_configs_on_langs() -> List[SEACrowdConfig]:

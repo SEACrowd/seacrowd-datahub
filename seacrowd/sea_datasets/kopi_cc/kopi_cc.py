@@ -112,7 +112,7 @@ _ALL_CONFIG = ["all-raw", "all-dedup", "all-neardup", "all-neardup_clean"] + _SN
 
 _SOURCE_VERSION = "2018.12.01"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 def seacrowd_config_constructor(snapshot, schema, version):

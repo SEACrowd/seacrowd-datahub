@@ -36,7 +36,7 @@ _URLs = {
 _SUPPORTED_TASKS = [Tasks.SENTIMENT_ANALYSIS]
 
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class IdAbusiveNewsComment(datasets.GeneratorBasedBuilder):

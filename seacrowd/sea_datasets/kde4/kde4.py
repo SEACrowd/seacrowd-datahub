@@ -53,7 +53,7 @@ _URL_TEMPLATE = "https://object.pouta.csc.fi/OPUS-KDE4/v2/moses/{src}-{tgt}.txt.
 
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 _SOURCE_VERSION = "2.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 kde4_language_codes = {
     "aar": "aa",

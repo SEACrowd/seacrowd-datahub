@@ -158,7 +158,7 @@ _SEACROWD_SCHEMA_NAME = TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]].lower()
 
 _SOURCE_VERSION = "2018.12.01"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 def seacrowd_config_constructor(lang, schema, version):

@@ -73,7 +73,7 @@ _SUPPORTED_TASKS = [Tasks.SPEECH_RECOGNITION]  # example: [Tasks.TRANSLATION, Ta
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class INDspeechTELDIALOGSVCSR(datasets.GeneratorBasedBuilder):

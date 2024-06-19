@@ -49,7 +49,7 @@ _SUPPORTED_TASKS = [Tasks.INSTRUCTION_TUNING]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class AyaEvaluationSuiteDataset(datasets.GeneratorBasedBuilder):

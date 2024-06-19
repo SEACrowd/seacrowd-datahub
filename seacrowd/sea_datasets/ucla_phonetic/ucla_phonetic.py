@@ -60,7 +60,7 @@ _DATA_URL = "https://github.com/xinjli/ucla-phonetic-corpus/releases/download/v1
 _SUPPORTED_TASKS = [Tasks.SPEECH_RECOGNITION]
 
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 def seacrowd_config_constructor(lang, schema, version):

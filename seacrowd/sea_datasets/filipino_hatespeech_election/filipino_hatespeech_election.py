@@ -43,7 +43,7 @@ _SUPPORTED_TASKS = [Tasks.ABUSIVE_LANGUAGE_PREDICTION]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 _CLASSES = ["0", "1"]  # corresponds to  ["non-hate-containing", "hate-containing"]
 

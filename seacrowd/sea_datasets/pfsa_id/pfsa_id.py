@@ -115,7 +115,7 @@ _SUPPORTED_TASKS = [Tasks.NAMED_ENTITY_RECOGNITION, Tasks.POS_TAGGING]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class PfsaIdDataset(datasets.GeneratorBasedBuilder):

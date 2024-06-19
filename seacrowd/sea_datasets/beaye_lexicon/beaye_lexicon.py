@@ -29,7 +29,7 @@ _LICENSE = Licenses.APACHE_2_0.value
 _URLS = "https://raw.githubusercontent.com/joanitolopo/bhinneka-korpus/main/lexicon"
 _SUPPORTED_TASKS = []
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 _LOCAL = False
 
 _LANGUAGES = ["ind", "day", "eng"]

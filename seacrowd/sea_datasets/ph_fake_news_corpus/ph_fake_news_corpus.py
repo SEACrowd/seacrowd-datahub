@@ -51,7 +51,7 @@ _URL = "https://github.com/aaroncarlfernandez/Philippine-Fake-News-Corpus/raw/ma
 
 _SUPPORTED_TASKS = [Tasks.FACT_CHECKING]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class PhilippineFakeNewsDataset(datasets.GeneratorBasedBuilder):

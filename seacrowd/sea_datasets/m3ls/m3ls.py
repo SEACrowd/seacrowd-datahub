@@ -62,7 +62,7 @@ _URL = "https://drive.google.com/uc?id=1Kznkw7YpRiWpdgH4_SVNwp0uGf3j-5e2"
 
 _SUPPORTED_TASKS = [Tasks.SUMMARIZATION, Tasks.IMAGE_CAPTIONING]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 _CONFIG_SUFFIXES_FOR_TASK = [TASK_TO_SCHEMA.get(task).lower() for task in _SUPPORTED_TASKS]
 

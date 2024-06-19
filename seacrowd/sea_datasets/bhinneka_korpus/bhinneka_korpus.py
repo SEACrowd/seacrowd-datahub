@@ -32,7 +32,7 @@ _LICENSE = Licenses.APACHE_2_0.value
 _URLS = "https://raw.githubusercontent.com/joanitolopo/bhinneka-korpus/main/"
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 _LANGUAGES = ["abs", "aoz", "day", "mak", "mkn"]
 LANGUAGES_TO_FILENAME_MAP = {

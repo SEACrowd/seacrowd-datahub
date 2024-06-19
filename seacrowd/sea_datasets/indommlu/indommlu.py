@@ -52,7 +52,7 @@ _SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 lang2subject = {"ind": "Bahasa Indonesia", "ban": "Bahasa Bali", "mad": "Bahasa Madura", "nij": "Bahasa Dayak Ngaju", "sun": "Bahasa Sunda", "jav": "Bahasa Jawa", "mak": "Bahasa Makassar", "bjn": "Bahasa Banjar", "abl": "Bahasa Lampung"}

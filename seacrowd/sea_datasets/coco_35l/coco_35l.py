@@ -57,7 +57,7 @@ _SUPPORTED_TASKS = [Tasks.IMAGE_CAPTIONING]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 _LANGUAGES = {"fil": "fil", "ind": "id", "tha": "th", "vie": "vi"}
 

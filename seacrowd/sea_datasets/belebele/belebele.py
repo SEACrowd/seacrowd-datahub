@@ -75,7 +75,7 @@ _SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 _SOURCE_NAMES = ["ceb_Latn", "ilo_Latn", "ind_Latn", "jav_Latn", "kac_Latn", "khm_Khmr", "lao_Laoo", "mya_Mymr", "shn_Mymr", "sun_Latn", "tgl_Latn", "tha_Thai", "vie_Latn", "war_Latn", "zsm_Latn"]
 _LANGUAGES = [source.split("_")[0] for source in _SOURCE_NAMES]

@@ -67,7 +67,7 @@ _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 _URLS = {
     "literary": "https://raw.githubusercontent.com/imperialite/Philippine-Languages-Online-Corpora/master/PALITO%20Corpus/Data/{lang}_Literary_Text.txt",

@@ -50,7 +50,7 @@ _SUPPORTED_TASKS = [Tasks.SPEECH_RECOGNITION, Tasks.TEXT_TO_SPEECH]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class Commonvoice120(datasets.GeneratorBasedBuilder):

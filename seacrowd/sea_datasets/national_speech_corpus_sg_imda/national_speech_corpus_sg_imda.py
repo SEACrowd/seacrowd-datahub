@@ -111,7 +111,7 @@ _SUPPORTED_TASKS = [Tasks.SPEECH_RECOGNITION]
 
 _SOURCE_VERSION = "2.0.8"  # should be 2.08 but HuggingFace does not allow
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class NationalSpeechCorpusSgIMDADataset(datasets.GeneratorBasedBuilder):

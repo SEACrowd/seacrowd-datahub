@@ -57,7 +57,7 @@ _URLS = {
 
 _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 _SUBSETS = ["gov_my", "govdocs", "muftiwp_gov_my", "myjms_mohe_gov_my"]

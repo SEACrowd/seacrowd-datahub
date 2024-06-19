@@ -31,7 +31,7 @@ _HOMEPAGE = "https://github.com/IndoNLP/nusa-writes"
 _LICENSE = "Creative Commons Attribution Share-Alike 4.0 International"
 _SUPPORTED_TASKS = [Tasks.EMOTION_CLASSIFICATION]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 _URLS = {
     "train":
     "https://raw.githubusercontent.com/IndoNLP/nusa-writes/main/data/nusa_alinea-emot-{lang}-train.csv",

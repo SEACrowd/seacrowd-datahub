@@ -221,7 +221,7 @@ _LANGUAGES = ["war", "ceb", "min", "vie", "ilo", "tgl", "lao", "khm", "mya", "ja
 
 _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
 _SOURCE_VERSION = "2022.1.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class Oscar2201Dataset(datasets.GeneratorBasedBuilder):

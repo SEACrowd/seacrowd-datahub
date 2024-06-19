@@ -40,7 +40,7 @@ _SUPPORTED_TASKS = [Tasks.E2E_TASK_ORIENTED_DIALOGUE]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class IndoCamRest(datasets.GeneratorBasedBuilder):

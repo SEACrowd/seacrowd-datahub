@@ -59,7 +59,7 @@ _LOCAL = False
 _BASE_URL = "https://huggingface.co/datasets/juletxara/xstory_cloze/resolve/main/spring2016.val.{lang}.tsv.split_20_80_{split}.tsv"
 _SUPPORTED_TASKS = [Tasks.COMMONSENSE_REASONING]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class XStoryClozeDataset(datasets.GeneratorBasedBuilder):

@@ -60,7 +60,7 @@ _URL = "https://data.mendeley.com/public-files/datasets/574v66hf2v/files/f258d15
 
 _SUPPORTED_TASKS = [Tasks.SENTIMENT_ANALYSIS, Tasks.EMOTION_CLASSIFICATION]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class PrdectIDDataset(datasets.GeneratorBasedBuilder):

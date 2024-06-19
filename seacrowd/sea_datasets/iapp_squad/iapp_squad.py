@@ -37,7 +37,7 @@ _SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
 _LOCAL = False
 _LANGUAGES = ["tha"]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 _URLS = {
     "train": "https://raw.githubusercontent.com/iapp-technology/iapp-wiki-qa-dataset/main/squad_format/data/train.jsonl",

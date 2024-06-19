@@ -45,7 +45,7 @@ _URLS = {
 }
 _SUPPORTED_TASKS = [Tasks.VISUAL_QUESTION_ANSWERING]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class OpenViVQADataset(datasets.GeneratorBasedBuilder):

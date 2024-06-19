@@ -63,7 +63,7 @@ _SUPPORTED_TASKS = [Tasks.TOPIC_MODELING]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class UitVion(datasets.GeneratorBasedBuilder):

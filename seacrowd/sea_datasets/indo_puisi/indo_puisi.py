@@ -31,7 +31,7 @@ _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 _URLS = {
     "train": "https://raw.githubusercontent.com/ilhamfp/puisi-pantun-generator/main/data/puisi.csv",

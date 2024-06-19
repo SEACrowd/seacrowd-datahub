@@ -58,7 +58,7 @@ _SUPPORTED_TASKS = [
 ]
 
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 class BibleEnId(datasets.GeneratorBasedBuilder):
     """Bible Jv-Id is a machine translation dataset containing Indonesian-Javanese parallel sentences collected from the bible.."""

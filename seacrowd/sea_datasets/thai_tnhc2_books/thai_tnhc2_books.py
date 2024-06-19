@@ -58,7 +58,7 @@ _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 class ThaiTnhc2BooksDataset(datasets.GeneratorBasedBuilder):
     """This dataset collects all 353 books from the Thai National Historical Corpus 2 (TNHC2) corpus. The dataset has been cleaned to use text for pretraining models and NLP tasks. The TNHC2 corpus is a Thai old books corpus and all books are copyright expired according to Thai law (50 years after the author's death). More information on this corpus can be found here: https://www.arts.chula.ac.th/chulaseal/tnhc2/."""

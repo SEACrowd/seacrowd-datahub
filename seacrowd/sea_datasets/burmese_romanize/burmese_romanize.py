@@ -38,7 +38,7 @@ _URLS = "http://www.nlpresearch-ucsy.edu.mm/NLP_UCSY/myanmaroma.zip"
 
 _SUPPORTED_TASKS = [Tasks.TRANSLITERATION]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 _LOCAL = False
 

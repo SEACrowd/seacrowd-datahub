@@ -60,7 +60,7 @@ _URLs = "https://dl.fbaipublicfiles.com/laser/WikiMatrix/v1/WikiMatrix.{lang1}-{
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 config = {
     "jv": ["en", "es", "fr", "id", "it", "pt"],

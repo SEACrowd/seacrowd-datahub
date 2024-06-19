@@ -51,7 +51,7 @@ _URLS = {
 _SUPPORTED_TASKS = [Tasks.POS_TAGGING]  # example: [Tasks.TRANSLATION, Tasks.NAMED_ENTITY_RECOGNITION, Tasks.RELATION_EXTRACTION]
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class YunshanCup2020Dataset(datasets.GeneratorBasedBuilder):

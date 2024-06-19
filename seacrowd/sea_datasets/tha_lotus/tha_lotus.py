@@ -48,7 +48,7 @@ _URL = "https://github.com/korakot/corpus/releases/download/v1.0/AIFORTHAI-Lotus
 
 _SUPPORTED_TASKS = [Tasks.SPEECH_RECOGNITION]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 CONFIG_SUFFIXES_FOR_TASK = [TASK_TO_SCHEMA.get(task).lower() for task in _SUPPORTED_TASKS]
 assert len(CONFIG_SUFFIXES_FOR_TASK) == 1

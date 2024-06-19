@@ -60,7 +60,7 @@ _URL = "https://data.statmt.org/cc-aligned/sentence-aligned/"
 
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 _SUBSETS = ["id_ID", "jv_ID", "su_ID", "th_TH", "vi_VN", "ms_MY", "lo_LA", "km_KH", "my_MM", "cx_PH"]
 

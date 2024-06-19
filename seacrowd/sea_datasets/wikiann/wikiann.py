@@ -88,7 +88,7 @@ _URL = "https://s3.amazonaws.com/datasets.huggingface.co/wikiann/1.1.0/panx_data
 _SUPPORTED_TASKS = [Tasks.NAMED_ENTITY_RECOGNITION]
 
 _SOURCE_VERSION = "1.1.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 def seacrowd_config_constructor(lang, schema, version):

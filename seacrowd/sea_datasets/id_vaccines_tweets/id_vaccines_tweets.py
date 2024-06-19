@@ -36,7 +36,7 @@ _URL = "https://raw.githubusercontent.com/rayendito/id-vaccines-tweets/main/id_v
 
 _SUPPORTED_TASKS = [Tasks.SENTIMENT_ANALYSIS]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class IdVaccinesTweetsDataset(datasets.GeneratorBasedBuilder):

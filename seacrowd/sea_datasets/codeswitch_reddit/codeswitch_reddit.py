@@ -52,7 +52,7 @@ _URL = "http://www.cs.toronto.edu/~ella/code-switch.reddit.tar.gz"
 
 _SUPPORTED_TASKS = [Tasks.CODE_SWITCHING_IDENTIFICATION, Tasks.SELF_SUPERVISED_PRETRAINING]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class CodeSwitchRedditDataset(datasets.GeneratorBasedBuilder):

@@ -28,7 +28,7 @@ _LICENSE = Licenses.CC_BY_NC_4_0.value
 _URL = "https://huggingface.co/datasets/Thaweewat/alpaca-cleaned-52k-th/resolve/main/alpaca-cleaned-th.parquet"
 _SUPPORTED_TASKS = [Tasks.INSTRUCTION_TUNING]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class ThaiAlpacaDataset(datasets.GeneratorBasedBuilder):

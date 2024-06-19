@@ -67,7 +67,7 @@ _SUPPORTED_TASKS = [Tasks.INTENT_CLASSIFICATION]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class SpamidPairDataset(datasets.GeneratorBasedBuilder):

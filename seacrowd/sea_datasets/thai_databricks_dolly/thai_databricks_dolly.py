@@ -29,7 +29,7 @@ _LICENSE = Licenses.CC_BY_SA_3_0.value
 _URL = "https://huggingface.co/datasets/Thaweewat/databricks-dolly-15k-th/resolve/main/databricks-dolly-15k-th.parquet"
 _SUPPORTED_TASKS = [Tasks.INSTRUCTION_TUNING]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class ThaiDatabricksDollyDataset(datasets.GeneratorBasedBuilder):

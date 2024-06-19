@@ -65,7 +65,7 @@ _SUPPORTED_TASKS = [Tasks.COMMONSENSE_REASONING]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class IndoStoryClozeDataset(datasets.GeneratorBasedBuilder):

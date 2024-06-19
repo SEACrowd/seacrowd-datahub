@@ -63,7 +63,7 @@ _SUPPORTED_TASKS = [Tasks.COMMONSENSE_REASONING, Tasks.QUESTION_ANSWERING]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class SeaEvalDataset(datasets.GeneratorBasedBuilder):

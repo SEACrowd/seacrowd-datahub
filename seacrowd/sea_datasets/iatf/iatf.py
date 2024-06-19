@@ -37,7 +37,7 @@ _SEACROWD_SCHEMA_NAME = TASK_TO_SCHEMA[_SUPPORTED_TASKS[0]].lower()
 _LANGUAGES = ["fil"]
 _LOCAL = False
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 _URL_BASE = "https://github.com/como-ph/covidphtext/raw/master/data/"
 _URLS = [

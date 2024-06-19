@@ -56,7 +56,7 @@ _SUPPORTED_TASKS = [Tasks.NAMED_ENTITY_RECOGNITION]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 class IndolemNERUGM(datasets.GeneratorBasedBuilder):
     """NER UGM comprises 2,343 sentences from news articles, and was constructed at the University of Gajah Mada based on five named entity classes: person, organization, location, time, and quantity; and based on 5-fold cross validation"""

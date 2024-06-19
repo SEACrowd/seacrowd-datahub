@@ -41,7 +41,7 @@ _SUPPORTED_TASKS = [Tasks.SENTIMENT_ANALYSIS]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 class IMDbJv(datasets.GeneratorBasedBuilder):
     """Javanese Imdb Movie Reviews Dataset is a Javanese version of the IMDb Movie Reviews dataset by translating the original English dataset to Javanese."""

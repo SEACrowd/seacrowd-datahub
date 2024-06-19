@@ -30,7 +30,7 @@ _HOMEPAGE = "https://github.com/imperialite/filipino-tiktok-hatespeech"
 _LICENSE = Licenses.CC_BY_SA_4_0.value
 _SUPPORTED_TASKS = [Tasks.SENTIMENT_ANALYSIS]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 _URL = "https://raw.githubusercontent.com/imperialite/filipino-tiktok-hatespeech/main/data"
 

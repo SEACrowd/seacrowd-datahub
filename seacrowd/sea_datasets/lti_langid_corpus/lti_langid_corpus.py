@@ -1427,7 +1427,7 @@ _URL = "http://sourceforge.net/projects/la-strings/files/Language-Data/LTI-LangI
 _SUPPORTED_TASKS = [Tasks.LANGUAGE_IDENTIFICATION]
 
 _SOURCE_VERSION = "5.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 # TODO: Name the dataset class to match the script name using CamelCase instead of snake_case

@@ -48,7 +48,7 @@ _URL = "https://data.depositar.io/dataset/304d1572-27d6-4549-8292-b1c8f5e9c086/r
 
 _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class BRCCDataset(datasets.GeneratorBasedBuilder):

@@ -78,7 +78,7 @@ _SUPPORTED_TASKS = [Tasks.SPEECH_RECOGNITION]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 logger = datasets.logging.get_logger(__name__)
 

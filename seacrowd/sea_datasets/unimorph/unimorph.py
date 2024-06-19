@@ -67,7 +67,7 @@ _URL = "https://raw.githubusercontent.com/unimorph/"
 
 _SUPPORTED_TASKS = [Tasks.MORPHOLOGICAL_INFLECTION]
 _SOURCE_VERSION = "4.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class UnimorphDataset(datasets.GeneratorBasedBuilder):

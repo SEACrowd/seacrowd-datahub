@@ -74,7 +74,7 @@ _SUPPORTED_TASKS = [Tasks.INTENT_CLASSIFICATION, Tasks.SLOT_FILLING]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 def config_constructor_intent_cls(schema: str, version: str, phoatis_subset: str = "syllable") -> SEACrowdConfig:

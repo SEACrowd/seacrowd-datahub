@@ -67,7 +67,7 @@ _URLS = {
 _SUPPORTED_TASKS = [Tasks.ASPECT_BASED_SENTIMENT_ANALYSIS]
 
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class LocalIDAbusive(datasets.GeneratorBasedBuilder):

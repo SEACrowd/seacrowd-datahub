@@ -62,7 +62,7 @@ _SUPPORTED_TASKS = [Tasks.OPTICAL_CHARACTER_RECOGNITION]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class VintextDataset(datasets.GeneratorBasedBuilder):

@@ -34,7 +34,7 @@ _URLS = {"text": "https://raw.githubusercontent.com/willyfh/msvd-indonesian/main
 
 _SUPPORTED_TASKS = [Tasks.VIDEO_TO_TEXT_RETRIEVAL]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 _LOCAL = False
 

@@ -61,7 +61,7 @@ _SUPPORTED_TASKS = [Tasks.SPEECH_LANGUAGE_IDENTIFICATION]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 def construct_configs() -> List[SEACrowdConfig]:

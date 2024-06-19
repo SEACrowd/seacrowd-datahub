@@ -55,7 +55,7 @@ _URL = "https://drive.google.com/uc?id=1AqAocrNFEPhBAfa5ATCj-3xMWbq659ME"
 
 _SUPPORTED_TASKS = [Tasks.INSTRUCTION_TUNING]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class WikiHowGOSCDataset(datasets.GeneratorBasedBuilder):

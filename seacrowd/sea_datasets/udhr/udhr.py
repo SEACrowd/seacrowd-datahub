@@ -31,7 +31,7 @@ _URLS = "https://unicode.org/udhr/assemblies/udhr_txt.zip"
 _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 _LANGS = {
     "ace": "Aceh",

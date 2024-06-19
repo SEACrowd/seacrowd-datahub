@@ -58,7 +58,7 @@ _URLS = {
 }
 _SUPPORTED_TASKS = [Tasks.INTENT_CLASSIFICATION, Tasks.SLOT_FILLING]
 _SOURCE_VERSION = "1.1.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 # ind, jav, khm, zlm, mya, tha, tgl, vie, cmn, tam
 _LANGS = [

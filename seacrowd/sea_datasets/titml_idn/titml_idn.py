@@ -38,7 +38,7 @@ _URLs = {"titml-idn": "https://huggingface.co/datasets/holylovenia/TITML-IDN/res
 _SUPPORTED_TASKS = [Tasks.SPEECH_RECOGNITION]
 
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class TitmlIdn(datasets.GeneratorBasedBuilder):

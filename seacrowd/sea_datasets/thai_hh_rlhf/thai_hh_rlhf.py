@@ -50,7 +50,7 @@ _LICENSE = Licenses.MIT.value
 _URL = "https://huggingface.co/datasets/Thaweewat/hh-rlhf-th/resolve/main/hh-rlhf-train-161k-th.parquet"
 _SUPPORTED_TASKS = [Tasks.REINFORCEMENT_LEARNING_WITH_HUMAN_FEEDBACK]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class ThaiHhRlhfDataset(datasets.GeneratorBasedBuilder):

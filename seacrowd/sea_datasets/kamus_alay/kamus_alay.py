@@ -45,7 +45,7 @@ _SUPPORTED_TASKS = [Tasks.MORPHOLOGICAL_INFLECTION]
 
 # Dataset does not have versioning
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class KamusAlay(datasets.GeneratorBasedBuilder):

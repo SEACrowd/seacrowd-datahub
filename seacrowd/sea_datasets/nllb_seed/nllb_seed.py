@@ -91,7 +91,7 @@ _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]  # example: [Tasks.TRANSLATION, T
 #  This version doesn't have to be consistent with semantic versioning. Anything that is
 #  provided by the original dataset as a version goes.
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 _LOCAL = False
 
 

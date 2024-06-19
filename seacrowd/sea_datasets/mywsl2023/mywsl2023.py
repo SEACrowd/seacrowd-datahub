@@ -64,7 +64,7 @@ _LABELS = ["air", "demam", "dengar", "makan", "minum", "salah", "saya", "senyap"
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class MyWsl2023(datasets.GeneratorBasedBuilder):

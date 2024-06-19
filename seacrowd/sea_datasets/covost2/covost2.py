@@ -68,7 +68,7 @@ _URLS = {_DATASETNAME: {"ind": COMMONVOICE_URL_TEMPLATE.format(lang=LANG_CODE["i
 
 _SUPPORTED_TASKS = [Tasks.SPEECH_TO_TEXT_TRANSLATION, Tasks.MACHINE_TRANSLATION]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 def seacrowd_config_constructor(src_lang, tgt_lang, schema, version):

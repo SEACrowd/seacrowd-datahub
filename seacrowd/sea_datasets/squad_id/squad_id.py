@@ -41,7 +41,7 @@ _URLs = {"train": "https://drive.google.com/uc?id=1LP0iB0Xe6nkbnSxMeclxexUfqCE9e
 _SUPPORTED_TASKS = [Tasks.QUESTION_ANSWERING]
 
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class SQuADIdDataset(datasets.GeneratorBasedBuilder):

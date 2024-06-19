@@ -50,7 +50,7 @@ _URL = "https://osf.io/download/j42g7/"
 
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class FilipinoWordsAOADataset(datasets.GeneratorBasedBuilder):

@@ -62,7 +62,7 @@ _SUPPORTED_TASKS = [Tasks.SELF_SUPERVISED_PRETRAINING]
 
 _LANGUAGES = ["ind", "jav", "ace", "ban", "bjn", "min", "sun"]
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 _SOURCE_VERSION = "2022.09.13"
 

@@ -57,7 +57,7 @@ _ALL_CONFIG = _YEAR + ["all"]
 
 _SOURCE_VERSION = "2018.12.01"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 def seacrowd_config_constructor(year, schema, version):

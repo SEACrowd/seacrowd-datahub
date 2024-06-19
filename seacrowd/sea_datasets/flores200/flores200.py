@@ -318,7 +318,7 @@ _SCHEMAS = [str(TASK_TO_SCHEMA[task]) for task in _SUPPORTED_TASKS]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 @dataclass

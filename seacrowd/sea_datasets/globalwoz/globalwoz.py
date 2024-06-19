@@ -51,7 +51,7 @@ _SUPPORTED_TASKS = [Tasks.E2E_TASK_ORIENTED_DIALOGUE]
 
 _SOURCE_VERSION = "2.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 def seacrowd_config_constructor(dial_type, lang, schema, version):

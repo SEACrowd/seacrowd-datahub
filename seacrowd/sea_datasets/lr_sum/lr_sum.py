@@ -49,7 +49,7 @@ _URL = "https://huggingface.co/datasets/bltlab/lr-sum"
 
 _SUPPORTED_TASKS = [Tasks.SUMMARIZATION]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class LRSumDataset(datasets.GeneratorBasedBuilder):

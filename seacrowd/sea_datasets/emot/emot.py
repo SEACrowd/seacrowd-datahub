@@ -51,7 +51,7 @@ _URLs = {
 _SUPPORTED_TASKS = [Tasks.EMOTION_CLASSIFICATION]
 
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class EmoT(datasets.GeneratorBasedBuilder):

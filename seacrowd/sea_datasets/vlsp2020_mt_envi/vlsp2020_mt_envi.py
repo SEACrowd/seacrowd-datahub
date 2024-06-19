@@ -59,7 +59,7 @@ _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class Vlsp2020MtEnviDataset(datasets.GeneratorBasedBuilder):

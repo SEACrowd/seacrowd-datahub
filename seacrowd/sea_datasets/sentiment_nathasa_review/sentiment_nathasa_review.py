@@ -42,7 +42,7 @@ _SUPPORTED_TASKS = [Tasks.SENTIMENT_ANALYSIS]
 
 _SOURCE_VERSION = "1.0.0"
 
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 class SentimentNathasaReview(datasets.GeneratorBasedBuilder):
     """Customer Review (Natasha Skincare) is a customers emotion dataset, with amounted to 19,253 samples with the division for each class is 804 joy, 43 surprise, 154 anger, 61 fear, 287 sad, 167 disgust, and 17736 no-emotions."""

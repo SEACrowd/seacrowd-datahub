@@ -56,7 +56,7 @@ _LANGUAGES = ["vi"]
 _LOCAL = False
 _SUPPORTED_TASKS = [Tasks.IMAGE_CAPTIONING]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 _URLS = "https://drive.google.com/uc?export=download&id=1YexKrE6o0UiJhFWpE8M5LKoe6-k3AiM4"
 _Split_Path = {

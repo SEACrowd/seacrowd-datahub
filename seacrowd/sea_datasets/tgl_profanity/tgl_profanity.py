@@ -33,7 +33,7 @@ _HOMEPAGE = "https://huggingface.co/datasets/mginoben/tagalog-profanity-dataset/
 _LICENSE = Licenses.UNKNOWN.value
 _SUPPORTED_TASKS = [Tasks.ABUSIVE_LANGUAGE_PREDICTION]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 _URLS = {
     "train": "https://huggingface.co/datasets/mginoben/tagalog-profanity-dataset/resolve/main/train.csv",
     "val": "https://huggingface.co/datasets/mginoben/tagalog-profanity-dataset/resolve/main/val.csv",

@@ -28,7 +28,7 @@ _LICENSE = "Creative Commons Attribution-NonCommercial-ShareAlike 4.0 Internatio
 _URLS = {_DATASETNAME: {"train": "https://raw.githubusercontent.com/ahmadizzan/netifier/master/data/processed/train.csv", "test": "https://raw.githubusercontent.com/ahmadizzan/netifier/master/data/processed/test.csv"}}
 _SUPPORTED_TASKS = [Tasks.ASPECT_BASED_SENTIMENT_ANALYSIS]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class Netifier(datasets.GeneratorBasedBuilder):

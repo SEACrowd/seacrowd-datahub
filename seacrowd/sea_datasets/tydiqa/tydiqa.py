@@ -84,7 +84,7 @@ _LOCAL = False
 _SOURCE_VERSION = "1.0.0"
 _SOURCE_VERSION_P = "1.0.0"
 _SOURCE_VERSION_S = "1.1.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 _URL = "https://storage.googleapis.com/tydiqa/"
 _PRIMARY_URLS = {

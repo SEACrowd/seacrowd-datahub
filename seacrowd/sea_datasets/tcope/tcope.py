@@ -51,7 +51,7 @@ _URL = "https://files.osf.io/v1/resources/3q5pw/providers/osfstorage/63737a5b0e7
 
 _SUPPORTED_TASKS = [Tasks.POS_TAGGING, Tasks.DEPENDENCY_PARSING]
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class TCOPEDataset(datasets.GeneratorBasedBuilder):

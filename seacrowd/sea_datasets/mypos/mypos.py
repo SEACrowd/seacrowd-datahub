@@ -43,7 +43,7 @@ _URL = "https://raw.githubusercontent.com/ye-kyaw-thu/myPOS/master/corpus-ver-3.
 
 _SUPPORTED_TASKS = [Tasks.POS_TAGGING]
 _SOURCE_VERSION = "3.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class MyPOSDataset(datasets.GeneratorBasedBuilder):

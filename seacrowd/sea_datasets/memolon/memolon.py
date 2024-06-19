@@ -57,7 +57,7 @@ _URLS = {
 }
 
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 _LANGUAGES = ["ceb", "tgl", "ind", "sun", "jav", "zsm", "vie", "tha", "mya"]
 

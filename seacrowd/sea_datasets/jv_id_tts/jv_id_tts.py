@@ -50,7 +50,7 @@ _URLs = {
 _SUPPORTED_TASKS = [Tasks.TEXT_TO_SPEECH]
 
 _SOURCE_VERSION = "1.0.0"
-_SEACROWD_VERSION = "1.0.0"
+_SEACROWD_VERSION = "2024.06.20"
 
 
 class JvIdTTS(datasets.GeneratorBasedBuilder):
