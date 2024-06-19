@@ -10,6 +10,7 @@ from seacrowd.utils.schemas import (
     pairs_features_score,
     pairs_multi_features,
     qa_features,
+    chat_features,
     image_features,
     image_multi_features,
     imqa_features,
@@ -85,6 +86,7 @@ class Tasks(Enum):
     # Pair Text Classification
     COMMONSENSE_REASONING = "CR"
     QUESTION_ANSWERING = "QA"
+    QUESTION_ANSWERING_RETRIEVAL = "QAR"
     TEXT_RETRIEVAL = "TRV"
     TEXTUAL_ENTAILMENT = "TE"
     SEMANTIC_SIMILARITY = "STS"
@@ -105,6 +107,7 @@ class Tasks(Enum):
     # Multi Text Generation
     DIALOGUE_SYSTEM = "DS"
     E2E_TASK_ORIENTED_DIALOGUE = "TOD"
+    MULTI_TURN_CONVERSATION = "MTC"
 
     # Self Supervised & Unsupervised Text
     PROMPTING = "PRT"
@@ -246,6 +249,8 @@ TASK_TO_SCHEMA = {
     Tasks.TOKEN_LEVEL_LANGUAGE_IDENTIFICATION: "SEQ_LABEL",
     Tasks.COMMONSENSE_REASONING: "QA",
     Tasks.QUESTION_ANSWERING: "QA",
+    Tasks.MULTI_TURN_CONVERSATION: "CHAT",
+    Tasks.QUESTION_ANSWERING_RETRIEVAL: "QA",
     Tasks.CONCEPT_ALIGNMENT_CLASSIFICATION: "PAIRS",
     Tasks.NEXT_SENTENCE_PREDICTION: "PAIRS",
     Tasks.TEXT_RETRIEVAL: "PAIRS",
@@ -313,6 +318,7 @@ SCHEMA_TO_FEATURES = {
     "KB": kb_features,
     "TREE": tree_features,
     "QA": qa_features,
+    "CHAT": chat_features,
     "T2T": text2text_features,
     "TEXT": text_features(),
     "TEXT_MULTI": text_multi_features(),
