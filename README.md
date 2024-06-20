@@ -6,8 +6,6 @@ Southeast Asia is home to more than 1,000 native languages. Nevertheless, Southe
 
 ## How to Use
 
-> Coming soon!
-
 ### Library Installation
 
 Find seacrowd library (v0.1.3) at https://pypi.org/project/seacrowd/. (See our release notes [here](https://github.com/SEACrowd/seacrowd-datahub/releases/tag/0.1.3).)
@@ -73,6 +71,8 @@ We can also load the dataloader from the metadata if we want.
 # Load dataset from metadata
 khpos_dset = khpos_meta.load_dataset()
 ```
+
+> For the functions' sample outputs, check our [release notes](https://github.com/SEACrowd/seacrowd-datahub/releases/tag/0.1.3).
 
 ## How to Contribute
 
