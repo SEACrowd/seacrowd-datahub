@@ -2,24 +2,9 @@
 
 # Welcome to SEACrowd!
 
-<!--
-<h3>158 datasets registered</h3>
-
-![Dataset claimed](https://progress-bar.dev/83/?title=Datasets%20Claimed%20(119%20Datasets%20Claimed))
-
-<!-- milestone starts
-![Milestone 1](https://progress-bar.dev/100/?title=Milestone%201%20(30%20Datasets%20Completed))
-
-![Milestone 2](https://progress-bar.dev/100/?title=Milestone%202%20(60%20Datasets%20Completed))
-
-![Milestone 3](https://progress-bar.dev/100/?title=Milestone%203%20(100%20Datasets%20Completed))
-
-![Milestone 4](https://progress-bar.dev/84/?title=Milestone%204%20(150%20Datasets%20Completed))
-<!-- milestone ends -->
-
 Southeast Asia is home to more than 1,000 native languages. Nevertheless, Southeast Asian NLP, vision-language, and speech processing is underrepresented in the research community, and one of the reasons is the lack of access to public datasets ([Aji et al., 2022](https://aclanthology.org/2022.acl-long.500/)). To address this issue, we initiate **SEACrowd**, a joint collaboration to collect NLP datasets for Southeast Asian languages. Help us collect and centralize Southeast Asian datasets, and be a co-author of our upcoming paper.
 
-## How to use dataloaders from SEACrowd Data Hub?
+## How to Use
 
 > Coming soon!
 
@@ -27,15 +12,69 @@ Southeast Asia is home to more than 1,000 native languages. Nevertheless, Southe
 
 Find seacrowd library (v0.1.3) at https://pypi.org/project/seacrowd/. (See our release notes [here](https://github.com/SEACrowd/seacrowd-datahub/releases/tag/0.1.3).)
 
+To install SEACrowd, install the `seacrowd` package in your python environment via `pip`.
+
 ```
 pip install seacrowd
 ```
 
-### Usage examples
+### Using `seacrowd` library
 
-> Coming soon!
+To use the `seacrowd` package, simply import it in your code:
+```
+import seacrowd as sc
+````
 
-## How to contribute?
+### List & Load Dataset
+SEACrowd provides functions for listing and loading all datasets that are implemented in NusaCrowd
+```
+# List all datasets
+dset_names = sc.list_datasets()
+
+# List all datasets with their config names
+dset_configs_dict = sc.list_datasets(with_config=True)
+
+# Load a single dataset based on the dataset name
+khpos_dset = sc.load_dataset("khpos", schema="seacrowd")
+
+# Load multiple datasets based on the dataset names
+dsets = sc.load_datasets(["thai_sum", "vsolscsum"], schema="seacrowd_t2t")
+```
+
+### List & Load Benchmark
+In addition to dataset-related functions, SEACrowd provides additional functions for listing and loading some SEA benchmarks.
+```
+# List all benchmarks
+benchmark_names = sc.list_benchmarks()
+
+# Load all datasets in a benchmark
+seacrowd_vl_dsets = sc.load_benchmark("SEACrowd-VL")
+```
+
+### Load Metadata
+Aside from loading datasets and benchmarks, `seacrowd` also supports loading the metadata (e.g., license, description, citation,  etc.) of the dataloaders.
+```
+# Load metadata of a dataloader
+khpos_meta = sc.for_dataset("khpos")
+
+# Load metadata of multiple dataloaders
+meta_dsets = sc.for_datasets(["thai_sum", "vsolscsum"])
+
+# Load metadata of a config name
+nusaparagraph_meta = sc.for_config_name("nusaparagraph_emot_jav_seacrowd_text")
+
+# Load metadata of multiple config names
+meta_dsets = sc.for_config_names(["sentiment_nathasa_review_seacrowd_text", "indonli_seacrowd_pairs"])
+```
+
+We can also load the dataloader from the metadata if we want.
+
+```
+# Load dataset from metadata
+khpos_dset = khpos_meta.load_dataset()
+```
+
+## How to Contribute
 
 Check out our [CONTRIBUTING.md](https://github.com/SEACrowd/seacrowd-datahub/blob/master/CONTRIBUTING.md) for a gentle introduction to contributing in SEACrowd. Jump straight ahead to [DATALOADER.md](https://github.com/SEACrowd/seacrowd-datahub/blob/master/DATALOADER.md) if you have decided to contribute by implementing dataloaders for our Data Hub!
 
@@ -55,4 +94,4 @@ If you are using any resources from SEACrowd, including datasheets, dataloaders,
 
 ## Acknowledgements
 
-Our initiative is heavily inspired by [NusaCrowd](https://github.com/IndoNLP/nusa-crowd/tree/master/nusacrowd) which provides open access data to 100+ Indonesian NLP corpora. You can check NusaCrowd paper on the following [link](https://aclanthology.org/2023.findings-acl.868/).
+Our initiative is heavily inspired by [NusaCrowd](https://github.com/IndoNLP/nusa-crowd/tree/master/nusacrowd) which provides open access data to 100+ Indonesian NLP corpora. You can check NusaCrowd paper (published in ACL Findings 2023) on the following [link](https://aclanthology.org/2023.findings-acl.868/).
