@@ -6,7 +6,7 @@ import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks
+from seacrowd.utils.constants import Tasks, Licenses
 
 _CITATION = """\
 @article{FrogStorytelling,
@@ -31,7 +31,7 @@ Indonesian written and spoken corpus, based on the twenty-eight pictures. (http:
 """
 _HOMEPAGE = "https://github.com/matbahasa/corpus-frog-storytelling"
 _LANGUAGES = ["ind"]
-_LICENSE = "Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)"
+_LICENSE = Licenses.CC_BY_SA_4_0.value
 _LOCAL = False
 _URLS = {
     _DATASETNAME: "https://github.com/matbahasa/corpus-frog-storytelling/archive/refs/heads/master.zip",

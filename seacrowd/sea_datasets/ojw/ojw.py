@@ -24,6 +24,7 @@ import datasets
 import pandas as pd
 
 from seacrowd.utils.configs import SEACrowdConfig
+from seacrowd.utils.constants import Licenses
 
 _CITATION = """\
 @inproceedings{moeljadi-aminullah-2020-building,
@@ -61,7 +62,7 @@ This dataset contains Old Javanese written language aimed to build a machine rea
 _HOMEPAGE = "https://github.com/davidmoeljadi/OJW"
 
 
-_LICENSE = "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+_LICENSE = Licenses.CC_BY_SA_4_0.value
 
 
 _URLS = {

@@ -7,7 +7,7 @@ import os
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks, DEFAULT_SOURCE_VIEW_NAME, DEFAULT_SEACROWD_VIEW_NAME
+from seacrowd.utils.constants import Licenses, Tasks, DEFAULT_SOURCE_VIEW_NAME, DEFAULT_SEACROWD_VIEW_NAME
 
 _DATASETNAME = "titml_idn"
 _SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
@@ -31,7 +31,7 @@ TITML-IDN (Tokyo Institute of Technology Multilingual - Indonesian) is collected
 
 _HOMEPAGE = "http://research.nii.ac.jp/src/en/TITML-IDN.html"
 
-_LICENSE = "For research purposes only. If you use this corpus, you have to cite (Lestari et al, 2006)."
+_LICENSE = Licenses.OTHERS.value + " | For research purposes only. If you use this corpus, you have to cite (Lestari et al, 2006)."
 
 _URLs = {"titml-idn": "https://huggingface.co/datasets/holylovenia/TITML-IDN/resolve/main/IndoLVCSR.zip"}
 

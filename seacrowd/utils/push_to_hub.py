@@ -33,20 +33,35 @@ def construct_readme(dsetname):
     citation = import_from(module_path, "_CITATION")
     license = import_from(module_path, "_LICENSE")
 
-    languages_part = "\n- " + "\n- ".join([lang for lang in languages if len(lang) <= 3])
-    pretty_name_part = dset_name.replace("_", " ").title()
-    task_categories_part = "\n- " + "\n- ".join(task.name.replace("_", "-").lower() for task in supported_tasks)
+    readme_string = "\n---"
     if "(" in license and ")" in license:
         license_part = license[license.find("(")+1:license.find(")")]
-        readme_string = f'\n---\nlicense: {license_part}\nlanguage: {languages_part}\npretty_name: {pretty_name_part}\ntask_categories: {task_categories_part}\ntags: {task_categories_part}\n---\n'
-    else:
-        readme_string = f'\n---\nlanguage: {languages_part}\npretty_name: {pretty_name_part}\ntask_categories: {task_categories_part}\ntags: {task_categories_part}\n---\n'
-    readme_string += f'\n\n# {pretty_name_part}'
+        if license_part == "others":
+            license_part = "other"
+        readme_string += f'\nlicense: {license_part}'
+
+    languages_part = "\n- " + "\n- ".join([lang for lang in languages if len(lang) <= 3])
+    readme_string += f'\nlanguage: {languages_part}'
+
+    pretty_name_part = dset_name.replace("_", " ").title()
+    readme_string += f'\npretty_name: {pretty_name_part}'
+
+    tasks = [task.name.replace("_", "-").lower() for task in supported_tasks]
+    if len(tasks) > 0:
+        task_categories_part = "\n- " + "\n- ".join(tasks)
+        readme_string += f'\ntask_categories: {task_categories_part}'
+        readme_string += f'\ntags: {task_categories_part}'
+
+    readme_string += '\n---'
+
     readme_string += f'\n\n{description}'
     if is_local:
         readme_string += "\n\nThis is a local dataset. You have to obtain this dataset separately from [{homepage}]({homepage}) to use this dataloader."
+    
     readme_string += f'\n\n## Languages\n\n{", ".join(languages)}'
+    
     readme_string += f'\n\n## Supported Tasks\n\n{", ".join([str(task.name.replace("_", " ").title()) for task in supported_tasks])}'
+    
     readme_string += f'''
     \n## Dataset Usage
     ### Using `datasets` library
@@ -72,7 +87,7 @@ def construct_readme(dsetname):
     readme_string += f'\n\n## Citation\n\nIf you are using the **{dset_name.replace("_", " ").title()}** dataloader in your work, please cite the following:'
     readme_string = re.sub(r"( )+\#", "#", readme_string)
     readme_string = re.sub(r"( )+\`\`\`", "```", readme_string)
-    readme_string = re.sub(r"( ){2, 4}", "", readme_string)
+    readme_string = re.sub(r"[ \t]{2,}", "", readme_string)
     readme_string += f'\n```\n{citation}\n{_SEACROWD_CITATION}\n```'
     readme_string = re.sub(r"( )+\@", "@", readme_string)
     return readme_string
@@ -85,49 +100,52 @@ if __name__ == "__main__":
     
     requirements_file = BytesIO(str.encode("seacrowd>=0.2.0"))
     
-    # for dirname in ["indolem_sentiment"]:
     for i, dirname in enumerate(os.listdir(_SEA_DATASETS_PATH)):
-        if not os.path.isdir(f"{_SEA_DATASETS_PATH}/{dirname}/"):
-            print(f"{dirname} is not a directory.")
+        if not os.path.isdir(f"{_SEA_DATASETS_PATH}/{dirname}/") or dirname == "__pycache__":
+            print(f"{dirname} is not a dataloader name.")
             continue
         
-        print(f'({i} / {len(os.listdir(_SEA_DATASETS_PATH))}) {dirname}')
+        try:
+            print(f'({i} / {len(os.listdir(_SEA_DATASETS_PATH))}) {dirname}')
 
-        api.create_repo(
-            f"SEACrowd/{dirname}",
-            repo_type="dataset",
-            exist_ok=True)
+            api.create_repo(
+                f"SEACrowd/{dirname}",
+                repo_type="dataset",
+                exist_ok=True)
 
-        api.upload_file(
-            path_or_fileobj=requirements_file,
-            path_in_repo="requirements.txt",
-            repo_id=f"SEACrowd/{dirname}",
-            repo_type="dataset",
-        )
-        
-        license_file = BytesIO(str.encode(
-            import_from(f"seacrowd.sea_datasets.{dirname}.{dirname}", "_LICENSE")))
-        api.upload_file(
-            path_or_fileobj=license_file,
-            path_in_repo="LICENSE",
-            repo_id=f"SEACrowd/{dirname}",
-            repo_type="dataset",
-        )
+            api.upload_file(
+                path_or_fileobj=requirements_file,
+                path_in_repo="requirements.txt",
+                repo_id=f"SEACrowd/{dirname}",
+                repo_type="dataset",
+            )
+            
+            license_file = BytesIO(str.encode(
+                import_from(f"seacrowd.sea_datasets.{dirname}.{dirname}", "_LICENSE")))
+            api.upload_file(
+                path_or_fileobj=license_file,
+                path_in_repo="LICENSE",
+                repo_id=f"SEACrowd/{dirname}",
+                repo_type="dataset",
+            )
 
-        readme_file = BytesIO(str.encode(construct_readme(dirname)))
-        api.upload_file(
-            path_or_fileobj=readme_file,
-            path_in_repo="README.md",
-            repo_id=f"SEACrowd/{dirname}",
-            repo_type="dataset",
-        )
+            readme_file = BytesIO(str.encode(construct_readme(dirname)))
+            api.upload_file(
+                path_or_fileobj=readme_file,
+                path_in_repo="README.md",
+                repo_id=f"SEACrowd/{dirname}",
+                repo_type="dataset",
+            )
 
-        for dataloader_py_file in os.listdir(f"{_SEA_DATASETS_PATH}/{dirname}"):
-            if dataloader_py_file.endswith(".py"):
-                dataloader_file = f"{_SEA_DATASETS_PATH}/{dirname}/{dataloader_py_file}"
-                api.upload_file(
-                    path_or_fileobj=dataloader_file,
-                    path_in_repo=dataloader_py_file,
-                    repo_id=f"SEACrowd/{dirname}",
-                    repo_type="dataset",
-                )
+            for dataloader_py_file in os.listdir(f"{_SEA_DATASETS_PATH}/{dirname}"):
+                if dataloader_py_file.endswith(".py"):
+                    dataloader_file = f"{_SEA_DATASETS_PATH}/{dirname}/{dataloader_py_file}"
+                    api.upload_file(
+                        path_or_fileobj=dataloader_file,
+                        path_in_repo=dataloader_py_file,
+                        repo_id=f"SEACrowd/{dirname}",
+                        repo_type="dataset",
+                    )
+        except Exception as e:
+            print(f"{dirname} ======= Error: {e}")
+            continue

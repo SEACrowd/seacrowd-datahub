@@ -7,7 +7,7 @@ import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import (DEFAULT_SEACROWD_VIEW_NAME,
+from seacrowd.utils.constants import (DEFAULT_SEACROWD_VIEW_NAME, Licenses,
                                        DEFAULT_SOURCE_VIEW_NAME, Tasks)
 
 _DATASETNAME = "jv_id_tts"
@@ -38,7 +38,7 @@ This dataset was collected by Google in collaboration with Gadjah Mada Universit
 
 _HOMEPAGE = "http://openslr.org/41/"
 
-_LICENSE = "See https://www.openslr.org/resources/41/LICENSE file for license information. Attribution-ShareAlike 4.0 (CC BY-SA 4.0)."
+_LICENSE = Licenses.CC_BY_SA_4_0.value
 
 _URLs = {
     _DATASETNAME: {

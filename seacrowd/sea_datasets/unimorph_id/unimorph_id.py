@@ -20,7 +20,7 @@ import datasets
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
-from seacrowd.utils.constants import Tasks
+from seacrowd.utils.constants import Tasks, Licenses
 
 _CITATION = """\
 @inproceedings{pimentel-ryskina-etal-2021-sigmorphon,
@@ -105,7 +105,7 @@ Original parsing can be found on https://huggingface.co/datasets/universal_morph
 
 _HOMEPAGE = "https://github.com/unimorph/ind"
 
-_LICENSE = "Creative Commons Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)"
+_LICENSE = Licenses.CC_BY_SA_3_0.value
 
 _URLS = {
     _DATASETNAME: "https://raw.githubusercontent.com/unimorph/ind/main/ind",
