@@ -1266,45 +1266,56 @@ class SEACrowdMetadataHelper:
 # SEACrowd Interface
 ###
 
-connhelps = SEACrowdConfigHelper()
-
-def list_datasets(with_config=False, config_helper=connhelps):
+def list_datasets(with_config=False):
+    config_helper = SEACrowdConfigHelper()
     return config_helper.list_datasets(with_config=with_config)
 
-def load_dataset(dataset_name, schema='seacrowd', config_helper=connhelps):
+def load_dataset(dataset_name, schema='seacrowd'):
+    config_helper = SEACrowdConfigHelper()
     return config_helper.load_dataset(dataset_name=dataset_name, schema=schema)
 
-def load_datasets(dataset_names, schema='seacrowd', config_helper=connhelps):
+def load_datasets(dataset_names, schema='seacrowd'):
+    config_helper = SEACrowdConfigHelper()
     return config_helper.load_datasets(dataset_names=dataset_names, schema=schema)
 
-def load_dataset_by_config_name(config_name, config_helper=connhelps):
+def load_dataset_by_config_name(config_name):
+    config_helper = SEACrowdConfigHelper()
     return config_helper.load_dataset_by_config_name(config_name=config_name)
 
-def load_datasets_by_config_names(config_names, config_helper=connhelps):
+def load_datasets_by_config_names(config_names):
+    config_helper = SEACrowdConfigHelper()
     return config_helper.load_datasets_by_config_names(config_names=config_names)
 
 def list_benchmarks(config_helper=connhelps):
+    config_helper = SEACrowdConfigHelper()
     return config_helper.list_benchmarks()
 
-def load_benchmark(benchmark_name, config_helper=connhelps):
+def load_benchmark(benchmark_name):
+    config_helper = SEACrowdConfigHelper()
     return config_helper.load_benchmark(benchmark_name=benchmark_name)
 
-def for_dataset(dataset_name, schema='seacrowd', config_helper=connhelps):
+def for_dataset(dataset_name, schema='seacrowd'):
+    config_helper = SEACrowdConfigHelper()
     return config_helper.for_dataset(dataset_name=dataset_name, schema=schema)
 
-def for_datasets(dataset_names, schema='seacrowd', config_helper=connhelps):
+def for_datasets(dataset_names, schema='seacrowd'):
+    config_helper = SEACrowdConfigHelper()
     return config_helper.for_datasets(dataset_names=dataset_names, schema=schema)
 
-def for_config_name(config_name, config_helper=connhelps):
+def for_config_name(config_name):
+    config_helper = SEACrowdConfigHelper()
     return config_helper.for_config_name(config_name=config_name)
 
-def for_config_names(config_names, config_helper=connhelps):
+def for_config_names(config_names):
+    config_helper = SEACrowdConfigHelper()
     return config_helper.for_config_names(config_names=config_names)
 
-def available_dataset_names(schema=None, config_helper=connhelps):
+def available_dataset_names(schema=None):
+    config_helper = SEACrowdConfigHelper()
     return config_helper.available_dataset_names(schema=schema)
 
-def available_config_names(dataset_name=None, config_helper=connhelps):
+def available_config_names(dataset_name=None):
+    config_helper = SEACrowdConfigHelper()
     return config_helper.available_config_names(dataset_name=dataset_name)
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@ pybrat==0.1.4
 datasets>=2.2.0
 black~=22.0
 flake8>=3.8.3
+gdown
 isort>=5.0.0
 aiohttp==3.8.1
 pre-commit==2.19.0
