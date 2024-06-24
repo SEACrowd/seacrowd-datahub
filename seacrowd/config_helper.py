@@ -1286,7 +1286,7 @@ def load_datasets_by_config_names(config_names):
     config_helper = SEACrowdConfigHelper()
     return config_helper.load_datasets_by_config_names(config_names=config_names)
 
-def list_benchmarks(config_helper=connhelps):
+def list_benchmarks():
     config_helper = SEACrowdConfigHelper()
     return config_helper.list_benchmarks()
 

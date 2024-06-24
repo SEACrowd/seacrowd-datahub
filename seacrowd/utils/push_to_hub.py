@@ -33,7 +33,7 @@ def construct_readme(dsetname):
     citation = import_from(module_path, "_CITATION")
     license = import_from(module_path, "_LICENSE")
 
-    languages_part = "\n- " + "\n- ".join(languages)
+    languages_part = "\n- " + "\n- ".join([lang for lang in languages if len(lang) <= 3])
     pretty_name_part = dset_name.replace("_", " ").title()
     task_categories_part = "\n- " + "\n- ".join(task.name.replace("_", "-").lower() for task in supported_tasks)
     if "(" in license and ")" in license:
