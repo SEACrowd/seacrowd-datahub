@@ -1015,7 +1015,6 @@ class SEACrowdConfigHelper:
         else:
             self._helpers = [helper for helper in helpers if not helper.is_broken]
 
-    @property
     def available_dataset_names(self, schema=None) -> List[str]:
         if schema == None:
             return sorted(list(set([helper.dataset_name for helper in self])))
@@ -1024,18 +1023,11 @@ class SEACrowdConfigHelper:
         else:
             raise ValueError("Schema must be either variations of `seacrowd` or `source`.")
     
-    @property
-    def available_config_names(self, dataset_name=None, schema=None) -> List[str]:
-        if dataset_name == None and schema == None:
+    def available_config_names(self, dataset_name=None) -> List[str]:
+        if dataset_name == None:
             return sorted(list(set([helper.config.name for helper in self])))
-        elif dataset_name != None and ("seacrowd" in schema or "source" in schema):
-            return sorted(list(set([helper.config.name for helper in self if helper.dataset_name == dataset_name and schema in helper.config.schema])))
-        elif dataset_name != None:
-            return sorted(list(set([helper.config.name for helper in self if helper.dataset_name == dataset_name])))
-        elif ("seacrowd" in schema or "source" in schema):
-            return sorted(list(set([helper.config.name for helper in self if schema in helper.config.schema])))
         else:
-            raise ValueError("Schema must be either variations of `seacrowd` or `source`.")
+            return sorted(list(set([helper.config.name for helper in self if helper.dataset_name == dataset_name])))
 
     def for_dataset(self, dataset_name: str, schema: str) -> "SEACrowdMetadata":
         # Widening the search for suggestions (if needed)
@@ -1274,25 +1266,46 @@ class SEACrowdMetadataHelper:
 # SEACrowd Interface
 ###
 
-def list_datasets(with_config=False):
-    conhelps = SEACrowdConfigHelper()
-    return conhelps.list_datasets(with_config=with_config)
+connhelps = SEACrowdConfigHelper()
 
-def load_dataset(dataset_name, schema='seacrowd'):
-    conhelps = SEACrowdConfigHelper()
-    return conhelps.load_dataset(dataset_name=dataset_name, schema=schema)
+def list_datasets(with_config=False, config_helper=connhelps):
+    return config_helper.list_datasets(with_config=with_config)
 
-def load_datasets(dataset_names, schema='seacrowd'):
-    conhelps = SEACrowdConfigHelper()
-    return conhelps.load_datasets(dataset_names=dataset_names, schema=schema)
+def load_dataset(dataset_name, schema='seacrowd', config_helper=connhelps):
+    return config_helper.load_dataset(dataset_name=dataset_name, schema=schema)
 
-def list_benchmarks():
-    conhelps = SEACrowdConfigHelper()
-    return conhelps.list_benchmarks()
+def load_datasets(dataset_names, schema='seacrowd', config_helper=connhelps):
+    return config_helper.load_datasets(dataset_names=dataset_names, schema=schema)
 
-def load_benchmark(benchmark_name):
-    conhelps = SEACrowdConfigHelper()
-    return conhelps.load_benchmark(benchmark_name=benchmark_name)
+def load_dataset_by_config_name(config_name, config_helper=connhelps):
+    return config_helper.load_dataset_by_config_name(config_name=config_name)
+
+def load_datasets_by_config_names(config_names, config_helper=connhelps):
+    return config_helper.load_datasets_by_config_names(config_names=config_names)
+
+def list_benchmarks(config_helper=connhelps):
+    return config_helper.list_benchmarks()
+
+def load_benchmark(benchmark_name, config_helper=connhelps):
+    return config_helper.load_benchmark(benchmark_name=benchmark_name)
+
+def for_dataset(dataset_name, schema='seacrowd', config_helper=connhelps):
+    return config_helper.for_dataset(dataset_name=dataset_name, schema=schema)
+
+def for_datasets(dataset_names, schema='seacrowd', config_helper=connhelps):
+    return config_helper.for_datasets(dataset_names=dataset_names, schema=schema)
+
+def for_config_name(config_name, config_helper=connhelps):
+    return config_helper.for_config_name(config_name=config_name)
+
+def for_config_names(config_names, config_helper=connhelps):
+    return config_helper.for_config_names(config_names=config_names)
+
+def available_dataset_names(schema=None, config_helper=connhelps):
+    return config_helper.available_dataset_names(schema=schema)
+
+def available_config_names(dataset_name=None, config_helper=connhelps):
+    return config_helper.available_config_names(dataset_name=dataset_name)
 
 if __name__ == "__main__":
     print(f'LIST DATASETS')

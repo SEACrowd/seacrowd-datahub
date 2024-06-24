@@ -8,7 +8,7 @@ Southeast Asia is home to more than 1,000 native languages. Nevertheless, Southe
 
 ### Library Installation
 
-Find seacrowd library (v0.1.3) at https://pypi.org/project/seacrowd/. (See our release notes [here](https://github.com/SEACrowd/seacrowd-datahub/releases/tag/0.1.3).)
+Find seacrowd library (v0.2.0) at https://pypi.org/project/seacrowd/. (See our release notes [here](https://github.com/SEACrowd/seacrowd-datahub/releases/tag/0.2.0).)
 
 To install SEACrowd, install the `seacrowd` package in your python environment via `pip`.
 
