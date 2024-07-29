@@ -24,7 +24,7 @@ import seacrowd as sc
 ````
 
 ### List & Load Dataset
-SEACrowd provides functions for listing and loading all datasets that are implemented in NusaCrowd
+SEACrowd provides functions for listing and loading all dataloaders that are implemented in SEACrowd.
 ```
 # List all datasets
 dset_names = sc.list_datasets()
