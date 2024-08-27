@@ -2,12 +2,13 @@ import os
 from typing import Dict, List, Tuple
 
 import datasets
-import jsonlines as jl
+import json
 import pandas as pd
 
 from seacrowd.utils import schemas
 from seacrowd.utils.configs import SEACrowdConfig
 from seacrowd.utils.constants import Licenses, Tasks
+
 
 _CITATION = """\
 @inproceedings{thapliyal-etal-2022-crossmodal,
@@ -46,8 +47,8 @@ _LICENSE = Licenses.CC_BY_4_0.value
 # there are no direct image folder ready, so it needs to be downloaded one by one
 # some warnings may occur when downloading due to reasons such as security certificate and others
 _URLS = {
-    "trans_train": "https://storage.googleapis.com/crossmodal-3600/cc3m_mt_train.jsonl.gz",
-    "trans_dev": "https://storage.googleapis.com/crossmodal-3600/cc3m_mt_dev.jsonl.gz",
+    "trans_train": "https://storage.googleapis.com/crossmodal-3600/cc3m_mt_train.jsonl.bz2",
+    "trans_dev": "https://storage.googleapis.com/crossmodal-3600/cc3m_mt_dev.jsonl.bz2",
 }
 
 _SUPPORTED_TASKS = [Tasks.IMAGE_CAPTIONING]
@@ -58,8 +59,12 @@ _SEACROWD_VERSION = "2024.06.20"
 
 _LANGUAGES = ["fil", "ind", "tha", "vie"]
 
-_LOCAL = True
-
+LANGUAGE_MAP = {
+    'fil': 'fil',
+    'ind': 'id',
+    'tha': 'th',
+    'vie': 'vi',
+}
 
 class CC3M35L(datasets.GeneratorBasedBuilder):
     """
@@ -70,7 +75,10 @@ class CC3M35L(datasets.GeneratorBasedBuilder):
     SOURCE_VERSION = datasets.Version(_SOURCE_VERSION)
     SEACROWD_VERSION = datasets.Version(_SEACROWD_VERSION)
 
-    BUILDER_CONFIGS = [SEACrowdConfig(name=f"cc3m_35l_{lang}_source", version=datasets.Version(_SOURCE_VERSION), description=f"cc3m_35l_{lang} source schema", schema="source", subset_id=f"cc3m_35l_{lang}",) for lang in _LANGUAGES] + [
+    BUILDER_CONFIGS = [
+        SEACrowdConfig(name=f"cc3m_35l_{lang}_source", version=datasets.Version(_SOURCE_VERSION), description=f"cc3m_35l_{lang} source schema", schema="source", subset_id=f"cc3m_35l_{lang}",)
+        for lang in _LANGUAGES
+    ] + [
         SEACrowdConfig(
             name=f"{_DATASETNAME}_{lang}_seacrowd_imtext",
             version=datasets.Version(_SEACROWD_VERSION),
@@ -80,6 +88,7 @@ class CC3M35L(datasets.GeneratorBasedBuilder):
         )
         for lang in _LANGUAGES
     ]
+
 
     DEFAULT_CONFIG_NAME = "cc3m_35l_id_source"
 
@@ -133,110 +142,89 @@ class CC3M35L(datasets.GeneratorBasedBuilder):
         """Returns SplitGenerators."""
         dev_path = dl_manager.download_and_extract(_URLS["trans_dev"])
         train_path = dl_manager.download_and_extract(_URLS["trans_train"])
-
+        current_lang = LANGUAGE_MAP[self.config.subset_id.split("_")[2]]
         if self.config.data_dir is None:
             raise ValueError("This is a local dataset. Please pass the data_dir kwarg to load_dataset.")
         else:
             data_dir = self.config.data_dir
 
-        # read tsv from local train and validation files
-        gcc_val = os.path.join(data_dir, "Validation_GCC-1.1.0-Validation.tsv")
-        gcc_train = os.path.join(data_dir, "Train_GCC-training.tsv")
-
-        # make it into pandas dataframe
-        colnames = ["caption", "img_url"]
-        gcc_val_df = pd.read_csv(gcc_val, sep="\t", header=None, names=colnames)
-        gcc_train_df = pd.read_csv(gcc_train, sep="\t", header=None, names=colnames)
-
-        # add new column to keep the downloaded image path
-        gcc_val_df["img_path"] = None
-        gcc_train_df["img_path"] = None
-
-        # add new column to keep the translated caption
-        gcc_val_df["trans_caption"] = None
-        gcc_train_df["trans_caption"] = None
-
-        gcc_val_df["backtrans_caption"] = None
-        gcc_train_df["backtrans_caption"] = None
-
-        # match the original captions in the translated set to the dataframe caption
-        # download the images from the URL and use it as the filepath
-        train_exceptions = []
-        val_exceptions = []
-
-        current_lang = self.config.subset_id.split("_")[2]
-        val_caption_targets = []
-        train_caption_targets = []
-
-        # filter validation data
-        with jl.open(os.path.join(dev_path), mode="r") as j:
-            val_caption_targets = [line for line in j if line["trg_lang"] == current_lang]
-            
-            #for line in val_caption_targets[:100]: # this was for debugging only
-            for line in val_caption_targets:
-                res = self.fill_img_path(gcc_train_df, line)
-                val_exceptions.extend(res[1])
-                gcc_val_df.update(res[0])
-            
-        # clean the memory
-        val_caption_targets = []
-
-        # filter train data
-        with jl.open(os.path.join(train_path), mode="r") as j:
-            train_caption_targets = [line for line in j if line["trg_lang"] == current_lang]
-            
-                
-            #for line in train_caption_targets[:100]: # this was for debugging only
-            for line in train_caption_targets:
-                res = self.fill_img_path(gcc_val_df, line)
-                train_exceptions.extend(res[1])
-                gcc_train_df.update(res[0])
-
-        # clean the memory
-        train_caption_targets = []
+        ###
+        # Dev Data
+        ###
+        dev_handler = open(dev_path, 'r')
+        gcc_val_df = pd.read_csv(os.path.join(data_dir, 'Validation_GCC-1.1.0-Validation.tsv'), sep="\t", header=None, names=["caption", "img_url"])
+        gcc_val_df.index = gcc_val_df.index + 1
+        
+        ###
+        # Train Data
+        ###
+        trn_handler = open(train_path, 'r')
+        gcc_trn_df = pd.read_csv(os.path.join(data_dir, 'Train_GCC-training.tsv'), sep="\t", header=None, names=["caption", "img_url"])
+        gcc_trn_df.index = gcc_trn_df.index + 1
 
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
-                    "filepath": gcc_train_df,
-                    "exceptions": train_exceptions,
+                    "data": (trn_handler, gcc_trn_df),
+                    "lang": current_lang,
+                    "split": "train",
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
-                    "filepath": gcc_val_df,
-                    "exceptions": val_exceptions,
+                    "data": (dev_handler, gcc_val_df),
+                    "lang": current_lang,
+                    "split": "dev",
                 },
             ),
         ]
 
-    def _generate_examples(self, filepath: dict, exceptions: list) -> Tuple[int, Dict]:
+    def _generate_examples(self, data: tuple, lang: str, split: str) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
-        for idx, row in filepath.iterrows():
-            if idx not in exceptions:
-                if self.config.schema == "source":
-                    yield idx, {
-                        "id": str(idx),
-                        "image_paths": row["img_path"],
-                        "src_lang": "en",
-                        "caption_tokenized": row["caption"],
-                        "trg_lang": self.config.subset_id.split("_")[2],
-                        "translation_tokenized": row["trans_caption"],
-                        "backtranslation_tokenized": row["backtrans_caption"],
-                    }
+        split_handler, gcc_df = data
+        
+        idx, c_data = -1, None
+        while True:
+            line = split_handler.readline().strip()
+            if not line:
+                split_handler.seek(0)
+                return idx, c_data # Return last data            
+                
+            # Matching index
+            row = json.loads(line)
+            if row['trg_lang'] != lang:
+                continue
+                
+            index = row['rec_num']
+            caption = row['caption_tokenized']
+            img_url = gcc_df.loc[index,'img_url']
+            
+            if c_data is not None:
+                yield idx, c_data
+            
+            idx += 1
+            if self.config.schema == "source":
+                c_data = {
+                    "id": str(idx),
+                    "image_paths": img_url,
+                    "src_lang": "en",
+                    "caption_tokenized": caption,
+                    "trg_lang": self.config.subset_id.split("_")[2],
+                    "translation_tokenized": row["translation_tokenized"],
+                    "backtranslation_tokenized": row["backtranslation_tokenized"],
+                }
 
-                elif self.config.schema == "seacrowd_imtext":
-                    yield idx, {
-                        "id": str(idx),
-                        "image_paths": [row["img_path"]],
-                        "texts": row["trans_caption"],
-                        "metadata": {
-                            "context": None,
-                            "labels": None,
-                        },
-                    }
-
-                else:
-                    raise ValueError(f"Invalid config: {self.config.name}")
+            elif self.config.schema == "seacrowd_imtext":
+                c_data = {
+                    "id": str(idx),
+                    "image_paths": [img_url],
+                    "texts": row["translation_tokenized"],
+                    "metadata": {
+                        "context": None,
+                        "labels": None,
+                    },
+                }
+            else:
+                raise ValueError(f"Invalid config: {self.config.name}")
