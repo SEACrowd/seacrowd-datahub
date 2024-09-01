@@ -42,7 +42,7 @@ Positive, Negative, Neutral, and Mixed.
 _HOMEPAGE = "https://huggingface.co/datasets/ccosme/SentiTaglishProductsAndServices"
 
 _LANGUAGES = ["tgl", "eng"]
-_LICENSE = Licenses.CC_BY_NC_SA_4_0.value
+_LICENSE = Licenses.CC_BY_4_0.value
 _LOCAL = False
 _URLS = {
     _DATASETNAME: "https://huggingface.co/datasets/ccosme/SentiTaglishProductsAndServices/resolve/main/SentiTaglish_ProductsAndServices.csv",
