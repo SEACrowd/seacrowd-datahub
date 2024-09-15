@@ -14,7 +14,7 @@ _DATASETNAME = "nusatranslation_mt"
 _SOURCE_VIEW_NAME = DEFAULT_SOURCE_VIEW_NAME
 _UNIFIED_VIEW_NAME = DEFAULT_SEACROWD_VIEW_NAME
 
-_LANGUAGES = ["ind", "btk", "bew", "bug", "jav", "mad", "mak", "min", "mui", "rej", "sun"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
+_LANGUAGES = ["ind", "abs", "bhp", "bew", "btk", "jav", "mad", "mak", "min", "mui", "rej", "sun"]  # We follow ISO639-3 language code (https://iso639-3.sil.org/code_tables/639/data)
 _LOCAL = False
 
 _CITATION = """\
@@ -62,6 +62,8 @@ LANGUAGES_MAP = {
     "rej": "rejang",
     "sun": "sundanese",
 }
+
+assert set(LANGUAGES_MAP.keys()).issubset(set(_LANGUAGES))
 
 
 class NusaTranslationMT(datasets.GeneratorBasedBuilder):
