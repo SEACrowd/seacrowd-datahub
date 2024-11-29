@@ -58,7 +58,7 @@ _LICENSE = Licenses.UNKNOWN.value
 _LOCAL = False
 
 _URLS = {
-    _DATASETNAME: "https://huggingface.co/datasets/NLPinas/EMoTES-3K/resolve/main/EMoTES-3K.jsonl?download=true",
+    _DATASETNAME: "https://huggingface.co/datasets/NLPinas/EMoTES-3K/resolve/main/EMoTES-3K.jsonl",
 }
 
 _SUPPORTED_TASKS = [Tasks.MORALITY_CLASSIFICATION, Tasks.INSTRUCTION_TUNING]  # Roberta moral or immoral classification  # FLAN-T5 Training

@@ -27,7 +27,10 @@ _HOMEPAGE = "https://huggingface.co/datasets/haryoaw/COPAL"
 
 _LICENSE = Licenses.CC_BY_SA_4_0.value
 
-_URLS = {"test": "https://huggingface.co/datasets/haryoaw/COPAL/resolve/main/test_copal.csv?download=true", "test_colloquial": "https://huggingface.co/datasets/haryoaw/COPAL/resolve/main/test_copal_colloquial.csv?download=true"}
+_URLS = {
+    "test": "https://huggingface.co/datasets/haryoaw/COPAL/resolve/main/test_copal.csv", 
+    "test_colloquial": "https://huggingface.co/datasets/haryoaw/COPAL/resolve/main/test_copal_colloquial.csv"
+}
 
 _SUPPORTED_TASKS = [Tasks.COMMONSENSE_REASONING]
 
