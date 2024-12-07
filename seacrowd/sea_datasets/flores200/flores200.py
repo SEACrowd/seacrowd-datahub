@@ -449,7 +449,7 @@ class Flores200(datasets.GeneratorBasedBuilder):
             
             lang = self.config.language_name
             lang_df = split_df.loc[(split_df['iso_639_3'] == lang.split('_')[0]) & (split_df['iso_15924'] == lang.split('_')[1])]
-            for id_, row in enumerate(lang_df.to_dict(orient='record')):
+            for id_, row in enumerate(lang_df.to_dict(orient='records')):
                 yield id_, row
                 
         elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.MACHINE_TRANSLATION]).lower()}":
@@ -463,7 +463,7 @@ class Flores200(datasets.GeneratorBasedBuilder):
             mt_df['text_1_name'] = mt_df.apply(lambda x: f"{x['iso_639_3_x']}_{x['iso_15924_x']}", axis='columns')
             mt_df['text_2_name'] = mt_df.apply(lambda x: f"{x['iso_639_3_y']}_{x['iso_15924_y']}", axis='columns')
             
-            for id_, row in enumerate(mt_df[['id', 'text_1', 'text_2', 'text_1_name', 'text_2_name']].to_dict(orient='record')):
+            for id_, row in enumerate(mt_df[['id', 'text_1', 'text_2', 'text_1_name', 'text_2_name']].to_dict(orient='records')):
                 yield id_, row
                 
         else:
