@@ -17,6 +17,7 @@ import os
 import zipfile
 from dataclasses import dataclass
 from typing import Dict, List, Tuple
+import pandas as pd
 
 import datasets
 
@@ -302,28 +303,29 @@ _LICENSE = Licenses.CC_BY_NC_4_0.value
 _LOCAL = False
 
 _URLS = {
-    _DATASETNAME: "https://github.com/openlanguagedata/flores/releases/download/v2.0-alpha.2/floresp-v2.0-alpha.2.zip",
+    _DATASETNAME: "https://huggingface.co/datasets/openlanguagedata/flores_plus",
 }
 
 _SPLITS = ["dev", "devtest"]
-
-_SENTENCES_PATHS = {lang: {split: os.path.join("floresp-v2.0-alpha.2", split, f"{split}.{lang}") for split in _SPLITS} for lang in _LANGUAGE_NAMES}
-
-_METADATA_PATHS = {split: os.path.join("floresp-v2.0-alpha.2", f"metadata_{split}.tsv") for split in _SPLITS}
 
 _SUPPORTED_TASKS = [Tasks.MACHINE_TRANSLATION]
 _SUPPORTED_SCHEMA_STRINGS = [f"seacrowd_{str(TASK_TO_SCHEMA[task]).lower()}" for task in _SUPPORTED_TASKS]
 
 _SCHEMAS = [str(TASK_TO_SCHEMA[task]) for task in _SUPPORTED_TASKS]
 
-_SOURCE_VERSION = "1.0.0"
+_SOURCE_VERSION = "2.0.0"
 
-_SEACROWD_VERSION = "2024.06.20"
+_SEACROWD_VERSION = "2024.12.07"
 
 
 @dataclass
+class Flores200SourceConfig(SEACrowdConfig):
+    """BuilderConfig for Source Schema."""
+    language_name: str = None
+    
+@dataclass
 class Flores200SeacrowdConfig(SEACrowdConfig):
-    """BuilderConfig for Nusantara."""
+    """BuilderConfig for SEACrowd Schema."""
 
     first_language_name: str = None
     second_language_name: str = None
@@ -340,23 +342,24 @@ class Flores200(datasets.GeneratorBasedBuilder):
     BUILDER_CONFIGS = []
 
     for first_lang_name in _LANGUAGE_NAMES:
+        source_subset_id = f"{_DATASETNAME}_{first_lang_name}"
+        
+        BUILDER_CONFIGS.append(
+            Flores200SourceConfig(
+                name=f"{source_subset_id}_source",
+                version=SOURCE_VERSION,
+                description=f"{_DATASETNAME} source schema",
+                schema="source",
+                subset_id=source_subset_id,
+                language_name=first_lang_name,
+            )
+        )
+
         for second_lang_name in _LANGUAGE_NAMES:
             if first_lang_name == second_lang_name or ((first_lang_name.split("_")[0] not in _LANGUAGES) and (second_lang_name.split("_")[0] not in _LANGUAGES)):
                 continue
 
             subset_id = f"{_DATASETNAME}_{first_lang_name}_{second_lang_name}"
-
-            BUILDER_CONFIGS.append(
-                Flores200SeacrowdConfig(
-                    name=f"{subset_id}_source",
-                    version=SOURCE_VERSION,
-                    description=f"{_DATASETNAME} source schema",
-                    schema="source",
-                    subset_id=subset_id,
-                    first_language_name=first_lang_name,
-                    second_language_name=second_lang_name,
-                )
-            )
 
             seacrowd_schema_config: list[SEACrowdConfig] = []
 
@@ -380,20 +383,20 @@ class Flores200(datasets.GeneratorBasedBuilder):
 
     def _info(self) -> datasets.DatasetInfo:
 
-        if self.config.schema == "source":
-            features = datasets.Features(
-                {
-                    "id": datasets.Value("int32"),
-                    "URL": datasets.Value("string"),
-                    "domain": datasets.Value("string"),
-                    "topic": datasets.Value("string"),
-                    "has_image": datasets.Value("int32"),
-                    "has_hyperlink": datasets.Value("int32"),
-                }
-            )
-
-            features[self.config.first_language_name] = datasets.Value("string")
-            features[self.config.second_language_name] = datasets.Value("string")
+        if self.config.schema == "source": 
+            features = datasets.Features({
+                'id': datasets.Value(dtype='int64', id=None),
+                'iso_639_3': datasets.Value(dtype='string', id=None),
+                'iso_15924': datasets.Value(dtype='string', id=None),
+                'glottocode': datasets.Value(dtype='string', id=None),
+                'text': datasets.Value(dtype='string', id=None),
+                'url': datasets.Value(dtype='string', id=None),
+                'domain': datasets.Value(dtype='string', id=None),
+                'topic': datasets.Value(dtype='string', id=None),
+                'has_image': datasets.Value(dtype='string', id=None),
+                'has_hyperlink': datasets.Value(dtype='string', id=None),
+                'last_updated': datasets.Value(dtype='string', id=None)
+            })
 
         else:
             schema = str(self.config.schema).lstrip(f"{_DATASETNAME}_seacrowd_").upper()
@@ -414,62 +417,54 @@ class Flores200(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
         """Returns SplitGenerators."""
+        
+        hf_path = '/'.join(_URLS[_DATASETNAME].split('/')[-2:])
+        flores_dset = datasets.load_dataset(hf_path, trust_remote_code=True)
 
-        dl_dir = dl_manager.download(_URLS[_DATASETNAME])
+        if self.config.schema == 'source':
+            return [
+                datasets.SplitGenerator(
+                    name=split,
+                    gen_kwargs={
+                        "split_df": flores_dset[split].to_pandas(),
+                    },
+                )
+                for split in _SPLITS
+            ]            
+        else:
+            return [
+                datasets.SplitGenerator(
+                    name=split,
+                    gen_kwargs={
+                        "split_df": flores_dset[split].to_pandas(),
+                    },
+                )
+                for split in _SPLITS
+            ]
 
-        base_dir = os.path.join(os.path.dirname(dl_dir), "flores200extracted")
-
-        password = "multilingual machine translation"
-
-        with zipfile.ZipFile(dl_dir, "r") as zip_ref:
-            # Set the password to extract the contents
-            zip_ref.setpassword(bytes(password, "utf-8"))
-
-            # Extract all contents to the specified directory
-            zip_ref.extractall(base_dir)
-
-        return [
-            datasets.SplitGenerator(
-                name=split,
-                gen_kwargs={
-                    "first_sentence_path": os.path.join(base_dir, _SENTENCES_PATHS[self.config.first_language_name][split]),
-                    "second_sentence_path": os.path.join(base_dir, _SENTENCES_PATHS[self.config.second_language_name][split]),
-                    "metadata_path": os.path.join(base_dir, _METADATA_PATHS[split]),
-                },
-            )
-            for split in _SPLITS
-        ]
-
-    def _generate_examples(self, first_sentence_path: str, second_sentence_path: str, metadata_path: str) -> Tuple[int, Dict]:
+    def _generate_examples(self, split_df: pd.DataFrame) -> Tuple[int, Dict]:
         """Yields examples as (key, example) tuples."""
 
-        sentences = {}
-        langs = [self.config.first_language_name, self.config.second_language_name]
-
-        for path, lang in zip([first_sentence_path, second_sentence_path], langs):
-            with open(path, "r") as sent_file:
-                sentences[lang] = [line.strip() for line in sent_file.readlines()]
-
-        with open(metadata_path, "r") as metadata_file:
-            metadata_lines = [line.strip() for line in metadata_file.readlines()[1:]]
-
-        if self.config.schema == "source":
-            for id_, metadata in enumerate(metadata_lines):
-                metadata = metadata.split("\t")
-                yield id_, {
-                    **{"id": id_ + 1, "URL": metadata[0], "domain": metadata[1], "topic": metadata[2], "has_image": 1 if metadata == "yes" else 0, "has_hyperlink": 1 if metadata == "yes" else 0},
-                    **{f"{lang}": sentences[lang][id_] for lang in langs},
-                }
-
+        if self.config.schema == 'source':
+            
+            lang = self.config.language_name
+            lang_df = split_df.loc[(split_df['iso_639_3'] == lang.split('_')[0]) & (split_df['iso_15924'] == lang.split('_')[1])]
+            for id_, row in enumerate(lang_df.to_dict(orient='record')):
+                yield id_, row
+                
         elif self.config.schema == f"seacrowd_{str(TASK_TO_SCHEMA[Tasks.MACHINE_TRANSLATION]).lower()}":
-            for id_, _ in enumerate(metadata_lines):
-                yield id_, {
-                    "id": id_ + 1,
-                    "text_1": sentences[self.config.first_language_name][id_],
-                    "text_2": sentences[self.config.second_language_name][id_],
-                    "text_1_name": self.config.first_language_name,
-                    "text_2_name": self.config.second_language_name,
-                }
+            
+            lang_1, lang_2 = self.config.first_language_name, self.config.second_language_name
+            l1_df = split_df.loc[(split_df['iso_639_3'] == lang_1.split('_')[0]) & (split_df['iso_15924'] == lang_1.split('_')[1])]
+            l2_df = split_df.loc[(split_df['iso_639_3'] == lang_2.split('_')[0]) & (split_df['iso_15924'] == lang_2.split('_')[1])]
 
+            mt_df = l1_df.merge(l2_df, on='id')
+            mt_df = mt_df.rename({'text_x': 'text_1', 'text_y': 'text_2'}, axis='columns')
+            mt_df['text_1_name'] = mt_df.apply(lambda x: f"{x['iso_639_3_x']}_{x['iso_15924_x']}", axis='columns')
+            mt_df['text_2_name'] = mt_df.apply(lambda x: f"{x['iso_639_3_y']}_{x['iso_15924_y']}", axis='columns')
+            
+            for id_, row in enumerate(mt_df[['id', 'text_1', 'text_2', 'text_1_name', 'text_2_name']].to_dict(orient='record')):
+                yield id_, row
+                
         else:
             raise ValueError(f"Invalid config: {self.config.name}")
