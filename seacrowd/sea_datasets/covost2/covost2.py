@@ -127,7 +127,6 @@ class Covost2(datasets.GeneratorBasedBuilder):
             homepage=_HOMEPAGE,
             license=_LICENSE,
             citation=_CITATION,
-            task_templates=[datasets.AutomaticSpeechRecognition(audio_column="audio", transcription_column="sentences")] if (self.config.schema == "seacrowd_sptext" or self.config.schema == "source") else None,
         )
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:

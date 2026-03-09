@@ -132,7 +132,6 @@ class INDspeechTELDIALOGSVCSR(datasets.GeneratorBasedBuilder):
             homepage=_HOMEPAGE,
             license=_LICENSE,
             citation=_CITATION,
-            task_templates=[datasets.AutomaticSpeechRecognition(audio_column="audio", transcription_column="sentences")],
         )
 
     def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
