@@ -378,7 +378,7 @@ BENCHMARK_DICT = {
         'multilexnorm_seacrowd_t2t',
         'paracotta_id_seacrowd_t2t',
         'stif_indonesia_seacrowd_t2t',        
-        'xpersona_id_seacrowd_t2t'
+        'xpersona_id_seacrowd_t2t',
         'facqa_seacrowd_qa',
         'idk_mrc_seacrowd_qa',
         'tydiqa_id_seacrowd_qa'
@@ -390,7 +390,7 @@ BENCHMARK_DICT = {
         'indspeech_teldialog_lvcsr_seacrowd_sptext',
         'indspeech_teldialog_svcsr_seacrowd_sptext',
         'librivox_indonesia_ind_seacrowd_sptext',
-        'titml_idn_seacrowd_sptext'
+        'titml_idn_seacrowd_sptext',
         # Sun
         'indspeech_newstra_ethnicsr_nooverlap_sun_seacrowd_sptext',
         'indspeech_news_ethnicsr_su_nooverlap_seacrowd_sptext',
@@ -928,6 +928,7 @@ class SEACrowdMetadata:
 
 def default_is_keeper(metadata: SEACrowdMetadata) -> bool:
     return not metadata.is_large and not metadata.is_resource and metadata.is_seacrowd_schema
+
 
 class SEACrowdConfigHelper:
     """

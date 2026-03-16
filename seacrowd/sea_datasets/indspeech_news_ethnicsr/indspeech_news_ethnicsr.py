@@ -95,7 +95,6 @@ class IndSpeechNewsEthnicSR(datasets.GeneratorBasedBuilder):
             homepage=_HOMEPAGE,
             license=_LICENSE,
             citation=_CITATION,
-            task_templates=[datasets.AutomaticSpeechRecognition(audio_column="audio", transcription_column="text")],
         )
 
 
